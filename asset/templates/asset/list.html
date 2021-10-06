@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{{ title }}{% endblock  %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'asset/css/style.css' %}">
+    <div class="asset-list">
+        <ul>
+        {% for asset in assets %}
+            <li>{{ asset.name }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock  %}
+

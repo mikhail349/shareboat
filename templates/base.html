@@ -1,0 +1,17 @@
+{% load static %}
+
+<html lang="ru">
+    <head>
+        <title>{% block title %}Shareboat{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        <nav class="menu">
+            <ul>
+                <li><a href="/asset/">ВСЕ АКТИВЫ</a></li>
+                <li><a href="/asset/my/">МОИ АКТИВЫ</a></li>
+            </ul>
+        </nav>
+        {% block content %}{% endblock %}
+    </body>
+</html>

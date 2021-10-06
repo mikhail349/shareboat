@@ -1,0 +1,22 @@
+
+
+<html lang="ru">
+    <head>
+        <title>Login</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    </head>
+    <body>
+        <div>
+            <form action="/user/api/auth/" method="post">
+                {% csrf_token %}
+                <label for="email">Email: </label>
+                <input id="email" type="email" name="email" >
+
+                <label for="password">Password: </label>
+                <input id="password" type="password" name="password" >
+                <input type="submit" value="OK">
+            </form>
+        </div>
+    </body>
+</html>

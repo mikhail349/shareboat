@@ -1,0 +1,11 @@
+body {
+    text-align: center;
+}
+
+form {
+    display: inline-block;
+}
+
+input {
+    display: block;
+}
