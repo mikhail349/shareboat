@@ -6,6 +6,9 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'asset/css/style.css' %}">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>    
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <div class="asset-list">
         <ul>
         {% for asset in assets %}
@@ -13,5 +16,6 @@
         {% endfor %}
         </ul>
     </div>
+    <div id="app">Загрузка...</div>
+    <script type="text/babel" src="{% static 'asset/js/react_comp.js' %}"></script>
 {% endblock  %}
-
