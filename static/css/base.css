@@ -1,4 +1,4 @@
-:root {
+/*:root {
     --main-color: #5c95c5;
 }
 
@@ -8,7 +8,7 @@ body {
 }
 
 body > header {
-    background-color: var(--main-color);
+    background-color: var(--primary);
     display: flex;
 }
 
@@ -37,5 +37,18 @@ body > header a {
 body > header .user-panel {
     margin: auto;
     margin-right: 20px;
+}
+
+html, body {
+    font-size: 1.4em;
+}*/
+
+.navbar {
+    background-color: var(--primary);
+    font-size: 1.25rem;
+}
+
+.nav-link {
+    color: white !important;
 }
 

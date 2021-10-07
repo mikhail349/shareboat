@@ -5,23 +5,31 @@
         <title>Login</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     </head>
     <body>
-        <div>
-            {% if errors %}
-                <div>{{ errors }}</div>
-            {% endif %}
-            <form action="{% if request.GET.next %} .?next={{ request.GET.next }} {% else %} . {% endif %}" method="post">
-                {% csrf_token %}
-                                
-                <label for="email">Email: </label>
-                <input id="email" type="email" name="email" >
+        {% if errors %}
+            <div>{{ errors }}</div>
+        {% endif %}
+        <form action=".?next={{ request.GET.next }}" method="post" class='form-signin'>
+            {% csrf_token %}
 
-                <label for="password">Password: </label>
-                <input id="password" type="password" name="password" >
+            <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>    
+            
+            <label for="email" class="sr-only">Эл. почта: </label>
+            <input id="email" type="email" name="email" autocomplete="email" placeholder="Эл. почта" class="form-control" >
+                
+            <label for="password" class="sr-only">Пароль: </label>
+            <input id="password" type="password" name="password" autocomplete="current-password" placeholder="Пароль" class="form-control">
 
-                <input type="submit" value="OK">
-            </form>
-        </div>
+            <input type="hidden" name="next" value={{ request.GET.next }} >
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+            <p>
+                Нет аккаунта? <a href="#">Зарегистрироваться</a>
+            </p>
+        </form>
     </body>
 </html>
