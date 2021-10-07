@@ -1,0 +1,41 @@
+:root {
+    --main-color: #5c95c5;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body > header {
+    background-color: var(--main-color);
+    display: flex;
+}
+
+body > header > * {
+    display: inline-block;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+body > header .menu ul {
+    margin: 0;
+    padding: 20px 0;
+}
+
+body > header .menu ul li {
+    display: inline;
+    margin: 20px;
+}
+
+body > header a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+body > header .user-panel {
+    margin: auto;
+    margin-right: 20px;
+}
+

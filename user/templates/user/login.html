@@ -8,13 +8,18 @@
     </head>
     <body>
         <div>
-            <form action="/user/api/auth/" method="post">
+            {% if errors %}
+                <div>{{ errors }}</div>
+            {% endif %}
+            <form action="{% if request.GET.next %} .?next={{ request.GET.next }} {% else %} . {% endif %}" method="post">
                 {% csrf_token %}
+                                
                 <label for="email">Email: </label>
                 <input id="email" type="email" name="email" >
 
                 <label for="password">Password: </label>
                 <input id="password" type="password" name="password" >
+
                 <input type="submit" value="OK">
             </form>
         </div>

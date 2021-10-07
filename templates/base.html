@@ -3,15 +3,28 @@
 <html lang="ru">
     <head>
         <title>{% block title %}Shareboat{% endblock %}</title>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
     </head>
     <body>
-        <nav class="menu">
-            <ul>
-                <li><a href="/asset/">ВСЕ АКТИВЫ</a></li>
-                <li><a href="/asset/my/">МОИ АКТИВЫ</a></li>
-            </ul>
-        </nav>
+        <header>
+            <nav class="menu">
+                <ul>
+                    <li><a href="/asset/">ВСЕ АКТИВЫ</a></li>
+                    <li><a href="/asset/my/">МОИ АКТИВЫ</a></li>
+                </ul>
+            </nav>
+            
+            <div class="user-panel">
+                {% if user.is_authenticated %}
+                    <a href="/user/logout/">ВЫХОД</a>
+                <!--<a href="/user/logout/?next={{ request.get_full_path }}">ВЫХОД</a>-->
+                {% else %}
+                    <a href="/user/login/?next={{ request.get_full_path }}">ВОЙТИ</a>
+                {% endif %}
+            </div>
+            
+        </header>
+
         {% block content %}{% endblock %}
     </body>
 </html>

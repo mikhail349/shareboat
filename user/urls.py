@@ -6,7 +6,9 @@ from . import views
 
 urlpatterns = [
     path('login/', views.login, name='login'),
+    #path('logout/', views.logout, name='logout'),
+    
     url(r'api/get_token/', obtain_jwt_token),
-    url(r'api/auth/', views.auth)
+    #url(r'api/auth/', views.auth)
     
 ]
