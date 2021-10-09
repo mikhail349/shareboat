@@ -26,7 +26,7 @@
                     <div class="col-md-4">
                         <div class="card mb-4 box-shadow">
                             {% if asset.files.first %}
-                                <img src="/uploads/{{ asset.files.first.file.data }}" class="card-img-top" />
+                                <img src="{{ asset.files.first.file.url }}" class="card-img-top" />
                             {% endif %}
                             
                             <div class="card-body">
