@@ -14,7 +14,11 @@ def login(request):
             django_login(request, user)
             return redirect(request.POST.get('next'))
 
-        return render(request, 'user/login.html', context={'errors': 'Неверный логин и/или пароль'})
+        context = {
+            'errors': 'Неверный логин и/или пароль',
+            'email': data['email']
+        }
+        return render(request, 'user/login.html', context=context)
 
 def logout(request):
     django_logout(request)

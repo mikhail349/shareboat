@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 from user import urls as user_urls
 from asset import urls as asset_urls
@@ -32,5 +34,5 @@ urlpatterns = [
     #path('api/', include(urlapipatterns)),
 
     path('user/', include(user_urls)),
-    path('asset/', include(asset_urls))
-]
+    path('asset/', include(asset_urls)),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
