@@ -13,17 +13,17 @@ def get_file_path(instance, filename):
     return filename
 
 class File(models.Model):
-    name = models.CharField(max_length=255, null=True, blank=True)
+    original_name = models.CharField(max_length=255, null=True, blank=True)
     file = models.FileField(upload_to=get_file_path)
 
     def __str__(self):
-        return self.name or ''
+        return self.original_name or ''
 
 class AssetFile(File):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name='files')
     
     def __str__(self):
-        return '%s - %s' % (self.name, self.asset)
+        return '%s - %s' % (self.original_name, self.asset)
 
 def _delete_file(path):
     try:
@@ -34,11 +34,11 @@ def _delete_file(path):
 @receiver(models.signals.pre_save, sender=AssetFile)
 def pre_save_file(sender, instance, *args, **kwargs):
     if not instance.pk:
-        instance.name = instance.file.name
+        instance.original_name = instance.file.name
     else:
         cur_file = AssetFile.objects.get(pk=instance.pk).file
         if cur_file != instance.file:
-            instance.name = instance.file.name
+            instance.original_name = instance.file.name
             _delete_file(cur_file.path)
 
 @receiver(models.signals.post_delete, sender=AssetFile)

@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Добавить актив{% endblock  %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'asset/css/create_update.css' %}">
+    <div class="container">
+        <section class="jumbotron text-center">   
+          <h1 class="jumbotron-heading">Добавить актив</h1>    
+        </section>
+        
+        <form action="." method="post" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Название актива</label>
+                <input type="text" id="name" name="name" class="form-control"  placeholder="Введите название актива" required autofocus>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+
+{% endblock  %}

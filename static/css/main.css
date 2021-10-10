@@ -1,3 +1,7 @@
+:root {
+    --jumbotron-padding-y: 3rem;
+}
+  
 .navbar {
     background-color: var(--primary);
     font-size: 1.25rem;
@@ -16,4 +20,23 @@
 body > .main-content-container {
     padding-top: 90px;
 }  
+  
+.jumbotron {
+    padding-top: var(--jumbotron-padding-y);
+    padding-bottom: var(--jumbotron-padding-y);
+    margin-bottom: 0;
+    background-color: #fff;
+}
+
+.jumbotron p:last-child {
+    margin-bottom: 0;
+}
+
+.jumbotron-heading {
+    font-weight: 300;
+}
+
+.jumbotron .container {
+    max-width: 40rem;
+}
   

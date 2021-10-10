@@ -7,3 +7,6 @@ class Asset(models.Model):
     
     def __str__(self):
         return self.name
+
+#class Boat(Asset):
+#    pass

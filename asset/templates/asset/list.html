@@ -5,16 +5,20 @@
 {% block title %}{{ title }}{% endblock  %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="{% static 'asset/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'asset/css/list.css' %}">
+    <!--
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+    -->
+
+    <script type="text/javascript" src="{% static 'asset/js/list.js' %}"></script>
     
     <section class="jumbotron text-center">
         <div class="container">
           <h1 class="jumbotron-heading">{{ title }}</h1>
           <p class="lead text-muted">Здесь представлены все ваши активы</p>
           <p>
-            <a href="#" class="btn btn-primary my-2">Добавить актив</a>
+            <a href="/asset/create" class="btn btn-primary my-2">Добавить актив</a>
           </p>
         </div>
     </section>
@@ -33,13 +37,49 @@
                                 <p class="card-text">
                                     {{ asset.name }}
                                 </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="#" class="btn btn-sm btn-outline-primary">Открыть</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">Изменить</a>
+                                        <button 
+                                            type="button" 
+                                            data-toggle="modal" 
+                                            data-target="#confirmDeletionModal" 
+                                            data-id="{{ asset.id }}"
+                                            class="btn btn-sm btn-outline-danger"
+                                        >
+                                            Удалить
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 {% endfor %}
             </div>
         </div>
     </div>
+
+    <div id="confirmDeletionModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmDeletionModalLabel" style="display: none">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeletionModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Woohoo, you're reading this text in a modal!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btnDelete" type="button" onclick="hideModal()" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>   
     <!--
     <div id="app">Загрузка...</div>
     <script src="{% static 'asset/js/react_comp.min.js' %}"></script>
