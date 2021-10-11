@@ -26,7 +26,8 @@
             <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="email" placeholder="Эл. почта" required class="form-control" >
                 
             <label for="password" class="sr-only">Пароль: </label>
-            <input id="password" type="password" name="password" autocomplete="current-password" placeholder="Пароль" required class="form-control">
+            <input id="password" type="password" name="password" autocomplete="current-password" 
+                placeholder="Пароль" required class="form-control" {% if errors %} autofocus {% endif %}>
 
             <input type="hidden" name="next" value={{ request.GET.next }} >
             <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>

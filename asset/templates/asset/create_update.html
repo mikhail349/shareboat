@@ -8,14 +8,19 @@
     <link rel="stylesheet" type="text/css" href="{% static 'asset/css/create_update.css' %}">
     <div class="container">
         <section class="jumbotron text-center">   
-          <h1 class="jumbotron-heading">Добавить актив</h1>    
+          <h1 class="jumbotron-heading">{% if asset %}Изменить{% else %}Добавить{% endif %}  актив</h1>    
         </section>
         
         <form action="." method="post" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
                 <label for="name">Название актива</label>
-                <input type="text" id="name" name="name" class="form-control"  placeholder="Введите название актива" required autofocus>
+                <input type="text" id="name" name="name" class="form-control" 
+                    {% if asset %} value="{{ asset.name }}" {% endif %} 
+                    placeholder="Введите название актива" 
+                    required 
+                    {% if not asset %} autofocus {% endif %}        
+                >
             </div>
             <button type="submit" class="btn btn-primary">Сохранить</button>
         </form>

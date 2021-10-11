@@ -26,16 +26,31 @@ def create(request):
         return redirect('/asset/')
 
 @login_required
+def update(request, pk):
+    try:
+        asset = Asset.objects.get(pk=pk, owner=request.user)
+        
+        if request.method == 'GET':
+            return render(request, 'asset/create_update.html', context={'asset': asset})
+        elif request.method == 'POST':
+            data = request.POST
+            asset.name = data['name']
+            asset.save()
+            return redirect('/asset/')
+    except Asset.DoesNotExist:
+        return render(request, 'not_found.html')
+
+@login_required
 @api_view(['POST'])
 def delete(request, pk):
     try:
-        a = Asset.objects.get(pk=pk)
+        asset = Asset.objects.get(pk=pk, owner=request.user)
     except Asset.DoesNotExist:
         return Response({'message': 'Актив не найден'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if a.owner != request.user:
+    if asset.owner != request.user:
         return Response({'message': 'Актив не найден'}, status=status.HTTP_400_BAD_REQUEST)
     
-    a.delete()
-    return Response({'data': pk})
+    asset.delete()
+    return Response()
 

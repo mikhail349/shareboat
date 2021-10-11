@@ -27,7 +27,7 @@ $(document).ready(() => {
         function onError(error) {
             //console.log(error);
             //alert(error.responseJSON.message);
-            $(".toast").toast("show");
+            //$(".toast").toast("show");
         }
     })
 })
