@@ -31,6 +31,13 @@ def register(request):
 
     elif request.method == "POST":
         data = request.POST
+
+        if User.objects.filter(email=data['email']).exists():
+            context = {
+                'errors': '%s уже зарегистрирован в системе' % data['email']
+            }
+            return render(request, 'user/register.html', context=context)        
+
         user = User.objects.create(email=data['email'])
         user.set_password(data['password1'])
         user.save()

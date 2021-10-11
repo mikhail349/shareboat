@@ -1,15 +1,12 @@
 from django.shortcuts import redirect, render
+
 from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
 
 from .models import Asset
-
-#def get(request):
-#    assets = Asset.objects.all()
-#    context = {'assets': assets, 'title': 'Все активы'}
-#    return render(request, 'asset/list.html', context)
 
 @login_required
 def get(request):
@@ -30,6 +27,15 @@ def create(request):
 
 @login_required
 @api_view(['POST'])
-def delete(request):
-    return Response({'data': request.user.email})
+def delete(request, pk):
+    try:
+        a = Asset.objects.get(pk=pk)
+    except Asset.DoesNotExist:
+        return Response({'message': 'Актив не найден'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if a.owner != request.user:
+        return Response({'message': 'Актив не найден'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    a.delete()
+    return Response({'data': pk})
 

@@ -1,9 +1,10 @@
 from django.urls import path, include
+from django.conf.urls import url
 
 from . import views
 
 apiurlpatterns = [
-    path('delete/', views.delete),
+    url(r'delete/(?P<pk>[0-9]+)/', views.delete),
 ]
 
 urlpatterns = [
