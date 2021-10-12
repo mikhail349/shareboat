@@ -12,6 +12,9 @@ $(document).ready(() => {
         $('#confirmDeleteModal').modal('hide');
         const id = $("#btnConfirmDelete").attr('data-id');
 
+        $(`.card-body a[data-id='${id}']`).addClass('disabled');
+        $(`.card-body button[data-id='${id}']`).attr("disabled", true);
+ 
         $.ajax({ 
             type: "POST",
             url: `/asset/api/delete/${id}/`,
@@ -25,9 +28,6 @@ $(document).ready(() => {
         }
     
         function onError(error) {
-            //console.log(error);
-            //alert(error.responseJSON.message);
-            //$(".toast").toast("show");
         }
     })
 })

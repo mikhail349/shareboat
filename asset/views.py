@@ -40,6 +40,7 @@ def update(request, pk):
     except Asset.DoesNotExist:
         return render(request, 'not_found.html')
 
+
 @login_required
 @api_view(['POST'])
 def delete(request, pk):
@@ -53,4 +54,3 @@ def delete(request, pk):
     
     asset.delete()
     return Response()
-
