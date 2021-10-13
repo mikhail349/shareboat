@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
@@ -15,14 +15,17 @@ def get(request):
     return render(request, 'asset/list.html', context)    
 
 @login_required
+@transaction.atomic
 def create(request):
     if request.method == 'GET':
         return render(request, 'asset/create_update.html')
 
     elif request.method == 'POST':
         data = request.POST
-        asset = Asset.objects.create(name=data['name'], owner=request.user)
-        asset.save()
+        files = request.FILES.getlist('file')
+        print(len(files))
+        print(request.FILES)
+        #asset = Asset.objects.create(name=data.get('name'), owner=request.user)
         return redirect('/asset/')
 
 @login_required

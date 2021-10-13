@@ -24,3 +24,6 @@ $.ajaxSetup({
         }
     }
 });
+
+//axiosDefaults.xsrfCookieName = "csrftoken"
+//axiosDefaults.xsrfHeaderName = "X-CSRFToken"

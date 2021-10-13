@@ -6,17 +6,19 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'asset/css/create_update.css' %}">
+    <script type="text/javascript" src="{% static 'asset/js/create_update.js' %}"></script>
 
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <div class="container">
         <section class="jumbotron text-center">   
           <h1 class="jumbotron-heading">{% if asset %}Изменить{% else %}Добавить{% endif %}  актив</h1>    
         </section>
-        
-        <form action="." method="post" autocomplete="off">
+    
+        <form action="." method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
                 <label for="name">Название актива</label>
@@ -26,16 +28,16 @@
                     required 
                     {% if not asset %} autofocus {% endif %}        
                 >
-
-                <hr class="mb-4">
+            </div>
+            <div class="form-group">
                 <h4 class="mb-3">Фотографии</h4>
                 <div id="react_app">Загрузка...</div>
-                <script type="text/babel" src="{% static 'asset/js/react_comp.js' %}"></script>
-                <hr class="mb-4">
-
+                <script type="text/babel" src="{% static 'asset/js/files_list.js' %}"></script>
             </div>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <hr>
+            <button id="saveBtn" type="button" class="btn btn-success">Сохранить</button>
         </form>
+
     </div>
 
 {% endblock  %}
