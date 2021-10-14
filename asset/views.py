@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+#import json
 
 from .models import Asset
+from .serializers import AssetSerializer
 
 @login_required
 def get(request):
@@ -34,7 +36,7 @@ def update(request, pk):
         asset = Asset.objects.get(pk=pk, owner=request.user)
         
         if request.method == 'GET':
-            return render(request, 'asset/create_update.html', context={'asset': asset})
+            return render(request, 'asset/create_update.html', context={'asset': AssetSerializer(asset).data})
         elif request.method == 'POST':
             data = request.POST
             asset.name = data['name']

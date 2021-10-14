@@ -4,17 +4,7 @@ function FilesList() {
     
     function onFileInputChange(e) {
         setFiles([...files, ...e.target.files]);
-        //fileInputRef.current.value = null;
-        //setFiles([...e.target.files]);
     }
-
-    //function getFiles() {
-    //    return files;
-    //}
-
-    React.useEffect(() => {
-        //return () => 
-    }, []);
 
     return (
         <React.Fragment>

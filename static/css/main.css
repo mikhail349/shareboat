@@ -69,3 +69,20 @@ button:focus {
     outline: none;
     box-shadow: none;
 }
+
+/*
+.navbar-brand img {  
+    animation-name: rotation;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0);
+    }    
+    100% {
+        transform: rotate(360deg);
+    }
+}
+*/

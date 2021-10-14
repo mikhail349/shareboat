@@ -15,9 +15,16 @@
 
     <div class="container">
         <section class="jumbotron text-center">   
-          <h1 class="jumbotron-heading">{% if asset %}Изменить{% else %}Добавить{% endif %}  актив</h1>    
+          <h1 class="jumbotron-heading">{% if asset %}Изменить{% else %}Добавить{% endif %} актив</h1>    
         </section>
+
+        <script>
+            var asset = {{ asset|safe }};
+        </script>
+        <div id="react_app">Загрузка...</div>
+        <script type="text/babel" src="{% static 'asset/js/create_update_react.js' %}"></script>
     
+        <!--
         <form action="." method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">
@@ -37,7 +44,7 @@
             <hr>
             <button id="saveBtn" type="button" class="btn btn-success">Сохранить</button>
         </form>
-
+        -->
     </div>
 
 {% endblock  %}
