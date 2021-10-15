@@ -85,7 +85,14 @@ function CreateUpdateReact() {
                             files.map((file, index) => (
                                 <div key={index} className="col-md-4">
                                     <div className="card box-shadow text-center h-100">
-                                        <img src={URL.createObjectURL(file)} class="card-img" />   
+                                        <img src={URL.createObjectURL(file)} class="card-img" />  
+                                        <div class="card-img-overlay">
+                                            <div class="card-footer d-flex justify-content-between align-items-center">
+                                                <div class="btn-group">
+                                                    <a href="update/{{ asset.id }}" data-id="{{ asset.id }}" class="btn btn-sm btn-outline-primary">Открыть</a>
+                                                </div>
+                                            </div> 
+                                        </div>
                                     </div>
                                 </div>                    
                             ))
