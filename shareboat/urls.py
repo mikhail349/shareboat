@@ -20,6 +20,7 @@ from django.conf import settings
 
 from user import urls as user_urls
 from asset import urls as asset_urls
+from file import urls as file_urls
 
 from . import views
 
@@ -35,4 +36,5 @@ urlpatterns = [
 
     path('user/', include(user_urls)),
     path('asset/', include(asset_urls)),
+    path('file/', include(file_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

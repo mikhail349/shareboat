@@ -4,6 +4,7 @@ from django.conf.urls import url
 from . import views
 
 apiurlpatterns = [
+    path('create/', views.create, name='create'),
     url(r'delete/(?P<pk>[0-9]+)/', views.delete),
 ]
 

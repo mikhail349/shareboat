@@ -2,11 +2,11 @@
 
 {% load static %}
 
-{% block title %}Добавить актив{% endblock  %}
+{% block title %}{% if asset %}Изменить{% else %}Добавить{% endif %} актив{% endblock  %}
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'asset/css/create_update.css' %}">
-    <script type="text/javascript" src="{% static 'asset/js/create_update.js' %}"></script>
+    <!--<script type="text/javascript" src="{% static 'asset/js/create_update.js' %}"></script>-->
 
     <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
@@ -19,8 +19,11 @@
         </section>
 
         <script>
-            var asset = {{ asset|safe }};
+            {% if asset %}
+                var asset = {{ asset|safe }};
+            {% endif %}
         </script>
+
         <div id="react_app">Загрузка...</div>
         <script type="text/babel" src="{% static 'asset/js/create_update_react.js' %}"></script>
     
