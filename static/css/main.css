@@ -70,8 +70,8 @@ button:focus {
     box-shadow: none;
 }
 
-/*
-.navbar-brand img {  
+
+.loading-ship-wheel {  
     animation-name: rotation;
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
@@ -85,4 +85,3 @@ button:focus {
         transform: rotate(360deg);
     }
 }
-*/

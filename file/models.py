@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.dispatch.dispatcher import receiver
+#from django.db import transaction
 
 import uuid
 import os
@@ -21,7 +22,7 @@ class File(models.Model):
 
 class AssetFile(File):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name='files')
-    
+
     def __str__(self):
         return '%s - %s' % (self.original_name, self.asset)
 
@@ -33,6 +34,9 @@ def _delete_file(path):
 
 @receiver(models.signals.pre_save, sender=AssetFile)
 def pre_save_file(sender, instance, *args, **kwargs):
+    if instance.is_default:
+        AssetFile.objects.filter(asset=instance.asset).update(is_default=False)
+
     if not instance.pk:
         instance.original_name = instance.file.name
     else:

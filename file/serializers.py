@@ -4,7 +4,6 @@ from .models import AssetFile
 class AssetFileSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source="file.url")
     filename = serializers.CharField(max_length=255, source="file.name")
-
     
     #url = serializers.SerializerMethodField() 
     #def get_url(self, obj):

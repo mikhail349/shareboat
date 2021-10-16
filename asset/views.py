@@ -54,10 +54,13 @@ def update(request, pk):
             asset.name = data['name']
             asset.save()
 
+            AssetFile.objects.filter(asset=asset).exclude(file__in=files).delete()
+
             for file in files:
-                asset_file = AssetFile.objects.get_or_create(asset=asset, file=file)
-  
+                AssetFile.objects.get_or_create(asset=asset, file=file)
+
             return JsonResponse({'redirect': '/asset/'})
+    
     except Asset.DoesNotExist:
         if request.method == 'GET':
             return render(request, 'not_found.html')
