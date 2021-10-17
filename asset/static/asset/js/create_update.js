@@ -116,7 +116,7 @@ function CreateUpdate() {
                                         <img src={file.url} class="card-img" />  
                                         <div class="card-img-overlay">
                                             <div class="btn-group">
-                                                <button type="button" onClick={() => onFileDelete(index)} class="btn btn-sm btn-danger">Удалить!</button>
+                                                <button type="button" onClick={() => onFileDelete(index)} class="btn btn-sm btn-danger">Удалить</button>
                                             </div>
                                         </div>
                                     </div>
