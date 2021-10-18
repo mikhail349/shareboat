@@ -155,7 +155,7 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/') 
 MEDIA_URL = '/uploads/'
 
-STATIC_ROOT = '/static/'
+STATIC_ROOT = os.environ['STATIC_ROOT']
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
