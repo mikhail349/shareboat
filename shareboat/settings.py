@@ -29,7 +29,7 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'user.User'
@@ -152,7 +152,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/') 
+MEDIA_ROOT = os.environ['MEDIA_ROOT']  #os.path.join(BASE_DIR, 'uploads/') 
 MEDIA_URL = '/uploads/'
 
 STATIC_ROOT = os.environ['STATIC_ROOT']
