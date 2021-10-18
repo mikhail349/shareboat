@@ -34,9 +34,6 @@ def _delete_file(path):
 
 @receiver(models.signals.pre_save, sender=AssetFile)
 def pre_save_file(sender, instance, *args, **kwargs):
-    if instance.is_default:
-        AssetFile.objects.filter(asset=instance.asset).update(is_default=False)
-
     if not instance.pk:
         instance.original_name = instance.file.name
     else:
