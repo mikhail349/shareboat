@@ -1,6 +1,5 @@
 from django.db import models
 from user.models import User
-import json
 
 class Asset(models.Model):
     name    = models.CharField(max_length=255)

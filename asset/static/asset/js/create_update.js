@@ -40,14 +40,18 @@ function CreateUpdate() {
 
     function onFileInputChange(e) {
         const newFiles = [...files];
+
         for (let file of e.target.files) {
+                 
+            /*if (!file.type.startsWith('image/')) {
+                continue;
+            }*/
             newFiles.push({
                 blob: file,
                 url: URL.createObjectURL(file)
-            })
+            });
         }
         setFiles(newFiles);
-
         fileInputRef.current.value = null;
     }
 
@@ -76,6 +80,7 @@ function CreateUpdate() {
         formData.append('name', asset.name);
 
         for (let file of files) {
+            console.log(file.blob.filename);
             formData.append('file', file.blob, file.blob.filename);
         }
 
@@ -108,7 +113,7 @@ function CreateUpdate() {
                 <div class="form-group">
                     <h4 class="mb-3">Фотографии</h4>
                     <div className={`row ${!!files.length ? 'mb-3' : ''}`}>
-                        <input ref={fileInputRef} type="file" name="files" accept="image/*" multiple hidden onChange={onFileInputChange} />
+                        <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
                         {
                             files.map((file, index) => (
                                 <div key={index} className="col-md-4">
