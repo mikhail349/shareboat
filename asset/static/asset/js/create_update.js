@@ -96,10 +96,10 @@ function CreateUpdate() {
 
     return (
         <React.Fragment>
-            <form onSubmit={onSave} autocomplete="off">
+            <form onSubmit={onSave}>
                 <div className="form-group">
                     <label for="name">Название актива</label>
-                    <input type="text" id="name" name="name" className="form-control" placeholder="Введите название актива" 
+                    <input type="text" id="name" name="name" className="form-control" placeholder="Введите название актива" autocomplete="autocomplete_off_randString"
                         required 
                         value={asset && asset.name}
                         onChange={onNameChanged}
