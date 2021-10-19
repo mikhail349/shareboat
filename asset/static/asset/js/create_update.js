@@ -108,7 +108,7 @@ function CreateUpdate() {
                 <div class="form-group">
                     <h4 class="mb-3">Фотографии</h4>
                     <div className={`row ${!!files.length ? 'mb-3' : ''}`}>
-                        <input ref={fileInputRef} type="file" name="files" multiple hidden onChange={onFileInputChange} />
+                        <input ref={fileInputRef} type="file" name="files" accept="image/*" multiple hidden onChange={onFileInputChange} />
                         {
                             files.map((file, index) => (
                                 <div key={index} className="col-md-4">
