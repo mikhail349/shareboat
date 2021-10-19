@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
+
 import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +31,7 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = 'runserver' in sys.argv
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'user.User'
