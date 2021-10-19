@@ -6,11 +6,12 @@
         <title>Авторизация</title>
         {% include 'bootstrap.html' %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/login.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script type="text/javascript" src="{% static 'user/js/login.min.js' %}"></script>
     </head>
     <body>
 
-        <form action=".?next={{ request.GET.next }}" method="post" class='form-signin'>
+        <form id="signup" action=".?next={{ request.GET.next }}" method="post" class='form-signin'>
             {% csrf_token %}
 
             <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>  
