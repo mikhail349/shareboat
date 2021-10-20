@@ -15,10 +15,13 @@ def get_file_path(instance, filename):
     return "%s.%s" % (uuid.uuid4(), ext)
 
 def remove_file(path):
+    pass
+    '''
     try:
         os.remove(os.path.join(settings.MEDIA_ROOT, path))
     except:
         pass
+    '''
 
 
 class AssetFile(models.Model):

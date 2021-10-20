@@ -3,7 +3,7 @@ function CreateUpdate() {
     const [action, setAction] = React.useState();
     const [files, setFiles] = React.useState([]);
     const [asset, setAsset] = React.useState();
-    const [btnSaveEnabled, setBtnSaveEnabled] = React.useState(true);
+    const [btnSaveOptions, setBtnSaveOptions] = React.useState({enabled: true, caption: "Сохранить"});
     const fileInputRef = React.createRef();
     
     React.useEffect(() => {
@@ -24,6 +24,11 @@ function CreateUpdate() {
         }
     }, [])
 
+    function setBtnSaveEnabled(value) {
+        const options = value ? {enabled: true, caption: "Сохранить"} : {enabled: false, caption: "Сохранение..."}
+        setBtnSaveOptions(options);
+    }
+
     async function loadFiles(id) {
         let newFiles = [...files];
         const response = await axios.get(`/file/api/get_assetfiles/${id}/`);
@@ -39,17 +44,22 @@ function CreateUpdate() {
         setFiles(newFiles);
     }
 
-    function onFileInputChange(e) {
+    async function AppendFiles(targetFiles) {
         const newFiles = [...files];
 
-        for (let file of e.target.files) {
+        for (let file of targetFiles) {
             newFiles.push({
                 blob: file,
                 url: URL.createObjectURL(file)
             });
         }
-        setFiles(newFiles);
-        fileInputRef.current.value = null;
+        setFiles(newFiles);            
+    }
+
+    function onFileInputChange(e) {
+        const targetFiles = [...e.target.files];
+        AppendFiles(targetFiles);
+        fileInputRef.current.value = null; 
     }
 
     function onNameChanged(e) {
@@ -91,44 +101,47 @@ function CreateUpdate() {
            
     }
 
-    function onFileDelete(index) {
+    function onFileDelete(e, index) {     
+        e.target.disabled = true;
+        e.target.innerText = 'Удаление...'
+
         let newFiles = [...files];
-        for (let i in newFiles) {
-            if (i == index) {
-                newFiles.splice(i, 1);
-                setFiles(newFiles);
-                return;
-            }
-        }
+        URL.revokeObjectURL(newFiles[index].url);
+        newFiles.splice(index, 1);
+        setFiles(newFiles);
     }
 
     return (
         <React.Fragment>
-            <form onSubmit={onSave} /*className="needs-validation" noValidate*/>
+            <form onSubmit={onSave} className="needs-validation" noValidate>
                 {
                     errors && <div className="alert alert-danger">{errors}</div>
                 }
                 <div className="mb-3">
                     <label for="name">Название актива</label>
-                    <input type="text" id="name" name="name" className="form-control" placeholder="Введите название актива" autocomplete="autocomplete_off_randString"
+                    <input type="text" id="name" name="name" className="form-control" placeholder="Введите название актива" autocomplete="false" aria-describedby="invalidInputName"
                         required 
                         value={asset && asset.name}
                         onChange={onNameChanged}
                     />
-             
+                    <div id="invalidInputName" class="invalid-feedback">
+                        Введите название актива
+                    </div>
                 </div>
                 <div className="mb-3">
                     <h4 className="mb-3">Фотографии</h4>
-                    <div className={`row ${!!files.length ? 'mb-3' : ''}`}>
+                    <div className="row">
                         <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
                         {
                             files.map((file, index) => (
-                                <div key={index} className="col-md-4">
-                                    <div className="card box-shadow text-right h-100">
+                                <div key={index} className="col-md-3 mb-3">
+                                    <div className="card box-shadow text-end">
                                         <img src={file.url} className="card-img" />  
                                         <div className="card-img-overlay">
                                             <div className="btn-group">
-                                                <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">Удалить</button>
+                                                <button type="button" onClick={(e) => onFileDelete(e, index)} className="btn btn-sm btn-danger">
+                                                    Удалить
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -138,7 +151,7 @@ function CreateUpdate() {
                     </div>
                     <button type="button" className="btn btn-primary" onClick={() => fileInputRef.current.click()}>Добавить {!!files.length && 'ещё '}фото</button>     
                     <hr/>
-                    <button type="submit" className="btn btn-success" disabled={!btnSaveEnabled}>Сохранить</button>
+                    <button type="submit" className="btn btn-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>
                 </div>
             </form>
         </React.Fragment>

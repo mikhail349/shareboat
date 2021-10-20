@@ -2,7 +2,11 @@
 :root {
     --jumbotron-padding-y: 3rem;
 }
-  
+
+.box-shadow { 
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
+}
+
 .navbar {
     font-size: 1.25rem;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
@@ -48,7 +52,7 @@ body > .main-content-container {
 .card-img-top,
 .card-img {
     width: 100%;
-    height: 300px;
+    height: 200px;
     object-fit: cover;
 }
 

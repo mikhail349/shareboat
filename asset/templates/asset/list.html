@@ -5,7 +5,6 @@
 {% block title %}Мои активы{% endblock  %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="{% static 'asset/css/list.css' %}">
     <script type="text/javascript" src="{% static 'asset/js/list.min.js' %}"></script>
     
     <section class="jumbotron text-center">
@@ -23,8 +22,8 @@
             <div class="container">
                 <div class="row">
                     {% for asset in assets %}
-                        <div class="col-md-4">
-                            <div class="card mb-4 box-shadow h-95">
+                        <div class="col-md-3">
+                            <div class="card mb-4 box-shadow">
 
                                 {% if asset.files.count > 1 %}
 

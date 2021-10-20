@@ -20,15 +20,15 @@
                 <div class="alert alert-danger">{{ errors }}</div>
             {% endif %}  
             
-            <label for="email" class="sr-only">Эл. почта: </label>
+            <label for="email" class="visually-hidden">Эл. почта: </label>
             <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="email" placeholder="Эл. почта" required class="form-control" >
                 
-            <label for="password" class="sr-only">Пароль: </label>
+            <label for="password" class="visually-hidden">Пароль: </label>
             <input id="password" type="password" name="password" autocomplete="current-password" 
                 placeholder="Пароль" required class="form-control" {% if errors %} autofocus {% endif %}>
 
             <input type="hidden" name="next" value={{ request.GET.next }} >
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
             <p>
                 Нет аккаунта? <a href="/user/register/">Зарегистрироваться</a>
             </p>

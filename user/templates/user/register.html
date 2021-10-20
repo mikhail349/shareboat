@@ -16,22 +16,22 @@
             <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>    
 
             {% if errors %}
-            <div class="alert alert-danger">{{ errors }}</div>
+                <div class="alert alert-danger">{{ errors }}</div>
             {% endif %}
             
-            <div class="form-group">
-                <label for="email" class="sr-only">Эл. почта: </label>
+            <div class="mb-3">
+                <label for="email" class="visually-hidden">Эл. почта: </label>
                 <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" >
                     
-                <label for="password1" class="sr-only">Пароль: </label>
+                <label for="password1" class="visually-hidden">Пароль: </label>
                 <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control">
 
-                <label for="password2" class="sr-only">Повторите пароль: </label>
+                <label for="password2" class="visually-hidden">Повторите пароль: </label>
                 <input id="password2" type="password" name="password2" placeholder="Повторите пароль" class="form-control">
             </div>
 
             <input type="hidden" name="next" value={{ request.GET.next }} >
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
         </form>
     </body>
 </html>
