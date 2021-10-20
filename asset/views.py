@@ -9,7 +9,7 @@ from rest_framework import status
 from PIL import UnidentifiedImageError
 
 from file.models import AssetFile
-from file.exceptions import FileLimitCountException
+from file.exceptions import AssetFileCountException, FileSizeException
 
 from .models import Asset
 from .serializers import AssetSerializer
@@ -19,10 +19,13 @@ def response_not_found():
     return JsonResponse({'message': 'Актив не найден'}, status=status.HTTP_400_BAD_REQUEST)
 
 def response_invalid_file_type():
-    return JsonResponse({'message': 'Один или несколько выбранных файлов не являются изображениями'}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'message': 'Можно приложить только фотографии'}, status=status.HTTP_400_BAD_REQUEST)
 
 def response_files_limit_count():
-    return JsonResponse({'message': 'Можно прикрепить не более 10 фотографий'}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'message': 'Можно приложить не более 10 фотографий'}, status=status.HTTP_400_BAD_REQUEST)
+
+def response_file_limit_size():
+    return JsonResponse({'message': 'Максимальный размер фотографии - 5 МБ'}, status=status.HTTP_400_BAD_REQUEST)
 
 FILES_LIMIT_COUNT = 10
 
@@ -42,7 +45,7 @@ def create(request):
         
         try:
             if len(files) > FILES_LIMIT_COUNT:
-                raise FileLimitCountException()
+                raise AssetFileCountException()
             
             with transaction.atomic():
                 asset = Asset.objects.create(name=data.get('name'), owner=request.user)
@@ -51,8 +54,10 @@ def create(request):
                     AssetFile.objects.create(asset=asset, file=file)
         except UnidentifiedImageError:
             return response_invalid_file_type()
-        except FileLimitCountException:
+        except AssetFileCountException:
             return response_files_limit_count()
+        except FileSizeException:
+            return response_file_limit_size()
 
         return JsonResponse({
             'data': {'id': asset.id},
@@ -73,7 +78,7 @@ def update(request, pk):
             
             try:
                 if len(files) > FILES_LIMIT_COUNT:
-                    raise FileLimitCountException()
+                    raise AssetFileCountException()
 
                 with transaction.atomic():
                     asset.name = data['name']
@@ -86,8 +91,10 @@ def update(request, pk):
 
             except UnidentifiedImageError:
                 return response_invalid_file_type()
-            except FileLimitCountException:
+            except AssetFileCountException:
                 return response_files_limit_count()
+            except FileSizeException:
+                return response_file_limit_size()
 
             return JsonResponse({'redirect': '/asset/'})
     

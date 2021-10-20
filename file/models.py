@@ -3,7 +3,9 @@ from django.dispatch.dispatcher import receiver
 from PIL import Image
 
 from asset.models import Asset
-from . import utils
+from . import utils, exceptions
+
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 class AssetFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)
@@ -15,6 +17,10 @@ class AssetFile(models.Model):
 
 @receiver(models.signals.pre_save, sender=AssetFile)
 def pre_save_asset_file(sender, instance, *args, **kwargs):
+
+    if instance.file.size > MAX_FILE_SIZE:
+        raise exceptions.FileSizeException()
+
     img = Image.open(instance.file)
     img.verify()
     if instance.pk:

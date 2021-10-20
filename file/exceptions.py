@@ -1,4 +1,5 @@
-#from  django.core import exceptions
+class AssetFileCountException(Exception):
+    pass
 
-class FileLimitCountException(Exception):
+class FileSizeException(Exception):
     pass
