@@ -2,9 +2,5 @@
 !**/migrations/__init__.py
 uploads/
 
-bootstrap.min.css
-bootstrap.bundle.min.js
-jquery-3.6.0.min.js
-
 *.pyc
 .env
