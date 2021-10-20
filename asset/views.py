@@ -1,16 +1,18 @@
 from django.shortcuts import redirect, render
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-from django.http import JsonResponse
+from PIL import UnidentifiedImageError
+
+from file.models import AssetFile
+from file.exceptions import FileLimitCountException
 
 from .models import Asset
 from .serializers import AssetSerializer
-from file.models import AssetFile
-from PIL import UnidentifiedImageError
 
 
 def response_not_found():
@@ -18,6 +20,11 @@ def response_not_found():
 
 def response_invalid_file_type():
     return JsonResponse({'message': 'Один или несколько выбранных файлов не являются изображениями'}, status=status.HTTP_400_BAD_REQUEST)
+
+def response_files_limit_count():
+    return JsonResponse({'message': 'Можно прикрепить не более 10 фотографий'}, status=status.HTTP_400_BAD_REQUEST)
+
+FILES_LIMIT_COUNT = 10
 
 @login_required
 def get(request):
@@ -34,6 +41,9 @@ def create(request):
         files = request.FILES.getlist('file')
         
         try:
+            if len(files) > FILES_LIMIT_COUNT:
+                raise FileLimitCountException()
+            
             with transaction.atomic():
                 asset = Asset.objects.create(name=data.get('name'), owner=request.user)
 
@@ -41,6 +51,8 @@ def create(request):
                     AssetFile.objects.create(asset=asset, file=file)
         except UnidentifiedImageError:
             return response_invalid_file_type()
+        except FileLimitCountException:
+            return response_files_limit_count()
 
         return JsonResponse({
             'data': {'id': asset.id},
@@ -60,6 +72,9 @@ def update(request, pk):
             files = request.FILES.getlist('file')
             
             try:
+                if len(files) > FILES_LIMIT_COUNT:
+                    raise FileLimitCountException()
+
                 with transaction.atomic():
                     asset.name = data['name']
                     asset.save()
@@ -68,8 +83,11 @@ def update(request, pk):
 
                     for file in files:
                         AssetFile.objects.get_or_create(asset=asset, file=file)
+
             except UnidentifiedImageError:
                 return response_invalid_file_type()
+            except FileLimitCountException:
+                return response_files_limit_count()
 
             return JsonResponse({'redirect': '/asset/'})
     

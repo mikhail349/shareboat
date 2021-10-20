@@ -5,8 +5,10 @@ function CreateUpdate() {
     const [asset, setAsset] = React.useState();
     const [btnSaveOptions, setBtnSaveOptions] = React.useState({enabled: true, caption: "Сохранить"});
     const fileInputRef = React.createRef();
+    const formRef = React.useRef()
     
     React.useEffect(() => {
+        //activateFormValidation(document.getElementsByClassName('needs-validation')[0]);
         axios.defaults.xsrfCookieName = 'csrftoken';
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
         const action = window.asset ? 1 : 0;
@@ -23,6 +25,14 @@ function CreateUpdate() {
             }
         }
     }, [])
+
+    React.useEffect(() => {
+        if (!formRef) return;
+
+        const form = formRef.current;
+        activateFormValidation(form);
+        return () => deactivateFormValidation(form);
+    }, [formRef]);
 
     function setBtnSaveEnabled(value) {
         const options = value ? {enabled: true, caption: "Сохранить"} : {enabled: false, caption: "Сохранение..."}
@@ -95,16 +105,14 @@ function CreateUpdate() {
             const response = await axios.post(url, formData);
             window.location.href = response.data.redirect;
         } catch (e) {
+            window.scrollTo(0, 0);
             setErrors(e.response.data.message);
             setBtnSaveEnabled(true);
         }
            
     }
 
-    function onFileDelete(e, index) {     
-        e.target.disabled = true;
-        e.target.innerText = 'Удаление...'
-
+    function onFileDelete(index) {     
         let newFiles = [...files];
         URL.revokeObjectURL(newFiles[index].url);
         newFiles.splice(index, 1);
@@ -113,7 +121,7 @@ function CreateUpdate() {
 
     return (
         <React.Fragment>
-            <form onSubmit={onSave} className="needs-validation" noValidate>
+            <form ref={formRef} onSubmit={onSave} className="needs-validation" noValidate>
                 {
                     errors && <div className="alert alert-danger">{errors}</div>
                 }
@@ -139,7 +147,7 @@ function CreateUpdate() {
                                         <img src={file.url} className="card-img" />  
                                         <div className="card-img-overlay">
                                             <div className="btn-group">
-                                                <button type="button" onClick={(e) => onFileDelete(e, index)} className="btn btn-sm btn-danger">
+                                                <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">
                                                     Удалить
                                                 </button>
                                             </div>
