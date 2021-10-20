@@ -10,10 +10,14 @@ from django.http import JsonResponse
 from .models import Asset
 from .serializers import AssetSerializer
 from file.models import AssetFile
+from PIL import UnidentifiedImageError
 
 
 def return_not_found():
     return JsonResponse({'message': 'Актив не найден'}, status=status.HTTP_400_BAD_REQUEST)
+
+def return_invalid_file_type():
+    return JsonResponse({'message': 'Один или несколько выбранных файлов не являются изображениями'}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
 def get(request):
@@ -30,8 +34,12 @@ def create(request):
         data = request.POST
         files = request.FILES.getlist('file')
         asset = Asset.objects.create(name=data.get('name'), owner=request.user)
-        for file in files:
-            AssetFile.objects.create(asset=asset, file=file)
+
+        try:
+            for file in files:
+                AssetFile.objects.create(asset=asset, file=file)
+        except UnidentifiedImageError:
+            return return_invalid_file_type()
 
         return JsonResponse({
             'data': {'id': asset.id},
@@ -56,8 +64,11 @@ def update(request, pk):
 
             AssetFile.objects.filter(asset=asset).exclude(file__in=files).delete()
 
-            for file in files:
-                AssetFile.objects.get_or_create(asset=asset, file=file)
+            try:
+                for file in files:
+                    AssetFile.objects.get_or_create(asset=asset, file=file)
+            except UnidentifiedImageError:
+                return return_invalid_file_type()
 
             return JsonResponse({'redirect': '/asset/'})
     

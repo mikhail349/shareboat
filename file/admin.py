@@ -1,12 +1,8 @@
 from django.contrib import admin
 
-from .models import File, AssetFile
+from .models import AssetFile
 
-class FileAdmin(admin.ModelAdmin):
-      exclude = ('original_name',)
-
-class AssetFileAdmin(FileAdmin):
+class AssetFileAdmin(admin.ModelAdmin):
     pass
 
-#admin.site.register(File, FileAdmin)
 admin.site.register(AssetFile, AssetFileAdmin)
