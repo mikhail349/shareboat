@@ -10,7 +10,6 @@ import math
 from asset.models import Asset
 
 def get_file_path(instance, filename):
-    #instance._meta.model.__name__, 
     ext = filename.split('.')[-1]
     return "%s.%s" % (uuid.uuid4(), ext)
 
