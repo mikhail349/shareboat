@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
-from user.models import User
+
+from .models import User
 
 def login(request):
     

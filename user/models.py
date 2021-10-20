@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager 
 
+from file import utils
+
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username and last_name fields."""
@@ -43,6 +45,8 @@ class User(AbstractUser):
     last_name = None
 
     email = models.EmailField(_('email address'), unique=True)
+    avatar = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
+    
     objects = UserManager()
 
     USERNAME_FIELD = "email"
