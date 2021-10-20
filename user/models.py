@@ -1,9 +1,12 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager 
+from django.dispatch.dispatcher import receiver
+from PIL import Image
 
-from file import utils
+from file import utils, exceptions
 
+MAX_AVATAR_SIZE = 5 * 1024 * 1024
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username and last_name fields."""
@@ -51,3 +54,33 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+@receiver(models.signals.pre_save, sender=User)
+def pre_save_user(sender, instance, *args, **kwargs):
+    
+    if instance.avatar:
+        if instance.avatar.size > MAX_AVATAR_SIZE:
+            raise exceptions.FileSizeException()
+
+        img = Image.open(instance.avatar)
+        img.verify()
+
+    if instance.pk:
+        cur_avatar = User.objects.get(pk=instance.pk).avatar
+        if cur_avatar != instance.avatar:
+            if cur_avatar:
+                transaction.on_commit(lambda: utils.remove_file(cur_avatar.path))
+
+
+@receiver(models.signals.post_save, sender=User)
+def compress_avatar(sender, instance, created, *args, **kwargs):
+    if instance.avatar:
+        img = Image.open(instance.avatar.path)
+        img = img.resize(utils.limit_size(img.width, img.height), Image.ANTIALIAS)
+        img.save(instance.avatar.path, quality=70, optimize=True)        
+
+
+@receiver(models.signals.post_delete, sender=User)
+def post_delete_user(sender, instance, *args, **kwargs):
+    if instance.avatar:
+        transaction.on_commit(lambda: utils.remove_file(instance.avatar.path))
