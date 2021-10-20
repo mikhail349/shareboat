@@ -8,7 +8,6 @@ function CreateUpdate() {
     const formRef = React.useRef()
     
     React.useEffect(() => {
-        //activateFormValidation(document.getElementsByClassName('needs-validation')[0]);
         axios.defaults.xsrfCookieName = 'csrftoken';
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
         const action = window.asset ? 1 : 0;
