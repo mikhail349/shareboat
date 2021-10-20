@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.dispatch.dispatcher import receiver
 from PIL import Image
@@ -15,13 +15,10 @@ def get_file_path(instance, filename):
     return "%s.%s" % (uuid.uuid4(), ext)
 
 def remove_file(path):
-    pass
-    '''
     try:
         os.remove(os.path.join(settings.MEDIA_ROOT, path))
     except:
         pass
-    '''
 
 
 class AssetFile(models.Model):
@@ -39,7 +36,7 @@ def pre_save_asset_file(sender, instance, *args, **kwargs):
     if instance.pk:
         cur_file = AssetFile.objects.get(pk=instance.pk).file
         if cur_file != instance.file:
-            remove_file(cur_file.path)
+            transaction.on_commit(lambda: remove_file(cur_file.path))
 
 
 @receiver(models.signals.post_save, sender=AssetFile)
@@ -65,4 +62,4 @@ def compress_imagefile(sender, instance, created, *args, **kwargs):
 @receiver(models.signals.post_delete, sender=AssetFile)
 def post_delete_asset_file(sender, instance, *args, **kwargs):
     if instance.file:
-        remove_file(instance.file.path)
+        transaction.on_commit(lambda: remove_file(instance.file.path))
