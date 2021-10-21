@@ -4,7 +4,6 @@ function CreateUpdate() {
     const [files, setFiles] = React.useState([]);
     const [asset, setAsset] = React.useState();
     const [count, setCount] = React.useState(0);
-    const [onFileUploadHover, setOnFileUploadHover] = React.useState(false);
 
     const [btnSaveOptions, setBtnSaveOptions] = React.useState({enabled: true, caption: "Сохранить"});
     const fileInputRef = React.createRef();
@@ -172,7 +171,7 @@ function CreateUpdate() {
                                 files.map((file, index) => (
                                     <div key={index} className="col-md-3 mb-3">
                                         <div className="card box-shadow text-end">
-                                            <img src={file.url} className="card-img" alt="Test" />  
+                                            <img src={file.url} className="card-img" />  
                                             <div className="card-img-overlay">
                                                 <div className="btn-group">
                                                     <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">

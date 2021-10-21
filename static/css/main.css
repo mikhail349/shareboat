@@ -23,7 +23,11 @@
 }
 
 .nav-link, .navbar-brand {
-    color: white !important;
+    color: var(--bs-gray-200) !important;
+}
+
+.nav-link:hover {
+    color: var(--bs-white) !important;
 }
 
 body > .main-content-container {
