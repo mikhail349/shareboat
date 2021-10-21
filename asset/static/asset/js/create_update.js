@@ -3,9 +3,12 @@ function CreateUpdate() {
     const [action, setAction] = React.useState();
     const [files, setFiles] = React.useState([]);
     const [asset, setAsset] = React.useState();
+    const [count, setCount] = React.useState(0);
+    const [onFileUploadHover, setOnFileUploadHover] = React.useState(false);
+
     const [btnSaveOptions, setBtnSaveOptions] = React.useState({enabled: true, caption: "Сохранить"});
     const fileInputRef = React.createRef();
-    const formRef = React.useRef()
+    const formRef = React.useRef();
     
     React.useEffect(() => {
         axios.defaults.xsrfCookieName = 'csrftoken';
@@ -118,6 +121,28 @@ function CreateUpdate() {
         setFiles(newFiles);
     }
 
+    function onDragEnter(e) {
+        e.preventDefault();
+        setCount((prevValue) => prevValue+1);
+    }
+
+    function onDragLeave(e) {
+        e.preventDefault();
+        setCount((prevValue) => prevValue-1);
+    }
+
+    function onDrop(e) {
+        e.preventDefault();
+        setCount(0);
+        AppendFiles(e.dataTransfer.files);
+    } 
+
+    function isFileUploadHover() {
+        return count > 0;
+    }
+
+    console.log(count);
+
     return (
         <React.Fragment>
             <form ref={formRef} onSubmit={onSave} className="needs-validation" noValidate>
@@ -137,26 +162,56 @@ function CreateUpdate() {
                 </div>
                 <div className="mb-3">
                     <h4 className="mb-3">Фотографии</h4>
-                    <div className="row">
-                        <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
-                        {
-                            files.map((file, index) => (
-                                <div key={index} className="col-md-3 mb-3">
-                                    <div className="card box-shadow text-end">
-                                        <img src={file.url} className="card-img" />  
-                                        <div className="card-img-overlay">
-                                            <div className="btn-group">
-                                                <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">
-                                                    Удалить
-                                                </button>
+                    <div className={`file-upload-wrapper ${isFileUploadHover() ? "bg-light" : ""}`} 
+                        onDragEnter={onDragEnter} 
+                        onDragLeave={onDragLeave} 
+                        onDrop={onDrop}
+                        onDragOver={(e) => e.preventDefault()}
+                    >    
+                        <div className="row">
+                            <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
+                            {
+                                files.map((file, index) => (
+                                    <div key={index} className="col-md-3 mb-3">
+                                        <div className="card box-shadow text-end">
+                                            <img src={file.url} className="card-img" />  
+                                            <div className="card-img-overlay">
+                                                <div className="btn-group">
+                                                    <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">
+                                                        Удалить
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>                    
-                            ))
-                        }                
+                                    </div>                    
+                                ))
+                            }                
+                        </div>
+                        <div class="row align-items-center">
+                            {
+                                (
+                                    <div class="col-auto">
+                                        <button type="button" className="btn btn-primary" onClick={() => fileInputRef.current.click()}>Добавить {!!files.length && 'ещё '}фото</button>  
+                                    </div> 
+                                )
+                            }
+
+                            <div class="col-auto">
+                                {
+                                    isFileUploadHover() ? (
+                                        <span className="text-success">
+                                            Отпустите, чтобы добавить фото
+                                        </span>  
+                                    ) : (
+                                        <span className="text-muted">
+                                            Или перетащите сюда фото
+                                        </span>     
+                                    )
+                                }
+
+                            </div>  
+                        </div>
                     </div>
-                    <button type="button" className="btn btn-primary" onClick={() => fileInputRef.current.click()}>Добавить {!!files.length && 'ещё '}фото</button>     
                     <hr/>
                     <button type="submit" className="btn btn-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>
                 </div>

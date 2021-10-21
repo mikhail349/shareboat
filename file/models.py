@@ -1,9 +1,10 @@
-from django.db import models, transaction
+from django.db import models
 from django.dispatch.dispatcher import receiver
+from django.db.models.signals import pre_save, post_save, post_delete
 from PIL import Image
 
 from asset.models import Asset
-from . import utils, exceptions
+from . import utils, signals
 
 MAX_FILE_SIZE = 5 * 1024 * 1024
 
@@ -14,29 +15,7 @@ class AssetFile(models.Model):
     def __str__(self):
         return '%s - %s' % (self.file, self.asset)
 
-
-@receiver(models.signals.pre_save, sender=AssetFile)
-def pre_save_asset_file(sender, instance, *args, **kwargs):
-
-    if instance.file.size > MAX_FILE_SIZE:
-        raise exceptions.FileSizeException()
-
-    img = Image.open(instance.file)
-    img.verify()
-    if instance.pk:
-        cur_file = AssetFile.objects.get(pk=instance.pk).file
-        if cur_file != instance.file:
-            transaction.on_commit(lambda: utils.remove_file(cur_file.path))
-
-
-@receiver(models.signals.post_save, sender=AssetFile)
-def compress_imagefile(sender, instance, created, *args, **kwargs):
-    img = Image.open(instance.file.path)
-    img = img.resize(utils.limit_size(img.width, img.height), Image.ANTIALIAS)
-    img.save(instance.file.path, quality=70, optimize=True)        
-
-
-@receiver(models.signals.post_delete, sender=AssetFile)
-def post_delete_asset_file(sender, instance, *args, **kwargs):
-    if instance.file:
-        transaction.on_commit(lambda: utils.remove_file(instance.file.path))
+pre_save.connect(signals.verify_imagefile, sender=AssetFile)
+pre_save.connect(signals.delete_changing_file, sender=AssetFile)
+post_save.connect(signals.compress_imagefile, sender=AssetFile)
+post_delete.connect(signals.delete_file, sender=AssetFile)

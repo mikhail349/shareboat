@@ -9,7 +9,7 @@
 
     <div class="container">
         <section class="jumbotron text-center">     
-          <img src="{{ user.avatar.url }}" class="img-fluid rounded-circle avatar" alt="...">
+          {% if user.avatar %}<img src="{{ user.avatar.url }}" class="img-fluid rounded-circle avatar">{% endif %}
         </section>
 
         <form action='/user/logout/' method='post'>

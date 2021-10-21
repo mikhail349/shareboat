@@ -1,4 +1,5 @@
 from django.conf import settings
+
 import uuid
 import os
 
@@ -25,3 +26,4 @@ def limit_size(width, height):
             height = max_height
 
     return (width, height)
+
