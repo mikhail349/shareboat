@@ -141,8 +141,6 @@ function CreateUpdate() {
         return count > 0;
     }
 
-    console.log(window.isMobile());
-
     return (
         <React.Fragment>
             <form ref={formRef} onSubmit={onSave} className="needs-validation" noValidate>
@@ -174,7 +172,7 @@ function CreateUpdate() {
                                 files.map((file, index) => (
                                     <div key={index} className="col-md-3 mb-3">
                                         <div className="card box-shadow text-end">
-                                            <img src={file.url} className="card-img" />  
+                                            <img src={file.url} className="card-img" alt="Test" />  
                                             <div className="card-img-overlay">
                                                 <div className="btn-group">
                                                     <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">
