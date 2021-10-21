@@ -141,7 +141,7 @@ function CreateUpdate() {
         return count > 0;
     }
 
-    console.log(count);
+    console.log(window.isMobile());
 
     return (
         <React.Fragment>
@@ -202,7 +202,7 @@ function CreateUpdate() {
                                         <span className="text-success">
                                             Отпустите, чтобы добавить фото
                                         </span>  
-                                    ) : (
+                                    ) : !window.isMobile() && (
                                         <span className="text-muted">
                                             Или перетащите сюда фото
                                         </span>     
