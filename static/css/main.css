@@ -3,6 +3,7 @@
     --jumbotron-padding-y: 3rem;
 }
 
+
 .box-shadow { 
     box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
 }
@@ -20,6 +21,10 @@
 .navbar-brand img {
     filter: brightness(0) invert(1);
     height: 46px;
+}
+
+.top-0-header {
+    top: 56px!important;
 }
 
 .nav-link, .navbar-brand {

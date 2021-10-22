@@ -6,13 +6,14 @@ from . import views
 
 urlapipatterns = [
     url('get_token/', obtain_jwt_token),
+    path('update/', views.update, name='profile'),
 ]
 
 urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('register/', views.register, name='register'),
-    path('profile/', views.profile, name='profile'),
+    path('update/', views.update, name='update'),
     
     path('api/', include(urlapipatterns))
 ]

@@ -1,12 +1,25 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.db import transaction
 
 from .models import User
 
 @login_required
-def profile(request):
-    return render(request, 'user/profile.html')
+def update(request):
+    if request.method == 'GET':
+        return render(request, 'user/update.html')
+    elif request.method == 'POST':
+        try:
+            with transaction.atomic():
+                data = request.POST
+                user = request.user
+                user.first_name = data.get('first_name')
+                user.save()  
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
+        return JsonResponse({})
 
 def login(request):
     

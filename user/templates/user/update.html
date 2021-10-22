@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Профиль{% endblock  %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'user/css/update.css' %}">
+    <script type="text/javascript" src="{% static 'user/js/update.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bs-form-validation.min.js' %}"></script>
+
+    <div class="container">
+        <section class="jumbotron text-center">     
+          {% if user.avatar %}<img src="{{ user.avatar.url }}" class="img-fluid rounded-circle avatar">{% endif %}
+        </section>
+        
+        <form id="formProfile" action='.' method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {% if success_message %}
+                <div class="alert alert-success">{{ success_message }}</div>
+            {% endif %}  
+            <div class="mb-3">
+                <label for="name">Имя</label>
+                <input type="text" name="first_name" class="form-control" 
+                    placeholder="Введите ваше имя" 
+                    autocomplete="false"
+                    value="{{ user.first_name }}"
+                />  
+            </div>
+            <div class="row g-3">
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-danger" href="/user/logout/">Выйти из аккаунта</a>    
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast-container position-absolute p-3 top-0-header start-50 translate-middle-x">
+        <div id="toast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Hello, world! This is a toast message.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+{% endblock  %}
