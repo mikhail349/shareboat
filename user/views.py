@@ -16,6 +16,15 @@ def update(request):
                 data = request.POST
                 user = request.user
                 user.first_name = data.get('first_name')
+
+                '''
+                email = data.get('email')
+                if user.email != email:
+                    if User.objects.exclude(pk=user.pk).filter(email=email).exists():
+                        raise Exception("Электронная почта %s уже занята" % email)
+                    user.email = email
+                '''
+
                 user.save()  
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=400)

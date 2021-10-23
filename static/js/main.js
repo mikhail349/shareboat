@@ -31,3 +31,68 @@ $.ajaxSetup({
         }
     }
 });
+
+$(document).ready(() => {
+    $("toast button[data-bs-dismiss=toast]").on('click', () => {
+        $("#toast").toast('hide');
+    });
+});
+
+$.fn.isValid = function() {
+    this[0].classList.add("was-validated");
+    return this[0].checkValidity();
+}
+
+function showSuccessToast(msg="Изменения сохранены.") {
+    $("#toast .toast-body").text(msg);
+    $("#toast").removeClass("bg-danger");
+    $("#toast").addClass("bg-success");
+    $("#toast").toast('show');
+}
+
+function showErrorToast(msg) {
+    $("#toast .toast-body").text(msg);
+    $("#toast").removeClass("bg-success");
+    $("#toast").addClass("bg-danger");
+    $("#toast").toast('show');
+}
+
+/*
+function ajaxWithForm(form, ajaxOptions, onSuccess=null, onError=null) {
+    if (!form.isValid()) return;
+        
+    enableForm(form, false);
+    
+    $.ajax({ 
+        ...ajaxOptions,
+        success: _onSuccess,
+        error: _onError
+    });
+
+    function _onSuccess(data, status) {
+        enableForm(form, true);
+        $("#toast .toast-body").text("Изменения сохранены.");
+        $("#toast").addClass("bg-success");
+        $("#toast").toast('show');
+        if (onSuccess) onSuccess(data, status);
+    }
+
+    function _onError(error) {
+        enableForm(form, true);
+        $("#toast .toast-body").text(error.responseJSON.message);
+        $("#toast").addClass("bg-danger");
+        $("#toast").toast('show');
+        if (onError) onError(error);
+    }
+}
+
+function enableForm(form, enabled) {
+    form.find("input").attr("readonly", !enabled);
+    form.find("button").attr("disabled", !enabled);
+    if (enabled) {
+        form.find("a.btn").removeClass("disabled");
+    } else {
+        form.find("a.btn").addClass("disabled", !enabled);
+    }
+}
+*/

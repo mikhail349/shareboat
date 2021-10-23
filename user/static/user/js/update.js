@@ -1,12 +1,17 @@
 $(document).ready(() => {
-    const btnSubmit = $("#formProfile button[type=submit]");
-    $("#formProfile").on('submit', (e) => {
-        e.preventDefault();
-        btnSubmit.attr("disabled", true);
 
+    $("#formProfile").on('submit', (e) => {
+        e.preventDefault();   
+
+        const form = $("#formProfile");
+        const btnSubmit = form.find("button[type=submit]");
+        
+        if (!form.isValid()) return;
+        
+        btnSubmit.attr("disabled", true);
         $.ajax({ 
             type: "POST",
-            data: $("#formProfile").serialize(),
+            data: form.serialize(),
             url: "/user/api/update/",
             success: onSuccess,
             error: onError
@@ -14,21 +19,12 @@ $(document).ready(() => {
     
         function onSuccess(data, status) {
             btnSubmit.attr("disabled", false);
-            $("#toast .toast-body").text("Изменения сохранены");
-            $("#toast").addClass("bg-success");
-            $("#toast").toast('show');
+            showSuccessToast();
         }
     
         function onError(error) {
             btnSubmit.attr("disabled", false);
-            $("#toast .toast-body").text(error.responseJSON.message);
-            $("#toast").addClass("bg-danger");
-            $("#toast").toast('show');
-            console.log('error', error);
+            showErrorToast(error.responseJSON.message);
         }
-    })
-
-    $("toast button[data-bs-dismiss=toast]").on('click', () => {
-        $("#toast").toast('hide')
     })
 })

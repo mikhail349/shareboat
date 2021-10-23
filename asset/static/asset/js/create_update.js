@@ -27,14 +27,6 @@ function CreateUpdate() {
         }
     }, [])
 
-    React.useEffect(() => {
-        if (!formRef) return;
-
-        const form = formRef.current;
-        activateFormValidation(form);
-        return () => deactivateFormValidation(form);
-    }, [formRef]);
-
     function setBtnSaveEnabled(value) {
         const options = value ? {enabled: true, caption: "Сохранить"} : {enabled: false, caption: "Сохранение..."}
         setBtnSaveOptions(options);
@@ -82,16 +74,14 @@ function CreateUpdate() {
     }
 
     function onSave(e) {
-        setErrors();
-        setBtnSaveEnabled(false);
         e.preventDefault();
+        setErrors();
         
         if (action == 0) {
             post('/asset/api/create/');
         } else {
             post(`/asset/api/update/${asset.id}/`);
         }
-        
     }
 
     async function post(url) {
@@ -102,6 +92,7 @@ function CreateUpdate() {
             formData.append('file', file.blob, file.blob.filename);
         }
 
+        setBtnSaveEnabled(false);
         try {
             const response = await axios.post(url, formData);
             window.location.href = response.data.redirect;
