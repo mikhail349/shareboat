@@ -15,11 +15,11 @@ def update(request):
             with transaction.atomic():
                 data = request.POST
                 user = request.user
-                files = request.FILES.getlist('avatar')
+                avatar = request.FILES.get('avatar')
                 user.first_name = data.get('first_name')
 
-                if user.avatar != files[0]:
-                    user.avatar = files[0]
+                if user.avatar != avatar:
+                    user.avatar = avatar
 
                 '''
                 email = data.get('email')

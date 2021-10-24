@@ -13,13 +13,15 @@ $(document).ready(() => {
 
             reader.onload = (e) => {
                 $("img.avatar").attr('src', e.target.result);
+                $("img.avatar").attr('data-do-save', "true");
             };
             avatarName = e.target.files[0].name;
             reader.readAsDataURL(e.target.files[0]);
         }
     })
 
-    $("#btnSendConfirmation").on("click", () => {
+    $("#btnSendConfirmation").on("click", (e) => {
+        e.preventDefault();
         const email = $("#formProfile input[name=email]").val()
         showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`)
     })
@@ -33,14 +35,16 @@ $(document).ready(() => {
         if (!form.checkValidity()) return;
 
         const formData = new FormData(form[0]);
-        let response = await fetch($("img.avatar").attr("src"));
-        let data = await response.blob();
-        formData.set("avatar", data, avatarName);
-        
-        btnSubmit.attr("disabled", true);
+
+        if ($("img.avatar")[0].hasAttribute('data-do-save')) {
+            let response = await fetch($("img.avatar").attr("src"));
+            let data = await response.blob();
+            formData.set("avatar", data, avatarName);
+        }
+    
         $.ajax({ 
             type: "POST",
-            data: formData, //form.serialize(),
+            data: formData,
             url: "/user/api/update/",
             processData: false,
             contentType: false,

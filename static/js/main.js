@@ -29,6 +29,10 @@ $(document).ready(() => {
     $("toast button[data-bs-dismiss=toast]").on('click', () => {
         $("#toast").toast('hide');
     });
+
+    $("form").on("submit", () => {
+        $("form button[type=submit]").attr("disabled", true);
+    })  
 });
 
 window.isMobile = () => {

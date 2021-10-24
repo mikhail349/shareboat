@@ -16,7 +16,6 @@ class AssetFile(models.Model):
         return '%s - %s' % (self.file, self.asset)
 
 pre_save.connect(signals.verify_imagefile, sender=AssetFile)
-pre_save.connect(signals.mark_changing_file_to_delete, sender=AssetFile)
+pre_save.connect(signals.delete_old_file, sender=AssetFile)
 post_save.connect(signals.compress_imagefile, sender=AssetFile)
-post_save.connect(signals.delete_marked_file, sender=AssetFile)
 post_delete.connect(signals.delete_file, sender=AssetFile)
