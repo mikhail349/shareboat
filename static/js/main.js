@@ -46,6 +46,7 @@ $.fn.isValid = function() {
 function showSuccessToast(msg="Изменения сохранены.") {
     $("#toast .toast-body").text(msg);
     $("#toast").removeClass("bg-danger");
+    $("#toast").removeClass("bg-secondary");
     $("#toast").addClass("bg-success");
     $("#toast").toast('show');
 }
@@ -53,7 +54,16 @@ function showSuccessToast(msg="Изменения сохранены.") {
 function showErrorToast(msg) {
     $("#toast .toast-body").text(msg);
     $("#toast").removeClass("bg-success");
+    $("#toast").removeClass("bg-secondary");
     $("#toast").addClass("bg-danger");
+    $("#toast").toast('show');
+}
+
+function showInfoToast(msg) {
+    $("#toast .toast-body").text(msg);
+    $("#toast").removeClass("bg-success");
+    $("#toast").removeClass("bg-danger");
+    $("#toast").addClass("bg-secondary");
     $("#toast").toast('show');
 }
 

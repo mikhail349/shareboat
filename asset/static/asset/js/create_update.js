@@ -179,7 +179,7 @@ function CreateUpdate() {
                             {
                                 (
                                     <div class="col-auto">
-                                        <button type="button" className="btn btn-primary" onClick={() => fileInputRef.current.click()}>Добавить {!!files.length && 'ещё '}фото</button>  
+                                        <button type="button" className="btn btn-outline-primary" onClick={() => fileInputRef.current.click()}>Добавить {!!files.length && 'ещё '}фото</button>  
                                     </div> 
                                 )
                             }
@@ -192,7 +192,7 @@ function CreateUpdate() {
                                         </span>  
                                     ) : !window.isMobile() && (
                                         <span className="text-muted">
-                                            Или перетащите сюда фото
+                                            Или перетащите фото сюда
                                         </span>     
                                     )
                                 }
@@ -201,7 +201,7 @@ function CreateUpdate() {
                         </div>
                     </div>
                     <hr/>
-                    <button type="submit" className="btn btn-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>
+                    <button type="submit" className="btn btn-outline-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>
                 </div>
             </form>
         </React.Fragment>
