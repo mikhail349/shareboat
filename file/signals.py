@@ -4,7 +4,7 @@ from PIL import Image
 from . import utils, exceptions
 
 def verify_imagefile(sender, instance, *args, **kwargs):
-    MAX_FILE_SIZE = 5 * 1024 * 1024
+    MAX_FILE_SIZE = 7 * 1024 * 1024
     for field in sender._meta.fields:
         if isinstance(field, models.ImageField):
             image_file = getattr(instance, field.name)
