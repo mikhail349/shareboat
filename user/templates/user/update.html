@@ -14,36 +14,19 @@
         </section> 
         <form id="formProfile" action='.' method="post" class="needs-validation" novalidate>
             {% csrf_token %} 
-            <div class="mb-3 ">
-                <!--<div class="col-auto">-->
-                    <label for="name">Эл. почта</label>
-                    <input type="email" name="email" class="form-control" 
-                        placeholder="Введите вашу электронную почту" 
-                        required
-                        disabled
-                        value="{{ user.email }}"
-                        aria-describedby="invalidInputEmail emailConfirmed"
-                    />
-                    <div id="invalidInputEmail" class="invalid-feedback">
-                        Введите вашу электронную почту
-                    </div>
-                    {% if user.email_confirmed %}
-                        <div id="emailConfirmed" class="form-text text-success">
-                            Почта подтверждена
-                        </div>
-                    {% else %}        
-                        <div id="emailConfirmed" class="form-text text-danger">
-                            Почта не подтверждена
-                        </div>
-                        <button id="sendEmailConfirmation" type="button" class="btn btn-secondary btn-sm">Отправить письмо для подтверждения</button>                     
-                    {% endif %}
-                    
-                <!--</div>
-                <div class="col-auto">
-                    <span class="text-danger">
-                        Почта не подтверждена
-                    </span>
-                </div>-->
+            <label for="name">Эл. почта</label>
+            <div class="input-group  mb-3">                
+                <input type="email" name="email" class="form-control" 
+                    placeholder="Введите вашу электронную почту" 
+                    disabled
+                    value="{{ user.email }}"
+                    aria-describedby="invalidInputEmail"
+                />
+                {% if user.email_confirmed %}
+                    <span class="input-group-text bg-white text-success">Подтверждена</span>
+                {% else %}
+                    <button id="btnSendConfirmation" class="btn btn-secondary" type="button">Подтвердить</button>           
+                {% endif %}
             </div>
             <div class="mb-3">
                 <label for="name">Имя</label>
@@ -55,10 +38,10 @@
             </div>
             <div class="row g-3">
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-success">Сохранить</button>
+                    <button type="submit" class="btn btn-outline-success">Сохранить</button>
                 </div>
                 <div class="col-auto">
-                    <a class="btn btn-danger" href="/user/logout/">Выйти из аккаунта</a>    
+                    <a class="btn btn-outline-danger" href="/user/logout/">Выйти из аккаунта</a>    
                 </div>
             </div>
         </form>

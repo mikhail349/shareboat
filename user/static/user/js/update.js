@@ -1,5 +1,10 @@
 $(document).ready(() => {
 
+    $("#btnSendConfirmation").on("click", () => {
+        const email = $("#formProfile input[name=email]").val()
+        showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`)
+    })
+
     $("#formProfile").on('submit', (e) => {
         e.preventDefault();   
 
