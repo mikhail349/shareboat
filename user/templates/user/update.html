@@ -15,14 +15,13 @@
         <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %} 
             <input type="file" name="avatar" accept="image/*" hidden />
-            <div class="form-floating mb-1">                
+            <div class="mb-1">                
                 <input type="email" name="email" class="form-control" 
                     placeholder="Введите вашу электронную почту" 
                     disabled
                     value="{{ user.email }}"
                     aria-describedby="invalidInputEmail"
                 />
-                <label for="email">Эл. почта</label>
             </div>
             <div class="mb-3">
                 {% if user.email_confirmed %}
