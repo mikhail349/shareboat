@@ -54,6 +54,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
 pre_save.connect(signals.verify_imagefile, sender=User)
-pre_save.connect(signals.delete_changing_file, sender=User)
+pre_save.connect(signals.mark_changing_file_to_delete, sender=User)
 post_save.connect(signals.compress_imagefile, sender=User)
+post_save.connect(signals.delete_marked_file, sender=User)
 post_delete.connect(signals.delete_file, sender=User)

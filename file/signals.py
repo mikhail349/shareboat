@@ -16,18 +16,25 @@ def verify_imagefile(sender, instance, *args, **kwargs):
                 img.verify()
 
 
-def delete_changing_file(sender, instance, *args, **kwargs):
-    if instance.pk:
-        def f():
-            cur_instance = sender.objects.get(pk=instance.pk)
-            for field in sender._meta.fields:
-                if isinstance(field, models.FileField):
-                    cur_file = getattr(cur_instance, field.name) 
-                    if cur_file:
-                        if cur_file != getattr(instance, field.name):
-                            utils.remove_file(cur_file.path)
+def mark_changing_file_to_delete(sender, instance, *args, **kwargs):
+    if instance.pk:    
+        files_to_delete = []
+        cur_instance = sender.objects.get(pk=instance.pk)
+        for field in sender._meta.fields:
+            if isinstance(field, models.FileField):
+                cur_file = getattr(cur_instance, field.name) 
+                if cur_file:
+                    if cur_file != getattr(instance, field.name):  
+                        files_to_delete.append(cur_file.path) 
+        if files_to_delete:
+            setattr(instance, '__files_to_delete', files_to_delete)                                
+        
+def delete_marked_file(sender, instance, created, *args, **kwargs):
+    def f():
+        for path in instance.__files_to_delete:
+            utils.remove_file(path)
+    if hasattr(instance, '__files_to_delete'):
         transaction.on_commit(f)
-
 
 def compress_imagefile(sender, instance, created, *args, **kwargs):
     try: 
@@ -49,5 +56,7 @@ def delete_file(sender, instance, *args, **kwargs):
                 image_file = getattr(instance, field.name)
                 if image_file:
                     utils.remove_file(image_file.path)
-
     transaction.on_commit(f)
+                
+
+    

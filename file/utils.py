@@ -8,10 +8,10 @@ def get_file_path(instance, filename):
     return "%s.%s" % (uuid.uuid4(), ext)
 
 def remove_file(path):
-    try:
+    try:   
         os.remove(os.path.join(settings.MEDIA_ROOT, path))
-    except:
-        pass
+    except Exception as e:
+        print("remove_file error:", str(e))
 
 def limit_size(width, height):
     max_width = 1920

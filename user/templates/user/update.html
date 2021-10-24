@@ -10,11 +10,11 @@
 
     <div class="container">                 
         <section class="jumbotron text-center">     
-            {% if user.avatar %}<img src="{{ user.avatar.url }}" class="img-fluid rounded-circle avatar">{% endif %}
+            <img src="{% if user.avatar %} {{ user.avatar.url}} {% else %} {% static 'img/blank-profile-picture.png' %} {% endif %}" class="img-fluid rounded-circle avatar" title="Сменить аватар">
         </section> 
-        <form id="formProfile" action='.' method="post" class="needs-validation" novalidate>
+        <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %} 
-            
+            <input type="file" name="avatar" accept="image/*" hidden />
             <div class="form-floating mb-1">                
                 <input type="email" name="email" class="form-control" 
                     placeholder="Введите вашу электронную почту" 
