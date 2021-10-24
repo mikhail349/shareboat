@@ -1,38 +1,37 @@
+{% extends 'user/main.html' %}
+
 {% load static %}
 
-<html lang="ru">
-    <head>
-        <title>Регистрация</title>    
-        {% include 'bootstrap.html' %}
-        <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.ico' %}"/>
-    </head>
-    <body>
-        <form action="." method="post" class='form-signin' 
-            oninput='password2.setCustomValidity(password2.value != password1.value ? "Пароли не совпадают." : "")'
-        >
-            {% csrf_token %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+    <script type="text/javascript" src="{% static 'user/js/register.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
+    <form action="." method="post" class="form-signin needs-validation" novalidate>
+        {% csrf_token %}
 
-            <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>    
+        <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>    
 
-            {% if errors %}
-                <div class="alert alert-danger">{{ errors }}</div>
-            {% endif %}
-            
-            <div class="mb-3">
-                <label for="email" class="visually-hidden">Эл. почта: </label>
-                <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" >
-                    
-                <label for="password1" class="visually-hidden">Пароль: </label>
-                <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control">
+        {% if errors %}
+            <div class="alert alert-danger">{{ errors }}</div>
+        {% endif %}
+        
+        <div class="form-floating">           
+            <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" area-describedby="invalidInputName">
+            <label for="email">Эл. почта</label>
+            <div class="invalid-tooltip">Введите эл. почту</div>
+        </div>
+        <div class="form-floating">                   
+            <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control">
+            <label for="password1">Пароль</label>
+            <div class="invalid-tooltip">Введите пароль</div>
+        </div>
+        <div class="form-floating mb-3">          
+            <input id="password2" type="password" name="password2" placeholder="Повторите пароль" required class="form-control">
+            <label for="password2">Повторите пароль</label>
+            <div class="invalid-tooltip">Повторите пароль</div>
+        </div>
 
-                <label for="password2" class="visually-hidden">Повторите пароль: </label>
-                <input id="password2" type="password" name="password2" placeholder="Повторите пароль" class="form-control">
-            </div>
-
-            <input type="hidden" name="next" value={{ request.GET.next }} >
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
-        </form>
-    </body>
-</html>
+        <input type="hidden" name="next" value={{ request.GET.next }} >
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
+    </form>
+{% endblock %}

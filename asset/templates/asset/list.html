@@ -12,7 +12,7 @@
           <h1 class="jumbotron-heading">Мои активы</h1>
           <p class="lead text-muted">Здесь {% if not assets %}будут{% endif %} представлены все ваши активы</p>
           <p>
-            <a href="/asset/create" class="btn btn-primary my-2">Добавить актив</a>
+            <a href="{% url 'create' %}" class="btn btn-primary my-2">Добавить актив</a>
           </p>
         </div>
     </section>
@@ -62,7 +62,7 @@
                                     </h5>     
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
-                                            <a href="update/{{ asset.id }}" data-id="{{ asset.id }}" class="btn btn-sm btn-outline-primary">Открыть</a>
+                                            <a href="{% url 'update' asset.id %}" data-id="{{ asset.id }}" class="btn btn-sm btn-outline-primary">Открыть</a>
                                             <button 
                                                 type="button" 
                                                 data-bs-toggle="modal" 

@@ -1,0 +1,17 @@
+
+{% load static %}
+
+<!DOCTYPE HTML>
+<html lang="ru">
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        {% include 'bootstrap.html' %}
+        <script type="text/javascript" src="{% static 'js/bs-form-validation.min.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/main.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.ico' %}"/>
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>

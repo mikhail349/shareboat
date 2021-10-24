@@ -14,27 +14,30 @@
         </section> 
         <form id="formProfile" action='.' method="post" class="needs-validation" novalidate>
             {% csrf_token %} 
-            <label for="name">Эл. почта</label>
-            <div class="input-group  mb-3">                
+            
+            <div class="form-floating mb-1">                
                 <input type="email" name="email" class="form-control" 
                     placeholder="Введите вашу электронную почту" 
                     disabled
                     value="{{ user.email }}"
                     aria-describedby="invalidInputEmail"
                 />
-                {% if user.email_confirmed %}
-                    <span class="input-group-text bg-white text-success">Подтверждена</span>
-                {% else %}
-                    <button id="btnSendConfirmation" class="btn btn-secondary" type="button">Подтвердить</button>           
-                {% endif %}
+                <label for="email">Эл. почта</label>
             </div>
             <div class="mb-3">
-                <label for="name">Имя</label>
+                {% if user.email_confirmed %}
+                    <small class="form-text bg-white text-success">Подтверждена</small>
+                {% else %}
+                    <button id="btnSendConfirmation" class="btn btn-outline-secondary btn-sm" type="button">Отправить письмо для подтверждения</button>
+                {% endif %}
+            </div>
+            <div class="form-floating mb-3">            
                 <input type="text" name="first_name" class="form-control" 
                     placeholder="Введите ваше имя" 
                     autocomplete="false"
                     value="{{ user.first_name }}"
                 />
+                <label for="first_name">Имя</label>
             </div>
             <div class="row g-3">
                 <div class="col-auto">

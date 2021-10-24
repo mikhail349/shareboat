@@ -137,16 +137,15 @@ function CreateUpdate() {
                 {
                     errors && <div className="alert alert-danger">{errors}</div>
                 }
-                <div className="mb-3">
-                    <label for="name">Название актива</label>
+                <h4 className="mb-3">Основная информация</h4>
+                <div className="form-floating mb-3">                 
                     <input type="text" id="name" name="name" className="form-control" placeholder="Введите название актива" autocomplete="false" aria-describedby="invalidInputName"
                         required 
                         value={asset && asset.name}
                         onChange={onNameChanged}
                     />
-                    <div id="invalidInputName" class="invalid-feedback">
-                        Введите название актива
-                    </div>
+                    <label for="name">Название актива</label>
+                    <div class="invalid-tooltip">Введите название актива</div>
                 </div>
                 <div className="mb-3">
                     <h4 className="mb-3">Фотографии</h4>

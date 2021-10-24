@@ -38,9 +38,13 @@ $(document).ready(() => {
     });
 });
 
-$.fn.isValid = function() {
+$.fn.checkValidity = function() {
     this[0].classList.add("was-validated");
     return this[0].checkValidity();
+}
+
+$.fn.setCustomValidity = function() {
+    return this[0].setCustomValidity();
 }
 
 function showSuccessToast(msg="Изменения сохранены.") {

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls import url
 
 from user import urls as user_urls
 from asset import urls as asset_urls
@@ -24,17 +25,13 @@ from file import urls as file_urls
 
 from . import views
 
-urlapipatterns = [
-    path('user/', include(user_urls))
-]
-
-urlpatterns = [
+urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [
     path('', views.index, name="view"),
     path('admin/', admin.site.urls),
-    #path('accounts/', include('django.contrib.auth.urls')),
-    #path('api/', include(urlapipatterns)),
 
     path('user/', include(user_urls)),
     path('asset/', include(asset_urls)),
     path('file/', include(file_urls)),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    url('^.*', views.not_found)
+]

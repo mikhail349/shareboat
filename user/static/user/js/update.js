@@ -11,7 +11,7 @@ $(document).ready(() => {
         const form = $("#formProfile");
         const btnSubmit = form.find("button[type=submit]");
         
-        if (!form.isValid()) return;
+        if (!form.checkValidity()) return;
         
         btnSubmit.attr("disabled", true);
         $.ajax({ 
