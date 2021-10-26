@@ -13,26 +13,20 @@
             <img
                 {% if user.avatar %}data-do-save{% endif %}
                 src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" 
-                class="img-fluid rounded-circle avatar" 
+                class="img-fluid rounded-circle avatar mb-3" 
                 title="Сменить аватар"
             >
+            <p class="lead text-muted">{{ user.email }}</p>
         </section> 
         <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %} 
-            <input type="file" name="avatar" accept="image/*" hidden />             
-            <input type="email" name="email" class="form-control" 
-                placeholder="Введите вашу электронную почту" 
-                disabled
-                value="{{ user.email }}"
-                aria-describedby="invalidInputEmail"
-            />
-            <div class="mb-3">
-                {% if user.email_confirmed %}
-                    <small class="form-text bg-white text-success">Эл. почта подтверждена</small>
-                {% else %}
-                    <a id="btnSendConfirmation" href="#" class="link-secondary">Отправить письмо для подтверждения</a>
-                {% endif %}
-            </div>
+            <input type="file" name="avatar" accept="image/*" hidden /> 
+            <input type="text" name="email" hidden value="{{ user.email }}"/> 
+            {% if not user.email_confirmed %}
+                <div class="alert alert-warning">
+                    Ваша почта пока ещё не подтверждена. <a id="btnSendConfirmation" data-email="{{ user.email }}" href="#" class="link-secondary">Отправить письмо для подтверждения.</a>
+                </div>
+            {% endif %}
             <div class="form-floating mb-3">            
                 <input type="text" name="first_name" class="form-control" 
                     placeholder="Введите ваше имя" 

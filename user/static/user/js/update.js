@@ -22,8 +22,8 @@ $(document).ready(() => {
 
     $("#btnSendConfirmation").on("click", (e) => {
         e.preventDefault();
-        const email = $("#formProfile input[name=email]").val()
-        showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`)
+        const email = $("#formProfile input[name=email]").val();
+        showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`);
     })
 
     $("#formProfile").on('submit', async (e) => {
@@ -55,6 +55,9 @@ $(document).ready(() => {
         function onSuccess(data, status) {
             btnSubmit.attr("disabled", false);
             showSuccessToast();
+            const userName = $('input[name=first_name]').val()
+            const email = $("#formProfile input[name=email]").val();
+            $("#userNameNavBar").text(userName || email);
         }
     
         function onError(error) {
