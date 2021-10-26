@@ -37,7 +37,7 @@ def get(request):
 @login_required
 def create(request):
     if request.method == 'GET':
-        return render(request, 'asset/create_update.html')
+        return render(request, 'asset/create.html')
 
     elif request.method == 'POST':
         data = request.POST
