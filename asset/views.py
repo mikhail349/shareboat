@@ -113,8 +113,8 @@ def delete(request, pk):
     except Asset.DoesNotExist:
         return response_not_found()
 
-    if asset.owner != request.user:
-        return response_not_found()
-    
+    if asset.posts.exists():
+        return JsonResponse({'message': 'По данному активу уже созданы объявления'}, status=status.HTTP_400_BAD_REQUEST)
+
     asset.delete()
     return Response()

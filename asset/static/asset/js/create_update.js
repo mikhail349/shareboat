@@ -84,6 +84,17 @@ function CreateUpdate() {
         }
     }
 
+    async function onDelete(e) {
+        e.preventDefault();
+        $('#confirmDeleteModal').modal('hide');
+        try {
+            await axios.post(`/asset/api/delete/${asset.id}/`);
+            window.location.href = '/asset/';
+        } catch(e) {
+            showErrorToast(e.response.data.message);
+        }
+    }
+
     async function post(url) {
         const formData = new FormData();
         formData.append('name', asset.name);
@@ -200,9 +211,47 @@ function CreateUpdate() {
                         </div>
                     </div>
                     <hr/>
-                    <button type="submit" className="btn btn-outline-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>
+                    <div className="row g-3">
+                        <div className="col-auto">
+                            <button type="submit" className="btn btn-outline-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>                          
+                        </div>
+                        {
+                            asset?.id && (
+                                <div className="col-auto">
+                                    <button type="button" className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+                                </div>
+                            )
+                        }
+                    </div>
                 </div>
             </form>
+
+            <div id="confirmDeleteModal" className="modal" tabindex="-1" role="dialog" aria-labelledby="confirmDeletionModalLabel" style={{display: 'none'}}>
+                <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="confirmDeletionModalLabel">Удаление актива</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <p>Удалить актив?</p>
+                    </div>
+                    <div className="modal-footer">
+                        <button id="btnConfirmDelete" type="button" className="btn btn-danger" onClick={onDelete}>Удалить</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>               
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="toast-container position-absolute p-3 top-0-header start-50 translate-middle-x">
+                <div id="toast" className="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div className="d-flex">
+                        <div className="toast-body"></div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
         </React.Fragment>
     )
 }

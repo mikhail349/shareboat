@@ -9,7 +9,7 @@ class Post(models.Model):
         PUBLISHED = "published", "Опубликовано"
 
 
-    asset = models.ForeignKey(Asset, on_delete=models.PROTECT)
+    asset = models.ForeignKey(Asset, on_delete=models.PROTECT, related_name="posts")
     price = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.CharField(max_length=10, choices=Status.choices,default=Status.DRAFT)
     text = models.TextField()
