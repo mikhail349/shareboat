@@ -1,0 +1,43 @@
+body > header > nav.navbar {
+    box-shadow: unset;
+}
+
+html {
+    font-size: 150%;
+}
+
+.video-header,
+.viewport-header {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.video-header {
+    z-index: 1;
+}
+
+.video-header video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.viewport-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+    text-align: center;
+}
+
+.viewport-header h1 {
+    font-family: 'Syncopate', sans-serif;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 30px;
+    line-height: 1.2;
+    
+    text-align: center;
+}

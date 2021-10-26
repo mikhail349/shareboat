@@ -1,0 +1,16 @@
+{% include "main.html" %}
+
+{% load static %}
+
+{% block content %}
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+    <script type="text/javascript" src="{% static 'js/home.min.js' %}"></script>
+
+    <header class="video-header">
+        <video src="https://css-tricks-post-videos.s3.us-east-1.amazonaws.com/Island%20-%204141.mp4" autoplay loop playsinline muted></video>
+        <div class="viewport-header">
+            <h1>Shareboat</h1>
+        </div>
+    </header>
+{% endblock %}
