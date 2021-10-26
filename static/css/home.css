@@ -2,10 +2,6 @@ body > header > nav.navbar {
     box-shadow: unset;
 }
 
-html {
-    font-size: 150%;
-}
-
 .video-header,
 .viewport-header {
     width: 100vw;
@@ -36,8 +32,6 @@ html {
     font-family: 'Syncopate', sans-serif;
     color: white;
     text-transform: uppercase;
-    letter-spacing: 30px;
-    line-height: 1.2;
-    
+    letter-spacing: 3vw;
     text-align: center;
 }
