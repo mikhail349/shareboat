@@ -42,6 +42,7 @@ $(document).ready(() => {
             formData.set("avatar", data, avatarName);
         }
     
+        btnSubmit.attr("disabled", true);
         $.ajax({ 
             type: "POST",
             data: formData,
