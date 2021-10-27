@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'user',
     'asset',
     'file',
-    'post'
+    'post',
+    'boat'
 ]
 
 REST_FRAMEWORK = {

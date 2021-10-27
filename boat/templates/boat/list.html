@@ -1,0 +1,76 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Моя флотилия{% endblock  %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'boat/js/list.min.js' %}"></script>
+    
+    <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Моя флотилия</h1>
+          <p class="lead text-muted">Здесь {% if not boats %}будут{% endif %} представлены все ваши лодки</p>
+          <p>
+            <a href="{% url 'create' %}" class="btn btn-primary my-2">Добавить лодку</a>
+          </p>
+        </div>
+    </section>
+
+    {% if boats %}
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    {% for boat in boats %}
+                        <div class="col-md-3">
+                            <div class="card mb-4 box-shadow">
+                                <a href="{% url 'update' boat.id %}">
+                                    {% if boat.files.count > 1 %}
+
+                                        <div id="fileCarousel{{forloop.counter0}}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
+                                            <ol class="carousel-indicators">
+                                                {% for file in boat.files.all %} 
+                                                    <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
+                                                {% endfor %}
+                                            </ol> 
+                                            <div class="carousel-inner">
+                                                {% for file in boat.files.all %} 
+                                                    <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}">
+                                                        <img class="d-block w-100 card-img-top" src="{{ file.file.url }}" />
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            <button type="button" class="carousel-control-prev" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </a>
+                                            <button type="button" class="carousel-control-next" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </a>
+                                        </div>
+
+                                    {% elif boat.files.exists %}
+
+                                        <img src="{{ boat.files.first.file.url }}" class="card-img-top" />
+                                    
+                                    {% else %}
+
+                                        <div class="card-img-top"></div>
+
+                                    {% endif %}
+                                </a>    
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {{ boat.name }}
+                                    </h5>       
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock  %}

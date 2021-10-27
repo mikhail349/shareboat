@@ -1,0 +1,35 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Изменить лодку{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'boat/css/create_update.css' %}">
+    <script type="text/javascript" src="{% static 'js/bs-form-validation.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/react-components/useAxios.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'boat/js/utils.min.js' %}"></script>
+
+    {% include 'react.html' %}
+
+    <div class="container">
+        <section class="jumbotron text-center">   
+          <h1 class="jumbotron-heading">Изменить лодку</h1>    
+        </section>
+
+        <script>
+            {% if boat %}
+                var boat = {{ boat|safe }};
+            {% endif %}
+        </script>
+
+        <div id="react_app">
+            <div class="text-center">
+                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" title="ShareBoat" />
+            </div>
+        </div>
+        <script type="text/javascript" src="{% static 'boat/js/update.min.js' %}"></script>
+
+    </div>
+
+{% endblock  %}
