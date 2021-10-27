@@ -2,17 +2,19 @@
 
 {% load static %}
 
-{% block title %}{% if asset %}Изменить{% else %}Добавить{% endif %} актив{% endblock  %}
+{% block title %}Изменить актив{% endblock %}
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'asset/css/create_update.css' %}">
     <script type="text/javascript" src="{% static 'js/bs-form-validation.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/react-components/useAxios.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'asset/js/utils.min.js' %}"></script>
 
     {% include 'react.html' %}
 
     <div class="container">
         <section class="jumbotron text-center">   
-          <h1 class="jumbotron-heading">{% if asset %}Изменить{% else %}Добавить{% endif %} актив</h1>    
+          <h1 class="jumbotron-heading">Изменить актив</h1>    
         </section>
 
         <script>
@@ -26,7 +28,7 @@
                 <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" title="ShareBoat" />
             </div>
         </div>
-        <script type="text/javascript" src="{% static 'asset/js/create_update.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'asset/js/update.min.js' %}"></script>
 
     </div>
 

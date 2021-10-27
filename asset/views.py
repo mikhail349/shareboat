@@ -71,7 +71,7 @@ def update(request, pk):
         asset = Asset.objects.get(pk=pk, owner=request.user)
         
         if request.method == 'GET':
-            return render(request, 'asset/create_update.html', context={'asset': AssetSerializer(asset).data})
+            return render(request, 'asset/update.html', context={'asset': AssetSerializer(asset).data})
         elif request.method == 'POST':
             data = request.POST
             files = request.FILES.getlist('file')

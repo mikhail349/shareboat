@@ -1,24 +1,15 @@
-function CreateUpdate() {
+function Update() {
     const [errors, setErrors] = React.useState();
-    const [action, setAction] = React.useState();
     const [files, setFiles] = React.useState([]);
     const [asset, setAsset] = React.useState();
-    const [count, setCount] = React.useState(0);
 
     const [btnSaveOptions, setBtnSaveOptions] = React.useState({enabled: true, caption: "Сохранить"});
-    const fileInputRef = React.createRef();
     const formRef = React.useRef();
+    useAxios();
     
-    React.useEffect(() => {
-        axios.defaults.xsrfCookieName = 'csrftoken';
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        const action = window.asset ? 1 : 0;
-        
+    React.useEffect(() => {        
         setAsset(window.asset);    
-        setAction(action);
-        if (action == 1) {
-            loadFiles(window.asset.id);
-        }
+        loadFiles(window.asset.id);
 
         return () => {
             for (let file of files) {
@@ -64,12 +55,6 @@ function CreateUpdate() {
         setFiles(newFiles);            
     }
 
-    function onFileInputChange(e) {
-        const targetFiles = [...e.target.files];
-        AppendFiles(targetFiles);
-        fileInputRef.current.value = null; 
-    }
-
     function onNameChanged(e) {
         setAsset((prevAsset) => {
             const newAsset = {...prevAsset}
@@ -78,14 +63,24 @@ function CreateUpdate() {
         })
     }
 
-    function onSave(e) {
+    async function onSave(e) {
         e.preventDefault();
-        setErrors();
         
-        if (action == 0) {
-            post('/asset/api/create/');
-        } else {
-            post(`/asset/api/update/${asset.id}/`);
+        setErrors();
+        setBtnSaveEnabled(false);
+        try {         
+            const formData = new FormData(formRef.current);
+
+            for (let file of files) {
+                formData.append('file', file.blob, file.blob.filename);
+            }
+
+            const response = await axios.post(`/asset/api/update/${asset.id}/`, formData);
+            window.location.href = response.data.redirect;
+        } catch (e) {
+            window.scrollTo(0, 0);
+            setErrors((e.response.data.message || e.response.data));
+            setBtnSaveEnabled(true);
         }
     }
 
@@ -96,28 +91,8 @@ function CreateUpdate() {
             await axios.post(`/asset/api/delete/${asset.id}/`);
             window.location.href = '/asset/';
         } catch(e) {
-            showErrorToast(e.response.data.message);
+            showErrorToast((e.response.data.message || e.response.data));
         }
-    }
-
-    async function post(url) {
-        const formData = new FormData();
-        formData.append('name', asset.name);
-
-        for (let file of files) {
-            formData.append('file', file.blob, file.blob.filename);
-        }
-
-        setBtnSaveEnabled(false);
-        try {
-            const response = await axios.post(url, formData);
-            window.location.href = response.data.redirect;
-        } catch (e) {
-            window.scrollTo(0, 0);
-            setErrors(e.response.data.message);
-            setBtnSaveEnabled(true);
-        }
-           
     }
 
     function onFileDelete(index) {     
@@ -125,26 +100,6 @@ function CreateUpdate() {
         URL.revokeObjectURL(newFiles[index].url);
         newFiles.splice(index, 1);
         setFiles(newFiles);
-    }
-
-    function onDragEnter(e) {
-        e.preventDefault();
-        setCount((prevValue) => prevValue+1);
-    }
-
-    function onDragLeave(e) {
-        e.preventDefault();
-        setCount((prevValue) => prevValue-1);
-    }
-
-    function onDrop(e) {
-        e.preventDefault();
-        setCount(0);
-        AppendFiles(e.dataTransfer.files);
-    } 
-
-    function isFileUploadHover() {
-        return count > 0;
     }
 
     return (
@@ -165,68 +120,19 @@ function CreateUpdate() {
                 </div>
                 <div className="mb-3">
                     <h4 className="mb-3">Фотографии</h4>
-                    <div className={`file-upload-wrapper ${isFileUploadHover() ? "bg-light" : ""}`} 
-                        onDragEnter={onDragEnter} 
-                        onDragLeave={onDragLeave} 
-                        onDrop={onDrop}
-                        onDragOver={(e) => e.preventDefault()}
-                    >    
-                        <div className="row">
-                            <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
-                            {
-                                files.map((file, index) => (
-                                    <div key={index} className="col-md-3 mb-3">
-                                        <div className="card box-shadow text-end">
-                                            <img src={file.url} className="card-img" />  
-                                            <div className="card-img-overlay">
-                                                <div className="btn-group">
-                                                    <button type="button" onClick={() => onFileDelete(index)} className="btn btn-sm btn-danger">
-                                                        Удалить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>                    
-                                ))
-                            }                
-                        </div>
-                        <div class="row align-items-center">
-                            {
-                                (
-                                    <div class="col-auto">
-                                        <button type="button" className="btn btn-outline-primary" onClick={() => fileInputRef.current.click()}>Добавить {!!files.length && 'ещё '}фото</button>  
-                                    </div> 
-                                )
-                            }
-
-                            <div class="col-auto">
-                                {
-                                    isFileUploadHover() ? (
-                                        <span className="text-success">
-                                            Отпустите, чтобы добавить фото
-                                        </span>  
-                                    ) : !window.isMobile() && (
-                                        <span className="text-muted">
-                                            Или перетащите фото сюда
-                                        </span>     
-                                    )
-                                }
-
-                            </div>  
-                        </div>
-                    </div>
+                    <FilesList 
+                        files={files} 
+                        onFilesAdd={AppendFiles} 
+                        onFileDelete={onFileDelete} 
+                    />
                     <hr/>
                     <div className="row g-3">
                         <div className="col-auto">
                             <button type="submit" className="btn btn-outline-success" disabled={!btnSaveOptions.enabled}>{btnSaveOptions.caption}</button>                          
                         </div>
-                        {
-                            asset?.id && (
-                                <div className="col-auto">
-                                    <button type="button" className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
-                                </div>
-                            )
-                        }
+                        <div className="col-auto">
+                            <button type="button" className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -261,4 +167,4 @@ function CreateUpdate() {
     )
 }
 
-ReactDOM.render(<CreateUpdate />, document.querySelector('#react_app'));
+ReactDOM.render(<Update />, document.querySelector('#react_app'));
