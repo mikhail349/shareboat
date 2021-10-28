@@ -20,8 +20,6 @@ from django.conf import settings
 from django.conf.urls import url
 
 from user import urls as user_urls
-from asset import urls as asset_urls
-from file import urls as file_urls
 from boat import urls as boat_urls
 
 from . import views
@@ -32,8 +30,6 @@ urlpatterns += [
     path('admin/', admin.site.urls),
 
     path('user/', include(user_urls)),
-    path('asset/', include(asset_urls)),
-    path('file/', include(file_urls)),
     path('boats/', include(boat_urls)),
     url('^.*', views.not_found)
 ]
