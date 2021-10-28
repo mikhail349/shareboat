@@ -1,6 +1,7 @@
 
 :root {
     --jumbotron-padding-y: 3rem;
+    --header-padding-top: 62px;
 }
 
 .box-shadow { 
@@ -8,7 +9,7 @@
 }
 
 body > .main-content-container {
-    padding-top: 62px;
+    padding-top: var(--header-padding-top);
 }  
 
 .loading-ship-wheel {  
@@ -24,5 +25,24 @@ body > .main-content-container {
     100% {
         transform: rotate(360deg);
     }
+}
+
+#overlayPanel {
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: calc(100% - var(--header-padding-top));
+    width: 100%;
+    margin-top: var(--header-padding-top);
+    /*padding: 20px;*/
+    opacity: 0.5;
+    z-index: 2;
+}
+
+#overlayPanel > div {
+    background-color: var(--bs-gray-200);
+    /*border-radius: 10px;*/
+    height: 100%;
 }
 

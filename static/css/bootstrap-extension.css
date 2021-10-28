@@ -12,7 +12,7 @@
 }
 
 .form-control.is-valid, .was-validated .form-control:valid {
-    border-color: var(--bs-gray-400);
-    padding-right: inherit !important;
+    border-color: var(--bs-gray-400) !important;
+    padding-right: 0.75rem !important;
     background-image: inherit !important;
 }

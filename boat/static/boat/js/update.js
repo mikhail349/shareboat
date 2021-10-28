@@ -1,5 +1,4 @@
 function Update() {
-    const [btnSaveEnabled, setBtnSaveEnabled] = React.useState(true);
     const [files, setFiles] = React.useState([]);
 
     React.useEffect(() => {          
@@ -13,7 +12,7 @@ function Update() {
     }, []);
 
     async function loadFiles(id) {
-        setBtnSaveEnabled(false);
+        showOverlayPanel("Загрузка...");
         try {
             let newFiles = [];
             const response = await axios.get(`/boats/api/get_files/${id}/`);
@@ -28,7 +27,7 @@ function Update() {
             }
             setFiles(newFiles);
         } finally {
-            setBtnSaveEnabled(true);
+            hideOverlayPanel();
         }
     }
 
@@ -47,7 +46,7 @@ function Update() {
         
         const {boat, files} = data;    
 
-        setBtnSaveEnabled(false);
+        showOverlayPanel();
         try {         
             const formData = new FormData();
             
@@ -61,9 +60,10 @@ function Update() {
 
             const response = await axios.post(`/boats/api/update/${boat.id}/`, formData);
             window.location.href = response.data.redirect;
-        } catch (e) {
+        } catch (e) {       
             showErrorToast((e.response.data.message || e.response.data));
-            setBtnSaveEnabled(true);
+        } finally {
+            hideOverlayPanel();
         }
     }
 
@@ -71,7 +71,7 @@ function Update() {
         return (
             <div className="row g-3">
                 <div className="col-auto">
-                    <button type="submit" className="btn btn-outline-success" disabled={!btnSaveEnabled}>Сохранить</button>                          
+                    <button type="submit" className="btn btn-outline-success">Сохранить</button>                          
                 </div>
                 <div className="col-auto">
                     <button type="button" className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>

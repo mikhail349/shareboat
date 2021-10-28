@@ -47,6 +47,20 @@ $.fn.setCustomValidity = function() {
     return this[0].setCustomValidity();
 }
 
+$.fn.setVisibility = function (visible) {
+    return this.css('visibility', visible ? 'visible' : "hidden");
+}
+
+function showOverlayPanel(msg="Сохранение...") {
+    const overlayPanel = $("#overlayPanel");
+    overlayPanel.find(".message").text(msg);
+    overlayPanel.css('visibility', 'visible');
+}
+
+function hideOverlayPanel() {
+    $("#overlayPanel").css('visibility', 'hidden');
+}
+
 function showSuccessToast(msg="Изменения сохранены.") {
     $("#toast .toast-body").text(msg);
     $("#toast").removeClass("bg-danger");

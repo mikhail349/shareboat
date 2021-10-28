@@ -1,11 +1,9 @@
 function Create() {
-    const [btnSaveEnabled, setBtnSaveEnabled] = React.useState(true);
-
     async function onSave(data) {   
         
         const {boat, files} = data;    
 
-        setBtnSaveEnabled(false);
+        showOverlayPanel();
         try {         
             const formData = new FormData();
             
@@ -21,14 +19,15 @@ function Create() {
             window.location.href = response.data.redirect;
         } catch (e) {
             showErrorToast((e.response.data.message || e.response.data));
-            setBtnSaveEnabled(true);
+        } finally {
+            hideOverlayPanel();
         }
     }
 
     return (
         <BoatForm 
             onSave={onSave}
-            buttons={<button type="submit" className="btn btn-outline-success" disabled={!btnSaveEnabled}>Сохранить</button>}
+            buttons={<button type="submit" className="btn btn-outline-success">Сохранить</button>}
         />
     )
 }

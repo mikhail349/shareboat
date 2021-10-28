@@ -45,5 +45,11 @@
         <div class="main-content-container">
             {% block content %}{% endblock %}
         </div>
+        <div id="overlayPanel">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" title="ShareBoat" />
+                <div class="message">Сохранение...</div>
+            </div>       
+        </div>
     </body>
 </html>

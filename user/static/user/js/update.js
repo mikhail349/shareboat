@@ -30,8 +30,6 @@ $(document).ready(() => {
         e.preventDefault();   
 
         const form = $("#formProfile");
-        const btnSubmit = form.find("button[type=submit]");
-        
         if (!form.checkValidity()) return;
 
         const formData = new FormData(form[0]);
@@ -41,8 +39,8 @@ $(document).ready(() => {
             let data = await response.blob();
             formData.set("avatar", data, avatarName);
         }
-    
-        btnSubmit.attr("disabled", true);
+
+        showOverlayPanel();
         $.ajax({ 
             type: "POST",
             data: formData,
@@ -54,7 +52,7 @@ $(document).ready(() => {
         });
     
         function onSuccess(data, status) {
-            btnSubmit.attr("disabled", false);
+            hideOverlayPanel();
             showSuccessToast();
             const userName = $('input[name=first_name]').val()
             const email = $("#formProfile input[name=email]").val();
@@ -62,7 +60,7 @@ $(document).ready(() => {
         }
     
         function onError(error) {
-            btnSubmit.attr("disabled", false);
+            hideOverlayPanel();
             showErrorToast(error.responseJSON.message);
         }
     })
