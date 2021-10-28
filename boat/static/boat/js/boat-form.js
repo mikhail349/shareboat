@@ -1,18 +1,53 @@
 $(document).ready(() => {
-    $("form").on("input", (e) => {
-        const length = $("form input[name=length]");
-        const lengthTooltip = $("form input[name=length] ~ .invalid-tooltip");
-        const lengthTooBig = length.val() > 999 ? "Лодок такой длины не бывает..." : "";
 
-        length[0].setCustomValidity(lengthTooBig);
-        if (lengthTooBig) {
-            lengthTooltip.text(lengthTooBig);
+    class InputValidator {
+        constructor(input, tooltip) {
+            this.input = input;
+            this.tooltip = $(input).siblings(".invalid-tooltip");
+            this.errorsList = [];
         }
 
-        if (!length.val().length) {
-            lengthTooltip.text("Укажите длину лодки");
+        addError(msg, f) {
+            if (f(this.input.val())) {
+                this.errorsList.push(msg);
+            }
         }
-    });
+
+        validate() {
+            const error = this.errorsList.join("\n");
+            this.input[0].setCustomValidity(error);
+            this.tooltip.text(error);            
+        }
+    }
+
+    $("input[name=name]").on("input", (e) => {
+        const length = new InputValidator($("input[name=name]"));
+        length.addError("Введите название лодки", (val) => !val);
+        length.addError("Слишком длинное название", (val) => val.length > 255);
+        length.validate();
+    })
+
+    $("input[name=length]").on("input", (e) => {
+        const length = new InputValidator($("input[name=length]"));
+        length.addError("Укажите длину лодки", (val) => !val || val < 0.1);
+        length.addError("Слишком длинная лодка", (val) => val > 999.9);
+        length.validate();
+    })
+
+    $("input[name=width]").on("input", () => {
+        const length = new InputValidator($("input[name=width]"));
+        length.addError("Укажите ширину лодки", (val) => !val || val < 0.1);
+        length.addError("Слишком широкая лодка", (val) => val > 99.9);
+        length.validate();
+    })
+
+    $("input[name=draft]").on("input", () => {
+        const length = new InputValidator($("input[name=draft]"));
+        length.addError("Укажите осадку лодки", (val) => !val || val < 0.1);
+        length.addError("Слишком большая осадка", (val) => val > 9.9);
+        length.validate();
+    })
+
 })
 
 function BoatForm(props) {
@@ -87,8 +122,8 @@ function BoatForm(props) {
                 }
                 <h4 className="mb-3">Основная информация</h4>
                 <div className="form-floating mb-3">                 
-                    <input type="text" id="name" name="name" className="form-control" placeholder="Введите название лодки" autocomplete="false" aria-describedby="invalidInputName"
-                        required 
+                    <input type="text" id="name" name="name" className="form-control" placeholder="Введите название лодки" autocomplete="false" aria-describedby="invalidInputName"             
+                        required
                         value={boat && boat.name}
                         onChange={onNameChanged}
                     />
@@ -99,8 +134,8 @@ function BoatForm(props) {
                     <div className="col-auto">
                         <div className="form-floating mb-3">                 
                             <input type="number" name="length" className="form-control" placeholder="Укажите длину лодки" autocomplete="false"
-                                step="any"
-                                required 
+                                step=".1"
+                                required
                                 value={boat && boat.length}
                                 onChange={onValueChanged}
                             />
@@ -111,7 +146,8 @@ function BoatForm(props) {
                     <div className="col-auto">
                         <div className="form-floating mb-3">                 
                             <input type="number" name="width" className="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
-                                required 
+                                step=".1"
+                                required         
                                 value={boat && boat.width}
                                 onChange={onValueChanged}
                             />
@@ -122,6 +158,7 @@ function BoatForm(props) {
                     <div className="col-auto">
                         <div className="form-floating mb-3">                 
                             <input type="number" name="draft" className="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
+                                step=".1"
                                 required 
                                 value={boat && boat.draft}
                                 onChange={onValueChanged}

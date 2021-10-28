@@ -1,0 +1,18 @@
+
+.card-img-top,
+.card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.btn:focus, button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.form-control.is-valid, .was-validated .form-control:valid {
+    border-color: var(--bs-gray-400);
+    padding-right: inherit !important;
+    background-image: inherit !important;
+}
