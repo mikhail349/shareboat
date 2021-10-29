@@ -107,41 +107,6 @@ $(document).ready(() => {
             hideOverlayPanel();
             showErrorToast((error.responseJSON.message || error.data));
         }
-        
-        /*const form = $("#formProfile");
-        if (!form.checkValidity()) return;
-
-        const formData = new FormData(form[0]);
-
-        if ($("img.avatar")[0].hasAttribute('data-do-save')) {
-            let response = await fetch($("img.avatar").attr("src"));
-            let data = await response.blob();
-            formData.set("avatar", data, avatarName);
-        }
-
-        showOverlayPanel();
-        $.ajax({ 
-            type: "POST",
-            data: formData,
-            url: "/user/api/update/",
-            processData: false,
-            contentType: false,
-            success: onSuccess,
-            error: onError
-        });
-    
-        function onSuccess(data, status) {
-            hideOverlayPanel();
-            showSuccessToast();
-            const userName = $('input[name=first_name]').val()
-            const email = $("#formProfile input[name=email]").val();
-            $("#userNameNavBar").text(userName || email);
-        }
-    
-        function onError(error) {
-            hideOverlayPanel();
-            showErrorToast(error.responseJSON.message);
-        }*/
     })
 
 })

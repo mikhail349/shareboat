@@ -11,7 +11,8 @@ function FilesList(props) {
     }, [])
 
     async function loadFiles(id) {
-        showOverlayPanel("Загрузка фотографий...");
+        const $submitBtn = $("form button[type=submit]");
+        $submitBtn.attr("disabled", true);
         try {
             let newFiles = [];
             const response = await axios.get(`/boats/api/get_files/${id}/`);
@@ -26,7 +27,7 @@ function FilesList(props) {
             }
             setFiles(newFiles);
         } finally {
-            hideOverlayPanel();
+            $submitBtn.attr("disabled", false);
         }
     }
 
