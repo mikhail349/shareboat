@@ -26,9 +26,9 @@
                     <div class="collapse navbar-collapse" id="menu">
                         <ul class="navbar-nav me-auto">
                             <li class="nav-item">
-                                <a class="nav-link" href="/boats/">Флотилия</a>
+                                <a class="nav-link" href="/boats/">Мой флот</a>
                             </li>    
-                        </ul>                           
+                        </ul>                          
                         <ul class="navbar-nav">
                             <li class="nav-item">
                                 {% if user.is_authenticated %}
@@ -38,6 +38,16 @@
                                 {% endif %}
                             </li>
                         </ul>
+                        <ul class="navbar-nav ">
+                            <li class="nav-item">
+                                {% if user.is_authenticated %}
+                                    <a id="userNotificationsNavBar" class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasNotifications" aria-controls="offcanvasNotifications">
+                                        <span class="d-md-none">Уведомления</span>
+                                        <img src="{% static 'img/bell.svg' %}" />                                        
+                                    </a>
+                                {% endif %}
+                            </li>
+                        </ul> 
                     </div>
                 </div>
             </nav>            
@@ -45,11 +55,32 @@
         <div class="main-content-container">
             {% block content %}{% endblock %}
         </div>
+
         <div id="overlayPanel">
             <div class="d-flex flex-column align-items-center justify-content-center">
-                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" title="ShareBoat" />
+                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
                 <div class="message">Сохранение...</div>
             </div>       
         </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNotifications" aria-labelledby="offcanvasNotificationsLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNotificationsLabel">Уведомления</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                Уведомлений нет
+            </div>
+        </div>
+    
+        <div class="toast-container position-absolute p-3 top-0-header start-50 translate-middle-x">
+            <div id="toast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
     </body>
 </html>

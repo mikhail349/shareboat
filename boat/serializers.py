@@ -6,7 +6,7 @@ from .models import Boat, BoatFile
 class BoatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Boat
-        fields = ('id', 'name', 'length', 'width', 'draft')
+        fields = ('id', 'name', 'length', 'width', 'draft', 'capacity')
 
 class BoatFileSerializer(serializers.ModelSerializer):
     url = serializers.URLField(source="file.url")

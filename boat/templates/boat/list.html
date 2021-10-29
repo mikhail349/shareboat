@@ -2,14 +2,14 @@
 
 {% load static %}
 
-{% block title %}Моя флотилия{% endblock  %}
+{% block title %}Мой флот{% endblock  %}
 
 {% block content %}
     <script type="text/javascript" src="{% static 'boat/js/list.min.js' %}"></script>
     
     <section class="jumbotron text-center">
         <div class="container">
-          <h1 class="jumbotron-heading">Моя флотилия</h1>
+          <h1 class="jumbotron-heading">Мой флот</h1>
           <p class="lead text-muted">Здесь {% if not boats %}будут{% endif %} представлены все ваши лодки</p>
           <p>
             <a href="{% url 'create' %}" class="btn btn-primary my-2">Добавить лодку</a>

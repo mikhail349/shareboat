@@ -13,6 +13,10 @@
     height: 46px;
 }
 
+#userNotificationsNavBar img {
+    filter: brightness(0) invert(1);
+}
+
 .top-0-header {
     top: 60px!important;
 }

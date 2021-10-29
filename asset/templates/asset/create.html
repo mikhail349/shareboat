@@ -5,11 +5,6 @@
 {% block title %}Добавить актив{% endblock  %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="{% static 'asset/css/create_update.css' %}">
-    <script type="text/javascript" src="{% static 'js/bs-form-validation.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/react-components/useAxios.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'asset/js/utils.min.js' %}"></script>
-
     {% include 'react.html' %}
 
     <div class="container">
@@ -19,7 +14,7 @@
 
         <div id="react_app">
             <div class="text-center">
-                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" title="ShareBoat" />
+                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
             </div>
         </div>
         <script type="text/javascript" src="{% static 'asset/js/create.min.js' %}"></script>

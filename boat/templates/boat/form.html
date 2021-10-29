@@ -1,0 +1,73 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'boat/css/form.css' %}">
+<script type="text/javascript" src="{% static 'boat/js/form.min.js' %}"></script>
+{% include 'react.html' %}
+
+<h4 class="mb-3">Основная информация</h4>
+<div class="form-floating mb-3">                 
+    <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="false" aria-describedby="invalidInputName"             
+        required
+        value="{{ boat.name }}"
+    />
+    <label for="name">Название лодки</label>
+    <div class="invalid-tooltip">Введите название лодки</div>
+</div>
+
+<div class="row">
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="false"
+                step=".1"
+                required
+                value="{{ boat.length }}"
+            />
+            <label for="length">Длина, м.</label>
+            <div class="invalid-tooltip">Укажите длину лодки</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
+                step=".1"
+                required    
+                value="{{ boat.width }}"     
+            />
+            <label for="length">Ширина, м.</label>
+            <div class="invalid-tooltip">Укажите ширину лодки</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
+                step=".1"
+                required
+                value="{{ boat.draft }}"
+            />
+            <label for="length">Осадка, м.</label>
+            <div class="invalid-tooltip">Укажите осадку лодки</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
+                required   
+                value="{{ boat.capacity }}"      
+            />
+            <label for="length">Вместимость, чел.</label>
+            <div class="invalid-tooltip">Укажите вместимость лодки</div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <h4 class="mb-3">Фотографии</h4>
+    <div id="react_app" data-boat-id="{{ boat.id }}" >
+        <div class="text-center">
+            <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
+        </div>
+    </div>
+    <script type="text/javascript" src="{% static 'boat/js/form-files.min.js' %}"></script>
+</div>

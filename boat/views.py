@@ -54,6 +54,7 @@ def create(request):
                     'length':   data.get('length'),
                     'width':    data.get('width'),
                     'draft':    data.get('draft'),
+                    'capacity': data.get('capacity'),
                 }
                 boat = Boat.objects.create(**fields, owner=request.user)
 
@@ -80,7 +81,7 @@ def update(request, pk):
         boat = Boat.objects.get(pk=pk, owner=request.user)
         
         if request.method == 'GET':
-            return render(request, 'boat/update.html', context={'boat': BoatSerializer(boat).data})
+            return render(request, 'boat/update.html', context={'boat': boat})
         elif request.method == 'POST':
             data = request.POST
             files = request.FILES.getlist('file')
@@ -90,10 +91,13 @@ def update(request, pk):
                     raise BoatFileCountException()
 
                 with transaction.atomic():
+                    
                     boat.name   = data.get('name')
                     boat.length = data.get('length')
                     boat.width  = data.get('width')
                     boat.draft  = data.get('draft')
+                    boat.capacity = data.get('capacity')
+
                     boat.save()
 
                     BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
@@ -133,7 +137,7 @@ def delete(request, pk):
     #if boat.posts.exists():
     #    return JsonResponse({'message': 'По данному активу уже созданы объявления'}, status=status.HTTP_400_BAD_REQUEST)    
     
-    return JsonResponse({})
+    return JsonResponse({'redirect': '/boats/'})
 
 @login_required
 def get_files(request, pk):
