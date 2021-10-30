@@ -40,7 +40,9 @@ $(document).ready(() => {
 
 $.fn.checkValidity = function() {
     this[0].classList.add("was-validated");
-    return this[0].checkValidity();
+    const res = this[0].checkValidity();
+    if (!res) showErrorToast("Устраните ошибки в полях формы");
+    return res;
 }
 
 $.fn.setCustomValidity = function() {

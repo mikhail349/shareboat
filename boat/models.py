@@ -1,3 +1,4 @@
+from typing import Type
 from django.db import models
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError
@@ -13,7 +14,14 @@ class Boat(models.Model):
 
     class Type(models.IntegerChoices):
         SAILING_YACHT   = 0, _("Парусная яхта")
-        MOTOR_BOAT      = 1, _("Моторная лодка")
+        MOTOR_BOAT      = 1, _("Катер/моторная лодка")
+        BOAT            = 2, _("Лодка")
+        GULET           = 3, _("Гулет")
+        JET_SKI         = 4, _("Гидроцикл")
+        MOTOR_YACHT     = 5, _("Моторная яхта")
+        HOUSE_BOAT      = 6, _("Хаусбот")
+        CATAMARAN       = 7, _("Катамаран")
+        TRIMARAN        = 8, _("Тримаран")
 
     name    = models.CharField(max_length=255)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
@@ -23,7 +31,7 @@ class Boat(models.Model):
     draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
 
-    type    = models.IntegerField(choices=Type.choices, default=Type.SAILING_YACHT)
+    type    = models.IntegerField(choices=Type.choices)
 
     def clean(self):
         pass
@@ -33,10 +41,39 @@ class Boat(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Boat, self).save(*args, **kwargs)
+
+    def is_motor_boat(self):
+        return self.type in self.get_motor_boat_types()
+
+    def is_comfort_boat(self):
+        return self.type in self.get_comfort_boat_types()
+
+    @classmethod
+    def get_motor_boat_types(cls):
+        return [cls.Type.SAILING_YACHT, cls.Type.MOTOR_BOAT, cls.Type.GULET, cls.Type.JET_SKI, cls.Type.MOTOR_YACHT, cls.Type.HOUSE_BOAT, cls.Type.CATAMARAN, cls.Type.TRIMARAN]
+
+    @classmethod
+    def get_comfort_boat_types(cls):
+        return [cls.Type.SAILING_YACHT, cls.Type.GULET, cls.Type.MOTOR_YACHT, cls.Type.HOUSE_BOAT, cls.Type.CATAMARAN, cls.Type.TRIMARAN]
+
+    @classmethod
+    def get_types(cls):
+        types = cls.Type.choices
+        return sorted(types, key=lambda tup: tup[1])
     
     def __str__(self):
         return self.name
 
+class MotorBoat(models.Model):
+    boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="motor_boat")
+    motor_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(9)])
+    motor_power     = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(2000)])
+
+class ComfortBoat(models.Model):
+    boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="comfort_boat")
+    berth_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
+    cabin_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
+    bathroom_amount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(9)])
 
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)

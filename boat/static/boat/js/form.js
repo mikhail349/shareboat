@@ -1,6 +1,6 @@
 $(document).ready(() => {
 
-    class InputValidator {
+    /*class InputValidator {
         constructor(input, tooltip) {
             this.input = input;
             this.tooltip = $(input).siblings(".invalid-tooltip");
@@ -53,11 +53,34 @@ $(document).ready(() => {
         length.addError("Укажите вместимость лодки", (val) => !val || val == 0);
         length.addError("Слишком большая вместимость лодки", (val) => val > 99);
         length.validate();
-    })
+    })*/
 
-    function save() {
+    $("#typeSelect").on('change', (e) => {
+
+        const boatType = parseInt($("#typeSelect option:selected").val());
         
-    }
+        const $collapseMotorBoat = $("#collapseMotorBoat");
+        const $fieldsetMotorBoat = $collapseMotorBoat.find("fieldset");
+
+        if (window.motorBoatTypes.includes(boatType)) {
+            $collapseMotorBoat.collapse("show");
+            $fieldsetMotorBoat.removeAttr("disabled");         
+        } else {
+            $collapseMotorBoat.collapse("hide");
+            $fieldsetMotorBoat.attr("disabled", "");
+        }
+
+        const $collapseComfortBoat = $("#collapseComfortBoat");
+        const $fieldsetComfortBoat = $collapseComfortBoat.find("fieldset");
+
+        if (window.comfortBoatTypes.includes(boatType)) {
+            $collapseComfortBoat.collapse("show");
+            $fieldsetComfortBoat.removeAttr("disabled");         
+        } else {
+            $collapseComfortBoat.collapse("hide");
+            $fieldsetComfortBoat.attr("disabled", "");
+        }
+    })
 
     $("form").on('submit', async (e) => {
         e.preventDefault();

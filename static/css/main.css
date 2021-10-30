@@ -8,6 +8,10 @@
     box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
 }
 
+input[max] {
+    min-width: 207px;
+}
+
 body > .main-content-container {
     padding-top: var(--header-padding-top);
 }  

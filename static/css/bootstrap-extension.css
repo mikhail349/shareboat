@@ -15,14 +15,24 @@
         opacity: 1;
     }
 }
-
+/*
 .btn:focus, button:focus {
     outline: none;
     box-shadow: none;
+}*/
+
+.form-floating > label {
+    white-space: nowrap;
 }
 
 .form-control.is-valid, .was-validated .form-control:valid {
     border-color: var(--bs-gray-400) !important;
     padding-right: 0.75rem !important;
     background-image: inherit !important;
+}
+
+.form-select.is-valid, .was-validated .form-select:valid {
+    border-color: var(--bs-gray-400) !important;
+    padding-right: 0.75rem !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;    
 }

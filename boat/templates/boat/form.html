@@ -1,65 +1,145 @@
 {% load static %}
+
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/form.css' %}">
 <script type="text/javascript" src="{% static 'boat/js/form.min.js' %}"></script>
 {% include 'react.html' %}
 
+<script type="text/javascript">
+    var motorBoatTypes = {{ motor_boat_types|safe }},
+        comfortBoatTypes = {{ comfort_boat_types|safe }}
+</script>
+
 <h4 class="mb-3">Основная информация</h4>
 <div class="form-floating mb-3">                 
     <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="false" aria-describedby="invalidInputName"             
-        required
+        required maxlength="255"
         value="{{ boat.name }}"
     />
     <label for="name">Название лодки</label>
     <div class="invalid-tooltip">Введите название лодки</div>
 </div>
 
-<div class="row">
-    <div class="col-auto">
-        <div class="form-floating mb-3">                 
-            <input type="number" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="false"
-                step=".1"
-                required
-                value="{{ boat.length }}"
-            />
-            <label for="length">Длина, м.</label>
-            <div class="invalid-tooltip">Укажите длину лодки</div>
-        </div>
-    </div>
-    <div class="col-auto">
-        <div class="form-floating mb-3">                 
-            <input type="number" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
-                step=".1"
-                required    
-                value="{{ boat.width }}"     
-            />
-            <label for="length">Ширина, м.</label>
-            <div class="invalid-tooltip">Укажите ширину лодки</div>
-        </div>
-    </div>
-    <div class="col-auto">
-        <div class="form-floating mb-3">                 
-            <input type="number" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
-                step=".1"
-                required
-                value="{{ boat.draft }}"
-            />
-            <label for="length">Осадка, м.</label>
-            <div class="invalid-tooltip">Укажите осадку лодки</div>
-        </div>
-    </div>
+<div class="form-floating mb-3">
+    <select class="form-select" id="typeSelect" name="type" required>
+        <option selected disabled value="">Выберите из списка</option>
+        {% for boat_type in boat_types %}
+           <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
+        {% endfor %}
+    </select>
+    <label for="typeSelect">Тип лодки</label>
+    <div class="invalid-tooltip">Выберите тип лодки</div>
 </div>
 
 <div class="row">
     <div class="col-auto">
         <div class="form-floating mb-3">                 
-            <input type="number" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
-                required   
+            <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="false"
+                step=".1" min="0.1" max="999.9"
+                required
+                value="{{ boat.length }}"
+            />
+            <label for="lengthInput">Длина, м.</label>
+            <div class="invalid-tooltip">Укажите длину лодки</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
+                step=".1" min="0.1" max="99.9"
+                required    
+                value="{{ boat.width }}"     
+            />
+            <label for="widthInput">Ширина, м.</label>
+            <div class="invalid-tooltip">Укажите ширину лодки</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
+                step=".1" min="0.1" max="9.9"
+                required
+                value="{{ boat.draft }}"
+            />
+            <label for="draftInput">Осадка, м.</label>
+            <div class="invalid-tooltip">Укажите осадку лодки</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
+                required min="1" max="99"
                 value="{{ boat.capacity }}"      
             />
-            <label for="length">Вместимость, чел.</label>
+            <label for="capacityInput">Вместимость, чел.</label>
             <div class="invalid-tooltip">Укажите вместимость лодки</div>
         </div>
     </div>
+</div>
+
+<div class="collapse {% if boat.is_motor_boat %}show{% endif %}" id="collapseMotorBoat">
+    <h4 class="mb-3">Двигатели</h4>
+    <fieldset id="fieldsetMotorBoat" {% if not boat.is_motor_boat %}disabled{% endif %}>
+        <div class="row">
+            <div class="col-auto">
+                <div class="form-floating mb-3">                 
+                    <input type="number" id="motorAmountInput" name="motor_amount" class="form-control" placeholder="Укажите кол-во двигателей" autocomplete="false"
+                        required min="1" max="9"
+                        value="{{ boat.motor_boat.motor_amount }}"     
+                    />
+                    <label for="widthInput">Кол-во двигателей</label>
+                    <div class="invalid-tooltip">Укажите кол-во двигателей</div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="form-floating mb-3">                 
+                    <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="false"
+                        required min="1" max="2000"
+                        value="{{ boat.motor_boat.motor_power }}"     
+                    />
+                    <label for="widthInput">Мощность двигателей, л.с.</label>
+                    <div class="invalid-tooltip">Укажите мощность двигателей</div>
+                </div>
+            </div>
+        </div>  
+    </fieldset>
+</div>
+
+<div class="collapse {% if boat.is_comfort_boat %}show{% endif %}" id="collapseComfortBoat">
+    <h4 class="mb-3">Удобства</h4>
+    <fieldset {% if not boat.is_comfort_boat %}disabled{% endif %}>
+        <div class="row">
+            <div class="col-auto">
+                <div class="form-floating mb-3">                 
+                    <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="false"
+                        required min="1" max="99"
+                        value="{{ boat.comfort_boat.berth_amount }}"     
+                    />
+                    <label for="widthInput">Кол-во спальных мест</label>
+                    <div class="invalid-tooltip">Укажите кол-во спальных мест</div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="form-floating mb-3">                 
+                    <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="false"
+                        required min="1" max="99"
+                        value="{{ boat.comfort_boat.cabin_amount }}"     
+                    />
+                    <label for="widthInput">Кол-во кают</label>
+                    <div class="invalid-tooltip">Укажите кол-во кают</div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="form-floating mb-3">                 
+                    <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во ванных комнат" autocomplete="false"
+                        required min="1" max="9"
+                        value="{{ boat.comfort_boat.bathroom_amount }}"     
+                    />
+                    <label for="widthInput">Кол-во ванных комнат</label>
+                    <div class="invalid-tooltip">Укажите кол-во ванных комнат</div>
+                </div>
+            </div>
+        </div>  
+    </fieldset>
 </div>
 
 <div class="mb-3">

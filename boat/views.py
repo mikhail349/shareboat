@@ -12,8 +12,9 @@ from file.exceptions import FileSizeException
 from shareboat.exceptions import ApiException
 
 from .exceptions import BoatFileCountException
-from .models import Boat, BoatFile
+from .models import Boat, MotorBoat, ComfortBoat, BoatFile
 from .serializers import BoatSerializer, BoatFileSerializer
+import json
 
 
 def response_not_found():
@@ -28,6 +29,13 @@ def response_files_limit_count(msg):
 def response_file_limit_size(msg):
     return JsonResponse({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
 
+def get_form_context():
+    return {
+        'boat_types': Boat.get_types(), 
+        'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
+        'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
+    }
+
 FILES_LIMIT_COUNT = 10
 
 @login_required
@@ -38,7 +46,8 @@ def get(request):
 @login_required
 def create(request):
     if request.method == 'GET':
-        return render(request, 'boat/create.html')
+        context = get_form_context()
+        return render(request, 'boat/create.html', context=context)
 
     elif request.method == 'POST':
         data = request.POST
@@ -55,8 +64,23 @@ def create(request):
                     'width':    data.get('width'),
                     'draft':    data.get('draft'),
                     'capacity': data.get('capacity'),
+                    'type':     data.get('type'),
                 }
                 boat = Boat.objects.create(**fields, owner=request.user)
+                if boat.is_motor_boat():
+                    motor_boat_fields = {
+                        'motor_amount': data.get('motor_amount'),
+                        'motor_power': data.get('motor_power')
+                    }
+                    MotorBoat.objects.create(**motor_boat_fields, boat=boat)
+
+                if boat.is_comfort_boat():
+                    comfort_boat_fields = {
+                        'berth_amount':     data.get('berth_amount'),
+                        'cabin_amount':     data.get('cabin_amount'),
+                        'bathroom_amount':  data.get('bathroom_amount')
+                    }
+                    ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
 
                 for file in files:
                     BoatFile.objects.create(boat=boat, file=file)
@@ -81,7 +105,11 @@ def update(request, pk):
         boat = Boat.objects.get(pk=pk, owner=request.user)
         
         if request.method == 'GET':
-            return render(request, 'boat/update.html', context={'boat': boat})
+            context = {
+                'boat': boat, 
+                **get_form_context()
+            }
+            return render(request, 'boat/update.html', context=context)
         elif request.method == 'POST':
             data = request.POST
             files = request.FILES.getlist('file')
@@ -97,8 +125,40 @@ def update(request, pk):
                     boat.width  = data.get('width')
                     boat.draft  = data.get('draft')
                     boat.capacity = data.get('capacity')
-
+                    boat.type   = data.get('type')
                     boat.save()
+
+                    if boat.is_motor_boat():
+                        try:
+                            motor_boat = MotorBoat.objects.get(boat=boat)
+                            motor_boat.motor_amount = data.get('motor_amount')
+                            motor_boat.motor_power = data.get('motor_power')
+                            motor_boat.save()
+                        except MotorBoat.DoesNotExist:
+                            motor_boat_fields = {
+                                'motor_amount': data.get('motor_amount'),
+                                'motor_power': data.get('motor_power')
+                            }
+                            MotorBoat.objects.create(**motor_boat_fields, boat=boat)
+                    else:
+                        MotorBoat.objects.filter(boat=boat).delete()
+
+                    if boat.is_comfort_boat():
+                        try:
+                            comfort_boat = ComfortBoat.objects.get(boat=boat)
+                            comfort_boat.berth_amount     = data.get('berth_amount')
+                            comfort_boat.cabin_amount     = data.get('cabin_amount')
+                            comfort_boat.bathroom_amount  = data.get('bathroom_amount')
+                            comfort_boat.save()
+                        except ComfortBoat.DoesNotExist:
+                            comfort_boat_fields = {
+                                'berth_amount':     data.get('berth_amount'),
+                                'cabin_amount':     data.get('cabin_amount'),
+                                'bathroom_amount':  data.get('bathroom_amount')
+                            }
+                            ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
+                    else:
+                        ComfortBoat.objects.filter(boat=boat).delete()
 
                     BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
 
