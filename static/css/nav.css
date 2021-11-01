@@ -8,6 +8,10 @@
     height: 46px;
 }
 
+.fixed-top {
+    transition: top ease-in-out .2s;
+}
+
 .navbar-brand {
     font-weight: lighter;
 }
