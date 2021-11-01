@@ -7,7 +7,7 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'user/js/login.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/login.css' %}">
-    <form id="signup" action=".?next={{ request.GET.next }}" method="post" class='needs-validation form-signin' novalidate>
+    <form id="signup" action="{% url 'user:login' %}?next={{ request.GET.next }}" method="post" class='needs-validation form-signin' novalidate>
         {% csrf_token %}
 
         <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>  
@@ -31,7 +31,7 @@
         <input type="hidden" name="next" value={{ request.GET.next }} >
         <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Войти</button>
         <p>
-            Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a>
+            Нет аккаунта? <a href="{% url 'user:register' %}">Зарегистрироваться</a>
         </p>
     </form>
 {% endblock %}

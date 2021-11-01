@@ -1,6 +1,7 @@
 
 {% load static %}
 
+<!DOCTYPE html>
 <html lang="ru">
     <head>
         <title>{% block title %}Shareboat{% endblock %}</title>
@@ -33,9 +34,9 @@
                         <ul class="navbar-nav">
                             <li class="nav-item">
                                 {% if user.is_authenticated %}
-                                    <a id="userNameNavBar" class="nav-link" href="/user/update/">{{ user.first_name|default:user.email }}</a>
+                                    <a id="userNameNavBar" class="nav-link" href="{% url 'user:update' %}">{{ user.first_name|default:user.email }}</a>
                                 {% else %}
-                                    <a class="nav-link" href="/user/login/?next={{ request.get_full_path }}">Войти</a>
+                                    <a class="nav-link" href="{% url 'user:login' %}?next={{ request.get_full_path }}">Войти</a>
                                 {% endif %}
                             </li>
                         </ul> 

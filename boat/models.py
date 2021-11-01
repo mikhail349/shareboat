@@ -62,7 +62,7 @@ class Boat(models.Model):
         return sorted(types, key=lambda tup: tup[1])
     
     def __str__(self):
-        return self.name
+        return "%s (%s)" % (self.name, self.get_type_display())
 
 class MotorBoat(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="motor_boat")

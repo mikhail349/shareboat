@@ -23,7 +23,23 @@ $(document).ready(() => {
     $("#btnSendConfirmation").on("click", (e) => {
         e.preventDefault();
         const email = $("#formProfile input[name=email]").val();
-        showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`);
+
+        $.ajax({ 
+            type: "POST",
+            url: "/user/api/send_verification_email/",
+            success: onSuccess,
+            error: onError
+        });
+    
+        function onSuccess(data, status) {
+            showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`);
+        }
+    
+        function onError(error) {
+            showErrorToast(error.responseJSON.message);
+        }
+
+        
     })
 
     $("#formProfile").on('submit', async (e) => {
