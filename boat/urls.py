@@ -3,6 +3,8 @@ from django.conf.urls import url
 
 from . import views
 
+app_name = 'boat'
+
 apiurlpatterns = [
     path('create/', views.create, name='api_create'),
     url(r'delete/(?P<pk>[0-9]+)/', views.delete),
@@ -10,7 +12,7 @@ apiurlpatterns = [
 ]
 
 urlpatterns = [
-    path('', views.get, name='get'),
+    path('', views.get, name='boats'),
     path('create/', views.create, name='create'),
     url(r'update/(?P<pk>[0-9]+)/', views.update, name='update'),
 

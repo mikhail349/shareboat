@@ -8,6 +8,10 @@
     height: 46px;
 }
 
+.navbar-brand {
+    font-weight: lighter;
+}
+
 #userNotificationsNavBar img {
     filter: brightness(0) invert(1);
 }

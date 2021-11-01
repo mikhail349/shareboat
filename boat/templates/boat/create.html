@@ -12,11 +12,11 @@
           <h1 class="jumbotron-heading">Добавить лодку</h1>    
         </section>
 
-        <form method="post" action="." enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form method="post" action="." enctype="multipart/form-data" class="needs-validation " novalidate>
             {% csrf_token %}
             {% include 'boat/form.html' %}                
             <hr/>
-            <button type="submit" class="btn btn-outline-success">Сохранить</button>
+            <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>
         </form>
 
     </div>

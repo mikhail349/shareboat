@@ -18,7 +18,7 @@
             <hr/>
             <div class="row g-3">
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-outline-success">Сохранить</button>                          
+                    <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>                          
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
@@ -43,20 +43,6 @@
                 </div>
             </div>
         </div>
-
-        <!--<script>
-            {% if boat %}
-                var boat = {{ boat|safe }};
-            {% endif %}
-        </script>
-
-        <div id="react_app">
-            <div class="text-center">
-                <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
-            </div>
-        </div>
-        <script type="text/javascript" src="{% static 'boat/js/update.min.js' %}"></script>-->
-
     </div>
 
 {% endblock  %}

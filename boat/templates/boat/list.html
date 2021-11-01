@@ -12,7 +12,7 @@
           <h1 class="jumbotron-heading">Мой флот</h1>
           <p class="lead text-muted">Здесь {% if not boats %}будут{% endif %} представлены все ваши лодки</p>
           <p>
-            <a href="{% url 'create' %}" class="btn btn-primary my-2">Добавить лодку</a>
+            <a href="{% url 'boat:create' %}" class="btn btn-primary my-2">Добавить лодку</a>
           </p>
         </div>
     </section>
@@ -22,9 +22,9 @@
             <div class="container">
                 <div class="row">
                     {% for boat in boats %}
-                        <div class="col-md-3">
+                        <div class="col-lg-4 col-md-4">
                             <div class="card mb-4 box-shadow">
-                                <a href="{% url 'update' boat.id %}">
+                                <a href="{% url 'boat:update' boat.id %}">
                                     {% if boat.files.count > 1 %}
 
                                         <div id="fileCarousel{{forloop.counter0}}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
