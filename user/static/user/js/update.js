@@ -106,7 +106,7 @@ $(document).ready(() => {
             showSuccessToast();
             const userName = $('input[name=first_name]').val()
             const email = $("#formProfile input[name=email]").val();
-            $("#userNameNavBar").text(userName || email);
+            $("#navbarDropdownUserProfile").text(userName || email);
         }
     
         function onError(error) {

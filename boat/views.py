@@ -9,7 +9,6 @@ from rest_framework import status
 from PIL import UnidentifiedImageError
 
 from file.exceptions import FileSizeException
-from shareboat.exceptions import ApiException
 
 from .exceptions import BoatFileCountException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile

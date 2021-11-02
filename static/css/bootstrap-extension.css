@@ -21,6 +21,16 @@
     box-shadow: none;
 }*/
 
+@media (min-width: 992px) {
+    .navbar-brand {
+        font-weight: lighter;
+    } 
+}
+
+.translate-95-right {
+    transform: translate(-95%,-50%)!important;
+}
+
 .form-floating > label {
     white-space: nowrap;
 }

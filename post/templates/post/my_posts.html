@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Мои объявления{% endblock  %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'boat/js/list.min.js' %}"></script>
+    
+    <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Мои объявления</h1>
+          <p class="lead text-muted">Здесь {% if not posts %}будут{% endif %} представлены все ваши объявления</p>
+          <p>
+            <a href="{% url 'post:create' %}" class="btn btn-primary my-2">Добавить объявление</a>
+          </p>
+        </div>
+    </section>
+
+    {% if posts %}
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row g-4">
+                    {% for post in posts %}
+                        <div class="col-lg-4 col-md-4">
+                            <div class="card box-shadow h-100">
+                                <a href="{% url 'post:update' pk=post.pk %}">
+                                    {% include 'boat/carousel.html' with boat=post.boat %}
+                                </a>    
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ post.boat.name }}</h5>     
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ post.boat.get_type_display }}</h6>  
+                                    <p class="card-text">{{ post.text|truncatechars:125 }}</p>
+                                    
+                                </div>
+                                {% if post.status == 0 %}
+                                    <div class="card-footer">
+                                        <a href="#" class="btn btn-warning text-dark">На проверку</a>
+                                    </div>
+                                {% endif %}
+                                <h5>
+                                    <span class="position-absolute top-0 start-100 translate-95-right badge {{ post.get_bg_by_status }}">{{ post.get_status_display }}</span>
+                                </h5>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock  %}

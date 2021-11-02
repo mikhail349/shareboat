@@ -16,6 +16,13 @@ class Post(models.Model):
     text = models.TextField()
     pub_datetime = models.DateTimeField(null=True, blank=True)
 
+    def get_bg_by_status(self):
+        if self.status == self.Status.DRAFT:
+            return 'bg-secondary'
+        if self.status == self.Status.APPROVING:
+            return 'bg-warning text-dark'
+        return 'bg-success'
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Post, self).save(*args, **kwargs)
@@ -39,7 +46,7 @@ class PostPrice(models.Model):
         DAYLY               = 0, _("Посуточно")
         DAYLY_PER_PERSON    = 1, _("Человеко-сутки")
 
-    post = models.ForeignKey(Post, on_delete=models.PROTECT, related_name="prices")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="prices")
     type = models.IntegerField(choices=Type.choices, default=Type.DAYLY)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     start_date = models.DateField()

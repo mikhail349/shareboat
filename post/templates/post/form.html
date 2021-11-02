@@ -1,0 +1,23 @@
+{% load static %}
+{% csrf_token %}
+
+<!--<link rel="stylesheet" type="text/css" href="{% static 'boat/css/form.css' %}">-->
+<script type="text/javascript" src="{% static 'post/js/form.min.js' %}"></script>
+
+<h4 class="mb-3">Основная информация</h4>
+<div class="form-floating mb-3">
+    <select class="form-select" id="boatSelect" name="boat" required>
+        <option selected disabled value="">Выберите из списка</option>
+        {% for boat in boats %}
+           <option value="{{ boat.pk }}" {% if boat.pk == post.boat.pk %}selected{% endif %}>{{ boat.name }}</option> 
+        {% endfor %}
+    </select>
+    <label for="boatSelect">Лодка</label>
+    <div class="invalid-tooltip">Выберите лодку</div>
+</div>
+
+<div class="form-floating mb-3">                 
+    <textarea id="textareaText" name="text" class="form-control" autocomplete="false" style="height: 100px" required>{{ post.text }}</textarea>
+    <label for="textareaText">Текст объявления</label>
+    <div class="invalid-tooltip">Введите текст объявления</div>
+</div>

@@ -2,19 +2,17 @@
 
 {% load static %}
 
-{% block title %}Изменить лодку{% endblock %}
+{% block title %}Изменить объявление{% endblock %}
 
 {% block content %}
-    <script type="text/javascript" src="{% static 'boat/js/update.min.js' %}"></script>
-
-    <div class="container-lg">
-        <section class="jumbotron text-center">   
-          <h1 class="jumbotron-heading">Изменить лодку</h1>    
+    <script type="text/javascript" src="{% static 'post/js/update.min.js' %}"></script>
+    <div class="container">
+        <section class="jumbotron text-center">
+          <h1 class="jumbotron-heading">Изменить объявление</h1>    
         </section>
 
-        <form method="post" action="/boats/api/update/{{ boat.id }}/" enctype="multipart/form-data" class="needs-validation" novalidate>
-            {% csrf_token %}
-            {% include 'boat/form.html' %}                
+        <form method="post" action="{% url 'post:api_update' pk=post.pk %}" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% include 'post/form.html' %}                
             <hr/>
             <div class="row g-3">
                 <div class="col-auto">
@@ -26,15 +24,15 @@
             </div>
         </form>
 
-         <div id="confirmDeleteModal" class="modal" data-boat-id="{{ boat.id }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeletionModalLabel" style="display: none">
+        <div id="confirmDeleteModal" class="modal" data-post-id="{{ post.pk }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeletionModalLabel" style="display: none">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeletionModalLabel">Удаление актива</h5>
+                    <h5 class="modal-title" id="confirmDeletionModalLabel">Удаление объявления</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Удалить лодку?</p>
+                    <p>Удалить объявление?</p>
                 </div>
                 <div class="modal-footer">
                     <button id="btnConfirmDelete" type="button" class="btn btn-danger">Удалить</button>
@@ -43,6 +41,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 {% endblock  %}
