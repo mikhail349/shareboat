@@ -4,7 +4,11 @@
 <!DOCTYPE html>
 <html lang="ru">
     <head>
-        <title>{% block title %}Shareboat{% endblock %}</title>
+        {% if request.path == '/' %}
+            <title>ShareBoat</title>
+        {% else %}
+            <title>{% block title %}{% endblock %} - ShareBoat</title>
+        {% endif %}
             
         {% include 'bootstrap.html' %}
 

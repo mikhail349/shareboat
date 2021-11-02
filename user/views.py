@@ -13,6 +13,7 @@ from shareboat.tokens import account_activation_token
 
 import logging
 logger_admin_mails = logging.getLogger('mail_admins')
+logger = logging.getLogger(__name__)
 
 from .models import User
 from emails.models import UserEmail
@@ -104,20 +105,17 @@ def register(request):
         data = request.POST
 
         if User.objects.filter(email=data['email']).exists():
-            context = {
-                'errors': '%s уже зарегистрирован в системе' % data['email']
-            }
-            return render(request, 'user/register.html', context=context)        
+            return render(request, 'user/register.html', context={'errors': '%s уже зарегистрирован в системе' % data['email']})        
 
-        user = User.objects.create(email=data['email'])
+        user = User.objects.create(email=data['email'], first_name=data.get('first_name'))
         user.set_password(data['password1'])
         user.save()
         django_login(request, user)
         
         try:
-            _send_verification_email(request, user)
+            UserEmail.send_verification_email(request, user)
             logger_admin_mails.info("Зарегистрировался новый пользователь %s" % data['email'])
-        except:
-            pass
+        except Exception as e:
+            logger.error(str(e))
         
         return redirect('/')

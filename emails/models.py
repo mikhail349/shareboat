@@ -34,7 +34,7 @@ class UserEmail(models.Model):
             user_email = None
 
         if not user_email:
-            return datetime.datetime.now()
+            return timezone.now()
         
         next_dt = user_email.last_email_dt + datetime.timedelta(minutes=cls.VERIFICATION_LAG_MINUTES)
         if next_dt < timezone.now():
@@ -43,9 +43,10 @@ class UserEmail(models.Model):
         return next_dt
 
     @classmethod
-    def send_verification_email(cls, request, user):
-        now = timezone.now()
+    def send_verification_email(cls, request, user):        
+        print('send_verification_email')
         next_dt = cls.get_next_verification_email_datetime(user) 
+        now = timezone.now()
         if timezone.now() < next_dt:
             total_seconds = (next_dt - now).total_seconds()
             minutes = total_seconds // 60

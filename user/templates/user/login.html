@@ -16,7 +16,7 @@
             <div class="alert alert-danger">{{ errors }}</div>
         {% endif %}  
         
-        <div class="form-floating">            
+        <div class="form-floating mb-3">            
             <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="email" placeholder="Эл. почта" required class="form-control" >
             <label for="email">Эл. почта</label>
             <div class="invalid-tooltip">Введите эл. почту</div>
