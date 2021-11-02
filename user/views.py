@@ -15,7 +15,6 @@ import logging
 logger_admin_mails = logging.getLogger('mail_admins')
 
 from .models import User
-#from emails.utils import send_verification_email as _send_verification_email
 from emails.models import UserEmail
 
 def verify(request, uidb64, token):
@@ -39,7 +38,6 @@ def send_verification_email(request):
         user = request.user
         if user.email_confirmed:
             return JsonResponse({'message': "Почта %s уже подтверждена" % user.email}, status=400)
-        #_send_verification_email(request, user)
         dt = UserEmail.send_verification_email(request, user)
         return JsonResponse({'next_verification_email_datetime': dt.isoformat()})
     except Exception as e:
