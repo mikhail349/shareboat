@@ -30,7 +30,7 @@ def verify(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         pass
 
-    return HttpResponse("Activation link is invalid!")
+    return render(request, 'user/not_verified.html')
 
 @login_required
 def send_verification_email(request):
