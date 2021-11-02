@@ -7,11 +7,11 @@
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/update.css' %}">
     <script type="text/javascript" src="{% static 'user/js/update.min.js' %}"></script>
-
-    <script type="text/javascript">
-        var nextVerificationEmailDatetime = new Date("{{ next_verification_email_datetime.isoformat }}")
-    </script>
-
+    {% if not user.email_confirmed %}
+        <script type="text/javascript">      
+            var nextVerificationEmailDatetime = new Date("{{ next_verification_email_datetime.isoformat }}")    
+        </script>
+    {% endif %}
     <div class="container">                 
         <section class="jumbotron text-center">     
             <img
