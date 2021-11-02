@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'asset',
     'file',
     'post',
-    'boat'
+    'boat',
+    'emails'
 ]
 
 REST_FRAMEWORK = {
@@ -173,9 +174,62 @@ EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_USE_SSL = os.environ['EMAIL_USE_SSL']
 DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
-
+SERVER_EMAIL = os.environ['SERVER_EMAIL']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ADMINS = list(eval((os.environ['ADMINS'])))
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },  
+    'handlers': {
+        'file': {   
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(os.environ['LOGGER_ROOT'], 'shareboat.log'),
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'INFO',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },  
+    'root': {
+        'handlers': ['file', 'console'],
+        'level': 'ERROR',
+        'propagate': True
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['file', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'mail_admins': {
+            'handlers': ['mail_admins'],
+            'level': 'INFO',
+        }
+    }
+}

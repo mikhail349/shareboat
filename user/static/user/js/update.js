@@ -1,5 +1,12 @@
 $(document).ready(() => {
 
+    var verificationEmailTimer = null;
+
+    if ( $("#alertEmailNotConfirmed").length ) {
+        verificationEmailInterval();
+        verificationEmailTimer = setInterval(verificationEmailInterval, 1000);
+    }
+
     $("img.avatar").on("click", (e) => {
         $('input[name=avatar]').trigger('click'); 
     })
@@ -20,10 +27,36 @@ $(document).ready(() => {
         }
     })
 
+
+    function verificationEmailInterval() {
+        const now = new Date();
+
+        var diff = nextVerificationEmailDatetime.getTime() - now.getTime();
+        var totalSeconds = Math.round(diff / 1000);
+
+        if (totalSeconds <= 0) {
+            clearInterval(verificationEmailTimer);
+            $("#alertEmailNotConfirmed span").text("Ваша почта пока ещё не подтверждена.");
+            $("#btnSendConfirmation").show();
+            return;
+        }
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+        const seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+        let val = '';
+        if (hours > 0) val += `${hours} ч.`;
+        if (minutes > 0) val += ` ${minutes} мин.`;
+        if (seconds > 0) val += ` ${seconds} сек.`;
+        val = val.trim()
+        
+        $("#alertEmailNotConfirmed span").html(`Письмо отправлено на почту. Повторная отправка возможна через <span style='word-wrap:break-word; display:inline-block;' >${val}</span>`)
+    }
+
     $("#btnSendConfirmation").on("click", (e) => {
         e.preventDefault();
-        const email = $("#formProfile input[name=email]").val();
 
+        $("#btnSendConfirmation").hide();
         $.ajax({ 
             type: "POST",
             url: "/user/api/send_verification_email/",
@@ -32,15 +65,18 @@ $(document).ready(() => {
         });
     
         function onSuccess(data, status) {
-            showInfoToast(`Письмо с подтверждением отправлено на почту ${email}`);
+            nextVerificationEmailDatetime = new Date(data.next_verification_email_datetime);
+            verificationEmailInterval();
+            verificationEmailTimer = setInterval(verificationEmailInterval, 1000);
         }
     
         function onError(error) {
             showErrorToast(error.responseJSON.message);
-        }
-
-        
+            $("#btnSendConfirmation").show();
+        }   
     })
+
+
 
     $("#formProfile").on('submit', async (e) => {
         e.preventDefault();   

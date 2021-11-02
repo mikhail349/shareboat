@@ -8,6 +8,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/update.css' %}">
     <script type="text/javascript" src="{% static 'user/js/update.min.js' %}"></script>
 
+    <script type="text/javascript">
+        var nextVerificationEmailDatetime = new Date("{{ next_verification_email_datetime.isoformat }}")
+    </script>
+
     <div class="container">                 
         <section class="jumbotron text-center">     
             <img
@@ -30,8 +34,9 @@
             <input type="file" name="avatar" accept="image/*" hidden /> 
             <input type="text" name="email" hidden value="{{ user.email }}"/> 
             {% if not user.email_confirmed %}
-                <div class="alert alert-warning">
-                    Ваша почта пока ещё не подтверждена. <a id="btnSendConfirmation" data-email="{{ user.email }}" href="#" class="link-secondary">Отправить письмо для подтверждения.</a>
+                <div id="alertEmailNotConfirmed" class="alert alert-warning">
+                    <span>Ваша почта пока ещё не подтверждена.</span>
+                    <a id="btnSendConfirmation" data-email="{{ user.email }}" href="#" class="link-secondary" style="display: none">Отправить письмо для подтверждения</a>
                 </div>
             {% endif %}
             <div class="form-floating mb-3">            

@@ -1,19 +1,22 @@
+from django.db.models.fields import EmailField
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db import transaction
-from shareboat.tokens import account_activation_token
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_text
-
-
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_text
 from django.contrib.auth import get_user_model
-from django.contrib.sites.shortcuts import get_current_site
+
+from shareboat.tokens import account_activation_token
+
+import logging
+logger_admin_mails = logging.getLogger('mail_admins')
 
 from .models import User
-from .utils import send_verification_email as _send_verification_email
+#from emails.utils import send_verification_email as _send_verification_email
+from emails.models import UserEmail
 
 def verify(request, uidb64, token):
     uid = force_text(urlsafe_base64_decode(uidb64))
@@ -36,15 +39,17 @@ def send_verification_email(request):
         user = request.user
         if user.email_confirmed:
             return JsonResponse({'message': "Почта %s уже подтверждена" % user.email}, status=400)
-        _send_verification_email(request, user)
-        return JsonResponse({})
+        #_send_verification_email(request, user)
+        dt = UserEmail.send_verification_email(request, user)
+        return JsonResponse({'next_verification_email_datetime': dt.isoformat()})
     except Exception as e:
         return JsonResponse({'message': str(e)}, status=400)
 
 @login_required
 def update(request):
     if request.method == 'GET':
-        return render(request, 'user/update.html')
+        next_verification_email_datetime = UserEmail.get_next_verification_email_datetime(request.user)
+        return render(request, 'user/update.html', context={'next_verification_email_datetime': next_verification_email_datetime})
     elif request.method == 'POST':
         try:
             with transaction.atomic():
@@ -79,7 +84,6 @@ def login(request):
         user = authenticate(request, email=data['email'], password=data['password'])
         if user is not None:
             django_login(request, user)
-            print(request.POST.get('next'))
             return redirect(request.POST.get('next'))
 
         context = {
@@ -110,9 +114,12 @@ def register(request):
         user = User.objects.create(email=data['email'])
         user.set_password(data['password1'])
         user.save()
+        django_login(request, user)
+        
         try:
             _send_verification_email(request, user)
+            logger_admin_mails.info("Зарегистрировался новый пользователь %s" % data['email'])
         except:
             pass
-        django_login(request, user)
+        
         return redirect('/')
