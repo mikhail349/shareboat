@@ -76,8 +76,6 @@ $(document).ready(() => {
         }   
     })
 
-
-
     $("#formProfile").on('submit', async (e) => {
         e.preventDefault();   
 
