@@ -75,6 +75,22 @@ class ComfortBoat(models.Model):
     cabin_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
     bathroom_amount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(9)])
 
+class Specification(models.Model):
+    
+    class Category(models.IntegerChoices):
+        OTHER       = 0, _("Прочее")
+        ELECTRONICS = 1, _("Электроника")
+
+    name        = models.CharField(max_length=255)
+    #amount      = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
+    boat        = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="specifications")
+    сategory    = models.IntegerField(choices=Category.choices)
+
+    @classmethod
+    def get_сategories(cls):
+        сategories = cls.Category.choices
+        return sorted(сategories, key=lambda tup: tup[1])
+
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')

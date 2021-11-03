@@ -11,7 +11,7 @@ from PIL import UnidentifiedImageError
 from file.exceptions import FileSizeException
 
 from .exceptions import BoatFileCountException
-from .models import Boat, MotorBoat, ComfortBoat, BoatFile
+from .models import Boat, MotorBoat, ComfortBoat, BoatFile, Specification
 from .serializers import BoatSerializer, BoatFileSerializer
 import json
 
@@ -33,6 +33,7 @@ def get_form_context():
         'boat_types': Boat.get_types(), 
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
+        'categories': Specification.get_сategories()
     }
 
 FILES_LIMIT_COUNT = 10
