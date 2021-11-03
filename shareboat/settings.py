@@ -224,7 +224,7 @@ LOGGING = {
         },
         'django.server': {
             'handlers': ['file', 'console'],
-            'level': 'WARNING',
+            'level': 'INFO',
             'propagate': False,
         },
         'mail_admins': {
