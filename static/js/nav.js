@@ -1,5 +1,10 @@
 var lastScrollTop = 0;
 
+$(document).ready(() => {
+     $('.navbar a.active').removeClass('active');
+     $('.navbar a[href="' + location.pathname + '"').addClass("active");
+})
+
 window.addEventListener("scroll", () => {
    var st = window.pageYOffset || document.documentElement.scrollTop;
    if (st > lastScrollTop && st > 62){
