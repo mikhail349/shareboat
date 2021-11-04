@@ -83,9 +83,11 @@ $(document).ready(() => {
         if (!form.checkValidity()) return;
 
         const formData = new FormData(form[0]);
+        const $avatarSrc = $("img.avatar").attr("src");
+        const doAvatarSave = $("img.avatar")[0].hasAttribute('data-do-save');
 
-        if ($("img.avatar")[0].hasAttribute('data-do-save')) {
-            let response = await fetch($("img.avatar").attr("src"));
+        if (doAvatarSave) {
+            let response = await fetch($avatarSrc);
             let data = await response.blob();
             formData.set("avatar", data, avatarName);
         }
@@ -106,7 +108,15 @@ $(document).ready(() => {
             showSuccessToast();
             const userName = $('input[name=first_name]').val()
             const email = $("#formProfile input[name=email]").val();
-            $("#navbarDropdownUserProfile").text(userName || email);
+            $("#navbarDropdownUserProfile span").text(userName || email);
+            if (doAvatarSave) {
+                if ($("#navbarDropdownUserProfile img").length) {
+                    $("#navbarDropdownUserProfile img").attr("src", $avatarSrc);
+                } else {
+                    $("#navbarDropdownUserProfile").prepend('<img class="d-inline-block align-top nav-bar-avatar rounded-circle mx-2" src="' + $avatarSrc + '" />');
+                }      
+            }
+            
         }
     
         function onError(error) {

@@ -38,7 +38,10 @@
                                     <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle" href="#"
                                         role="button" data-bs-toggle="dropdown" aria-expanded="false"
                                     >
-                                        {{ user.first_name|default:user.email }}
+                                        {% if user.avatar %}
+                                            <img class="d-inline-block align-top nav-bar-avatar rounded-circle mx-2" src="{{ user.avatar.url }}" />
+                                        {% endif %}
+                                        <span>{{ user.first_name|default:user.email }}</span>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">
                                         <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
