@@ -1,6 +1,9 @@
 from django.db import models, transaction
 from PIL import Image
 
+import logging
+logger = logging.getLogger(__name__)
+
 from . import utils, exceptions
 
 def verify_imagefile(sender, instance, *args, **kwargs):
@@ -36,8 +39,8 @@ def compress_imagefile(sender, instance, created, *args, **kwargs):
                     img = Image.open(image_file.path)
                     img = img.resize(utils.limit_size(img.width, img.height), Image.ANTIALIAS)
                     img.save(image_file.path, quality=70, optimize=True) 
-    except:
-        pass
+    except Exception as e:
+        logger.error(str(e))
 
 
 def delete_file(sender, instance, *args, **kwargs):

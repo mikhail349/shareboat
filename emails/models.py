@@ -44,7 +44,6 @@ class UserEmail(models.Model):
 
     @classmethod
     def send_verification_email(cls, request, user):        
-        print('send_verification_email')
         next_dt = cls.get_next_verification_email_datetime(user) 
         now = timezone.now()
         if timezone.now() < next_dt:

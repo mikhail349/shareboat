@@ -208,28 +208,21 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'mail_admins': {
-            'level': 'INFO',
             'class': 'django.utils.log.AdminEmailHandler',
         }
     },  
     'root': {
         'handlers': ['file', 'console'],
-        'level': 'ERROR',
-        'propagate': True
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'django.server': {
             'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': False,
         },
         'mail_admins': {
-            'handlers': ['mail_admins'],
-            'level': 'INFO',
-        }
+            'handlers': ['file', 'console', 'mail_admins'],
+            'propagate': False,
+        },
     }
 }

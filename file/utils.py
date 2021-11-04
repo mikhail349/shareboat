@@ -3,6 +3,9 @@ from django.conf import settings
 import uuid
 import os
 
+import logging
+logger = logging.getLogger(__name__)
+
 def get_file_path(instance, filename):
     ext = filename.split('.')[-1]
     return "%s.%s" % (uuid.uuid4(), ext)
@@ -11,7 +14,7 @@ def remove_file(path):
     try:   
         os.remove(os.path.join(settings.MEDIA_ROOT, path))
     except Exception as e:
-        print("remove_file error:", str(e))
+        logger.error(str(e))
 
 def limit_size(width, height):
     max_width = 1920
