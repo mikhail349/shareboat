@@ -30,8 +30,9 @@
 
         <input type="hidden" name="next" value={{ request.GET.next }} >
         <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Войти</button>
-        <p>
-            Нет аккаунта? <a href="{% url 'user:register' %}">Зарегистрироваться</a>
-        </p>
+        
+        <div><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>
+        <div><a href="{% url 'user:register' %}">Зарегистрироваться</a></div>
     </form>
+    
 {% endblock %}

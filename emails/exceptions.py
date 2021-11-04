@@ -1,0 +1,2 @@
+class EmailLagError(Exception):
+    pass

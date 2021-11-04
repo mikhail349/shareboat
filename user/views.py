@@ -5,9 +5,11 @@ from django.contrib.auth import authenticate, login as django_login, logout as d
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db import transaction
+from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_text
 from django.contrib.auth import get_user_model
+from emails.exceptions import EmailLagError
 
 from shareboat.tokens import account_activation_token
 
@@ -31,7 +33,7 @@ def verify(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         pass
 
-    return render(request, 'user/not_verified.html')
+    return render(request, 'user/invalid_link.html')
 
 @login_required
 def send_verification_email(request):
@@ -95,6 +97,44 @@ def login(request):
 def logout(request):
     django_logout(request)
     return redirect('/')
+
+def restore_password(request):
+    return render(request, 'user/restore_password.html')
+
+def change_password(request, uidb64, token):
+    uid = force_text(urlsafe_base64_decode(uidb64))
+    User = get_user_model()
+    
+    if request.method == 'GET':
+        try:
+            user = User.objects.get(pk=uid)
+            if account_activation_token.check_token(user, token):
+                return render(request, 'user/change_password.html', context={'email': user.email, 'uidb64': uidb64, 'token': token})
+        except User.DoesNotExist:
+            pass
+
+    elif request.method == "POST":
+        data = request.POST
+        user = User.objects.get(pk=uid)
+        if account_activation_token.check_token(user, token):
+            user.set_password(data['password1'])
+            user.save()
+            django_login(request, user)
+            return redirect('/')
+
+    return render(request, 'user/invalid_link.html')
+
+def send_restore_password_email(request):
+    try:
+        email = request.POST.get('email')
+        user = User.objects.get(email=email)
+        dt = UserEmail.send_restore_password_email(request, user)
+        return JsonResponse({'next_email_datetime': dt.isoformat()})
+    
+    except User.DoesNotExist:
+        return JsonResponse({'message': 'Почтовый адрес %s не найден в системе' % email}, status=400)
+    except EmailLagError as e:
+        return JsonResponse({'message': str(e)}, status=400)
 
 def register(request):
 

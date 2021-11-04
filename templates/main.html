@@ -22,44 +22,9 @@
         <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.ico' %}"/>
     </head>
     <body>
-        <header>
-            <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
-                <div class="container-md">
-                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <a class="navbar-brand me-auto p-2" href="/">ShareBoat</a>
-                    <div class="collapse navbar-collapse" id="menu">
-                        <ul class="navbar-nav me-auto">    
-                        </ul>  
-                        <ul class="navbar-nav">
-                            {% if user.is_authenticated %}
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                    >
-                                        {% if user.avatar %}
-                                            <img class="d-inline-block align-top nav-bar-avatar rounded-circle mx-2" src="{{ user.avatar.url }}" />
-                                        {% endif %}
-                                        <span>{{ user.first_name|default:user.email }}</span>
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">
-                                        <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
-                                        <li><a class="dropdown-item" href="{% url 'boat:boats' %}">Флот</a></li>
-                                        <li><a class="dropdown-item" href="{% url 'post:my_posts' %}">Объявления</a></li>
-                                    </ul>
-                                </li>
-                            {% else %}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'user:login' %}?next={{ request.get_full_path }}">Войти</a>
-                                </li>
-                            {% endif %}
-                            </li>
-                        </ul> 
-                    </div>
-                </div>
-            </nav>            
-        </header>
+        
+        {% include 'nav.html' %}
+
         <div class="main-content-container">
             {% block content %}{% endblock %}
         </div>
@@ -81,14 +46,7 @@
             </div>
         </div>
     
-        <div class="toast-container position-fixed p-3 top-0-header start-50 translate-middle-x">
-            <div id="toast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body"></div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
+        {% include 'toast.html' %}
 
     </body>
 </html>
