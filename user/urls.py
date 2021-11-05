@@ -20,8 +20,8 @@ urlpatterns = [
     path('update/', views.update, name='update'),
     path('restore_password/', views.restore_password, name='restore_password'),
 
-    path('verify/<uidb64>/<token>/', views.verify, name='verify'),
-    path('change_password/<uidb64>/<token>/', views.change_password, name='change_password'),
+    path('verify/<token>/', views.verify, name='verify'),
+    path('change_password/<token>/', views.change_password, name='change_password'),
 
     path('api/', include(urlapipatterns))
 ]

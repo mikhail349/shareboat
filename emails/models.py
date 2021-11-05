@@ -1,11 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
 from .exceptions import EmailLagError
-from django.contrib.auth.tokens import default_token_generator  
+from shareboat import tokens
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 
@@ -57,10 +54,9 @@ class UserEmail(models.Model):
         type = cls.Type.VERIFICATION    
         cls.validate_next_email_dt(user, type)
 
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
+        token = tokens.generate_token(user, tokens.VERIFICATION)
         domain = ("https" if request.is_secure() else "http") + "://" + get_current_site(request).domain
-        html = render_to_string("emails/verification_email.html", context={'uid': uid, 'token': token, 'domain': domain})
+        html = render_to_string("emails/verification_email.html", context={'token': token, 'domain': domain})
         send_email("Подтверждение почты", html, [user.email])
         cls.objects.update_or_create(user=user, type=type)
         return cls.get_next_email_datetime(user, type)
@@ -69,11 +65,9 @@ class UserEmail(models.Model):
     def send_restore_password_email(cls, request, user):      
         type = cls.Type.RESTORE_PASSWORD  
         cls.validate_next_email_dt(user, type)
-
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
+        token = tokens.generate_token(user, tokens.RESTORE_PASSWORD)
         domain = ("https" if request.is_secure() else "http") + "://" + get_current_site(request).domain
-        html = render_to_string("emails/restore_password_email.html", context={'uid': uid, 'token': token, 'domain': domain})
+        html = render_to_string("emails/restore_password_email.html", context={'token': token, 'domain': domain})
         send_email("Восстановление пароля", html, [user.email])
         cls.objects.update_or_create(user=user, type=type)
         return cls.get_next_email_datetime(user, type)

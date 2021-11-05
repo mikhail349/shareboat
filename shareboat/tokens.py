@@ -1,12 +1,24 @@
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from shareboat.settings import SECRET_KEY
+from django.conf import settings
+import datetime
+import jwt
+from .exceptions import InvalidToken
 
-# Не используется
-class TokenGenerator(PasswordResetTokenGenerator):
-    key_salt = SECRET_KEY
+VERIFICATION = 'verification'
+RESTORE_PASSWORD = 'restore_password'
 
-    def _make_hash_value(self, user, timestamp):
-        return str(user.pk) + str(timestamp) + str(user.is_active) + str(self.key_salt)
+def generate_token(user, type):
+    
+    token_payload = {
+        'user_id': user.id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=1),
+        'iat': datetime.datetime.utcnow(),    
+        'type': type
+    }
 
-      
-verification_email_token = TokenGenerator()
+    return jwt.encode(token_payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+
+def check_token(token, type):
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+    if payload.get('type') != type:
+        raise InvalidToken("Неверный токен")
+    return payload

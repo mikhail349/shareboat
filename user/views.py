@@ -3,11 +3,12 @@ from django.contrib.auth import authenticate, login as django_login, logout as d
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db import transaction
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_text
 from django.contrib.auth import get_user_model
 from emails.exceptions import EmailLagError
-from django.contrib.auth.tokens import default_token_generator 
+import jwt
+
+from shareboat import tokens
+from shareboat.exceptions import InvalidToken
 
 import logging
 logger_admin_mails = logging.getLogger('mail_admins')
@@ -16,20 +17,21 @@ logger = logging.getLogger(__name__)
 from .models import User
 from emails.models import UserEmail
 
-def verify(request, uidb64, token):
-    uid = force_text(urlsafe_base64_decode(uidb64))
+def verify(request, token):
     User = get_user_model()
     try: 
-        user = User.objects.get(pk=uid)
-        if default_token_generator.check_token(user, token):
-            if not user.email_confirmed:
-                user.email_confirmed = True
-                user.save()
-            return render(request, 'user/verified.html')
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        pass
+        payload = tokens.check_token(token, tokens.VERIFICATION)
+        user = User.objects.get(pk=payload.get('user_id'))
+        if not user.email_confirmed:
+            user.email_confirmed = True
+            user.save()
+        return render(request, 'user/verified.html')
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError):
+        msg = 'Неверная ссылка'
+    except jwt.ExpiredSignatureError:
+        msg = 'Ссылка устарела'
 
-    return render(request, 'user/invalid_link.html')
+    return render(request, 'user/invalid_link.html', context={'msg': msg})
 
 @login_required
 def send_verification_email(request):
@@ -97,24 +99,24 @@ def logout(request):
 def restore_password(request):
     return render(request, 'user/restore_password.html')
 
-def change_password(request, uidb64, token):
-    uid = force_text(urlsafe_base64_decode(uidb64))
-    User = get_user_model()
-
+def change_password(request, token):
+    User = get_user_model() 
     try:
-        user = User.objects.get(pk=uid)
-        if default_token_generator.check_token(user, token):
-            if request.method == 'GET':
-                return render(request, 'user/change_password.html', context={'email': user.email, 'uidb64': uidb64, 'token': token})
-            elif request.method == "POST":
-                user.set_password(request.POST['password1'])
-                user.save()
-                django_login(request, user)
-                return redirect('/')
-    except User.DoesNotExist:
-        pass
+        payload = tokens.check_token(token, tokens.RESTORE_PASSWORD)
+        user = User.objects.get(pk=payload.get('user_id'))
+        if request.method == 'GET':
+            return render(request, 'user/change_password.html', context={'email': user.email, 'token': token})
+        elif request.method == "POST":
+            user.set_password(request.POST['password1'])
+            user.save()
+            django_login(request, user)
+            return redirect('/')
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError):
+        msg = 'Неверная ссылка'
+    except jwt.ExpiredSignatureError:
+        msg = 'Ссылка устарела'
 
-    return render(request, 'user/invalid_link.html')
+    return render(request, 'user/invalid_link.html', context={'msg': msg})
     
 
 def send_restore_password_email(request):
