@@ -27,7 +27,9 @@ function FilesList(props) {
             }
             setFiles(newFiles);
         } finally {
+            //onPhotosLoaded();
             $submitBtn.attr("disabled", false);
+
         }
     }
 
@@ -123,5 +125,5 @@ function FilesList(props) {
         </div>
     )
 }
-const app = document.querySelector('#react_app');
-ReactDOM.render(<FilesList boatId={$(app).attr("data-boat-id")} />, app);
+const appPhotos = document.querySelector('#react_app_photos');
+ReactDOM.render(<FilesList boatId={$(appPhotos).attr("data-boat-id")}/>, appPhotos);

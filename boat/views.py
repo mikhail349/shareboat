@@ -9,12 +9,13 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from PIL import UnidentifiedImageError
 from django.core.exceptions import ValidationError
+from django.core import serializers
 
 from file.exceptions import FileSizeException
 
 from .exceptions import BoatFileCountException
-from .models import Boat, MotorBoat, ComfortBoat, BoatFile, Specification
-from .serializers import BoatFileSerializer
+from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
+from .serializers import BoatFileSerializer, BoatPriceSerializer
 import json
 
 
@@ -31,11 +32,13 @@ def response_file_limit_size(msg):
     return JsonResponse({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
 
 def get_form_context():
+    #print(json.dumps(BoatPrice.get_types()))
     return {
         'boat_types': Boat.get_types(), 
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
-        'categories': Specification.get_сategories()
+        'price_types': BoatPrice.get_types(),
+        #'categories': Specification.get_сategories()
     }
 
 FILES_LIMIT_COUNT = 10
@@ -109,14 +112,17 @@ def update(request, pk):
         boat = Boat.objects.get(pk=pk, owner=request.user)
         
         if request.method == 'GET':
+            #print(serializers.serialize('json', boat.prices.all(), fields=('id', 'price')))
             context = {
                 'boat': boat, 
+                'prices': serializers.serialize('json', boat.prices.all()),
                 **get_form_context()
             }
             return render(request, 'boat/update.html', context=context)
         elif request.method == 'POST':
             data = request.POST
             files = request.FILES.getlist('file')
+            print(data.get('prices'))
             
             try:
                 if len(files) > FILES_LIMIT_COUNT:

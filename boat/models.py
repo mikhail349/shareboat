@@ -101,11 +101,16 @@ class BoatPrice(models.Model):
         DAY     = 0, _("Сутки")
         WEEK    = 1, _("Неделя")
 
-    post = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices")
+    boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices")
     type = models.IntegerField(choices=Type.choices)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     start_date = models.DateField()
     end_date = models.DateField()
+
+    @classmethod
+    def get_types(cls):
+        types = sorted(cls.Type.choices, key=lambda tup: tup[1])   
+        return [list(e) for e in types]
 
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)

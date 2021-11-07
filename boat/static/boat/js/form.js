@@ -1,3 +1,7 @@
+function onPhotosLoaded() {
+    console.log('onPhotosLoaded');
+}
+
 $(document).ready(() => {
 
     $("#typeSelect").on('change', (e) => {
@@ -53,6 +57,8 @@ $(document).ready(() => {
             }
             console.log(src);  
         }
+
+        formData.append('prices', JSON.stringify(window.prices));
 
         const url = $form.attr("action");
         $.ajax({ 

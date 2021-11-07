@@ -6,7 +6,9 @@
 
 <script type="text/javascript">
     var motorBoatTypes = {{ motor_boat_types|safe }},
-        comfortBoatTypes = {{ comfort_boat_types|safe }}
+        comfortBoatTypes = {{ comfort_boat_types|safe }},
+        priceTypes = {{ price_types|safe }},
+        prices = {{ prices|safe }}
 </script>
 
 <h4 class="mb-3">Основная информация</h4>
@@ -42,7 +44,7 @@
                 min="1900"
                 max="2999"
                 step="1"
-                value="{{ boat.issue_year }}"
+                value="{{ boat.issue_year|default:"" }}"
             />
             <label for="name">Год выпуска</label>
             <div class="invalid-tooltip">Введите год выпуска</div>
@@ -165,6 +167,16 @@
     </fieldset>
 </div>
 
+<div class="mb-3">
+    <h4 class="mb-3">Цена аренды</h4>
+    <div id="react_app_prices" data-boat-id="{{ boat.id }}">
+        <div class="text-center">
+            <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
+        </div>
+    </div>
+    <script type="text/javascript" src="{% static 'boat/js/form-prices.min.js' %}"></script>
+</div>
+
 <!--<h4 class="mb-3">Доп. оборудование</h4>
 {% for category in categories %}
     <div class="row g-3 ">
@@ -183,7 +195,7 @@
 
 <div class="mb-3">
     <h4 class="mb-3">Фотографии</h4>
-    <div id="react_app" data-boat-id="{{ boat.id }}" >
+    <div id="react_app_photos" data-boat-id="{{ boat.id }}">
         <div class="text-center">
             <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
         </div>
