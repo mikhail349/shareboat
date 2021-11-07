@@ -21,8 +21,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">
                                 <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
-                                <li><a class="dropdown-item" href="{% url 'boat:boats' %}">Флот</a></li>
-                                <li><a class="dropdown-item" href="{% url 'post:my_posts' %}">Объявления</a></li>
+                                <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Флот</a></li>
                             </ul>
                         </li>
                     {% else %}

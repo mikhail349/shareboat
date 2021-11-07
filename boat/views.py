@@ -2,22 +2,24 @@ from django.shortcuts import redirect, render
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.urls import reverse
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from PIL import UnidentifiedImageError
+from django.core.exceptions import ValidationError
 
 from file.exceptions import FileSizeException
 
 from .exceptions import BoatFileCountException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile, Specification
-from .serializers import BoatSerializer, BoatFileSerializer
+from .serializers import BoatFileSerializer
 import json
 
 
 def response_not_found():
-    return JsonResponse({'message': 'Лодка не найдена'}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'message': 'Лодка не найдена'}, status=404)
 
 def response_invalid_file_type():
     return JsonResponse({'message': 'Можно приложить только фотографии'}, status=status.HTTP_400_BAD_REQUEST)
@@ -39,7 +41,7 @@ def get_form_context():
 FILES_LIMIT_COUNT = 10
 
 @login_required
-def get(request):
+def my_boats(request):
     boats = Boat.objects.filter(owner=request.user).order_by('id')
     return render(request, 'boat/list.html', context={'boats': boats})    
 
@@ -60,6 +62,8 @@ def create(request):
             with transaction.atomic():
                 fields = {
                     'name':     data.get('name'),
+                    'text':     data.get('text'),
+                    'issue_year': data.get('issue_year'),
                     'length':   data.get('length'),
                     'width':    data.get('width'),
                     'draft':    data.get('draft'),
@@ -90,12 +94,12 @@ def create(request):
             return response_files_limit_count(str(e))
         except FileSizeException as e:
             return response_file_limit_size(str(e))
-        except Exception as e:
+        except ValidationError as e:
             return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse({
             'data': {'id': boat.id},
-            'redirect': '/boats/'
+            'redirect': reverse('boat:my_boats')
         })
 
 
@@ -121,6 +125,8 @@ def update(request, pk):
                 with transaction.atomic():
                     
                     boat.name   = data.get('name')
+                    boat.text   = data.get('text')
+                    boat.issue_year = data.get('issue_year')
                     boat.length = data.get('length')
                     boat.width  = data.get('width')
                     boat.draft  = data.get('draft')
@@ -171,10 +177,10 @@ def update(request, pk):
                 return response_files_limit_count(str(e))
             except FileSizeException as e:
                 return response_file_limit_size(str(e))
-            except Exception as e:
+            except ValidationError as e:
                 return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-            return JsonResponse({'redirect': '/boats/'})
+            return JsonResponse({'redirect': reverse('boat:my_boats')})
     
     except Boat.DoesNotExist:
         if request.method == 'GET':
@@ -191,13 +197,8 @@ def delete(request, pk):
         boat.delete()
     except Boat.DoesNotExist:
         return response_not_found()
-    except Exception as e:
-        return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)    
-
-    #if boat.posts.exists():
-    #    return JsonResponse({'message': 'По данному активу уже созданы объявления'}, status=status.HTTP_400_BAD_REQUEST)    
     
-    return JsonResponse({'redirect': '/boats/'})
+    return JsonResponse({'redirect': reverse('boat:my_boats')})
 
 @login_required
 def get_files(request, pk):

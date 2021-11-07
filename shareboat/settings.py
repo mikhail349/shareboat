@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'user',
-    'asset',
     'file',
     'post',
     'boat',

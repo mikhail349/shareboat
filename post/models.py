@@ -5,6 +5,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from datetime import datetime
 
+'''
 class Post(models.Model):
     class Status(models.IntegerChoices):
         DRAFT       = 0, _("Заготовка")
@@ -51,3 +52,4 @@ class PostPrice(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+'''

@@ -19,15 +19,48 @@
     <div class="invalid-tooltip">Введите название лодки</div>
 </div>
 
+<div class="form-floating mb-3">                 
+    <textarea id="textareaText" name="text" class="form-control" placeholder="Описание лодки" autocomplete="false" style="height: 100px">{{ boat.text|default:"" }}</textarea>
+    <label for="textareaText">Описание лодки</label>
+</div>
+
 <div class="form-floating mb-3">
     <select class="form-select" id="typeSelect" name="type" required>
         <option selected disabled value="">Выберите из списка</option>
         {% for boat_type in boat_types %}
-           <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
+        <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
         {% endfor %}
     </select>
     <label for="typeSelect">Тип лодки</label>
     <div class="invalid-tooltip">Выберите тип лодки</div>
+</div>
+
+<div class="row">
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" id="issueYearInput" name="issue_year" class="form-control" placeholder="Год выпуска"        
+                min="1900"
+                max="2999"
+                step="1"
+                value="{{ boat.issue_year }}"
+            />
+            <label for="name">Год выпуска</label>
+            <div class="invalid-tooltip">Введите год выпуска</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-auto">
+        <div class="form-floating mb-3">                 
+            <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
+                required min="1" max="99"
+                value="{{ boat.capacity }}"      
+            />
+            <label for="capacityInput">Вместимость, чел.</label>
+            <div class="invalid-tooltip">Укажите вместимость лодки</div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -62,16 +95,6 @@
             />
             <label for="draftInput">Осадка, м.</label>
             <div class="invalid-tooltip">Укажите осадку лодки</div>
-        </div>
-    </div>
-    <div class="col-auto">
-        <div class="form-floating mb-3">                 
-            <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
-                required min="1" max="99"
-                value="{{ boat.capacity }}"      
-            />
-            <label for="capacityInput">Вместимость, чел.</label>
-            <div class="invalid-tooltip">Укажите вместимость лодки</div>
         </div>
     </div>
 </div>
@@ -130,12 +153,12 @@
             </div>
             <div class="col-auto">
                 <div class="form-floating mb-3">                 
-                    <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во ванных комнат" autocomplete="false"
+                    <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="false"
                         required min="1" max="9"
                         value="{{ boat.comfort_boat.bathroom_amount }}"     
                     />
-                    <label for="widthInput">Кол-во ванных комнат</label>
-                    <div class="invalid-tooltip">Укажите кол-во ванных комнат</div>
+                    <label for="widthInput">Кол-во сан. узлов</label>
+                    <div class="invalid-tooltip">Укажите кол-во сан. узлов</div>
                 </div>
             </div>
         </div>  

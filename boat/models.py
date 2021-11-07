@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
-#from boat.validators import validate_even
 
 from user.models import User
 from file import utils, signals
@@ -24,8 +23,10 @@ class Boat(models.Model):
         TRIMARAN        = 8, _("Тримаран")
 
     name    = models.CharField(max_length=255)
+    text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
 
+    issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
     length  = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     width   = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
@@ -34,7 +35,12 @@ class Boat(models.Model):
     type    = models.IntegerField(choices=Type.choices)
 
     def clean(self):
-        pass
+        if self.text:
+            self.text = self.text.strip()
+        if self.text == "":
+            self.text = None
+        if self.issue_year == "":
+            self.issue_year = None
         #if self.length == 0:
         #    raise ValidationError({'length': _('Укажите длину лодки')})   
 
@@ -82,7 +88,6 @@ class Specification(models.Model):
         ELECTRONICS = 1, _("Электроника")
 
     name        = models.CharField(max_length=255)
-    #amount      = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
     boat        = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="specifications")
     сategory    = models.IntegerField(choices=Category.choices)
 
@@ -90,6 +95,17 @@ class Specification(models.Model):
     def get_сategories(cls):
         сategories = cls.Category.choices
         return sorted(сategories, key=lambda tup: tup[1])
+
+class BoatPrice(models.Model):
+    class Type(models.IntegerChoices):
+        DAY     = 0, _("Сутки")
+        WEEK    = 1, _("Неделя")
+
+    post = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices")
+    type = models.IntegerField(choices=Type.choices)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField()
 
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)

@@ -1,6 +1,5 @@
 from django.urls import path, include
-from django.conf.urls import url
-
+'''
 from . import views
 
 app_name = 'post'
@@ -18,3 +17,4 @@ urlpatterns = [
 
     path('api/', include(apiurlpatterns))
 ]
+'''

@@ -7,12 +7,12 @@ app_name = 'boat'
 
 apiurlpatterns = [
     path('create/', views.create, name='api_create'),
-    url(r'delete/(?P<pk>[0-9]+)/', views.delete),
+    url(r'delete/(?P<pk>[0-9]+)/', views.delete, name='api_delete'),
     url(r'get_files/(?P<pk>[0-9]+)/', views.get_files),
 ]
 
 urlpatterns = [
-    path('', views.get, name='boats'),
+    path('my_boats', views.my_boats, name='my_boats'),
     path('create/', views.create, name='create'),
     url(r'update/(?P<pk>[0-9]+)/', views.update, name='update'),
 

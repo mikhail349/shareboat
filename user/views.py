@@ -9,13 +9,13 @@ import jwt
 
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
+from emails.models import UserEmail
+from .models import User
 
 import logging
 logger_admin_mails = logging.getLogger('mail_admins')
 logger = logging.getLogger(__name__)
 
-from .models import User
-from emails.models import UserEmail
 
 def verify(request, token):
     User = get_user_model()
@@ -41,7 +41,7 @@ def send_verification_email(request):
             return JsonResponse({'message': "Почта %s уже подтверждена" % user.email}, status=400)
         dt = UserEmail.send_verification_email(request, user)
         return JsonResponse({'next_verification_email_datetime': dt.isoformat()})
-    except Exception as e:
+    except EmailLagError as e:
         return JsonResponse({'message': str(e)}, status=400)
 
 @login_required
@@ -50,27 +50,16 @@ def update(request):
         next_verification_email_datetime = UserEmail.get_next_email_datetime(request.user, type=UserEmail.Type.VERIFICATION)
         return render(request, 'user/update.html', context={'next_verification_email_datetime': next_verification_email_datetime})
     elif request.method == 'POST':
-        try:
-            with transaction.atomic():
-                data = request.POST
-                user = request.user
-                avatar = request.FILES.get('avatar')
-                user.first_name = data.get('first_name')
+        with transaction.atomic():
+            data = request.POST
+            user = request.user
+            avatar = request.FILES.get('avatar')
+            user.first_name = data.get('first_name')
 
-                if user.avatar != avatar:
-                    user.avatar = avatar
+            if user.avatar != avatar:
+                user.avatar = avatar
 
-                '''
-                email = data.get('email')
-                if user.email != email:
-                    if User.objects.exclude(pk=user.pk).filter(email=email).exists():
-                        raise Exception("Электронная почта %s уже занята" % email)
-                    user.email = email
-                '''
-
-                user.save()  
-        except Exception as e:
-            return JsonResponse({'message': str(e)}, status=400)
+            user.save()  
         return JsonResponse({})
 
 
@@ -133,6 +122,9 @@ def send_restore_password_email(request):
 
 def register(request):
 
+    def render_error(msg):
+        return render(request, 'user/register.html', context={'errors': msg})  
+
     if request.method == 'GET':
         return render(request, 'user/register.html')
 
@@ -140,7 +132,10 @@ def register(request):
         data = request.POST
 
         if User.objects.filter(email=data['email']).exists():
-            return render(request, 'user/register.html', context={'errors': '%s уже зарегистрирован в системе' % data['email']})        
+            return render_error('%s уже зарегистрирован в системе' % data['email'])      
+
+        if data['password1'] != data['password2']:
+            return render_error('Пароли не совпадают')  
 
         user = User.objects.create(email=data['email'], first_name=data.get('first_name'))
         user.set_password(data['password1'])

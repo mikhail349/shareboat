@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db import transaction
 
+'''
 from .models import Post
 from boat.models import Boat
 
@@ -69,3 +70,4 @@ def delete(request, pk):
             return JsonResponse({'redirect': '/posts/my_posts/'})
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=400)  
+'''
