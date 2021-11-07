@@ -1,9 +1,9 @@
 var lastScrollTop = 0;
 
-$(document).ready(() => {
-     $('.navbar a.active').removeClass('active');
-     $('.navbar a[href="' + location.pathname + '"').addClass("active");
-})
+/*$(document).ready(() => {
+     $('.navbar-nav a.active').removeClass('active bg-light text-dark');
+     $('.navbar-nav a[href="' + location.pathname + '"').addClass("active bg-light text-dark");
+})*/
 
 window.addEventListener("scroll", () => {
    var st = window.pageYOffset || document.documentElement.scrollTop;
