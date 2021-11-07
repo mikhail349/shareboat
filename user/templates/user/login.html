@@ -7,7 +7,7 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'user/js/login.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/login.css' %}">
-    <form id="signup" action="{% url 'user:login' %}?next={{ request.GET.next }}" method="post" class='needs-validation form-signin' novalidate>
+    <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next }}" method="post" class='needs-validation form-signin' novalidate>
         {% csrf_token %}
 
         <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>  
@@ -17,13 +17,13 @@
         {% endif %}  
         
         <div class="form-floating mb-3">            
-            <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="email" placeholder="Эл. почта" required class="form-control" >
+            <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="username email" placeholder="Эл. почта" required class="form-control" >
             <label for="email">Эл. почта</label>
             <div class="invalid-tooltip">Введите эл. почту</div>
         </div>
 
         <div class="form-floating mb-3">
-            <input id="password" type="password" name="password" autocomplete="password" placeholder="Пароль" required class="form-control" {% if errors %} autofocus {% endif %}>
+            <input id="password" type="password" name="password" autocomplete="new-password" placeholder="Пароль" required class="form-control" {% if errors %} autofocus {% endif %}>
             <label for="password">Пароль</label>
             <div class="invalid-tooltip">Введите пароль</div>
         </div>
@@ -31,8 +31,10 @@
         <input type="hidden" name="next" value={{ request.GET.next }} >
         <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Войти</button>
         
-        <div><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>
-        <div><a href="{% url 'user:register' %}">Зарегистрироваться</a></div>
+        <p>
+            <div class="mb-2"><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>
+            <div><a href="{% url 'user:register' %}">Зарегистрироваться</a></div>
+        </p>
     </form>
     
 {% endblock %}
