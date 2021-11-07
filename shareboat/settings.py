@@ -50,7 +50,6 @@ INSTALLED_APPS = [
 
     'user',
     'file',
-    'post',
     'boat',
     'emails'
 ]
