@@ -31,9 +31,9 @@
                                     <h5 class="card-title">{{ boat.name }}</h5>     
                                     <h6 class="card-subtitle mb-3 text-muted">{{ boat.get_type_display }}</h6>
                                     {% if boat.is_published %}
-                                        <a href="#" class="btn btn-outline-danger">Снять с публикации</a>
+                                        <a data-boat-id="{{ boat.pk }}" href="#" class="btn btn-outline-danger">Снять с публикации</a>
                                     {% else %}
-                                        <a href="#" class="btn btn-outline-primary">Опубликовать</a>
+                                        <a data-boat-id="{{ boat.pk }}" href="#" class="btn btn-outline-primary">Опубликовать</a>
                                     {% endif %}
                                 </div>
                             </div>
