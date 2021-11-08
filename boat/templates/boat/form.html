@@ -8,7 +8,7 @@
     var motorBoatTypes = {{ motor_boat_types|safe }},
         comfortBoatTypes = {{ comfort_boat_types|safe }},
         priceTypes = {{ price_types|safe }},
-        prices = {{ prices|safe }}
+        prices = {{ prices|safe|default:"[]" }}
 </script>
 
 <h4 class="mb-3">Основная информация</h4>

@@ -32,7 +32,6 @@ def response_file_limit_size(msg):
     return JsonResponse({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
 
 def get_form_context():
-    #print(json.dumps(BoatPrice.get_types()))
     return {
         'boat_types': Boat.get_types(), 
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
@@ -43,6 +42,13 @@ def get_form_context():
 
 FILES_LIMIT_COUNT = 10
 
+def handle_boat_prices(boat, prices):
+    boat_prices = [BoatPrice(pk=e.get('pk'), price=e['price'], type=e['type'], start_date=e['start_date'], end_date=e['end_date'], boat=boat) for e in prices]
+    
+    BoatPrice.objects.filter(boat=boat).exclude(id__in=[e.pk for e in boat_prices]).delete()
+    BoatPrice.objects.bulk_update([e for e in boat_prices if e.pk is not None], ['price', 'type', 'start_date', 'end_date'])
+    BoatPrice.objects.bulk_create([e for e in boat_prices if e.pk is None])
+
 @login_required
 def my_boats(request):
     boats = Boat.objects.filter(owner=request.user).order_by('id')
@@ -51,12 +57,12 @@ def my_boats(request):
 @login_required
 def create(request):
     if request.method == 'GET':
-        context = get_form_context()
-        return render(request, 'boat/create.html', context=context)
+        return render(request, 'boat/create.html', context=get_form_context())
 
     elif request.method == 'POST':
         data = request.POST
         files = request.FILES.getlist('file')
+        prices = json.loads(data.get('prices'))
         
         try:
             if len(files) > FILES_LIMIT_COUNT:
@@ -89,6 +95,8 @@ def create(request):
                     }
                     ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
 
+                handle_boat_prices(boat, prices)
+
                 for file in files:
                     BoatFile.objects.create(boat=boat, file=file)
         except UnidentifiedImageError:
@@ -112,7 +120,6 @@ def update(request, pk):
         boat = Boat.objects.get(pk=pk, owner=request.user)
         
         if request.method == 'GET':
-            #print(serializers.serialize('json', boat.prices.all(), fields=('id', 'price')))
             context = {
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
@@ -122,7 +129,7 @@ def update(request, pk):
         elif request.method == 'POST':
             data = request.POST
             files = request.FILES.getlist('file')
-            print(data.get('prices'))
+            prices = json.loads(data.get('prices'))
             
             try:
                 if len(files) > FILES_LIMIT_COUNT:
@@ -171,6 +178,8 @@ def update(request, pk):
                             ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
                     else:
                         ComfortBoat.objects.filter(boat=boat).delete()
+
+                    handle_boat_prices(boat, prices)
 
                     BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
 
