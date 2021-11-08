@@ -108,15 +108,7 @@ $(document).ready(() => {
             showSuccessToast();
             const userName = $('input[name=first_name]').val()
             const email = $("#formProfile input[name=email]").val();
-            $("#navbarDropdownUserProfile span").text(userName || email);
-            if (doAvatarSave) {
-                if ($("#navbarDropdownUserProfile img").length) {
-                    $("#navbarDropdownUserProfile img").attr("src", $avatarSrc);
-                } else {
-                    $("#navbarDropdownUserProfile").prepend('<img class="d-inline-block align-top nav-bar-avatar rounded-circle mx-2" src="' + $avatarSrc + '" />');
-                }      
-            }
-            
+            $("#navbarDropdownUserProfile span").text(userName || email);        
         }
     
         function onError(error) {

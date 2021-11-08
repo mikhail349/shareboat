@@ -11,12 +11,7 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle" href="#"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                            >
-                                {% if user.avatar %}
-                                    <img class="d-inline-block align-top nav-bar-avatar rounded-circle mx-2" src="{{ user.avatar.url }}" />
-                                {% endif %}
+                            <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle align-middle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span>{{ user.first_name|default:user.email }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">
