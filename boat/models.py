@@ -25,6 +25,7 @@ class Boat(models.Model):
     name    = models.CharField(max_length=255)
     text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
+    is_published = models.BooleanField(default=False)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
     length  = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
@@ -115,9 +116,7 @@ class BoatPrice(models.Model):
     def clean(self):
         errors = []
         if self.end_date < self.start_date:
-            errors.append(ValidationError(_('Окончание периода цены не должно быть раньше начала периода'), code="invalid_dates")  )  
-        
-        errors.append(ValidationError(_('Тест')))
+            errors.append(ValidationError(_('Окончание действия цены не должно быть раньше начала действия'), code="invalid_dates"))  
 
         existing_boat_prices = BoatPrice.objects.filter(
             boat=self.boat,
@@ -129,7 +128,11 @@ class BoatPrice(models.Model):
         )
 
         if existing_boat_prices.exists():
-            errors.append(ValidationError(_('Тип цены "%s" пересекается с уже существующим периодом' % self.get_type_display()), code="invalid_range"))  
+            errors.append(ValidationError(
+                _('Период действия цены для типа "%(value)s" пересекается с другим периодом этого же типа'), 
+                params={'value': self.get_type_display()},
+                code="invalid_range"
+            ))  
 
         if errors:
             raise ValidationError(errors)

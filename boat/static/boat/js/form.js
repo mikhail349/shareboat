@@ -77,8 +77,7 @@ $(document).ready(() => {
     
         function onError(error) {
             hideOverlayPanel();
-            console.log(parseJSONError(error.responseJSON));
-            showErrorToast((error.responseJSON.message || error.data));
+            showErrorToast(parseJSONError(error.responseJSON));
         }
     })
 

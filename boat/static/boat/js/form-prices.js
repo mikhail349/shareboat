@@ -33,7 +33,6 @@ function PricesList(props) {
     }
 
     function changeValue(e, index, fieldName) {
-        console.log('onchange', fieldName)
         const newPrices = [...prices];
         newPrices[index][fieldName] = e.target.value;
         setPrices(newPrices); 
@@ -76,24 +75,24 @@ function PricesList(props) {
                             </div>
                             <div className="col-auto">
                                 <div className="form-floating">                 
-                                    <input type="date" className="form-control" placeholder="Укажите начало периода"
+                                    <input type="date" className="form-control" placeholder="Укажите начало действия"
                                         required 
                                         value={price.start_date}
                                         onChange={(e) => changeValue(e, index, 'start_date')}
                                     />
-                                    <label>Начало периода</label>
-                                    <div className="invalid-tooltip">Укажите начало периода</div>
+                                    <label>Начало действия</label>
+                                    <div className="invalid-tooltip">Укажите начало действия</div>
                                 </div>
                             </div>
                             <div className="col-auto">
                                 <div className="form-floating">                 
-                                    <input type="date" className="form-control" placeholder="Укажите окончание периода"
+                                    <input type="date" className="form-control" placeholder="Укажите окончание действия"
                                         required 
                                         value={price.end_date}
                                         onChange={(e) => changeValue(e, index, 'end_date')}
                                     />
-                                    <label>Окончание периода</label>
-                                    <div className="invalid-tooltip">Укажите окончание периода</div>
+                                    <label>Окончание действия</label>
+                                    <div className="invalid-tooltip">Укажите окончание действия</div>
                                 </div>
                             </div>
                             <div className="col-md">

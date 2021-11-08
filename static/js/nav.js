@@ -8,9 +8,11 @@ var lastScrollTop = 0;
 window.addEventListener("scroll", () => {
    var st = window.pageYOffset || document.documentElement.scrollTop;
    if (st > lastScrollTop && st > 62){
-        $('body > header > nav').css("top", "-80px")
+        $('body > header > nav').css("top", "-80px");
+        $('.toast-container ').attr("style", "top: 0 !important;");
    } else {
-        $('body > header > nav').css("top", "0")
+        $('body > header > nav').css("top", "0");
+        $('.toast-container ').attr("style", "top: 62px !important;");
    }
    lastScrollTop = st <= 0 ? 0 : st;
 }, false);

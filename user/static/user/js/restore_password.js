@@ -56,7 +56,7 @@ $(document).ready(() => {
         }
     
         function onError(error) {
-            showErrorToast(error.responseJSON?.message);
+            showErrorToast(parseJSONError(error.responseJSON), 'Ошибка отправки письма');
             $fieldset.attr("disabled", false);
         }   
     });

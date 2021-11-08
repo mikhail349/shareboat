@@ -40,10 +40,19 @@ $(document).ready(() => {
 
 function parseJSONError(json) {
     if ('message' in json) {
-        if (Array.isArray(json.message) && json.message.length > 0 ) {
-            if (json.message[0] === '__all__') {
-                return json.message[1]
+        if (Array.isArray(json.message) && json.message.length > 0) {
+            if (Array.isArray(json.message[0]) && json.message[0].length > 0) {
+                if (json.message[0][0] === '__all__') {
+                    const list = json.message[0][1];
+                    let res = '<ul class="list-group list-group-flush bg-light">';
+                    for (li of list) {
+                        res += `<li class="list-group-item bg-light">${li}</li>`
+                    } 
+                    res += '</ul>';
+                    return res;
+                }           
             }
+            return json.message[0];
         }
         return json.message;
     }
@@ -75,27 +84,35 @@ function hideOverlayPanel() {
     $("#overlayPanel").css('visibility', 'hidden');
 }
 
+function removeToastBGs() {
+    $("#toast").removeClass("bg-light");
+    $("#toast").removeClass("bg-success");
+}
+
 function showSuccessToast(msg="Изменения сохранены.") {
-    $("#toast .toast-body").text(msg);
-    $("#toast").removeClass("bg-danger");
-    $("#toast").removeClass("bg-secondary");
+    const html = `
+        <div class="d-flex text-white">
+            <div class="toast-body">${msg}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `
+    removeToastBGs();
     $("#toast").addClass("bg-success");
+    $("#toast").html(html);
     $("#toast").toast('show');
 }
 
-function showErrorToast(msg) {
-    const body = msg || "Ошибка";
-    $("#toast .toast-body").text(body);
-    $("#toast").removeClass("bg-success");
-    $("#toast").removeClass("bg-secondary");
-    $("#toast").addClass("bg-danger");
-    $("#toast").toast('show');
-}
+function showErrorToast(body, header="Ошибка") {
+    const html = `
+        <div class="toast-header text-white bg-danger">
+            <span class="me-auto">${header}</span>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">${body}</div>
+    `
 
-function showInfoToast(msg) {  
-    $("#toast .toast-body").text(msg);
-    $("#toast").removeClass("bg-success");
-    $("#toast").removeClass("bg-danger");
-    $("#toast").addClass("bg-secondary");
+    removeToastBGs();
+    $("#toast").addClass("bg-light");
+    $("#toast").html(html);
     $("#toast").toast('show');
 }

@@ -71,7 +71,7 @@ $(document).ready(() => {
         }
     
         function onError(error) {
-            showErrorToast(error.responseJSON.message);
+            showErrorToast(parseJSONError(error.responseJSON), 'Ошибка отправки письма');
             $("#btnSendConfirmation").show();
         }   
     })
@@ -113,7 +113,7 @@ $(document).ready(() => {
     
         function onError(error) {
             hideOverlayPanel();
-            showErrorToast(error.responseJSON.message);
+            showErrorToast(parseJSONError(error.responseJSON));
         }
     })
 })
