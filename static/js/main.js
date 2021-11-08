@@ -38,6 +38,18 @@ $(document).ready(() => {
     });
 });
 
+function parseJSONError(json) {
+    if ('message' in json) {
+        if (Array.isArray(json.message) && json.message.length > 0 ) {
+            if (json.message[0] === '__all__') {
+                return json.message[1]
+            }
+        }
+        return json.message;
+    }
+    return json;
+}
+
 $.fn.checkValidity = function() {
     this[0].classList.add("was-validated");
     const res = this[0].checkValidity();

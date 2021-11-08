@@ -113,9 +113,12 @@ class BoatPrice(models.Model):
         return [list(e) for e in types]
 
     def clean(self):
+        errors = []
         if self.end_date < self.start_date:
-            raise ValidationError(_('Окончание периода цены не должно быть раньше начала периода'))   
+            errors.append(ValidationError(_('Окончание периода цены не должно быть раньше начала периода'), code="invalid_dates")  )  
         
+        errors.append(ValidationError(_('Тест')))
+
         existing_boat_prices = BoatPrice.objects.filter(
             boat=self.boat,
             type=self.type
@@ -125,11 +128,11 @@ class BoatPrice(models.Model):
             pk=self.pk
         )
 
-        #if self.pk:
-        #existing_boat_prices = existing_boat_prices.exclude(pk=self.pk)
-
         if existing_boat_prices.exists():
-            raise ValidationError(_('Тип цены "%s" пересекается с уже существующим периодом' % self.get_type_display()))  
+            errors.append(ValidationError(_('Тип цены "%s" пересекается с уже существующим периодом' % self.get_type_display()), code="invalid_range"))  
+
+        if errors:
+            raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
         self.full_clean()

@@ -43,16 +43,28 @@ def get_form_context():
 FILES_LIMIT_COUNT = 10
 
 def handle_boat_prices(boat, prices):
-    #boat_prices = [BoatPrice(pk=e.get('pk'), price=e['price'], type=e['type'], start_date=e['start_date'], end_date=e['end_date'], boat=boat) for e in prices]
-    boat_prices = []
+    BoatPrice.objects.filter(boat=boat).exclude(id__in=[price.get('pk') for price in prices]).delete()
+    
     for price in prices:
-        boat_price = BoatPrice(pk=price.get('pk'), price=price['price'], type=price['type'], start_date=price['start_date'], end_date=price['end_date'], boat=boat)
-        boat_price.clean()
-        boat_prices.append(boat_price)
-        
-    BoatPrice.objects.filter(boat=boat).exclude(id__in=[e.pk for e in boat_prices]).delete()
-    BoatPrice.objects.bulk_update([e for e in boat_prices if e.pk is not None], ['price', 'type', 'start_date', 'end_date'])
-    BoatPrice.objects.bulk_create([e for e in boat_prices if e.pk is None])
+        if 'pk' in price:
+            try:
+                boat_price = BoatPrice.objects.get(pk=price['pk'])
+                boat_price.price        = price['price']
+                boat_price.type         = price['type']
+                boat_price.start_date   = price['start_date']
+                boat_price.end_date     = price['end_date']
+                boat_price.boat         = boat
+                boat_price.save()
+            except BoatPrice.DoesNotExist:
+                pass
+        else:
+            BoatPrice.objects.create(
+                price        =price['price'], 
+                type        = price['type'], 
+                start_date  = price['start_date'], 
+                end_date    = price['end_date'], 
+                boat        = boat
+            )
 
 @login_required
 def my_boats(request):
