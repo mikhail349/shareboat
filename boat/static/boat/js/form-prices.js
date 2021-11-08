@@ -44,6 +44,9 @@ function PricesList(props) {
             {
                 prices.map((price, index) => (        
                     <React.Fragment>
+                        {
+                            index != 0 && <hr/> 
+                        }
                         <div className="row align-items-center gy-3 mb-3">
                             <div className="col-auto">
                                 <div className="form-floating">
@@ -98,8 +101,7 @@ function PricesList(props) {
                                     Удалить
                                 </button>                                          
                             </div>
-                        </div>
-                        <hr/>                     
+                        </div>                    
                       </React.Fragment>             
                 ))
             }

@@ -43,8 +43,13 @@ def get_form_context():
 FILES_LIMIT_COUNT = 10
 
 def handle_boat_prices(boat, prices):
-    boat_prices = [BoatPrice(pk=e.get('pk'), price=e['price'], type=e['type'], start_date=e['start_date'], end_date=e['end_date'], boat=boat) for e in prices]
-    
+    #boat_prices = [BoatPrice(pk=e.get('pk'), price=e['price'], type=e['type'], start_date=e['start_date'], end_date=e['end_date'], boat=boat) for e in prices]
+    boat_prices = []
+    for price in prices:
+        boat_price = BoatPrice(pk=price.get('pk'), price=price['price'], type=price['type'], start_date=price['start_date'], end_date=price['end_date'], boat=boat)
+        boat_price.clean()
+        boat_prices.append(boat_price)
+        
     BoatPrice.objects.filter(boat=boat).exclude(id__in=[e.pk for e in boat_prices]).delete()
     BoatPrice.objects.bulk_update([e for e in boat_prices if e.pk is not None], ['price', 'type', 'start_date', 'end_date'])
     BoatPrice.objects.bulk_create([e for e in boat_prices if e.pk is None])
@@ -106,7 +111,7 @@ def create(request):
         except FileSizeException as e:
             return response_file_limit_size(str(e))
         except ValidationError as e:
-            return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse({
             'data': {'id': boat.id},
@@ -193,7 +198,7 @@ def update(request, pk):
             except FileSizeException as e:
                 return response_file_limit_size(str(e))
             except ValidationError as e:
-                return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
 
             return JsonResponse({'redirect': reverse('boat:my_boats')})
     

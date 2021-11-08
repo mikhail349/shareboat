@@ -1,5 +1,5 @@
-from typing import Type
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -111,6 +111,29 @@ class BoatPrice(models.Model):
     def get_types(cls):
         types = sorted(cls.Type.choices, key=lambda tup: tup[1])   
         return [list(e) for e in types]
+
+    def clean(self):
+        if self.end_date < self.start_date:
+            raise ValidationError(_('Окончание периода цены не должно быть раньше начала периода'))   
+        
+        existing_boat_prices = BoatPrice.objects.filter(
+            boat=self.boat,
+            type=self.type
+        ).filter(
+            Q(start_date__range=(self.start_date,self.end_date))|Q(end_date__range=(self.start_date,self.end_date))|Q(start_date__lt=self.start_date,end_date__gt=self.end_date)
+        ).exclude(
+            pk=self.pk
+        )
+
+        #if self.pk:
+        #existing_boat_prices = existing_boat_prices.exclude(pk=self.pk)
+
+        if existing_boat_prices.exists():
+            raise ValidationError(_('Тип цены "%s" пересекается с уже существующим периодом' % self.get_type_display()))  
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(BoatPrice, self).save(*args, **kwargs)
 
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)

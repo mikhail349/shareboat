@@ -55,7 +55,6 @@ $(document).ready(() => {
             } else {
                 formData.append("file", data);
             }
-            console.log(src);  
         }
 
         formData.append('prices', JSON.stringify(window.prices));
@@ -78,6 +77,7 @@ $(document).ready(() => {
     
         function onError(error) {
             hideOverlayPanel();
+            console.log(error.responseJSON);
             showErrorToast((error.responseJSON.message || error.data));
         }
     })
