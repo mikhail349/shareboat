@@ -10,7 +10,7 @@ $(document).ready(() => {
         const $priceFromInput = $("form input[name=priceFrom]")
         const $priceToInput = $("form input[name=priceTo]")
         const isInvalidPriceRange = (parseFloat($priceFromInput.val()) > parseFloat($priceToInput.val()));
-        const INVALID_PRICE_RANGE_MSG = 'Цена от не должна быть больше цены до';
+        const INVALID_PRICE_RANGE_MSG = '"Цена от" не должна быть больше "Цены до"';
         $priceFromInput[0].setCustomValidity(isInvalidPriceRange ? INVALID_PRICE_RANGE_MSG : "");
 
         if (isInvalidPriceRange) {
@@ -21,7 +21,7 @@ $(document).ready(() => {
 
         const $dateFromInput = $("form input[name=dateFrom]");
         const $dateToInput = $("form input[name=dateTo]");
-        const INVALID_DATE_RANDGE_MSG = 'Аренда с не должна быть позже аренды по';
+        const INVALID_DATE_RANDGE_MSG = '"Аренда с" не должна быть позже "Аренды по"';
         
         let isInvalidDateRange = false;
         if ($dateFromInput.val() && $dateToInput.val()) {
