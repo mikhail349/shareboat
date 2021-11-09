@@ -1,32 +1,33 @@
 $(document).ready(() => {
-    $("#formApplyFilter").on('submit', function(e) {
-        e.preventDefault();
-        let url = $(this).attr("action");
+
+    $("#btnFilterClear").on('click', function (e) {
+        $("#offcanvasBoatFilter input[type=checkbox]").prop("checked", false);
+        $("#offcanvasBoatFilter input").val("");
+    })
+
+    $("#formApplyFilter").on('submit input', function(e) {
+
+        const $priceFromInput = $("form input[name=priceFrom]")
+        const $priceToInput = $("form input[name=priceTo]")
+        const isInvalidRange = (parseFloat($priceFromInput.val()) > parseFloat($priceToInput.val()));
+        const INVALID_RANDGE_MSG = 'Цена от не должна быть больше цены до';
+        $priceFromInput[0].setCustomValidity(isInvalidRange ? INVALID_RANDGE_MSG : "");
+
+        if (INVALID_RANDGE_MSG) {
+            $priceFromInput.siblings(".invalid-tooltip").text(INVALID_RANDGE_MSG);
+        } else {
+            $priceFromInput.siblings(".invalid-tooltip").text("Укажите корректную цену");
+        }
+        
+        if (isInvalidRange) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
 
         for (let boatTypeInput of $('input[data-boat-type]:checked')) {
             let boatType = $(boatTypeInput).attr('data-boat-type');
-            url += `boatType=${boatType}&`
+            $(this).prepend(`<input type="hidden" name="boatType" value="${boatType}" />`);
         }
-        
-        console.log(url);
-        
-        /*$.ajax({ 
-            type: "GET",
-            url: '/boats/',
-            processData: false, 
-            contentType: false,
-            success: onSuccess,
-            error: onError
-        }); 
-       
-        function onSuccess(data) {
-            //hideOverlayPanel();
-            //window.location.href = data.redirect;
-        }
-    
-        function onError(error) {
-            //hideOverlayPanel();
-            //showErrorToast(parseJSONError(error.responseJSON));
-        }*/
     })
 })

@@ -39,6 +39,10 @@ class Boat(models.Model):
         now = timezone.now()
         return BoatPrice.objects.filter(boat=self, start_date__lte=now, end_date__gte=now)
 
+    def get_future_prices(self):
+        now = timezone.now()
+        return BoatPrice.objects.filter(boat=self, start_date__gt=now)
+
     def clean(self):
         if self.text:
             self.text = self.text.strip()

@@ -12,12 +12,12 @@
           <h1 class="jumbotron-heading">Изменить лодку</h1>    
         </section>
 
-        <form method="post" action="/boats/api/update/{{ boat.id }}/" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form method="post" action="/boats/api/update/{{ boat.id }}/" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
             {% csrf_token %}
             {% include 'boat/form.html' %}                
             <hr/>
             <div class="row g-3">
-                <div class="col-auto">
+                <div class="col-auto pe-0">
                     <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>                          
                 </div>
                 <div class="col-auto">

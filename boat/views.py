@@ -72,10 +72,37 @@ def my_boats(request):
     return render(request, 'boat/my_boats.html', context={'boats': boats})   
 
 def boats(request):
+    q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
+    q_price_from=request.GET.get('priceFrom')
+    q_price_to=request.GET.get('priceTo')
+    q_date_from=request.GET.get('dateFrom')
+    q_date_to=request.GET.get('dateTo')
+
     boats = Boat.objects.filter(is_published=True)
+    if q_boat_types:
+        boats = boats.filter(type__in=q_boat_types)
+    if q_price_from:
+        boats = boats.filter(prices__price__gte=q_price_from)
+    if q_price_to:
+        boats = boats.filter(prices__price__lte=q_price_to)
+    if q_date_from:
+        boats = boats.filter(prices__start_date__lte=q_date_from, prices__end_date__gte=q_date_from)
+    if q_date_to:
+        boats = boats.filter(prices__start_date__lte=q_date_to, prices__end_date__gte=q_date_to)
+
     if request.user.is_authenticated:
         boats = boats.exclude(owner=request.user)
-    return render(request, 'boat/boats.html', context={'boats': boats, 'boat_types': Boat.get_types()})   
+    
+    boats = boats.distinct().order_by('-id')
+
+    q = {
+        'boat_types':   q_boat_types,
+        'price_from':   q_price_from,
+        'price_to':     q_price_to,
+        'date_from':    q_date_from,
+        'date_to':      q_date_to
+    }
+    return render(request, 'boat/boats.html', context={'boats': boats, 'boat_types': Boat.get_types(), 'q': q})   
 
 @login_required
 def create(request):

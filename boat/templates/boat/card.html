@@ -17,3 +17,20 @@
 {% else %}
     <h6 class="card-title text-danger mb-3">Нет действующих цен</h6>
 {% endif %}
+
+{% if boat.get_future_prices %}
+    <h6 class="card-title">Будущие цены</h6>
+    <table class="table">
+        <tbody>
+            {% for future_price in boat.get_future_prices %}
+                <tr>
+                    <td>{{ future_price.get_type_display }}</td>
+                    <td>{{ future_price.price }} руб.</td>
+                    <td>с {{ future_price.start_date|date:"d.m.y" }} г.</td>
+                </tr>                                                 
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h6 class="card-title text-danger mb-3">Нет будущих цен</h6>
+{% endif %}

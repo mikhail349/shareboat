@@ -10,7 +10,7 @@
             <h1 class="jumbotron-heading">Добавить лодку</h1>    
         </section>
         
-        <form method="post" action="." enctype="multipart/form-data" class="needs-validation " novalidate>
+        <form method="post" action="." enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
             {% csrf_token %}
             {% include 'boat/form.html' %}                
             <hr/>
