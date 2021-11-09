@@ -1,4 +1,5 @@
 
+from django.db.models.fields import BooleanField
 from django.shortcuts import render
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
@@ -39,6 +40,11 @@ def get_form_context():
         'price_types': BoatPrice.get_types(),
         #'categories': Specification.get_сategories()
     }
+
+def get_bool(value):
+    if value in (True, 'True', 'true', '1', 'on'):
+        return True
+    return False
 
 FILES_LIMIT_COUNT = 10
 
@@ -128,6 +134,7 @@ def create(request):
                     'draft':    data.get('draft'),
                     'capacity': data.get('capacity'),
                     'type':     data.get('type'),
+                    'is_published':  get_bool(data.get('is_published', False))
                 }
                 boat = Boat.objects.create(**fields, owner=request.user)
                 if boat.is_motor_boat():
@@ -175,7 +182,6 @@ def update(request, pk):
                 'prices': serializers.serialize('json', boat.prices.all()),
                 **get_form_context()
             }
-            print(boat.length)
             return render(request, 'boat/update.html', context=context)
         elif request.method == 'POST':
             data = request.POST
@@ -186,16 +192,16 @@ def update(request, pk):
                 if len(files) > FILES_LIMIT_COUNT:
                     raise BoatFileCountException()
 
-                with transaction.atomic():
-                    
-                    boat.name   = data.get('name')
-                    boat.text   = data.get('text')
-                    boat.issue_year = data.get('issue_year')
-                    boat.length = data.get('length')
-                    boat.width  = data.get('width')
-                    boat.draft  = data.get('draft')
-                    boat.capacity = data.get('capacity')
-                    boat.type   = data.get('type')
+                with transaction.atomic():                   
+                    boat.name           = data.get('name')
+                    boat.text           = data.get('text')
+                    boat.issue_year     = data.get('issue_year')
+                    boat.length         = data.get('length')
+                    boat.width          = data.get('width')
+                    boat.draft          = data.get('draft')
+                    boat.capacity       = data.get('capacity')
+                    boat.type           = data.get('type')
+                    boat.is_published   = get_bool(data.get('is_published', False))
                     boat.save()
 
                     if boat.is_motor_boat():
