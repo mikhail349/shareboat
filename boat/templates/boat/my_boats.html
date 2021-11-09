@@ -1,0 +1,49 @@
+{% extends 'main.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% block title %}Мой флот{% endblock  %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'boat/js/list.min.js' %}"></script>
+    
+    <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Мой флот</h1>
+          <p class="lead text-muted">Здесь {% if not boats %}будут{% endif %} представлены все ваши лодки</p>
+          <p>
+            <a href="{% url 'boat:create' %}" class="btn btn-primary my-2">Добавить лодку</a>
+          </p>
+        </div>
+    </section>
+
+    {% if boats %}
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row g-4">
+                    {% for boat in boats %}
+                        <div class="col-lg-4 col-md-4">
+                            <div class="card box-shadow h-100">
+                                <a href="{% url 'boat:update' boat.id %}">
+                                    {% include 'boat/carousel.html' %}
+                                </a>    
+                                <div class="card-body d-flex flex-column">
+                                    {% include 'boat/card.html' %}
+                                    <div class="mt-auto">
+                                        {% if boat.is_published %}
+                                            <a data-boat-id="{{ boat.pk }}" href="#" class="btn btn-outline-danger">Снять с публикации</a>
+                                        {% else %}
+                                            <a data-boat-id="{{ boat.pk }}" href="#" class="btn btn-outline-primary">Опубликовать</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock  %}

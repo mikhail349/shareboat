@@ -16,11 +16,13 @@
     }
 }
 
+/*
 @media (min-width: 992px) {
     .navbar-brand {
         font-weight: lighter;
     } 
 }
+*/
 
 .form-control[required] ~ label::after, .form-select[required] ~ label::after {
     content:" *";

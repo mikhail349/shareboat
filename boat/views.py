@@ -1,10 +1,10 @@
-from django.shortcuts import redirect, render
+
+from django.shortcuts import render
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
 
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from PIL import UnidentifiedImageError
@@ -15,7 +15,7 @@ from file.exceptions import FileSizeException
 
 from .exceptions import BoatFileCountException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
-from .serializers import BoatFileSerializer, BoatPriceSerializer
+from .serializers import BoatFileSerializer
 import json
 
 
@@ -69,7 +69,13 @@ def handle_boat_prices(boat, prices):
 @login_required
 def my_boats(request):
     boats = Boat.objects.filter(owner=request.user).order_by('id')
-    return render(request, 'boat/list.html', context={'boats': boats})    
+    return render(request, 'boat/my_boats.html', context={'boats': boats})   
+
+def boats(request):
+    boats = Boat.objects.all()
+    if request.user.is_authenticated:
+        boats = boats.exclude(owner=request.user)
+    return render(request, 'boat/boats.html', context={'boats': boats})   
 
 @login_required
 def create(request):
@@ -142,6 +148,7 @@ def update(request, pk):
                 'prices': serializers.serialize('json', boat.prices.all()),
                 **get_form_context()
             }
+            print(boat.length)
             return render(request, 'boat/update.html', context=context)
         elif request.method == 'POST':
             data = request.POST

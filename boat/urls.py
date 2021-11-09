@@ -12,7 +12,9 @@ apiurlpatterns = [
 ]
 
 urlpatterns = [
-    path('my_boats', views.my_boats, name='my_boats'),
+    path('', views.boats, name="boats"),
+    path('my_boats/', views.my_boats, name='my_boats'),
+
     path('create/', views.create, name='create'),
     url(r'update/(?P<pk>[0-9]+)/', views.update, name='update'),
 

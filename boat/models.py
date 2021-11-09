@@ -1,10 +1,11 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, FilteredRelation, Count
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
+from django.utils import timezone
 
 from user.models import User
 from file import utils, signals
@@ -32,8 +33,11 @@ class Boat(models.Model):
     width   = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
-
     type    = models.IntegerField(choices=Type.choices)
+
+    def get_now_prices(self):
+        now = timezone.now()
+        return BoatPrice.objects.filter(boat=self, start_date__lte=now, end_date__gte=now)
 
     def clean(self):
         if self.text:
@@ -41,9 +45,7 @@ class Boat(models.Model):
         if self.text == "":
             self.text = None
         if self.issue_year == "":
-            self.issue_year = None
-        #if self.length == 0:
-        #    raise ValidationError({'length': _('Укажите длину лодки')})   
+            self.issue_year = None 
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -140,6 +142,7 @@ class BoatPrice(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(BoatPrice, self).save(*args, **kwargs)
+
 
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)

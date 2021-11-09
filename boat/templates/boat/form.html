@@ -1,4 +1,5 @@
 {% load static %}
+{% load l10n %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/form.css' %}">
 <script type="text/javascript" src="{% static 'boat/js/form.min.js' %}"></script>
@@ -71,7 +72,7 @@
             <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="false"
                 step=".1" min="0.1" max="999.9"
                 required
-                value="{{ boat.length }}"
+                value="{{ boat.length|unlocalize }}"
             />
             <label for="lengthInput">Длина, м.</label>
             <div class="invalid-tooltip">Укажите длину лодки</div>
@@ -82,7 +83,7 @@
             <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
                 step=".1" min="0.1" max="99.9"
                 required    
-                value="{{ boat.width }}"     
+                value="{{ boat.width|unlocalize }}"     
             />
             <label for="widthInput">Ширина, м.</label>
             <div class="invalid-tooltip">Укажите ширину лодки</div>
@@ -93,7 +94,7 @@
             <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
                 step=".1" min="0.1" max="9.9"
                 required
-                value="{{ boat.draft }}"
+                value="{{ boat.draft|unlocalize }}"
             />
             <label for="draftInput">Осадка, м.</label>
             <div class="invalid-tooltip">Укажите осадку лодки</div>
