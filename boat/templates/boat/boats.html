@@ -6,17 +6,19 @@
 {% block title %}Объявления{% endblock  %}
 
 {% block content %}
-    <script type="text/javascript" src="{% static 'boat/js/list.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'boat/js/boats.min.js' %}"></script>
     
-    <section class="jumbotron text-center">
+    <section class="jumbotron text-center ">
         <div class="container">
-          <h1 class="jumbotron-heading">Объявления</h1>
-          <p class="lead text-muted">Здесь {% if not boats %}будут{% endif %} представлены все ваши лодки</p>
-          <p>
-            <a href="{% url 'boat:create' %}" class="btn btn-primary my-2">Добавить лодку</a>
-          </p>
+          <h1 class="jumbotron-heading mb-3">Объявления</h1>
+            <div class="sticky-top">
+                <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">
+                    Фильтр
+                </button>
+            </div>
         </div>
     </section>
+    
 
     {% if boats %}
         <div class="album py-5 bg-light">
@@ -39,4 +41,27 @@
             </div>
         </div>
     {% endif %}
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasBoatFilter">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasBoatFilterLabel">Фильтр</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <h6 class="mb-3">Типы лодок</h6>
+            <div class="list-group mb-3">
+                {% for boat_type in boat_types %}
+                    <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="" data-boat-type="{{ boat_type.0 }}">
+                        {{ boat_type.1 }}
+                    </label>                   
+                {% endfor %}
+            </div>
+            <form id="formApplyFilter" action="{% url 'boat:boats' %}" method="get">
+                <button class="btn btn-primary" type="submit">
+                    Применить
+                </button>
+            </form>
+        </div>
+    </div>
 {% endblock  %}

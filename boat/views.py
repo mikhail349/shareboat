@@ -72,10 +72,10 @@ def my_boats(request):
     return render(request, 'boat/my_boats.html', context={'boats': boats})   
 
 def boats(request):
-    boats = Boat.objects.all()
+    boats = Boat.objects.filter(is_published=True)
     if request.user.is_authenticated:
         boats = boats.exclude(owner=request.user)
-    return render(request, 'boat/boats.html', context={'boats': boats})   
+    return render(request, 'boat/boats.html', context={'boats': boats, 'boat_types': Boat.get_types()})   
 
 @login_required
 def create(request):

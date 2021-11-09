@@ -24,6 +24,10 @@
 }
 */
 
+.offcanvas-end {
+    border-left: none;
+}
+
 .form-control[required] ~ label::after, .form-select[required] ~ label::after {
     content:" *";
     color:red;
