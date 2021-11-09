@@ -80,7 +80,7 @@ class Boat(models.Model):
 class MotorBoat(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="motor_boat")
     motor_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(9)])
-    motor_power     = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(2000)])
+    motor_power     = models.DecimalField(max_digits=5, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
 
 class ComfortBoat(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="comfort_boat")

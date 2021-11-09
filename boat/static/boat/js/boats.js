@@ -9,17 +9,34 @@ $(document).ready(() => {
 
         const $priceFromInput = $("form input[name=priceFrom]")
         const $priceToInput = $("form input[name=priceTo]")
-        const isInvalidRange = (parseFloat($priceFromInput.val()) > parseFloat($priceToInput.val()));
-        const INVALID_RANDGE_MSG = 'Цена от не должна быть больше цены до';
-        $priceFromInput[0].setCustomValidity(isInvalidRange ? INVALID_RANDGE_MSG : "");
+        const isInvalidPriceRange = (parseFloat($priceFromInput.val()) > parseFloat($priceToInput.val()));
+        const INVALID_PRICE_RANGE_MSG = 'Цена от не должна быть больше цены до';
+        $priceFromInput[0].setCustomValidity(isInvalidPriceRange ? INVALID_PRICE_RANGE_MSG : "");
 
-        if (INVALID_RANDGE_MSG) {
-            $priceFromInput.siblings(".invalid-tooltip").text(INVALID_RANDGE_MSG);
+        if (isInvalidPriceRange) {
+            $priceFromInput.siblings(".invalid-tooltip").text(INVALID_PRICE_RANGE_MSG);
         } else {
             $priceFromInput.siblings(".invalid-tooltip").text("Укажите корректную цену");
         }
+
+        const $dateFromInput = $("form input[name=dateFrom]");
+        const $dateToInput = $("form input[name=dateTo]");
+        const INVALID_DATE_RANDGE_MSG = 'Аренда с не должна быть позже аренды по';
         
-        if (isInvalidRange) {
+        let isInvalidDateRange = false;
+        if ($dateFromInput.val() && $dateToInput.val()) {
+            const dateFrom = new Date($dateFromInput.val());
+            const dateTo = new Date($dateToInput.val());
+            isInvalidDateRange = dateFrom > dateTo;
+        }
+        $dateFromInput[0].setCustomValidity(isInvalidDateRange ? INVALID_DATE_RANDGE_MSG : "");
+        if (isInvalidDateRange) {
+            $dateFromInput.siblings(".invalid-tooltip").text(INVALID_DATE_RANDGE_MSG);
+        } else {
+            $dateFromInput.siblings(".invalid-tooltip").text("Укажите корректную дату");
+        }
+   
+        if (isInvalidPriceRange || isInvalidDateRange) {
             e.preventDefault();
             e.stopPropagation();
             return;

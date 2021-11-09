@@ -95,9 +95,6 @@ def boats(request):
         boats = boats.filter(prices__start_date__lte=q_date_from, prices__end_date__gte=q_date_from)
     if q_date_to:
         boats = boats.filter(prices__start_date__lte=q_date_to, prices__end_date__gte=q_date_to)
-
-    if request.user.is_authenticated:
-        boats = boats.exclude(owner=request.user)
     
     boats = boats.distinct().order_by('-id')
 

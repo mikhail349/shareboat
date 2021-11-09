@@ -125,8 +125,9 @@
             <div class="col-auto">
                 <div class="form-floating mb-3">                 
                     <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="false"
-                        required min="1" max="2000"
-                        value="{{ boat.motor_boat.motor_power }}"     
+                        step=".1" min="0.1" max="9999.9"
+                        required
+                        value="{{ boat.motor_boat.motor_power|unlocalize }}"     
                     />
                     <label for="widthInput">Мощность, л.с.</label>
                     <div class="invalid-tooltip">Укажите мощность двигателей</div>
