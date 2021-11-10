@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 
 {% load static %}
-{% load humanize %}
+{% load boat_extras %}
 
 {% block title %}Объявления{% endblock  %}
 
@@ -10,10 +10,22 @@
     
     <section class="jumbotron text-center ">
         <div class="container-md">
-          <h1 class="jumbotron-heading mb-3">Объявления</h1>
-            <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">
-                Фильтр
-            </button>
+            <h1 class="jumbotron-heading mb-3">Объявления</h1>
+            <p class="lead text-muted">
+                {% if q.date_from or q.date_to %}           
+                    Дата аренды 
+                    {% if q.date_from %} с {{ q.date_from|strptime:'%Y-%m-%d'|date:"d.m.y" }}{% endif %}
+                    {% if q.date_to %} по {{ q.date_to|strptime:'%Y-%m-%d'|date:"d.m.y" }}{% endif %}       
+                    <br/>        
+                {% endif %}
+                {% if q.price_from or q.price_to %}
+                    Цена 
+                    {% if q.price_from %} с {{ q.price_from|todecimal }}{% endif %}
+                    {% if q.price_to %} по {{ q.price_to|todecimal }}{% endif %}    
+                    <br/> 
+                {% endif %}
+            </p>
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр</button>
         </div>
     </section>
     

@@ -7,9 +7,9 @@
         <tbody>
             {% for now_price in boat.get_now_prices %}
                 <tr>
-                    <td>{{ now_price.get_type_display }}</td>
-                    <td>{{ now_price.price }} руб.</td>
-                    <td>до {{ now_price.end_date|date:"d.m.y" }} г.</td>
+                    <td class="text-start">{{ now_price.get_type_display }}</td>
+                    <td class="text-start">{{ now_price.price }} руб.</td>
+                    <td class="text-end">до {{ now_price.end_date|date:"d.m.y" }} г.</td>
                 </tr>                                                 
             {% endfor %}
         </tbody>
@@ -24,9 +24,9 @@
         <tbody>
             {% for future_price in boat.get_future_prices %}
                 <tr>
-                    <td>{{ future_price.get_type_display }}</td>
-                    <td>{{ future_price.price }} руб.</td>
-                    <td>с {{ future_price.start_date|date:"d.m.y" }} г.</td>
+                    <td class="text-start">{{ future_price.get_type_display }}</td>
+                    <td class="text-start">{{ future_price.price }} руб.</td>
+                    <td class="text-end">с {{ future_price.start_date|date:"d.m.y" }} г.</td>
                 </tr>                                                 
             {% endfor %}
         </tbody>

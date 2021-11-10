@@ -114,6 +114,8 @@ def boats(request):
         'price_type':   q_price_type
     }
 
+    print([e for e in BoatPrice.get_types() if e[0] in q_boat_types])
+
     context = {
         'boats': objects, 
         'boat_types': Boat.get_types(),
