@@ -1,8 +1,16 @@
 $(document).ready(() => {
 
-    $("#btnFilterClear").on('click', function (e) {
+    $("#btnFilterClear").on('click', function(e) {
         $("#offcanvasBoatFilter input[type=checkbox]").prop("checked", false);
         $("#offcanvasBoatFilter input").val("");
+    })
+
+    $(".pagination a").on('click', function(e) {
+        e.preventDefault();
+        const page = $(this).attr("data-page");
+
+        $("#formApplyFilter").append(`<input type="hidden" name="page" value="${page}" />`);
+        $("#formApplyFilter").submit();
     })
 
     $("#formApplyFilter").on('submit input', function(e) {
@@ -46,5 +54,10 @@ $(document).ready(() => {
             let boatType = $(boatTypeInput).attr('data-boat-type');
             $(this).prepend(`<input type="hidden" name="boatType" value="${boatType}" />`);
         }
+
+        if (!$(this).find('input[name=page]').length) {
+            $(this).append(`<input type="hidden" name="page" value="1" />`);
+        }
+        
     })
 })

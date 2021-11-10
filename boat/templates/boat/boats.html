@@ -9,20 +9,19 @@
     <script type="text/javascript" src="{% static 'boat/js/boats.min.js' %}"></script>
     
     <section class="jumbotron text-center ">
-        <div class="container">
+        <div class="container-md">
           <h1 class="jumbotron-heading mb-3">Объявления</h1>
-            <div class="sticky-top">
-                <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">
-                    Фильтр
-                </button>
-            </div>
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">
+                Фильтр
+            </button>
         </div>
     </section>
     
 
     {% if boats %}
-        <div class="album py-5 bg-light">
+        <div class="album bg-light">
             <div class="container">
+                {% include 'boat/paginator.html' %}
                 <div class="row g-4">
                     {% for boat in boats %}
                         <div class="col-lg-4 col-md-4">
@@ -35,9 +34,9 @@
                                 </div>
                             </div>
                         </div>
-
                     {% endfor %}
                 </div>
+                {% include 'boat/paginator.html' %}
             </div>
         </div>
     {% endif %}

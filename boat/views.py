@@ -1,10 +1,11 @@
 
-from django.db.models.fields import BooleanField
 from django.shortcuts import render
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
+from django.core.paginator import Paginator
+from django.conf import settings
 
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -80,9 +81,10 @@ def my_boats(request):
 def boats(request):
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
     q_price_from=request.GET.get('priceFrom')
-    q_price_to=request.GET.get('priceTo')
-    q_date_from=request.GET.get('dateFrom')
-    q_date_to=request.GET.get('dateTo')
+    q_price_to  =request.GET.get('priceTo')
+    q_date_from =request.GET.get('dateFrom')
+    q_date_to   =request.GET.get('dateTo')
+    q_page      =request.GET.get('page', 1)
 
     boats = Boat.objects.filter(is_published=True)
     if q_boat_types:
@@ -97,6 +99,9 @@ def boats(request):
         boats = boats.filter(prices__start_date__lte=q_date_to, prices__end_date__gte=q_date_to)
     
     boats = boats.distinct().order_by('-id')
+    print(q_page)
+    p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
+    objects = p.object_list
 
     q = {
         'boat_types':   q_boat_types,
@@ -105,7 +110,7 @@ def boats(request):
         'date_from':    q_date_from,
         'date_to':      q_date_to
     }
-    return render(request, 'boat/boats.html', context={'boats': boats, 'boat_types': Boat.get_types(), 'q': q})   
+    return render(request, 'boat/boats.html', context={'boats': objects, 'boat_types': Boat.get_types(), 'q': q, 'p': p})   
 
 @login_required
 def create(request):
