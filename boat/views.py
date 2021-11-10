@@ -84,6 +84,7 @@ def boats(request):
     q_price_to  =request.GET.get('priceTo')
     q_date_from =request.GET.get('dateFrom')
     q_date_to   =request.GET.get('dateTo')
+    q_price_type=request.GET.get('priceType')
     q_page      =request.GET.get('page', 1)
 
     boats = Boat.objects.filter(is_published=True)
@@ -97,9 +98,10 @@ def boats(request):
         boats = boats.filter(prices__start_date__lte=q_date_from, prices__end_date__gte=q_date_from)
     if q_date_to:
         boats = boats.filter(prices__start_date__lte=q_date_to, prices__end_date__gte=q_date_to)
+    if q_price_type:
+        boats = boats.filter(prices__type=q_price_type)
     
     boats = boats.distinct().order_by('-id')
-    print(q_page)
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
     objects = p.object_list
 
@@ -108,9 +110,19 @@ def boats(request):
         'price_from':   q_price_from,
         'price_to':     q_price_to,
         'date_from':    q_date_from,
-        'date_to':      q_date_to
+        'date_to':      q_date_to,
+        'price_type':   q_price_type
     }
-    return render(request, 'boat/boats.html', context={'boats': objects, 'boat_types': Boat.get_types(), 'q': q, 'p': p})   
+
+    context = {
+        'boats': objects, 
+        'boat_types': Boat.get_types(),
+        'price_types': BoatPrice.get_types(),
+        'q': q, 
+        'p': p
+    }
+
+    return render(request, 'boat/boats.html', context=context)   
 
 @login_required
 def create(request):

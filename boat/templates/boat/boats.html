@@ -58,7 +58,7 @@
             </div>
 
             <form id="formApplyFilter" action="{% url 'boat:boats' %}" method="get" class="needs-validation" novalidate>
-                <h6 class="mb-3">Диапазон цен</h6>
+                <h6 class="mb-3">Цена</h6>
                 <div class="row align-items-center gy-3 mb-3">
                     <div class="col">
                         <div class="form-floating">                 
@@ -80,6 +80,15 @@
                             <div class="invalid-tooltip">Укажите корректную цену</div>
                         </div>
                     </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" name="priceType">
+                        <option selected value="">Любой</option>
+                        {% for price_type in price_types %}
+                            <option value="{{ price_type.0 }}" {% if q.price_type == price_type.0|slugify %}selected{% endif %}>{{ price_type.1 }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Тип цены</label>
                 </div>
 
                 <h6 class="mb-3">Период аренды</h6>
@@ -103,6 +112,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-auto pe-0">
                         <button class="btn btn-primary" type="submit">Применить</button>
