@@ -1,5 +1,5 @@
-<nav class="py-5">
-    {% if p.paginator.num_pages > 1 %}
+{% if p.paginator.num_pages > 1 %}
+    <nav class="{{ class }}">    
         <ul class="pagination justify-content-center my-0">   
                         
             <li class="page-item {% if p.number == 1 %}disabled{% endif %}">
@@ -28,6 +28,6 @@
                 <a class="page-link" href="#" data-page="{{ p.paginator.num_pages }}">В конец</a>
             </li>
             
-        </ul>
-    {% endif %}
-</nav>
+        </ul>     
+    </nav>
+{% endif %}

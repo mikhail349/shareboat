@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.conf import settings
+from datetime import datetime
 
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -80,28 +81,36 @@ def my_boats(request):
 
 def boats(request):
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
+    q_price_type=request.GET.get('priceType')
     q_price_from=request.GET.get('priceFrom')
     q_price_to  =request.GET.get('priceTo')
     q_date_from =request.GET.get('dateFrom')
-    q_date_to   =request.GET.get('dateTo')
-    q_price_type=request.GET.get('priceType')
+    q_date_to   =request.GET.get('dateTo') 
     q_page      =request.GET.get('page', 1)
 
-    boats = Boat.objects.filter(is_published=True)
+    #boat_prices = BoatPrice.objects.all()
+    #if q_price_type:
+    #    boat_prices = boat_prices.filter(type=q_price_type) 
+    #if q_price_from:
+    #    boat_prices = boat_prices.filter(price__gte=q_price_from)
+    #if q_price_to:
+    #    boat_prices = boat_prices.filter(price__lte=q_price_to)
+    #if q_date_from:
+    #    boat_prices = boat_prices.filter(start_date__lte=q_date_from, end_date__gte=q_date_from)
+    #if q_date_to:
+    #    boat_prices = boat_prices.filter(start_date__lte=q_date_to, end_date__gte=q_date_to)
+
+    #if q_date_from:
+    #    boat_prices = boat_prices.filter(start_date__lte=q_date_from) 
+    #if q_date_to:
+    #    boat_prices = boat_prices.filter(end_date__gte=q_date_to)
+ 
+    boats = Boat.objects.filter(is_published=True)#.filter(prices__in=boat_prices)
     if q_boat_types:
         boats = boats.filter(type__in=q_boat_types)
-    if q_price_from:
-        boats = boats.filter(prices__price__gte=q_price_from)
-    if q_price_to:
-        boats = boats.filter(prices__price__lte=q_price_to)
-    if q_date_from:
-        boats = boats.filter(prices__start_date__lte=q_date_from, prices__end_date__gte=q_date_from)
-    if q_date_to:
-        boats = boats.filter(prices__start_date__lte=q_date_to, prices__end_date__gte=q_date_to)
-    if q_price_type:
-        boats = boats.filter(prices__type=q_price_type)
-    
+
     boats = boats.distinct().order_by('-id')
+    print(boats.query)
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
     objects = p.object_list
 
@@ -114,14 +123,18 @@ def boats(request):
         'price_type':   q_price_type
     }
 
-    print([e for e in BoatPrice.get_types() if e[0] in q_boat_types])
+    f = {
+        'boat_types': ', '.join([str(e[1]) for e in Boat.get_types() if e[0] in q_boat_types]),
+        'price_type': next((e[1] for e in BoatPrice.get_types() if e[0] == int(q_price_type)), '') if q_price_type else ''
+    }
 
     context = {
         'boats': objects, 
         'boat_types': Boat.get_types(),
         'price_types': BoatPrice.get_types(),
         'q': q, 
-        'p': p
+        'p': p,
+        'f': f
     }
 
     return render(request, 'boat/boats.html', context=context)   
