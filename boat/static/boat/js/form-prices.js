@@ -21,7 +21,7 @@ function PricesList(props) {
     function addPrice() {
         const newPrices = [...prices];
         newPrices.push({
-            
+            type: 0
         });
         setPrices(newPrices);
     }
@@ -49,13 +49,14 @@ function PricesList(props) {
                         <div className="row align-items-center gy-3 mb-3">
                             <div className="col-auto">
                                 <div className="form-floating">
-                                    <select className="form-select" required value={price.type} onChange={(e) => changeValue(e, index, 'type')}>
-                                        <option selected disabled value="">Выберите из списка</option>
+                                    <select className="form-select" required disabled value={price.type} onChange={(e) => changeValue(e, index, 'type')}>
+                                        <option value={priceTypes[0][0]}>{priceTypes[0][1]}</option>                                     
+                                        {/*<option selected disabled value="">Выберите из списка</option>
                                         {
                                             priceTypes.map((priceType, index) => (
                                                 <option value={priceType[0]}>{priceType[1]}</option>
                                             ))
-                                        }
+                                        }*/}
                                     </select>
                                     <label>Тип цены</label>
                                     <div className="invalid-tooltip">Выберите тип цены</div>

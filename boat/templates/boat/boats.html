@@ -53,7 +53,7 @@
                     {% for boat in boats %}
                         <div class="col-lg-4 col-md-4">
                             <div class="card box-shadow h-100">
-                                <a href="#">
+                                <a href="{% url 'boat:booking' boat.id %}">
                                     {% include 'boat/carousel.html' %}
                                 </a>    
                                 <div class="card-body d-flex flex-column">

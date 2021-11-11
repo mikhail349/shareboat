@@ -10,19 +10,28 @@
     -webkit-animation-fill-mode: forwards;
 }
 
+.carousel-img {
+    height: 200px;
+    object-fit: cover;
+    opacity: 0;
+    animation: fadein .5s;
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+}
+
 @keyframes fadein {
     to {
         opacity: 1;
     }
 }
 
-/*
+
 @media (min-width: 992px) {
-    .navbar-brand {
-        font-weight: lighter;
-    } 
+    .carousel-img {
+        height: 400px;
+    }
 }
-*/
+
 
 .offcanvas-end {
     border-left: none;

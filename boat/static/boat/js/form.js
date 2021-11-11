@@ -56,7 +56,7 @@ $(document).ready(() => {
                 formData.append("file", data);
             }
         }
-
+        
         formData.append('prices', JSON.stringify(window.prices));
 
         const url = $form.attr("action");

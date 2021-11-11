@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('create/', views.create, name='create'),
     url(r'update/(?P<pk>[0-9]+)/', views.update, name='update'),
+    path('booking/<int:pk>/', views.booking, name='booking'),
 
     path('api/', include(apiurlpatterns))
 ]

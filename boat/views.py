@@ -52,7 +52,7 @@ FILES_LIMIT_COUNT = 10
 
 def handle_boat_prices(boat, prices):
     BoatPrice.objects.filter(boat=boat).exclude(id__in=[price.get('pk') for price in prices]).delete()
-    
+    print(prices)
     for price in prices:
         if 'pk' in price:
             try:
@@ -110,7 +110,6 @@ def boats(request):
         boats = boats.filter(type__in=q_boat_types)
 
     boats = boats.distinct().order_by('-id')
-    print(boats.query)
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
     objects = p.object_list
 
@@ -199,6 +198,16 @@ def create(request):
             'redirect': reverse('boat:my_boats')
         })
 
+def booking(request, pk):
+    if request.method == 'GET':
+        try:
+            boat = Boat.objects.get(pk=pk, is_published=True)
+            context = {
+                'boat': boat
+            }
+            return render(request, 'boat/booking.html', context=context)
+        except Boat.DoesNotExist:
+            return render(request, 'not_found.html')
 
 @login_required
 def update(request, pk):

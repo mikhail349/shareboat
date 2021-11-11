@@ -106,10 +106,10 @@ class Specification(models.Model):
 class BoatPrice(models.Model):
     class Type(models.IntegerChoices):
         DAY     = 0, _("Сутки")
-        WEEK    = 1, _("Неделя")
+        #WEEK    = 1, _("Неделя")
 
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices")
-    type = models.IntegerField(choices=Type.choices)
+    type = models.IntegerField(choices=Type.choices, default=Type.DAY)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     start_date = models.DateField()
     end_date = models.DateField()

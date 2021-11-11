@@ -16,7 +16,7 @@ $(document).ready(() => {
 
     $("#formApplyFilter").on('submit input', function(e) {
 
-        const $priceFromInput = $("form input[name=priceFrom]")
+        /*const $priceFromInput = $("form input[name=priceFrom]")
         const $priceToInput = $("form input[name=priceTo]")
         const isInvalidPriceRange = (parseFloat($priceFromInput.val()) > parseFloat($priceToInput.val()));
         const INVALID_PRICE_RANGE_MSG = '"Цена от" не должна быть больше "Цены до"';
@@ -49,7 +49,7 @@ $(document).ready(() => {
             e.preventDefault();
             e.stopPropagation();
             return;
-        }
+        }*/
 
         for (let boatTypeInput of $('input[data-boat-type]:checked')) {
             let boatType = $(boatTypeInput).attr('data-boat-type');
