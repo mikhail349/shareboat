@@ -5,59 +5,69 @@
 {% block title %}Бронирование лодки{% endblock %}
 
 {% block content %}
+    <script type="text/javascript" src="{% static 'boat/js/booking.min.js' %}"></script>
     <div class="container-lg">
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Бронирование лодки</h1>    
         </section>
 
         <div class="row g-3">
-            <div class="col-lg">
-                {% if boat.files.count > 1 %}
-
-                    <div id="fileCarousel{{forloop.counter0}}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
-                        <ol class="carousel-indicators">
-                            {% for file in boat.files.all %} 
-                                <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
-                            {% endfor %}
-                        </ol> 
-                        <div class="carousel-inner">
-                            {% for file in boat.files.all %} 
-                                <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}">
-                                    <img class="d-block w-100 rounded carousel-img" src="{{ file.file.url }}" />
+            {% if boat.files.exists %}
+                <div class="col-lg">
+                    <div class="card box-shadow text-end">
+                        {% if boat.files.count > 1 %}  
+                            <div id="fileCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
+                                <ol class="carousel-indicators">
+                                    {% for file in boat.files.all %} 
+                                        <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
+                                    {% endfor %}
+                                </ol> 
+                                <div class="carousel-inner">
+                                    {% for file in boat.files.all %} 
+                                        <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}">
+                                            <img class="d-block w-100 rounded carousel-img" src="{{ file.file.url }}" />
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
-                        </div>
-                        <button type="button" class="carousel-control-prev" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                        <button type="button" class="carousel-control-next" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
+                                <button type="button" class="carousel-control-prev" data-bs-target="#fileCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button type="button" class="carousel-control-next" data-bs-target="#fileCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                                <!--
+                                <button type="button" class="carousel-control-full-screen" data-bs-target="#fileCarousel">
+                                    <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">FullScreen</span>
+                                </button>
+                                -->
+                            </div>
+                        {% elif boat.files.exists %}
+                            <img class="carousel-img rounded" src="{{ boat.files.first.file.url }}" />
+                        {% endif %}
                     </div>
-
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
+            
             <div class="col-lg">
                 <h2>{{ boat.name }}</h2>   
                 <p class="text-muted">{{ boat.get_type_display }}</p>   
                 <dl>  
-                <div class="row g-3">
-                    
-                        <div class="col">
-                            <dt>Длина</dt>
-                            <dd>{{ boat.length }} м.</dd>
-                        </div>
-                        <div class="col">
-                            <dt>Ширина</dt>
-                            <dd>{{ boat.width }} м.</dd>
-                        </div>
-                        <div class="col">
-                            <dt>Осадка</dt>
-                            <dd>{{ boat.draft }} м.</dd>
-                        </div>
-                    
+                <div class="row g-3">                 
+                    <div class="col">
+                        <dt>Длина</dt>
+                        <dd>{{ boat.length }} м.</dd>
+                    </div>
+                    <div class="col">
+                        <dt>Ширина</dt>
+                        <dd>{{ boat.width }} м.</dd>
+                    </div>
+                    <div class="col">
+                        <dt>Осадка</dt>
+                        <dd>{{ boat.draft }} м.</dd>
+                    </div>            
                 </div>
                 </dl>
             </div>           

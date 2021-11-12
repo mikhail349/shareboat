@@ -36,6 +36,15 @@ $(document).ready(() => {
     $("toast button[data-bs-dismiss=toast]").on('click', () => {
         $("#toast").toast('hide');
     });
+    
+    $(".carousel-control-full-screen").on("click", function(e) {
+        const $carousel = $($(this).attr("data-bs-target"));
+        if ($carousel.hasClass("full-screen")) {
+            $carousel.removeClass("full-screen");
+        } else {
+            $carousel.addClass('full-screen');
+        }
+    })
 });
 
 function parseJSONError(json) {
