@@ -53,23 +53,53 @@
             
             <div class="col-lg">
                 <h2>{{ boat.name }}</h2>   
-                <p class="text-muted">{{ boat.get_type_display }}</p>   
-                <dl>  
-                <div class="row g-3">                 
+                <h4 class="text-muted mb-5">{{ boat.get_type_display }}</h4>   
+
+                <div class="row row-cols-3 g-3">                 
                     <div class="col">
-                        <dt>Длина</dt>
-                        <dd>{{ boat.length }} м.</dd>
+                        <p class="text-muted">
+                            <strong class="d-block">Длина</strong>{{ boat.length }} м.
+                        </p>
                     </div>
                     <div class="col">
-                        <dt>Ширина</dt>
-                        <dd>{{ boat.width }} м.</dd>
+                        <p class="text-muted">
+                            <strong class="d-block">Ширина</strong>{{ boat.width }} м.
+                        </p>
                     </div>
                     <div class="col">
-                        <dt>Осадка</dt>
-                        <dd>{{ boat.draft }} м.</dd>
-                    </div>            
+                        <p class="text-muted">
+                            <strong class="d-block">Осадка</strong>{{ boat.draft }} м.
+                        </p>
+                    </div>                      
+                    <div class="col">
+                        <p class="text-muted">
+                            <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан" }}</span>
+                        </p>
+                    </div>
+                    <div class="col">
+                        <p class="text-muted">
+                            <strong class="d-block">Вместимость</strong>{{ boat.capacity }} чел.
+                        </p>
+                    </div>
+                    <div class="col"></div>
+
+                    {% if boat.is_motor_boat %}
+                        
+                        <div class="col">
+                            <p class="text-muted">
+                                <strong class="d-block">Кол-во двигателей</strong>{{ boat.motor_boat.motor_amount }}
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p class="text-muted">
+                                <strong class="d-block">Мощность</strong>{{ boat.motor_boat.motor_power }} л.с.
+                            </p>
+                        </div>
+                        <div class="col"></div>                    
+                    {% endif %}
                 </div>
-                </dl>
+
+
             </div>           
         </div>
         <p >{{ boat.text|default_if_none:""|linebreaks }}</p>
