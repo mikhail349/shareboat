@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q, FilteredRelation, Count
+from django.db.models import Q
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _

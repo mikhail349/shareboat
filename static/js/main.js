@@ -125,3 +125,11 @@ function showErrorToast(body, header="Ошибка") {
     $("#toast").html(html);
     $("#toast").toast('show');
 }
+
+function plural(value, one, two, five) {
+    if (value >= 5 && value <= 20) return five;
+    let lastDig = parseInt(value.toString().substr(-1));
+    if (lastDig == 1) return one;
+    if (lastDig >= 2 && lastDig <= 4) return two;
+    return five;
+}

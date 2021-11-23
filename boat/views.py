@@ -1,12 +1,15 @@
 
+from decimal import Decimal
 from django.shortcuts import render
 from django.db import transaction
+from django.db.models import Max, Min
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.conf import settings
-from datetime import datetime
+from django.utils import timezone
+from django.utils.dateparse import parse_date
 
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -14,8 +17,9 @@ from PIL import UnidentifiedImageError
 from django.core.exceptions import ValidationError
 from django.core import serializers
 
-from file.exceptions import FileSizeException
+from shareboat.date_utils import daterange
 
+from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
 from .serializers import BoatFileSerializer
@@ -202,12 +206,38 @@ def booking(request, pk):
     if request.method == 'GET':
         try:
             boat = Boat.objects.get(pk=pk, is_published=True)
+            price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
+            prices = boat.prices.values('start_date', 'end_date')
             context = {
-                'boat': boat
+                'boat': boat,
+                'first_price_date': price_dates.get('first'),
+                'last_price_date': price_dates.get('last'),
+                'prices_exist': price_dates.get('last') is not None and price_dates.get('last') >= timezone.localdate(),
+                'price_ranges': [[e['start_date'], e['end_date']] for e in prices]
             }
             return render(request, 'boat/booking.html', context=context)
         except Boat.DoesNotExist:
             return render(request, 'not_found.html')
+
+@login_required
+def calc_booking(request, pk):
+    start_date  = parse_date(request.GET.get('start_date'))
+    end_date    = parse_date(request.GET.get('end_date'))
+    try:
+        boat = Boat.objects.get(pk=pk)
+        prices = boat.prices #for cache
+        
+        sum = Decimal()
+        days = 0
+        for date in daterange(start_date, end_date):       
+            range_prices = prices.filter(start_date__lte=date, end_date__gte=date)
+            if not range_prices:
+                return JsonResponse({'message': 'Выбранный период содержит недоступные даты'}, status=status.HTTP_400_BAD_REQUEST)
+            sum += range_prices[0].price
+            days += 1
+        return JsonResponse({'sum': float(sum), 'days': days})
+    except Boat.DoesNotExist:
+        return response_not_found()
 
 @login_required
 def update(request, pk):

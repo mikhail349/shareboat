@@ -1,0 +1,4 @@
+.daterangepicker td.available:not(.start-date):not(.end-date):not(.in-range) {
+    color: var(--bs-primary);
+    font-weight: bolder;
+}

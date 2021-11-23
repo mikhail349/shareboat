@@ -5,15 +5,31 @@
 {% block title %}Бронирование лодки{% endblock %}
 
 {% block content %}
+    <script type="text/javascript">
+        var boatId = {{ boat.pk }}
+            firstPriceDate = new Date('{{ first_price_date.isoformat }}'),
+            lastPriceDate = new Date('{{ last_price_date.isoformat }}'),
+            priceRanges = []
+
+        {% for price_range in price_ranges %}
+            priceRanges.push({
+                startDate: new Date('{{ price_range.0.isoformat }}'),
+                endDate: new Date('{{ price_range.1.isoformat }}')
+            })
+        {% endfor %}
+    </script>
+
     <script type="text/javascript" src="{% static 'boat/js/booking.min.js' %}"></script>
+    {% include 'daterangepicker.html' %}
+
     <div class="container-lg">
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Бронирование лодки</h1>    
         </section>
 
-        <div class="row g-3">
-            {% if boat.files.exists %}
-                <div class="col-lg">
+        <div class="row g-3"> 
+            <div class="col-lg">
+                {% if boat.files.exists %}
                     <div class="card box-shadow text-end">
                         {% if boat.files.count > 1 %}  
                             <div id="fileCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
@@ -47,15 +63,21 @@
                         {% elif boat.files.exists %}
                             <img class="carousel-img rounded" src="{{ boat.files.first.file.url }}" />
                         {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-            
+                    </div>           
+                {% endif %}
+                <div class="mt-3 d-none d-lg-block">{{ boat.text|default_if_none:""|linebreaks }}</div>
+            </div>
+    
             <div class="col-lg">
                 <h2>{{ boat.name }}</h2>   
-                <h4 class="text-muted mb-5">{{ boat.get_type_display }}</h4>   
+                <h4 class="text-muted">{{ boat.get_type_display }}</h4>   
+                <div class="mt-3 d-lg-none">{{ boat.text|default_if_none:""|linebreaks }}</div>
 
-                <div class="row row-cols-3 g-3">                 
+                <div class="row row-cols-3 gx-3">   
+                    <div class="col-12">
+                        <hr/>
+                        <h5>Основная информация</h5>
+                    </div>                
                     <div class="col">
                         <p class="text-muted">
                             <strong class="d-block">Длина</strong>{{ boat.length }} м.
@@ -76,33 +98,72 @@
                             <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан" }}</span>
                         </p>
                     </div>
-                    <div class="col">
+                    <div class="col-8">
                         <p class="text-muted">
                             <strong class="d-block">Вместимость</strong>{{ boat.capacity }} чел.
                         </p>
                     </div>
-                    <div class="col"></div>
 
-                    {% if boat.is_motor_boat %}
-                        
+                    {% if boat.is_motor_boat %}    
+                        <div class="col-12">
+                            <hr/>
+                            <h5>Двигатели</h5>
+                        </div>                 
                         <div class="col">
                             <p class="text-muted">
-                                <strong class="d-block">Кол-во двигателей</strong>{{ boat.motor_boat.motor_amount }}
+                                <strong class="d-block">Кол-во</strong>{{ boat.motor_boat.motor_amount }}
                             </p>
                         </div>
-                        <div class="col">
+                        <div class="col-8">
                             <p class="text-muted">
                                 <strong class="d-block">Мощность</strong>{{ boat.motor_boat.motor_power }} л.с.
                             </p>
+                        </div>                  
+                    {% endif %}
+
+                    {% if boat.is_comfort_boat %}    
+                        <div class="col-12">
+                            <hr/>
+                            <h5>Удобства</h5>
+                        </div>                 
+                        <div class="col">
+                            <p class="text-muted">
+                                <strong class="d-block">Спальные места</strong>{{ boat.comfort_boat.berth_amount }}
+                            </p>
                         </div>
-                        <div class="col"></div>                    
+                        <div class="col mt-auto">
+                            <p class="text-muted">
+                                <strong class="d-block">Каюты</strong>{{ boat.comfort_boat.cabin_amount }}
+                            </p>
+                        </div>           
+                        <div class="col mt-auto">
+                            <p class="text-muted">
+                                <strong class="d-block">Сан. узлы</strong>{{ boat.comfort_boat.bathroom_amount }}
+                            </p>
+                        </div>          
                     {% endif %}
                 </div>
 
 
             </div>           
         </div>
-        <p >{{ boat.text|default_if_none:""|linebreaks }}</p>
         
+        <h4 class="mb-3">Бронирование</h4>
+        {% if prices_exist %}
+            <div class="row gy-3 mb-3 ">
+                <div class="col-auto">
+                    <div class="form-floating">                 
+                        <input id="bookingdaterangepicker" type="text" class="form-control" placeholder="Укажите период" required />
+                        <label>Период</label>
+                        <div class="invalid-tooltip">Укажите период</div>
+                    </div>
+                </div>
+                <div class="col me-auto">
+                    <h5 id="priceAlert" class="alert alert-secondary">Для расчета цены выберите период</h5>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-danger mb-3">Нет расценок</div>
+        {% endif %}
     </div>
 {% endblock  %}
