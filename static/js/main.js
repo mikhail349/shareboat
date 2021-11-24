@@ -48,6 +48,7 @@ $(document).ready(() => {
 });
 
 function parseJSONError(json) {
+    if (!json) return null;
     if ('message' in json) {
         if (Array.isArray(json.message) && json.message.length > 0) {
             if (Array.isArray(json.message[0]) && json.message[0].length > 0) {

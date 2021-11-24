@@ -51,9 +51,12 @@ $(document).ready(() => {
             firstDay: 1
         }
     })
+    var xhr = null;
+    $('#bookingdaterangepicker').on('apply.daterangepicker', function(e, picker) {
+        var range = picker.startDate.format(picker.locale.format) + ' - ' + picker.endDate.format(picker.locale.format);
 
-    $('#bookingdaterangepicker').on('apply.daterangepicker', function(e, picker) {   
-        $.ajax({ 
+        if (!!xhr) xhr.abort();
+        xhr = $.ajax({ 
             type: "GET",
             url: `/boats/api/calc_booking/${boatId}/?start_date=${picker.startDate.format('YYYY-MM-DD')}&end_date=${picker.endDate.format('YYYY-MM-DD')}`,
             processData: false,
@@ -61,25 +64,38 @@ $(document).ready(() => {
             success: onSuccess,
             error: onError
         }); 
+
+        $('#priceAlert').removeClass('alert-danger');
+        $('#priceAlert').removeClass('alert-success');
+        $('#priceAlert').addClass('alert-secondary');
+        $('#priceAlert').html(`
+            <h5>Идет расчет цены за период ${range}...</h5>
+        `);
        
         function onSuccess(data) {
-            $('#bookingdaterangepicker').val(picker.startDate.format(picker.locale.format) + ' - ' + picker.endDate.format(picker.locale.format));
+            $('#bookingdaterangepicker').val(range);
             
             $('#priceAlert').removeClass('alert-danger');
             $('#priceAlert').removeClass('alert-secondary');
             $('#priceAlert').addClass('alert-success');
             let sumStr = data.sum.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
-            $('#priceAlert').text(`${sumStr} за ${data.days} ${daysStr}`);
+            $('#priceAlert').html(`
+                <h4>${sumStr}</h4>
+                <div>за ${data.days} ${daysStr}</div>
+            `)
         }
     
         function onError(error) {
+            if (error.status == 0) return;
             $('#bookingdaterangepicker').val('');
             
             $('#priceAlert').removeClass('alert-success');
             $('#priceAlert').removeClass('alert-secondary');
             $('#priceAlert').addClass('alert-danger');
-            $('#priceAlert').text(parseJSONError(error.responseJSON));
+            $('#priceAlert').html(`
+                <h5>${parseJSONError(error.responseJSON)}</h5>
+            `);
         }
     });
 })

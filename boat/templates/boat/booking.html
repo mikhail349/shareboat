@@ -13,8 +13,8 @@
 
         {% for price_range in price_ranges %}
             priceRanges.push({
-                startDate: new Date('{{ price_range.0.isoformat }}'),
-                endDate: new Date('{{ price_range.1.isoformat }}')
+                startDate: new Date(new Date('{{ price_range.0.isoformat }}').toDateString()),
+                endDate: new Date(new Date('{{ price_range.1.isoformat }}').toDateString())
             })
         {% endfor %}
     </script>
@@ -158,8 +158,10 @@
                         <div class="invalid-tooltip">Укажите период</div>
                     </div>
                 </div>
-                <div class="col me-auto">
-                    <h5 id="priceAlert" class="alert alert-secondary">Для расчета цены выберите период</h5>
+                <div class="col-12">
+                    <div id="priceAlert" class="alert alert-secondary text-center">
+                        <h5>Для расчета цены выберите период</h5>
+                    </div>
                 </div>
             </div>
         {% else %}

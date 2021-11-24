@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'user',
     'file',
     'boat',
-    'emails'
+    'emails',
+    'booking'
 ]
 
 REST_FRAMEWORK = {

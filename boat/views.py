@@ -20,9 +20,10 @@ from django.core import serializers
 from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
-from .exceptions import BoatFileCountException
+from .exceptions import BoatFileCountException, PriceDateRangeException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
 from .serializers import BoatFileSerializer
+from .utils import calc_booking as _calc_booking
 import json
 
 
@@ -56,7 +57,6 @@ FILES_LIMIT_COUNT = 10
 
 def handle_boat_prices(boat, prices):
     BoatPrice.objects.filter(boat=boat).exclude(id__in=[price.get('pk') for price in prices]).delete()
-    print(prices)
     for price in prices:
         if 'pk' in price:
             try:
@@ -219,25 +219,16 @@ def booking(request, pk):
         except Boat.DoesNotExist:
             return render(request, 'not_found.html')
 
-@login_required
 def calc_booking(request, pk):
     start_date  = parse_date(request.GET.get('start_date'))
     end_date    = parse_date(request.GET.get('end_date'))
     try:
-        boat = Boat.objects.get(pk=pk)
-        prices = boat.prices #for cache
-        
-        sum = Decimal()
-        days = 0
-        for date in daterange(start_date, end_date):       
-            range_prices = prices.filter(start_date__lte=date, end_date__gte=date)
-            if not range_prices:
-                return JsonResponse({'message': 'Выбранный период содержит недоступные даты'}, status=status.HTTP_400_BAD_REQUEST)
-            sum += range_prices[0].price
-            days += 1
-        return JsonResponse({'sum': float(sum), 'days': days})
+        res = _calc_booking(pk, start_date, end_date)
+        return JsonResponse(res)
     except Boat.DoesNotExist:
         return response_not_found()
+    except PriceDateRangeException as e:
+        return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
 def update(request, pk):
