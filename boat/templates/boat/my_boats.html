@@ -28,12 +28,24 @@
                                 </a>    
                                 <div class="card-body d-flex flex-column">
                                     {% include 'boat/card.html' %}
+                                    <div class="dropdown mt-auto">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuStatus{{ boat.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Сменить статус
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ boat.pk }}">
+                                            {% if boat.status == Status.DRAFT %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.CHECKING }}">Отправить на проверку</a></li>
+                                            {% elif boat.status == Status.PUBLISHED %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.DRAFT }}">Вернуть в заготовку</a></li>
+                                            {% else %}
+                                                <li><span class="dropdown-item disabled">Нет доступных статусов</span></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
                                 </div>
-                                {% if boat.is_published %}
-                                    <h5>
-                                        <span class="position-absolute top-0 start-100 translate-95-right badge bg-success">Опубликована</span>
-                                    </h5>
-                                {% endif %}
+                                <h5>
+                                    <span class="position-absolute top-0 start-100 translate-95-right badge bg-secondary">{{ boat.get_status_display }}</span>
+                                </h5>
                             </div>
                         </div>
 

@@ -9,7 +9,8 @@ apiurlpatterns = [
     path('create/', views.create, name='api_create'),
     url(r'delete/(?P<pk>[0-9]+)/', views.delete, name='api_delete'),
     url(r'get_files/(?P<pk>[0-9]+)/', views.get_files),
-    path('calc_booking/<int:pk>/', views.calc_booking, name='api_calc_booking')
+    path('calc_booking/<int:pk>/', views.calc_booking, name='api_calc_booking'),
+    path('set_status/<int:pk>/', views.set_status, name='api_set_status'),
 ]
 
 urlpatterns = [
@@ -19,6 +20,5 @@ urlpatterns = [
     path('create/', views.create, name='create'),
     url(r'update/(?P<pk>[0-9]+)/', views.update, name='update'),
     path('booking/<int:pk>/', views.booking, name='booking'),
-
     path('api/', include(apiurlpatterns))
 ]

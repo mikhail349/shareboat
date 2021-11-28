@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from decimal import Decimal
 from boat.exceptions import PriceDateRangeException
 from shareboat.date_utils import daterange
@@ -17,3 +18,9 @@ def calc_booking(boat_pk, start_date, end_date):
         sum += range_prices[0].price
         days += 1
     return {'sum': float(sum), 'days': days}
+
+def my_boats(request, context=None):
+    if context is None:
+        context = {}
+    boats = Boat.objects.filter(owner=request.user).order_by('id')
+    return render(request, 'boat/my_boats.html', context={'boats': boats, 'Status': Boat.Status, **context}) 

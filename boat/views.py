@@ -1,6 +1,6 @@
 
 from decimal import Decimal
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.db import transaction
 from django.db.models import Max, Min
 from django.contrib.auth.decorators import login_required
@@ -23,7 +23,8 @@ from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
 from .serializers import BoatFileSerializer
-from .utils import calc_booking as _calc_booking
+from .utils import calc_booking as _calc_booking, my_boats as _my_boats
+
 import json
 
 
@@ -81,7 +82,31 @@ def handle_boat_prices(boat, prices):
 @login_required
 def my_boats(request):
     boats = Boat.objects.filter(owner=request.user).order_by('id')
-    return render(request, 'boat/my_boats.html', context={'boats': boats})   
+    return render(request, 'boat/my_boats.html', context={'boats': boats, 'Status': Boat.Status}) 
+
+@login_required
+def set_status(request, pk):
+    
+    ALLOWED_STATUSES = {
+        Boat.Status.DRAFT: (Boat.Status.CHECKING,),
+        Boat.Status.CHECKING: (),
+        Boat.Status.PUBLISHED: (Boat.Status.DRAFT,)
+    }
+
+    try:
+        new_status = int(request.POST.get('status'))
+        boat = Boat.objects.get(pk=pk, owner=request.user)
+
+        if not new_status in ALLOWED_STATUSES.get(boat.status):
+            return JsonResponse({'message': 'Некорректный статус'}, status=status.HTTP_400_BAD_REQUEST)
+
+        boat.status = new_status
+        boat.save()
+
+        return JsonResponse({})
+    except Boat.DoesNotExist:
+        return response_not_found()    
+
 
 def boats(request):
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
@@ -109,7 +134,7 @@ def boats(request):
     #if q_date_to:
     #    boat_prices = boat_prices.filter(end_date__gte=q_date_to)
  
-    boats = Boat.objects.filter(is_published=True)#.filter(prices__in=boat_prices)
+    boats = Boat.objects.published()
     if q_boat_types:
         boats = boats.filter(type__in=q_boat_types)
 
@@ -165,8 +190,7 @@ def create(request):
                     'width':    data.get('width'),
                     'draft':    data.get('draft'),
                     'capacity': data.get('capacity'),
-                    'type':     data.get('type'),
-                    'is_published':  get_bool(data.get('is_published', False))
+                    'type':     data.get('type')
                 }
                 boat = Boat.objects.create(**fields, owner=request.user)
                 if boat.is_motor_boat():
@@ -205,7 +229,7 @@ def create(request):
 def booking(request, pk):
     if request.method == 'GET':
         try:
-            boat = Boat.objects.get(pk=pk, is_published=True)
+            boat = Boat.objects.published().get(pk=pk)
             price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
             prices = boat.prices.values('start_date', 'end_date')
             context = {
@@ -260,7 +284,6 @@ def update(request, pk):
                     boat.draft          = data.get('draft')
                     boat.capacity       = data.get('capacity')
                     boat.type           = data.get('type')
-                    boat.is_published   = get_bool(data.get('is_published', False))
                     boat.save()
 
                     if boat.is_motor_boat():

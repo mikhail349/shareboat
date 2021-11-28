@@ -14,11 +14,6 @@
 
 <h4 class="mb-3">Основная информация</h4>
 
-<div class="form-check form-switch mb-3">
-  <input class="form-check-input" type="checkbox" id="cbIsPublished" name='is_published' {% if boat.is_published %}checked{% endif %} >
-  <label class="form-check-label" for="cbIsPublished">Опубликовать</label>
-</div>
-
 <div class="form-floating mb-3">                 
     <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="false" aria-describedby="invalidInputName"             
         required maxlength="255"

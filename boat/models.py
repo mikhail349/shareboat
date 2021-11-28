@@ -10,7 +10,23 @@ from django.utils import timezone
 from user.models import User
 from file import utils, signals
 
+class BoatQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(status=Boat.Status.PUBLISHED)
+
+class BoatManager(models.Manager):
+    def get_queryset(self):
+        return BoatQuerySet(self.model, using=self._db)
+    
+    def published(self):
+        return self.get_queryset().published()
+
 class Boat(models.Model):
+
+    class Status(models.IntegerChoices):
+        DRAFT       = 0, _("Заготовка")
+        CHECKING    = 1, _("На проверке")  
+        PUBLISHED   = 2, _("Опубликована")
 
     class Type(models.IntegerChoices):
         SAILING_YACHT   = 0, _("Парусная яхта")
@@ -26,7 +42,7 @@ class Boat(models.Model):
     name    = models.CharField(max_length=255)
     text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
-    is_published = models.BooleanField(default=False)
+    status  = models.IntegerField(choices=Status.choices, default=Status.DRAFT)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
     length  = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
@@ -34,6 +50,16 @@ class Boat(models.Model):
     draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
     type    = models.IntegerField(choices=Type.choices)
+
+    objects = BoatManager()
+
+    @property
+    def is_draft(self):
+        return self.status == self.Status.DRAFT
+
+    @property
+    def is_published(self):
+        return self.status == self.Status.PUBLISHED
 
     def get_now_prices(self):
         now = timezone.now()
