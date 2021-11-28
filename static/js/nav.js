@@ -9,10 +9,12 @@ window.addEventListener("scroll", () => {
    var st = window.pageYOffset || document.documentElement.scrollTop;
    if (st > lastScrollTop && st > 62){
         $('body > header > nav').css("top", "-80px");
-        $('.toast-container ').attr("style", "top: 0 !important;");
+        $('.alert-container ').attr("style", "top: 0 !important;");
+        $('.toast-container ').attr("style", "top: 58px !important;");
    } else {
         $('body > header > nav').css("top", "0");
-        $('.toast-container ').attr("style", "top: 62px !important;");
+        $('.alert-container ').attr("style", "top: 62px !important;");
+        $('.toast-container ').attr("style", "top: 120px !important;");
    }
    lastScrollTop = st <= 0 ? 0 : st;
 }, false);

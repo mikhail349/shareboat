@@ -267,6 +267,8 @@ def update(request, pk):
             }
             return render(request, 'boat/update.html', context=context)
         elif request.method == 'POST':
+            if boat.is_read_only:
+                return JsonResponse({'message': 'Лодку возможно редактировать только на статусе "Заготовка"'}, status=status.HTTP_400_BAD_REQUEST)
             data = request.POST
             files = request.FILES.getlist('file')
             prices = json.loads(data.get('prices'))
@@ -348,6 +350,8 @@ def update(request, pk):
 def delete(request, pk):
     try:
         boat = Boat.objects.get(pk=pk, owner=request.user)
+        if boat.is_read_only:
+            return JsonResponse({'message': 'Лодку возможно удалить только на статусе "Заготовка"'}, status=status.HTTP_400_BAD_REQUEST)
         boat.delete()
     except Boat.DoesNotExist:
         return response_not_found()

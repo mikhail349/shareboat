@@ -54,6 +54,10 @@ class Boat(models.Model):
     objects = BoatManager()
 
     @property
+    def is_read_only(self):
+        return self.status != self.Status.DRAFT
+
+    @property
     def is_draft(self):
         return self.status == self.Status.DRAFT
 

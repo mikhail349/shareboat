@@ -7,6 +7,12 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'boat/js/update.min.js' %}"></script>
 
+    {% if boat.is_read_only %}
+        <div class="alert-container alert alert-danger position-fixed w-100 top-0-header" role="alert">
+            Лодка может быть изменена только на статусе "Заготовка"
+        </div>
+    {% endif %}
+
     <div class="container-lg">
         <section class="jumbotron text-center">   
           <h1 class="jumbotron-heading">Изменить лодку</h1>    
@@ -16,14 +22,16 @@
             {% csrf_token %}
             {% include 'boat/form.html' %}                
             <hr/>
-            <div class="row g-3">
-                <div class="col-auto pe-0">
-                    <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>                          
+            <fieldset {% if boat.is_read_only %}disabled{% endif %}>
+                <div class="row g-3">            
+                    <div class="col-auto pe-0">
+                        <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>                          
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+                    </div> 
                 </div>
-                <div class="col-auto">
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
-                </div>
-            </div>
+            </fieldset>
         </form>
 
          <div id="confirmDeleteModal" class="modal" data-boat-id="{{ boat.id }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeletionModalLabel" style="display: none">
