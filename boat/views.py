@@ -88,9 +88,9 @@ def my_boats(request):
 def set_status(request, pk):
     
     ALLOWED_STATUSES = {
-        Boat.Status.DRAFT: (Boat.Status.CHECKING,),
+        Boat.Status.SAVED: (Boat.Status.CHECKING,),
         Boat.Status.CHECKING: (),
-        Boat.Status.PUBLISHED: (Boat.Status.DRAFT,)
+        Boat.Status.PUBLISHED: (Boat.Status.SAVED,)
     }
 
     try:

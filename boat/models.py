@@ -24,7 +24,7 @@ class BoatManager(models.Manager):
 class Boat(models.Model):
 
     class Status(models.IntegerChoices):
-        DRAFT       = 0, _("Заготовка")
+        SAVED       = 0, _("Сохранена")
         CHECKING    = 1, _("На проверке")  
         PUBLISHED   = 2, _("Опубликована")
 
@@ -42,7 +42,7 @@ class Boat(models.Model):
     name    = models.CharField(max_length=255)
     text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
-    status  = models.IntegerField(choices=Status.choices, default=Status.DRAFT)
+    status  = models.IntegerField(choices=Status.choices, default=Status.SAVED)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
     length  = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
@@ -55,11 +55,11 @@ class Boat(models.Model):
 
     @property
     def is_read_only(self):
-        return self.status != self.Status.DRAFT
+        return self.status != self.Status.SAVED
 
     @property
     def is_draft(self):
-        return self.status == self.Status.DRAFT
+        return self.status == self.Status.SAVED
 
     @property
     def is_published(self):
