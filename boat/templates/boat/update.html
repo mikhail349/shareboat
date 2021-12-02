@@ -34,22 +34,7 @@
             </fieldset>
         </form>
 
-         <div id="confirmDeleteModal" class="modal" data-boat-id="{{ boat.id }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeletionModalLabel" style="display: none">
-            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 380px;">
-                <div class="modal-content rounded shadow">
-                    <div class="modal-body p-4 text-center">
-                        <h5>Удалить лодку?</h5>
-                        <p class="mb-0">Все цены и фотографии так же будут удалены</p>
-                    </div>
-                    <div class="modal-footer flex-nowrap p-0">
-                        <button id="btnConfirmDelete" type="button" class="btn btn-l btn-link fs-6 text-decoration-none text-danger col-6 m-0 rounded-0 border-end">
-                            <strong>Да, удалить</strong>
-                        </button>
-                        <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Отмена</button>               
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include 'boat/delete_modal.html' %}
     </div>
 
 {% endblock  %}

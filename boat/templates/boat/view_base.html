@@ -1,0 +1,120 @@
+<div class="row g-3"> 
+    <div class="col-lg">
+        {% if boat.files.exists %}
+            <div class="card box-shadow text-end">
+                {% if boat.files.count > 1 %}  
+                    <div id="fileCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
+                        <ol class="carousel-indicators">
+                            {% for file in boat.files.all %} 
+                                <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
+                            {% endfor %}
+                        </ol> 
+                        <div class="carousel-inner">
+                            {% for file in boat.files.all %} 
+                                <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}">
+                                    <img class="d-block w-100 rounded carousel-img" src="{{ file.file.url }}" />
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="carousel-control-prev" data-bs-target="#fileCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button type="button" class="carousel-control-next" data-bs-target="#fileCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        <!--
+                        <button type="button" class="carousel-control-full-screen" data-bs-target="#fileCarousel">
+                            <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">FullScreen</span>
+                        </button>
+                        -->
+                    </div>
+                {% elif boat.files.exists %}
+                    <img class="carousel-img rounded" src="{{ boat.files.first.file.url }}" />
+                {% endif %}
+            </div>           
+        {% endif %}
+        <div class="mt-3 d-none d-lg-block">{{ boat.text|default_if_none:""|linebreaks }}</div>
+    </div>
+
+    <div class="col-lg">
+        <h2>{{ boat.name }}</h2>   
+        <h4 class="text-muted">{{ boat.get_type_display }}</h4>   
+        <div class="mt-3 d-lg-none">{{ boat.text|default_if_none:""|linebreaks }}</div>
+
+        <div class="row row-cols-3 gx-3">   
+            <div class="col-12">
+                <hr/>
+                <h5>Основная информация</h5>
+            </div>                
+            <div class="col">
+                <p class="text-muted">
+                    <strong class="d-block">Длина</strong>{{ boat.length }} м.
+                </p>
+            </div>
+            <div class="col">
+                <p class="text-muted">
+                    <strong class="d-block">Ширина</strong>{{ boat.width }} м.
+                </p>
+            </div>
+            <div class="col">
+                <p class="text-muted">
+                    <strong class="d-block">Осадка</strong>{{ boat.draft }} м.
+                </p>
+            </div>                      
+            <div class="col">
+                <p class="text-muted">
+                    <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан" }}</span>
+                </p>
+            </div>
+            <div class="col-8">
+                <p class="text-muted">
+                    <strong class="d-block">Вместимость</strong>{{ boat.capacity }} чел.
+                </p>
+            </div>
+
+            {% if boat.is_motor_boat %}    
+                <div class="col-12">
+                    <hr/>
+                    <h5>Двигатели</h5>
+                </div>                 
+                <div class="col">
+                    <p class="text-muted">
+                        <strong class="d-block">Кол-во</strong>{{ boat.motor_boat.motor_amount }}
+                    </p>
+                </div>
+                <div class="col-8">
+                    <p class="text-muted">
+                        <strong class="d-block">Мощность</strong>{{ boat.motor_boat.motor_power }} л.с.
+                    </p>
+                </div>                  
+            {% endif %}
+
+            {% if boat.is_comfort_boat %}    
+                <div class="col-12">
+                    <hr/>
+                    <h5>Удобства</h5>
+                </div>                 
+                <div class="col">
+                    <p class="text-muted">
+                        <strong class="d-block">Спальные места</strong>{{ boat.comfort_boat.berth_amount }}
+                    </p>
+                </div>
+                <div class="col mt-auto">
+                    <p class="text-muted">
+                        <strong class="d-block">Каюты</strong>{{ boat.comfort_boat.cabin_amount }}
+                    </p>
+                </div>           
+                <div class="col mt-auto">
+                    <p class="text-muted">
+                        <strong class="d-block">Сан. узлы</strong>{{ boat.comfort_boat.bathroom_amount }}
+                    </p>
+                </div>          
+            {% endif %}
+        </div>
+
+
+    </div>           
+</div>

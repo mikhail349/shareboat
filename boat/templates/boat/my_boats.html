@@ -23,7 +23,7 @@
                     {% for boat in boats %}
                         <div class="col-lg-4 col-md-4">
                             <div class="card box-shadow h-100">
-                                <a href="{% url 'boat:update' boat.id %}" >
+                                <a href="{% url 'boat:view' boat.id %}" >
                                     {% include 'boat/carousel.html' %}
                                 </a>    
                                 <div class="card-body d-flex flex-column">
@@ -33,19 +33,35 @@
                                             Действия
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ boat.pk }}">
+                                            <li><a class="dropdown-item" href="{% url 'boat:update' boat.id %}">Редактировать</a></li>
+    
+                                            <li><hr class="dropdown-divider"></li>
                                             {% if boat.status == Status.SAVED %}
-                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.CHECKING }}">Отправить на проверку</a></li>
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.CHECKING }}">Опубликовать</a></li>
+                                            {% elif boat.status == Status.CHECKING %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Отозвать с проверки</a></li>
                                             {% elif boat.status == Status.PUBLISHED %}
-                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Вернуть в заготовку</a></li>
-                                            {% else %}
-                                                <li><span class="dropdown-item disabled">Нет доступных статусов</span></li>
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Снять с публикации</a></li>
                                             {% endif %}
+
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <button class="dropdown-item text-danger" 
+                                                    data-boat-id="{{ boat.pk }}"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmDeleteModal"
+                                                >
+                                                    Удалить
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
-                                <h5>
-                                    <span class="position-absolute top-0 start-100 translate-95-right badge bg-secondary">{{ boat.get_status_display }}</span>
-                                </h5>
+                                {% if boat.status != Status.SAVED %}
+                                    <h5>
+                                        <span class="position-absolute top-0 start-100 translate-95-right badge bg-secondary">{{ boat.get_status_display }}</span>
+                                    </h5>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -53,5 +69,7 @@
                 </div>
             </div>
         </div>
+
+        {% include 'boat/delete_modal.html' %}
     {% endif %}
 {% endblock  %}

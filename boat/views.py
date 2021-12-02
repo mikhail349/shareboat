@@ -89,7 +89,7 @@ def set_status(request, pk):
     
     ALLOWED_STATUSES = {
         Boat.Status.SAVED: (Boat.Status.CHECKING,),
-        Boat.Status.CHECKING: (),
+        Boat.Status.CHECKING: (Boat.Status.SAVED,),
         Boat.Status.PUBLISHED: (Boat.Status.SAVED,)
     }
 
@@ -255,6 +255,14 @@ def calc_booking(request, pk):
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
+def view(request, pk):
+    try:
+        boat = Boat.objects.get(pk=pk, owner=request.user)
+        return render(request, 'boat/view.html', context={'boat': boat})
+    except Boat.DoesNotExist:
+        return render(request, 'not_found.html')
+
+@login_required
 def update(request, pk):
     try:
         boat = Boat.objects.get(pk=pk, owner=request.user)
@@ -350,8 +358,8 @@ def update(request, pk):
 def delete(request, pk):
     try:
         boat = Boat.objects.get(pk=pk, owner=request.user)
-        if boat.is_read_only:
-            return JsonResponse({'message': 'Лодку возможно удалить только на статусе "Заготовка"'}, status=status.HTTP_400_BAD_REQUEST)
+        #if boat.is_read_only:
+        #    return JsonResponse({'message': 'Лодку возможно удалить только на статусе "Заготовка"'}, status=status.HTTP_400_BAD_REQUEST)
         boat.delete()
     except Boat.DoesNotExist:
         return response_not_found()

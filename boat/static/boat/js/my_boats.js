@@ -1,6 +1,35 @@
 $(document).ready(() => {
-    $("a[data-boat-id]").on('click', function (e) {
-        e.preventDefault();
+
+    $("#confirmDeleteModal").on('show.bs.modal', function (e) {
+        const boatId = $(e.relatedTarget).attr('data-boat-id');
+        $(this).attr('data-boat-id', boatId);
+    })
+
+    $("#confirmDeleteModal").on('hide.bs.modal', function (e) {
+        $(this).attr('data-boat-id', -1);
+    });
+
+    $("#btnConfirmDelete").on("click", () => {
+        const $confirmDeleteModal = $('#confirmDeleteModal');
+        const boatId = $confirmDeleteModal.attr("data-boat-id");
+        $confirmDeleteModal.modal('hide');
+        
+        showOverlayPanel("Удаление...");
+        $.ajax({ 
+            type: "POST",
+            url: `/boats/api/delete/${boatId}/`,
+            success: onSuccess,
+            error: onError
+        }); 
+       
+        function onSuccess(data) {
+            document.location.reload();
+        }
+    
+        function onError(error) {
+            hideOverlayPanel();
+            showErrorToast(parseJSONError(error.responseJSON));
+        }
     })
 
     $("a[data-boat-id][data-status]").on('click', function(e) {
