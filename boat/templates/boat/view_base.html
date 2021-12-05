@@ -1,3 +1,5 @@
+{% load l10n %}
+
 <div class="row g-3"> 
     <div class="col-lg">
         {% if boat.files.exists %}
@@ -66,7 +68,7 @@
             </div>                      
             <div class="col">
                 <p class="text-muted">
-                    <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан" }}</span>
+                    <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|unlocalize|default:"не указан" }}</span>
                 </p>
             </div>
             <div class="col-8">
@@ -112,6 +114,33 @@
                         <strong class="d-block">Сан. узлы</strong>{{ boat.comfort_boat.bathroom_amount }}
                     </p>
                 </div>          
+            {% endif %}
+
+            {% if show_prices %}
+                <div class="col-12">
+                    <hr/>
+                    <h5>Цена аренды</h5>
+                </div> 
+                {% if not boat.prices.exists %}
+                    <div class="col">
+                        <p class="text-muted">
+                            <span class="d-block text-danger">не указана</span>
+                        </p>
+                    </div>
+                {% else %}
+                    {% for price in boat.prices.all %}
+                        <div class="col">
+                            <h5 class="text-muted">
+                                {{ price.price }} р.
+                            </h5>
+                        </div>
+                        <div class="col-8">
+                            <p class="text-muted">
+                                {{ price.start_date|date:'d.m.Y' }} - {{ price.end_date|date:'d.m.Y' }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
         </div>
 

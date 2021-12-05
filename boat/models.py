@@ -23,10 +23,17 @@ class BoatManager(models.Manager):
 
 class Boat(models.Model):
 
+    class Meta:
+        permissions = [
+            ('can_view_boats_on_moderation', 'Can view boats on moderation'),
+            ('can_moderate_boats', 'Can moderate boats'),
+        ]
+
     class Status(models.IntegerChoices):
-        SAVED       = 0, _("Сохранена")
-        CHECKING    = 1, _("На проверке")  
-        PUBLISHED   = 2, _("Опубликована")
+        DECLINED        = -1, _("Отклонена")
+        SAVED           = 0, _("Сохранена")
+        ON_MODERATION   = 1, _("На проверке")  
+        PUBLISHED       = 2, _("Опубликована")
 
     class Type(models.IntegerChoices):
         SAILING_YACHT   = 0, _("Парусная яхта")
@@ -50,6 +57,7 @@ class Boat(models.Model):
     draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
     type    = models.IntegerField(choices=Type.choices)
+    modified = models.DateTimeField(auto_now=True)
 
     objects = BoatManager()
 
@@ -175,6 +183,23 @@ class BoatPrice(models.Model):
         self.full_clean()
         super(BoatPrice, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['start_date', 'end_date']
+
+
+class BoatDeclinedModeration(models.Model):
+    
+    class REASON(models.IntegerChoices):
+        OTHER = 0, _("Прочее")
+
+    boat    = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="declined_moderation")
+    reason  = models.IntegerField(choices=REASON.choices)
+    comment = models.TextField(null=True, blank=True)
+
+    @classmethod
+    def get_reasons(cls):
+        types = cls.REASON.choices
+        return sorted(types, key=lambda tup: tup[1])
 
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)

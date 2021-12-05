@@ -19,6 +19,9 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Флот</a></li>
+                                {% if perms.boat.can_view_boats_on_moderation %}
+                                    <li><a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">Модерация лодок</a></li>
+                                {% endif %}
                                 <div class="dropdown-divider"></div>
                                 <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'user:logout' %}">Выйти</a></li>

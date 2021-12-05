@@ -69,10 +69,10 @@ function parseJSONError(json) {
     return json;
 }
 
-$.fn.checkValidity = function() {
+$.fn.checkValidity = function(doShowErrorToast=true) {
     this[0].classList.add("was-validated");
     const res = this[0].checkValidity();
-    if (!res) showErrorToast("Устраните ошибки в полях формы");
+    if (!res && doShowErrorToast) showErrorToast("Устраните ошибки в полях формы");
     return res;
 }
 

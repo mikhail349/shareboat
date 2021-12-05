@@ -3,13 +3,13 @@ from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db import transaction
 from django.db.models import Max, Min
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.utils import timezone
-from django.utils.dateparse import parse_date
+from django.utils.dateparse import parse_date, parse_datetime
 
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -21,7 +21,7 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
+from .models import Boat, BoatDeclinedModeration, MotorBoat, ComfortBoat, BoatFile, BoatPrice
 from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 
@@ -84,12 +84,31 @@ def my_boats(request):
     boats = Boat.objects.filter(owner=request.user).order_by('id')
     return render(request, 'boat/my_boats.html', context={'boats': boats, 'Status': Boat.Status}) 
 
+@permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
+def boats_on_moderation(request):
+    boats = Boat.objects.filter(status=Boat.Status.ON_MODERATION)
+    return render(request, 'boat/boats_on_moderation.html', context={'boats': boats}) 
+
+@permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
+def moderate(request, pk):
+    if request.method == 'GET':
+        try:
+            boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
+            context = {
+                'boat': boat,
+                'reasons': BoatDeclinedModeration.get_reasons()
+            }
+            return render(request, 'boat/moderate.html', context=context)
+        except Boat.DoesNotExist:
+            return render(request, 'not_found.html')
+
 @login_required
 def set_status(request, pk):
     
     ALLOWED_STATUSES = {
-        Boat.Status.SAVED: (Boat.Status.CHECKING,),
-        Boat.Status.CHECKING: (Boat.Status.SAVED,),
+        Boat.Status.DECLINED: (Boat.Status.ON_MODERATION,),
+        Boat.Status.SAVED: (Boat.Status.ON_MODERATION,),
+        Boat.Status.ON_MODERATION: (Boat.Status.SAVED,),
         Boat.Status.PUBLISHED: (Boat.Status.SAVED,)
     }
 
@@ -103,9 +122,53 @@ def set_status(request, pk):
         boat.status = new_status
         boat.save()
 
+        BoatDeclinedModeration.objects.filter(boat=boat).delete()
+
         return JsonResponse({})
     except Boat.DoesNotExist:
         return response_not_found()    
+
+@permission_required('boat.can_moderate_boats', raise_exception=True)
+def accept_boat(request, pk):
+    if request.method == 'POST':
+        try:
+            boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
+                   
+            if boat.modified != parse_datetime(request.POST.get('modified')):
+                return JsonResponse({'code': 'outdated', 'message': 'Данные лодки были изменены'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            boat.status = Boat.Status.PUBLISHED
+            boat.save()
+            return JsonResponse({'redirect': reverse('boat:boats_on_moderation')})
+        except Boat.DoesNotExist:
+            return response_not_found()
+
+@permission_required('boat.can_moderate_boats', raise_exception=True)
+def decline_boat(request, pk):
+    if request.method == 'POST':
+        try:
+            boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
+            reason = request.POST.get('reason')
+            comment = request.POST.get('comment')
+            modified = parse_datetime(request.POST.get('modified'))
+                   
+            if boat.modified != modified:
+                return JsonResponse({'code': 'outdated', 'message': 'Данные лодки были изменены'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            boat.status = Boat.Status.DECLINED
+            boat.save()
+
+            try:
+                boat_declined_moderation = BoatDeclinedModeration.objects.get(boat=boat)
+                boat_declined_moderation.reason=reason
+                boat_declined_moderation.comment=comment
+                boat_declined_moderation.save()
+            except BoatDeclinedModeration.DoesNotExist:
+                BoatDeclinedModeration.objects.create(boat=boat, reason=reason, comment=comment)
+
+            return JsonResponse({'redirect': reverse('boat:boats_on_moderation')})
+        except Boat.DoesNotExist:
+            return response_not_found()
 
 
 def boats(request):
@@ -275,8 +338,6 @@ def update(request, pk):
             }
             return render(request, 'boat/update.html', context=context)
         elif request.method == 'POST':
-            if boat.is_read_only:
-                return JsonResponse({'message': 'Лодку возможно редактировать только на статусе "Заготовка"'}, status=status.HTTP_400_BAD_REQUEST)
             data = request.POST
             files = request.FILES.getlist('file')
             prices = json.loads(data.get('prices'))
@@ -294,6 +355,8 @@ def update(request, pk):
                     boat.draft          = data.get('draft')
                     boat.capacity       = data.get('capacity')
                     boat.type           = data.get('type')
+                    if boat.status == Boat.Status.DECLINED:
+                        boat.status = Boat.Status.SAVED
                     boat.save()
 
                     if boat.is_motor_boat():
@@ -330,6 +393,7 @@ def update(request, pk):
 
                     handle_boat_prices(boat, prices)
 
+                    BoatDeclinedModeration.objects.filter(boat=boat).delete()
                     BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
 
                     for file in files:

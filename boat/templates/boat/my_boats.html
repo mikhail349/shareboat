@@ -34,26 +34,23 @@
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ boat.pk }}">
                                             <li><a class="dropdown-item" href="{% url 'boat:update' boat.id %}">Редактировать</a></li>
-    
-                                            <li><hr class="dropdown-divider"></li>
-                                            {% if boat.status == Status.SAVED %}
-                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.CHECKING }}">Опубликовать</a></li>
-                                            {% elif boat.status == Status.CHECKING %}
-                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Отозвать с проверки</a></li>
-                                            {% elif boat.status == Status.PUBLISHED %}
-                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Снять с публикации</a></li>
-                                            {% endif %}
-
-                                            <li><hr class="dropdown-divider"></li>
                                             <li>
-                                                <button class="dropdown-item text-danger" 
-                                                    data-boat-id="{{ boat.pk }}"
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#confirmDeleteModal"
-                                                >
+                                                <button class="dropdown-item text-danger" data-boat-id="{{ boat.pk }}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                                     Удалить
                                                 </button>
                                             </li>
+    
+                                            <li><hr class="dropdown-divider"></li>
+                                            {% if boat.status == Status.SAVED %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.ON_MODERATION }}">Опубликовать</a></li>
+                                            {% elif boat.status == Status.ON_MODERATION %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Отозвать с проверки</a></li>
+                                            {% elif boat.status == Status.PUBLISHED %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.SAVED }}">Снять с публикации</a></li>
+                                            {% elif boat.status == Status.DECLINED %}
+                                                <li><a class="dropdown-item" href="#" data-boat-id="{{ boat.pk }}" data-status="{{ Status.ON_MODERATION }}">Опубликовать</a></li>
+                                            {% endif %}
+                                      
                                         </ul>
                                     </div>
                                 </div>

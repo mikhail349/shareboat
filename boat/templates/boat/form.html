@@ -46,7 +46,7 @@
                 min="1900"
                 max="2999"
                 step="1"
-                value="{{ boat.issue_year|default:"" }}"
+                value="{{ boat.issue_year|unlocalize|default:"" }}"
             />
             <label for="name">Год выпуска</label>
             <div class="invalid-tooltip">Введите год выпуска</div>
