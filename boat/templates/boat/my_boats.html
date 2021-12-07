@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load humanize %}
+{% load boat_extras %}
 
 {% block title %}Мой флот{% endblock  %}
 
@@ -56,7 +57,9 @@
                                 </div>
                                 {% if boat.status != Status.SAVED %}
                                     <h5>
-                                        <span class="position-absolute top-0 start-100 translate-95-right badge bg-secondary">{{ boat.get_status_display }}</span>
+                                        <span class="position-absolute top-0 start-100 translate-95-right badge {{ boat.status|get_status_color }}">
+                                            {{ boat.get_status_display }}
+                                        </span>
                                     </h5>
                                 {% endif %}
                             </div>

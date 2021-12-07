@@ -103,6 +103,13 @@ def moderate(request, pk):
             return render(request, 'not_found.html')
 
 @login_required
+def delete_declined_moderation(request, pk):
+    try:
+        BoatDeclinedModeration.objects.get(boat__pk=pk, boat__owner=request.user).delete()
+    except BoatDeclinedModeration.DoesNotExist:
+        return response_not_found()  
+
+@login_required
 def set_status(request, pk):
     
     ALLOWED_STATUSES = {
@@ -393,7 +400,7 @@ def update(request, pk):
 
                     handle_boat_prices(boat, prices)
 
-                    BoatDeclinedModeration.objects.filter(boat=boat).delete()
+                    #BoatDeclinedModeration.objects.filter(boat=boat).delete()
                     BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
 
                     for file in files:
@@ -435,3 +442,4 @@ def get_files(request, pk):
     files = BoatFile.objects.filter(boat__pk=pk, boat__owner=request.user)
     serializer = BoatFileSerializer(files, many=True, context={'request': request})
     return JsonResponse({'data': serializer.data})
+

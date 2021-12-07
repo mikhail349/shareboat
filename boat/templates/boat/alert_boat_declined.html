@@ -1,0 +1,14 @@
+{% load static %}
+
+{% if boat.declined_moderation %}
+    <script type="text/javascript" src="{% static 'boat/js/alert_boat_declined.min.js' %}"></script>
+
+    <div class="alert alert-danger alert-dismissible">
+        <h5>Объявление не соответствует правилам сервиса</h5>
+        <div>Причина: {{ boat.declined_moderation.get_reason_display }}</div>
+        {% if boat.declined_moderation.comment %}
+            <div>Комментарий: {{ boat.declined_moderation.comment }}</div>
+        {% endif %}
+        <button id="btnDeleteDeclinedModeration" data-boat-id="{{ boat.pk }}" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endif %}

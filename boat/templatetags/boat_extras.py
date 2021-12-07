@@ -2,7 +2,7 @@ from django import template
 from datetime import datetime
 from decimal import Decimal
 
-from boat.models import BoatPrice
+from boat.models import BoatPrice, Boat
 
 register = template.Library()
 
@@ -20,6 +20,14 @@ def toaccusative(value):
         'неделя': 'неделю'
     }
     return d.get(value.lower(), value)
+
+@register.filter
+def get_status_color(value):
+    if value == Boat.Status.DECLINED:
+        return 'bg-danger'
+    if value == Boat.Status.PUBLISHED:
+        return 'bg-success'
+    return 'bg-secondary'
 
 @register.simple_tag
 def calc_sum(boat, *args, **kwargs):

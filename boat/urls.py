@@ -14,6 +14,7 @@ apiurlpatterns = [
 
     path('decline_boat/<int:pk>/', views.decline_boat, name='api_decline_boat'),
     path('accept_boat/<int:pk>/', views.accept_boat, name='api_accept_boat'),
+    path('delete_declined_moderation/<int:pk>/', views.delete_declined_moderation, name="api_delete_declined_moderation")
 ]
 
 urlpatterns = [
