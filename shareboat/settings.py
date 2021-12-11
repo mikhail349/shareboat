@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'file',
     'boat',
     'emails',
-    'booking'
+    'booking',
+    'notification'
 ]
 
 REST_FRAMEWORK = {
@@ -86,11 +87,16 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'shareboat.context_processors.nav_counters',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+
+            'libraries': {
+                'extras': 'shareboat.templatetags.extras'
+            }
         },
     },
     {

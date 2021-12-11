@@ -11,5 +11,6 @@
         </section>
         {% include 'boat/alert_boat_declined.html' %}
         {% include 'boat/view_base.html' with show_prices=True %}
+        <a class="btn btn-outline-primary mb-3" href="{% url 'boat:update' boat.pk %}" role="button">Редактировать</a>
     </div>
 {% endblock  %}

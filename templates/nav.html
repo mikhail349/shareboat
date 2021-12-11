@@ -20,9 +20,18 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Флот</a></li>
                                 {% if perms.boat.can_view_boats_on_moderation %}
-                                    <li><a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">Модерация лодок</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">
+                                            Модерация лодок <span class="badge bg-secondary">{{ nav_counters.boats_on_moderation_count }}</span>
+                                        </a>
+                                    </li>
                                 {% endif %}
                                 <div class="dropdown-divider"></div>
+                                <li>
+                                    <button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNotifications" aria-controls="offcanvasNotifications">
+                                        Уведомления {% if user.notifications.exists %}<span class="badge bg-danger">{{ user.notifications.count }}</span>{% endif %}
+                                    </button>
+                                </li>
                                 <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'user:logout' %}">Выйти</a></li>
                             </ul>

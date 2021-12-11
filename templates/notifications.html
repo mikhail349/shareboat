@@ -1,0 +1,43 @@
+{% load extras %}
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNotifications" aria-labelledby="offcanvasNotificationsLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNotificationsLabel">Уведомления</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if not user.notifications.exists %}
+            Уведомлений нет
+        {% else %}
+            <div class="row g-0">
+                <button type="button" class="btn btn-outline-danger mb-3" >Удалить все</button>
+            </div>
+            {% for item in user.notifications.all %}
+               
+                <div class="card bg-light mb-2">
+                    <div class="card-body">
+                        {% if item|hasattr:'boatdeclinedmoderation' %}
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title text-danger">{{ item.title }}</h5>
+                                <button type="button" class="btn-close text-reset" aria-label="Close"></button>
+                            </div>
+                            <p class="card-text">{{ item.text }}</p>
+                            <p class="card-text"><small class="text-muted">{{ item.received_at|timesince }} назад</small></p>
+                            <a href="{% url 'boat:view' item.boatdeclinedmoderation.boat.pk  %}" class="btn btn-primary">Перейти к лодке</a>
+                        {% else %}
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ item.title }}</h5>
+                                <button type="button" class="btn-close text-reset" aria-label="Close"></button>
+                            </div>                    
+                            <p class="card-text">{{ item.text }}</p>
+                            <p class="card-text"><small class="text-muted">{{ item.received_at|timesince }} назад</small></p>
+                        {% endif %}
+                        
+                        
+                    </div>
+                </div>
+                
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

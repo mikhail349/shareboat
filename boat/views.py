@@ -21,9 +21,10 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, BoatDeclinedModeration, MotorBoat, ComfortBoat, BoatFile, BoatPrice
+from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice #,BoatDeclinedModeration
 from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
+from notification.models import BoatDeclinedModeration
 
 import json
 
@@ -165,13 +166,8 @@ def decline_boat(request, pk):
             boat.status = Boat.Status.DECLINED
             boat.save()
 
-            try:
-                boat_declined_moderation = BoatDeclinedModeration.objects.get(boat=boat)
-                boat_declined_moderation.reason=reason
-                boat_declined_moderation.comment=comment
-                boat_declined_moderation.save()
-            except BoatDeclinedModeration.DoesNotExist:
-                BoatDeclinedModeration.objects.create(boat=boat, reason=reason, comment=comment)
+            BoatDeclinedModeration.objects.filter(boat=boat).delete()
+            BoatDeclinedModeration.objects.create(title="Лодка отклонена", text="Объявление не соответствует правилам сервиса", user=boat.owner, boat=boat, reason=reason, comment=comment)
 
             return JsonResponse({'redirect': reverse('boat:boats_on_moderation')})
         except Boat.DoesNotExist:

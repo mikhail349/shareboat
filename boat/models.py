@@ -187,20 +187,6 @@ class BoatPrice(models.Model):
         ordering = ['start_date', 'end_date']
 
 
-class BoatDeclinedModeration(models.Model):
-    
-    class REASON(models.IntegerChoices):
-        OTHER = 0, _("Прочее")
-
-    boat    = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="declined_moderation")
-    reason  = models.IntegerField(choices=REASON.choices)
-    comment = models.TextField(null=True, blank=True)
-
-    @classmethod
-    def get_reasons(cls):
-        types = cls.REASON.choices
-        return sorted(types, key=lambda tup: tup[1])
-
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=utils.get_file_path)
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')
