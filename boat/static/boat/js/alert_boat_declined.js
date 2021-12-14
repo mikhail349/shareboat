@@ -1,9 +1,9 @@
 $(document).ready(() => {
     $('#btnDeleteDeclinedModeration').on('click', function (e) {
-        const boatId = $(this).attr('data-boat-id');
+        const notificationId = $(this).attr('data-notification-id');
         $.ajax({ 
             type: "POST",
-            url: `/boats/api/delete_declined_moderation/${boatId}/`
+            url: `/notifications/api/delete/${notificationId}/`
         });
     })
 })

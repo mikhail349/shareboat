@@ -22,6 +22,7 @@ from django.conf.urls import url
 from user import urls as user_urls
 from boat import urls as boat_urls
 from booking import urls as booking_urls
+from notification import urls as notification_urls 
 
 from . import views
 
@@ -33,5 +34,5 @@ urlpatterns += [
     path('user/', include(user_urls)),
     path('boats/', include(boat_urls)),
     path('bookings/', include(booking_urls)),
-    url('^.*', views.not_found)
+    path('notifications/', include(notification_urls))
 ]

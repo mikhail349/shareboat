@@ -9,6 +9,6 @@
         {% if boat.declined_moderation.comment %}
             <div>Комментарий: {{ boat.declined_moderation.comment }}</div>
         {% endif %}
-        <button id="btnDeleteDeclinedModeration" data-boat-id="{{ boat.pk }}" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button id="btnDeleteDeclinedModeration" data-notification-id="{{ boat.declined_moderation.pk }}" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 {% endif %}

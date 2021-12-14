@@ -13,8 +13,7 @@ apiurlpatterns = [
     path('set_status/<int:pk>/', views.set_status, name='api_set_status'),
 
     path('decline_boat/<int:pk>/', views.decline_boat, name='api_decline_boat'),
-    path('accept_boat/<int:pk>/', views.accept_boat, name='api_accept_boat'),
-    path('delete_declined_moderation/<int:pk>/', views.delete_declined_moderation, name="api_delete_declined_moderation")
+    path('accept_boat/<int:pk>/', views.accept_boat, name='api_accept_boat')
 ]
 
 urlpatterns = [

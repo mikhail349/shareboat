@@ -11,8 +11,8 @@ class Notification(models.Model):
     read = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
 
-    def get_type(self):
-        return self.__class__.__name__
+    def __str__(self):
+        return '%s - %s' % (self.title, self.text)
 
     class Meta:
         ordering = ['-pk']

@@ -21,7 +21,7 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice #,BoatDeclinedModeration
+from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
 from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from notification.models import BoatDeclinedModeration
@@ -102,13 +102,6 @@ def moderate(request, pk):
             return render(request, 'boat/moderate.html', context=context)
         except Boat.DoesNotExist:
             return render(request, 'not_found.html')
-
-@login_required
-def delete_declined_moderation(request, pk):
-    try:
-        BoatDeclinedModeration.objects.get(boat__pk=pk, boat__owner=request.user).delete()
-    except BoatDeclinedModeration.DoesNotExist:
-        return response_not_found()  
 
 @login_required
 def set_status(request, pk):
