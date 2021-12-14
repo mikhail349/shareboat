@@ -353,6 +353,8 @@ def update(request, pk):
                     boat.type           = data.get('type')
                     if boat.status == Boat.Status.DECLINED:
                         boat.status = Boat.Status.SAVED
+                    elif boat.status == Boat.Status.PUBLISHED:
+                        boat.status = Boat.Status.ON_MODERATION
                     boat.save()
 
                     if boat.is_motor_boat():

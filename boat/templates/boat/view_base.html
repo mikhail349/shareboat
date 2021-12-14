@@ -68,7 +68,7 @@
             </div>                      
             <div class="col">
                 <p class="text-muted">
-                    <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|unlocalize|default:"не указан" }}</span>
+                    <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан"|unlocalize }}</span>
                 </p>
             </div>
             <div class="col-8">
