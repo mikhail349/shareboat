@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from user.models import User
 from file import utils, signals
+from base.models import Base
 
 class BoatQuerySet(models.QuerySet):
     def published(self):
@@ -59,6 +60,7 @@ class Boat(models.Model):
     type    = models.IntegerField(choices=Type.choices)
     modified = models.DateTimeField(auto_now=True)
 
+    base    = models.ForeignKey(Base, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)
     objects = BoatManager()
 
 
@@ -122,6 +124,11 @@ class ComfortBoat(models.Model):
     berth_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
     cabin_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
     bathroom_amount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(9)])
+
+class BoatCoordinates(models.Model):
+    boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="coordinates")
+    lon = models.DecimalField(max_digits=9, decimal_places=6)
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
 
 class Specification(models.Model):
     

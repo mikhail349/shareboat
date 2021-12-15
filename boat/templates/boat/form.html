@@ -170,6 +170,17 @@
     </fieldset>
 </div>
 
+<h4 class="mb-3">Местоположение</h4>
+<div class="form-floating">
+    <select class="form-select" id="baseSelect" name="base_pk">
+        <option selected value="">Не указана</option>
+        {% for base in bases %}
+        <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }}</option> 
+        {% endfor %}
+    </select>
+    <label for="baseSelect">База</label>
+</div>
+
 <div class="mb-3">
     <h4 class="mb-3">Цена аренды</h4>
     <div id="react_app_prices" data-boat-id="{{ boat.id }}">

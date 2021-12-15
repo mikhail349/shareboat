@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'boat',
     'emails',
     'booking',
-    'notification'
+    'notification',
+    'base'
 ]
 
 REST_FRAMEWORK = {

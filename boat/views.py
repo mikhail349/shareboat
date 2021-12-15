@@ -25,6 +25,7 @@ from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
 from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from notification.models import BoatDeclinedModeration
+from base.models import Base
 
 import json
 
@@ -47,6 +48,7 @@ def get_form_context():
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
         'price_types': BoatPrice.get_types(),
+        'bases': Base.objects.all()
         #'categories': Specification.get_сategories()
     }
 
@@ -249,8 +251,10 @@ def create(request):
                     'width':    data.get('width'),
                     'draft':    data.get('draft'),
                     'capacity': data.get('capacity'),
-                    'type':     data.get('type')
+                    'type':     data.get('type'),
+                    'base':     Base.objects.get(pk=data.get('base_pk')) if data.get('base_pk') else None 
                 }
+
                 boat = Boat.objects.create(**fields, owner=request.user)
                 if boat.is_motor_boat():
                     motor_boat_fields = {
@@ -279,6 +283,8 @@ def create(request):
             return response_file_limit_size(str(e))
         except ValidationError as e:
             return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Base.DoesNotExist:
+            return JsonResponse({'message': 'База не найдена'}, status=404)
 
         return JsonResponse({
             'data': {'id': boat.id},
@@ -343,18 +349,21 @@ def update(request, pk):
                     raise BoatFileCountException()
 
                 with transaction.atomic():                   
-                    boat.name           = data.get('name')
-                    boat.text           = data.get('text')
-                    boat.issue_year     = data.get('issue_year')
-                    boat.length         = data.get('length')
-                    boat.width          = data.get('width')
-                    boat.draft          = data.get('draft')
-                    boat.capacity       = data.get('capacity')
-                    boat.type           = data.get('type')
+                    boat.name       = data.get('name')
+                    boat.text       = data.get('text')
+                    boat.issue_year = data.get('issue_year')
+                    boat.length     = data.get('length')
+                    boat.width      = data.get('width')
+                    boat.draft      = data.get('draft')
+                    boat.capacity   = data.get('capacity')
+                    boat.type       = data.get('type')
+                    boat.base       = Base.objects.get(pk=data.get('base_pk')) if data.get('base_pk') else None
+                    
                     if boat.status == Boat.Status.DECLINED:
                         boat.status = Boat.Status.SAVED
                     elif boat.status == Boat.Status.PUBLISHED:
                         boat.status = Boat.Status.ON_MODERATION
+                    
                     boat.save()
 
                     if boat.is_motor_boat():
@@ -405,6 +414,8 @@ def update(request, pk):
                 return response_file_limit_size(str(e))
             except ValidationError as e:
                 return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
+            except Base.DoesNotExist:
+                return JsonResponse({'message': 'База не найдена'}, status=404)
 
             return JsonResponse({'redirect': reverse('boat:my_boats')})
     
