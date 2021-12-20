@@ -1,7 +1,3 @@
-function onPhotosLoaded() {
-    console.log('onPhotosLoaded');
-}
-
 $(document).ready(() => {
 
     $("#typeSelect").on('change', (e) => {
@@ -80,5 +76,24 @@ $(document).ready(() => {
             showErrorToast(parseJSONError(error.responseJSON));
         }
     })
+
+    var map;
+
+    $("#switchCustomLocation").on('click', function (e) {
+        if ($(this).is(":checked")) {
+            $("#map").show();
+             
+            map = L.map('map', { dragging: !L.Browser.mobile }).setView([51.505, -0.09], 13);
+            map.on('click', function(e){
+                var marker = new L.marker(e.latlng).addTo(map);
+            });
+        
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+        } else {
+            $("#map").hide();
+            map?.remove();
+        }
+    })
+
 
 })

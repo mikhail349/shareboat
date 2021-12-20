@@ -27,7 +27,6 @@ function FilesList(props) {
             }
             setFiles(newFiles);
         } finally {
-            //onPhotosLoaded();
             $submitBtn.attr("disabled", false);
 
         }

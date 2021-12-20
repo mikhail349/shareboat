@@ -1,4 +1,9 @@
 .file-upload-wrapper {
-    border-radius: .25rem;
-    transition: background-color .15s ease-in-out;
-  }
+  border-radius: .25rem;
+  transition: background-color .15s ease-in-out;
+}
+
+#map {
+  height: 360px;
+  border-radius: 0.25rem;
+}

@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/form.css' %}">
 <script type="text/javascript" src="{% static 'boat/js/form.min.js' %}"></script>
 {% include 'react.html' %}
+{% include 'leaflet.html' %}
 
 <script type="text/javascript">
     var motorBoatTypes = {{ motor_boat_types|safe }},
@@ -171,7 +172,7 @@
 </div>
 
 <h4 class="mb-3">Местоположение</h4>
-<div class="form-floating">
+<div class="form-floating mb-3">
     <select class="form-select" id="baseSelect" name="base_pk">
         <option selected value="">Не указана</option>
         {% for base in bases %}
@@ -180,6 +181,13 @@
     </select>
     <label for="baseSelect">База</label>
 </div>
+
+<div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="switchCustomLocation">
+    <label class="form-check-label" for="switchCustomLocation">Своё местоположение</label>
+</div>
+
+<div id="map" class="mb-3" style="display: none"></div>
 
 <div class="mb-3">
     <h4 class="mb-3">Цена аренды</h4>
