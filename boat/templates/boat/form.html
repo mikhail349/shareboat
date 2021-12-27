@@ -187,7 +187,19 @@
     <label class="form-check-label" for="switchCustomLocation">Своё местоположение</label>
 </div>
 
-<div id="map" class="mb-3" style="display: none"></div>
+<!-- Вынести в отдельный компонент -->
+<script>
+    var markerIconUrl = "{% static 'img/marker-icon.png' %}",
+        markerShadowUrl = "{% static 'img/marker-shadow.png' %}";
+</script>
+<div id="mapContainer" style="display: none">
+    <div class="form-floating mb-3">                 
+        <input type="text" id="addressInput" name="address" class="form-control" placeholder="Введите адрес" />
+        <label for="addressInput">Адрес</label>
+    </div>
+    <!--<button type="button" class="btn btn-outline-primary mb-3">Найти на карте</button>-->
+    <div id="map" class="mb-3"></div>
+</div>
 
 <div class="mb-3">
     <h4 class="mb-3">Цена аренды</h4>

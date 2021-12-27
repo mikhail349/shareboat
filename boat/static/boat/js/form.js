@@ -78,22 +78,53 @@ $(document).ready(() => {
     })
 
     var map;
+    var marker = {};
 
     $("#switchCustomLocation").on('click', function (e) {
         if ($(this).is(":checked")) {
-            $("#map").show();
+            $("#mapContainer").show();
              
-            map = L.map('map', { dragging: !L.Browser.mobile }).setView([51.505, -0.09], 13);
+            map = L.map('map', { /*dragging: !L.Browser.mobile*/ }).setView([55.72524,37.62896], 12);
             map.on('click', function(e){
-                var marker = new L.marker(e.latlng).addTo(map);
-            });
+                var markerIcon = L.icon({
+                    iconUrl: markerIconUrl,
+                    shadowUrl: markerShadowUrl,
+                
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+                map?.removeLayer(marker);
+                marker = new L.marker(e.latlng, {draggable: true, icon: markerIcon}).on('dragend', function(e) {
+                    //map?.removeLayer(marker);
+                    console.log('dragend', e.target.getLatLng());
+                    reverseGeocode(e.target.getLatLng());
+                }).addTo(map);
+
+               reverseGeocode(e.latlng);
+            });            
         
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
         } else {
-            $("#map").hide();
+            $("#mapContainer").hide();
             map?.remove();
         }
     })
 
-
+    function reverseGeocode(latlng) {
+        $("#addressInput").val('Идет поиск...');
+        $("#addressInput").attr('disabled', true);
+        $.ajax({
+            type: 'GET',
+            url: `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&accept-language=ru`,
+            success: onSuccess
+        })
+        function onSuccess(data) {
+            if (data.display_name) {
+                $("#addressInput").val(data.display_name);
+                $("#addressInput").attr('disabled', false);
+            }
+        }
+    }
 })
