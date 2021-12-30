@@ -45,7 +45,16 @@ $(document).ready(() => {
             $carousel.addClass('full-screen');
         }
     })
+
 });
+
+$(document).keypress(
+    function(event){
+        if (event.which == '13') {
+            event.preventDefault();
+        }
+    }
+);
 
 function parseJSONError(json) {
     if (!json) return null;

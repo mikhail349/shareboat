@@ -193,11 +193,26 @@
         markerShadowUrl = "{% static 'img/marker-shadow.png' %}";
 </script>
 <div id="mapContainer" style="display: none">
-    <div class="form-floating mb-3">                 
+    <div class="form-floating mb-3">            
+        <!--   
+        <input class="form-control" list="addressList" id="addressInput" placeholder="Введите адрес...">
+        <label for="exampleDataList">Адрес</label>
+        <datalist id="addressList">
+            <option value="San Francisco">
+            <option value="New York">
+            <option value="Seattle">
+            <option value="Los Angeles">
+            <option value="Chicago">
+        </datalist>   
+        -->
+        
         <input type="text" id="addressInput" name="address" class="form-control" placeholder="Введите адрес" />
         <label for="addressInput">Адрес</label>
+
+        <ul id="addressList" class="list-group">
+        </ul>
+        
     </div>
-    <!--<button type="button" class="btn btn-outline-primary mb-3">Найти на карте</button>-->
     <div id="map" class="mb-3"></div>
 </div>
 

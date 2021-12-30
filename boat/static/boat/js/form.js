@@ -112,6 +112,41 @@ $(document).ready(() => {
         }
     })
 
+    var addressInputTimeout;
+
+    $('#addressInput').on('input', function(e) {
+        //console.log(e, e.target.value);
+
+        function onSuccess(data) {
+            /*if (data.display_name) {
+                $("#addressInput").val(data.display_name);
+                $("#addressInput").attr('disabled', false);
+            }*/
+            
+            //for (let item of data) {
+            //    $("#addressList").append($("<option>").attr('value', 'item.display_name'));
+            //}
+
+            $.each(data, function(i, item) {
+                //if (item.class !== 'boundary') {
+                    //console.log(item);
+                    $("#addressList").append($("<li>").text(item.display_name));
+                //}
+                
+            });
+        }
+
+        clearTimeout(addressInputTimeout);
+        addressInputTimeout = setTimeout(function() {
+            $("#addressList").empty();
+            $.ajax({
+                type: 'GET',
+                url: `https://nominatim.openstreetmap.org/search?q=${e.target.value}&format=json&accept-language=ru`,
+                success: onSuccess
+            });
+        }, 300);
+    })
+
     function reverseGeocode(latlng) {
         $("#addressInput").val('Идет поиск...');
         $("#addressInput").attr('disabled', true);
