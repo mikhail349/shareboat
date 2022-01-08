@@ -21,7 +21,7 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice
+from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from notification.models import BoatDeclinedModeration
@@ -227,70 +227,7 @@ def boats(request):
     }
 
     return render(request, 'boat/boats.html', context=context)   
-
-@login_required
-def create(request):
-    if request.method == 'GET':
-        return render(request, 'boat/create.html', context=get_form_context())
-
-    elif request.method == 'POST':
-        data = request.POST
-        files = request.FILES.getlist('file')
-        prices = json.loads(data.get('prices'))
-        
-        try:
-            if len(files) > FILES_LIMIT_COUNT:
-                raise BoatFileCountException()
-            
-            with transaction.atomic():
-                fields = {
-                    'name':     data.get('name'),
-                    'text':     data.get('text'),
-                    'issue_year': data.get('issue_year'),
-                    'length':   data.get('length'),
-                    'width':    data.get('width'),
-                    'draft':    data.get('draft'),
-                    'capacity': data.get('capacity'),
-                    'type':     data.get('type'),
-                    'base':     Base.objects.get(pk=data.get('base_pk')) if data.get('base_pk') else None 
-                }
-
-                boat = Boat.objects.create(**fields, owner=request.user)
-                if boat.is_motor_boat():
-                    motor_boat_fields = {
-                        'motor_amount': data.get('motor_amount'),
-                        'motor_power': data.get('motor_power')
-                    }
-                    MotorBoat.objects.create(**motor_boat_fields, boat=boat)
-
-                if boat.is_comfort_boat():
-                    comfort_boat_fields = {
-                        'berth_amount':     data.get('berth_amount'),
-                        'cabin_amount':     data.get('cabin_amount'),
-                        'bathroom_amount':  data.get('bathroom_amount')
-                    }
-                    ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
-
-                handle_boat_prices(boat, prices)
-
-                for file in files:
-                    BoatFile.objects.create(boat=boat, file=file)
-        except UnidentifiedImageError:
-            return response_invalid_file_type()
-        except BoatFileCountException as e:
-            return response_files_limit_count(str(e))
-        except FileSizeException as e:
-            return response_file_limit_size(str(e))
-        except ValidationError as e:
-            return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Base.DoesNotExist:
-            return JsonResponse({'message': 'База не найдена'}, status=404)
-
-        return JsonResponse({
-            'data': {'id': boat.id},
-            'redirect': reverse('boat:my_boats')
-        })
-
+    
 def booking(request, pk):
     if request.method == 'GET':
         try:
@@ -328,116 +265,41 @@ def view(request, pk):
         return render(request, 'not_found.html')
 
 @login_required
+def create(request):
+    if request.method == 'GET':
+        return render(request, 'boat/create.html', context=get_form_context())
+
+    elif request.method == 'POST':
+        return create_or_update(request, None)
+
+@login_required
 def update(request, pk):
-    try:
-        boat = Boat.objects.get(pk=pk, owner=request.user)
-        
-        if request.method == 'GET':
+
+    if request.method == 'GET':
+        try:
+            boat = Boat.objects.get(pk=pk, owner=request.user)
+            print(boat.is_custom_location())
             context = {
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
+                'custom_coordinates': serializers.serialize('json', [boat.coordinates], fields=('lat', 'lon')) if boat.is_custom_location() else [],
+                'custom_address': boat.coordinates.address if boat.is_custom_location() else '',
                 **get_form_context()
             }
             return render(request, 'boat/update.html', context=context)
-        elif request.method == 'POST':
-            data = request.POST
-            files = request.FILES.getlist('file')
-            prices = json.loads(data.get('prices'))
-            
-            try:
-                if len(files) > FILES_LIMIT_COUNT:
-                    raise BoatFileCountException()
-
-                with transaction.atomic():                   
-                    boat.name       = data.get('name')
-                    boat.text       = data.get('text')
-                    boat.issue_year = data.get('issue_year')
-                    boat.length     = data.get('length')
-                    boat.width      = data.get('width')
-                    boat.draft      = data.get('draft')
-                    boat.capacity   = data.get('capacity')
-                    boat.type       = data.get('type')
-                    boat.base       = Base.objects.get(pk=data.get('base_pk')) if data.get('base_pk') else None
-                    
-                    if boat.status == Boat.Status.DECLINED:
-                        boat.status = Boat.Status.SAVED
-                    elif boat.status == Boat.Status.PUBLISHED:
-                        boat.status = Boat.Status.ON_MODERATION
-                    
-                    boat.save()
-
-                    if boat.is_motor_boat():
-                        try:
-                            motor_boat = MotorBoat.objects.get(boat=boat)
-                            motor_boat.motor_amount = data.get('motor_amount')
-                            motor_boat.motor_power = data.get('motor_power')
-                            motor_boat.save()
-                        except MotorBoat.DoesNotExist:
-                            motor_boat_fields = {
-                                'motor_amount': data.get('motor_amount'),
-                                'motor_power': data.get('motor_power')
-                            }
-                            MotorBoat.objects.create(**motor_boat_fields, boat=boat)
-                    else:
-                        MotorBoat.objects.filter(boat=boat).delete()
-
-                    if boat.is_comfort_boat():
-                        try:
-                            comfort_boat = ComfortBoat.objects.get(boat=boat)
-                            comfort_boat.berth_amount     = data.get('berth_amount')
-                            comfort_boat.cabin_amount     = data.get('cabin_amount')
-                            comfort_boat.bathroom_amount  = data.get('bathroom_amount')
-                            comfort_boat.save()
-                        except ComfortBoat.DoesNotExist:
-                            comfort_boat_fields = {
-                                'berth_amount':     data.get('berth_amount'),
-                                'cabin_amount':     data.get('cabin_amount'),
-                                'bathroom_amount':  data.get('bathroom_amount')
-                            }
-                            ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
-                    else:
-                        ComfortBoat.objects.filter(boat=boat).delete()
-
-                    handle_boat_prices(boat, prices)
-
-                    #BoatDeclinedModeration.objects.filter(boat=boat).delete()
-                    BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
-
-                    for file in files:
-                        BoatFile.objects.get_or_create(boat=boat, file=file)
-
-            except UnidentifiedImageError:
-                return response_invalid_file_type()
-            except BoatFileCountException as e:
-                return response_files_limit_count(str(e))
-            except FileSizeException as e:
-                return response_file_limit_size(str(e))
-            except ValidationError as e:
-                return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
-            except Base.DoesNotExist:
-                return JsonResponse({'message': 'База не найдена'}, status=404)
-
-            return JsonResponse({'redirect': reverse('boat:my_boats')})
-    
-    except Boat.DoesNotExist:
-        if request.method == 'GET':
+        except Boat.DoesNotExist:
             return render(request, 'not_found.html')
-        elif request.method == 'POST':
-            return response_not_found()
-
+    elif request.method == 'POST':
+        return create_or_update(request, pk)
 
 @login_required
 @api_view(['POST'])
 def delete(request, pk):
     try:
-        boat = Boat.objects.get(pk=pk, owner=request.user)
-        #if boat.is_read_only:
-        #    return JsonResponse({'message': 'Лодку возможно удалить только на статусе "Заготовка"'}, status=status.HTTP_400_BAD_REQUEST)
-        boat.delete()
+        Boat.objects.get(pk=pk, owner=request.user).delete()
+        return JsonResponse({'redirect': reverse('boat:my_boats')})
     except Boat.DoesNotExist:
         return response_not_found()
-    
-    return JsonResponse({'redirect': reverse('boat:my_boats')})
 
 @login_required
 def get_files(request, pk):
@@ -445,3 +307,122 @@ def get_files(request, pk):
     serializer = BoatFileSerializer(files, many=True, context={'request': request})
     return JsonResponse({'data': serializer.data})
 
+def create_or_update(request, pk=None):
+    data = request.POST
+    files = request.FILES.getlist('file')
+    prices = json.loads(data.get('prices'))
+    is_custom_location = get_bool(data.get('is_custom_location'))
+    custom_coordinates = json.loads(data.get('custom_coordinates')) if data.get('custom_coordinates') and is_custom_location else None
+    base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
+    
+    try:
+        if len(files) > FILES_LIMIT_COUNT:
+            raise BoatFileCountException()
+
+        with transaction.atomic(): 
+
+            if pk is not None:
+                boat = Boat.objects.get(pk=pk, owner=request.user)
+                
+                boat.name       = data.get('name')
+                boat.text       = data.get('text')
+                boat.issue_year = data.get('issue_year')
+                boat.length     = data.get('length')
+                boat.width      = data.get('width')
+                boat.draft      = data.get('draft')
+                boat.capacity   = data.get('capacity')
+                boat.type       = data.get('type')
+                boat.base       = base
+                
+                if boat.status == Boat.Status.DECLINED:
+                    boat.status = Boat.Status.SAVED
+                elif boat.status == Boat.Status.PUBLISHED:
+                    boat.status = Boat.Status.ON_MODERATION
+                
+                boat.save()
+            else:
+                fields = {
+                    'name':         data.get('name'),
+                    'text':         data.get('text'),
+                    'issue_year':   data.get('issue_year'),
+                    'length':       data.get('length'),
+                    'width':        data.get('width'),
+                    'draft':        data.get('draft'),
+                    'capacity':     data.get('capacity'),
+                    'type':         data.get('type'),
+                    'base':         base
+                }
+
+                boat = Boat.objects.create(**fields, owner=request.user)        
+
+                    
+            if boat.is_motor_boat():
+                try:
+                    motor_boat = MotorBoat.objects.get(boat=boat)
+                    motor_boat.motor_amount = data.get('motor_amount')
+                    motor_boat.motor_power = data.get('motor_power')
+                    motor_boat.save()
+                except MotorBoat.DoesNotExist:
+                    motor_boat_fields = {
+                        'motor_amount': data.get('motor_amount'),
+                        'motor_power': data.get('motor_power')
+                    }
+                    MotorBoat.objects.create(**motor_boat_fields, boat=boat)
+            else:
+                MotorBoat.objects.filter(boat=boat).delete()
+
+            if boat.is_comfort_boat():
+                try:
+                    comfort_boat = ComfortBoat.objects.get(boat=boat)
+                    comfort_boat.berth_amount     = data.get('berth_amount')
+                    comfort_boat.cabin_amount     = data.get('cabin_amount')
+                    comfort_boat.bathroom_amount  = data.get('bathroom_amount')
+                    comfort_boat.save()
+                except ComfortBoat.DoesNotExist:
+                    comfort_boat_fields = {
+                        'berth_amount':     data.get('berth_amount'),
+                        'cabin_amount':     data.get('cabin_amount'),
+                        'bathroom_amount':  data.get('bathroom_amount')
+                    }
+                    ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
+            else:
+                ComfortBoat.objects.filter(boat=boat).delete()
+
+            if is_custom_location:
+
+                lat = round(custom_coordinates.get('lat'), 6)
+                lon = round(custom_coordinates.get('lng'), 6)
+                address = data.get('custom_address')
+
+                try:
+                    boat_coordinates = BoatCoordinates.objects.get(boat=boat)
+                    boat_coordinates.lat = lat
+                    boat_coordinates.lon = lon
+                    boat_coordinates.address = address
+                    boat_coordinates.save()
+                except BoatCoordinates.DoesNotExist:
+                    BoatCoordinates.objects.create(boat=boat, lat=lat, lon=lon, address=address) 
+            else:
+                BoatCoordinates.objects.filter(boat=boat).delete()
+
+            handle_boat_prices(boat, prices)
+
+            BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
+            for file in files:
+                BoatFile.objects.get_or_create(boat=boat, file=file)
+
+            return JsonResponse({
+                'data': {'id': boat.id},
+                'redirect': reverse('boat:my_boats')
+            })
+
+    except BoatFileCountException as e:
+        return response_files_limit_count(str(e))
+    except UnidentifiedImageError:
+        return response_invalid_file_type()
+    except Boat.DoesNotExist:
+        return response_not_found()
+    except FileSizeException as e:
+        return response_file_limit_size(str(e))
+    except ValidationError as e:
+        return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)

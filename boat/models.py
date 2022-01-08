@@ -98,6 +98,13 @@ class Boat(models.Model):
     def is_comfort_boat(self):
         return self.type in self.get_comfort_boat_types()
 
+    def is_custom_location(self):
+        try:
+            r = self.coordinates
+            return True
+        except BoatCoordinates.DoesNotExist:
+            return False
+
     @classmethod
     def get_motor_boat_types(cls):
         return [cls.Type.SAILING_YACHT, cls.Type.MOTOR_BOAT, cls.Type.GULET, cls.Type.JET_SKI, cls.Type.MOTOR_YACHT, cls.Type.HOUSE_BOAT, cls.Type.CATAMARAN, cls.Type.TRIMARAN]
@@ -129,6 +136,7 @@ class BoatCoordinates(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="coordinates")
     lon = models.DecimalField(max_digits=9, decimal_places=6)
     lat = models.DecimalField(max_digits=9, decimal_places=6)
+    address = models.TextField()
 
 class Specification(models.Model):
     

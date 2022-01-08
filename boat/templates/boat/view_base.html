@@ -49,6 +49,8 @@
         </svg>
         {% if boat.base %}
             <span class="text-primary">{{ boat.base.name }}</span>
+        {% elif boat.is_custom_location %}
+        <span class="text-primary">{{ boat.coordinates.address }}</span>
         {% else %}
             <span class="text-muted">Местоположение не указано</span>
         {% endif %}

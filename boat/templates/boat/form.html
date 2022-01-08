@@ -10,7 +10,9 @@
     var motorBoatTypes = {{ motor_boat_types|safe }},
         comfortBoatTypes = {{ comfort_boat_types|safe }},
         priceTypes = {{ price_types|safe }},
-        prices = {{ prices|safe|default:"[]" }}
+        prices = {{ prices|safe|default:"[]" }},
+        customCoordinates = {{ custom_coordinates|safe|default:"[]" }},
+        customAddress = '{{ custom_address|safe }}';
 </script>
 
 <h4 class="mb-3">Основная информация</h4>
@@ -173,7 +175,7 @@
 
 <h4 class="mb-3">Местоположение</h4>
 <div class="form-floating mb-3">
-    <select class="form-select" id="baseSelect" name="base_pk">
+    <select class="form-select" id="baseSelect" name="base">
         <option selected value="">Не указана</option>
         {% for base in bases %}
         <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }}</option> 
@@ -183,7 +185,7 @@
 </div>
 
 <div class="form-check form-switch mb-3">
-    <input class="form-check-input" type="checkbox" role="switch" id="switchCustomLocation">
+    <input class="form-check-input" type="checkbox" role="switch" id="switchCustomLocation" name="is_custom_location">
     <label class="form-check-label" for="switchCustomLocation">Своё местоположение</label>
 </div>
 
@@ -205,14 +207,17 @@
             <option value="Chicago">
         </datalist>   
         -->
-        
+        <!--
         <input type="text" id="addressInput" name="address" class="form-control" placeholder="Введите адрес" />
+        
         <label for="addressInput">Адрес</label>
-
+        -->
+        <!--   
         <ul id="addressList" class="list-group">
         </ul>
-        
+        -->
     </div>
+    <label id="addressLabel" class="form-label">Поставьте точку на карте</label>
     <div id="map" class="mb-3"></div>
 </div>
 

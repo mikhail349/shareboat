@@ -1,3 +1,4 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from decimal import Decimal
 from boat.exceptions import PriceDateRangeException
