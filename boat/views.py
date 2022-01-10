@@ -278,7 +278,6 @@ def update(request, pk):
     if request.method == 'GET':
         try:
             boat = Boat.objects.get(pk=pk, owner=request.user)
-            print(boat.is_custom_location())
             context = {
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
