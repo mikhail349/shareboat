@@ -91,21 +91,21 @@ $(document).ready(() => {
         }
     })
 
+    if (window.customCoordinates.length > 0) {
+        var latlng = {
+            lat: window.customCoordinates[0].fields.lat,
+            lng: window.customCoordinates[0].fields.lon
+        }
+        createMarker(latlng);
+        $('#addressLabel').text(window.customAddress);
+    }
+
     $("#switchCustomLocation").on('click', function () {
         if ($(this).is(":checked")) {
             $("#baseSelect").attr('disabled', true);
             $("#mapContainer").show();
 
             var defaultLanLng = [55.72524,37.62896];
-
-            if (window.customCoordinates.length > 0) {
-                var latlng = {
-                    lat: window.customCoordinates[0].fields.lat,
-                    lng: window.customCoordinates[0].fields.lon
-                }
-                createMarker(latlng);
-                $('#addressLabel').text(window.customAddress);
-            }
 
             if (!$.isEmptyObject(marker)) {
                 defaultLanLng = marker.getLatLng();
@@ -123,7 +123,8 @@ $(document).ready(() => {
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
         } else {
             $("#mapContainer").hide();
-            map?.remove();
+            map.remove();
+            map = null;
             $("#baseSelect").attr('disabled', false);
         }
     })
@@ -148,7 +149,7 @@ $(document).ready(() => {
         });
 
         if (map) {
-            marker.addTo(map);
+            marker?.addTo(map);
         }
     }
 
