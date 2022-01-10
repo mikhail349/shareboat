@@ -190,19 +190,26 @@ $(document).ready(() => {
     })*/
 
     function reverseGeocode(latlng) {
-        //$("#addressInput").val('Идет поиск...');
+        $("form button[type=submit").attr('disabled', true);
         //$("#addressInput").attr('disabled', true);
         $('#addressLabel').text('Идет поиск...');
         $.ajax({
             type: 'GET',
             url: `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&accept-language=ru`,
-            success: onSuccess
+            success: onSuccess,
+            error: onError
         })
         function onSuccess(data) {
             if (data.display_name) {
                 $('#addressLabel').text(data.display_name);
                 window.customAddress = data.display_name;
+                $("form button[type=submit").attr('disabled', false);
             }
+        }
+        function onError() {
+            $("form button[type=submit").attr('disabled', false);
+            map?.removeLayer(marker);
+            marker = null;
         }
     }
 })
