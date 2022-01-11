@@ -8,6 +8,11 @@
     box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
 }
 
+#map {
+    border-radius: 0.25rem;
+    z-index: 5;
+}
+
 .form-input-min-width input[type="date"], .form-input-min-width input[type="number"], .form-input-min-width input[type="text"], .form-input-min-width select {
     min-width: 207px;
 }

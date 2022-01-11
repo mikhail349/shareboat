@@ -1,4 +1,8 @@
 {% load l10n %}
+{% load static %}
+{% include 'leaflet.html' %}
+
+<script type="text/javascript" src="{% static 'boat/js/view_base.min.js' %}"></script>
 
 <div class="row g-3"> 
     <div class="col-lg">
@@ -49,8 +53,10 @@
         </svg>
         {% if boat.base %}
             <span class="text-primary">{{ boat.base.name }}</span>
+            <div id="map" style="height: 200px" data-lat="{{ boat.base.lat }}" data-lng="{{ boat.base.lon }}" class="mb-3"></div>
         {% elif boat.is_custom_location %}
-        <span class="text-primary">{{ boat.coordinates.address }}</span>
+            <span class="text-primary">{{ boat.coordinates.address }}</span>
+            <div id="map" style="height: 200px" data-lat="{{ boat.coordinates.lat }}" data-lng="{{ boat.coordinates.lon }}" class="mb-3"></div>
         {% else %}
             <span class="text-muted">Местоположение не указано</span>
         {% endif %}

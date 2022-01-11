@@ -134,17 +134,8 @@ $(document).ready(() => {
     }
 
     function createMarker(latlng) {
-        var markerIcon = L.icon({
-            iconUrl: markerIconUrl,
-            shadowUrl: markerShadowUrl,
-        
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
         map?.removeLayer(marker);
-        marker = new L.marker(latlng, {draggable: true, icon: markerIcon}).on('dragend', function(e) {
+        marker = new L.marker(latlng, {draggable: true, icon: window.markerIcon}).on('dragend', function(e) {
             reverseGeocode(e.target.getLatLng());
         });
 

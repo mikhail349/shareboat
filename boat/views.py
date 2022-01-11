@@ -260,7 +260,11 @@ def calc_booking(request, pk):
 def view(request, pk):
     try:
         boat = Boat.objects.get(pk=pk, owner=request.user)
-        return render(request, 'boat/view.html', context={'boat': boat})
+        context = {
+            'boat': boat,
+            #'coordinates': serializers.serialize('json', [boat.coordinates], fields=('lat', 'lon')) if boat.is_custom_location() else [],
+        }
+        return render(request, 'boat/view.html', context=context)
     except Boat.DoesNotExist:
         return render(request, 'not_found.html')
 
