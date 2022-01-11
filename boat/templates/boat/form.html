@@ -41,9 +41,9 @@
     <label for="typeSelect">Тип лодки</label>
     <div class="invalid-tooltip">Выберите тип лодки</div>
 </div>
-
-<div class="row">
-    <div class="col-auto">
+    
+<div class="row row-cols-lg-auto">
+    <div class="col">
         <div class="form-floating mb-3">                 
             <input type="number" id="issueYearInput" name="issue_year" class="form-control" placeholder="Год выпуска"        
                 min="1900"
@@ -57,8 +57,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-auto">
+<div class="row row-cols-lg-auto">
+    <div class="col">
         <div class="form-floating mb-3">                 
             <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
                 required min="1" max="99"
@@ -70,8 +70,9 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-auto">
+<h4 class="mb-3">Габариты лодки</h4>
+<div class="row row-cols-lg-auto">
+    <div class="col">
         <div class="form-floating mb-3">                 
             <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="false"
                 step=".1" min="0.1" max="999.9"
@@ -82,7 +83,7 @@
             <div class="invalid-tooltip">Укажите длину лодки</div>
         </div>
     </div>
-    <div class="col-auto">
+    <div class="col">
         <div class="form-floating mb-3">                 
             <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
                 step=".1" min="0.1" max="99.9"
@@ -93,7 +94,7 @@
             <div class="invalid-tooltip">Укажите ширину лодки</div>
         </div>
     </div>
-    <div class="col-auto">
+    <div class="col">
         <div class="form-floating mb-3">                 
             <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
                 step=".1" min="0.1" max="9.9"
@@ -109,8 +110,8 @@
 <div class="collapse {% if boat.is_motor_boat %}show{% endif %}" id="collapseMotorBoat">
     <h4 class="mb-3">Двигатели</h4>
     <fieldset id="fieldsetMotorBoat" {% if not boat.is_motor_boat %}disabled{% endif %}>
-        <div class="row">
-            <div class="col-auto">
+        <div class="row row-cols-lg-auto">
+            <div class="col">
                 <div class="form-floating mb-3">                 
                     <input type="number" id="motorAmountInput" name="motor_amount" class="form-control" placeholder="Укажите кол-во двигателей" autocomplete="false"
                         required min="1" max="9"
@@ -120,7 +121,7 @@
                     <div class="invalid-tooltip">Укажите кол-во двигателей</div>
                 </div>
             </div>
-            <div class="col-auto">
+            <div class="col">
                 <div class="form-floating mb-3">                 
                     <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="false"
                         step=".1" min="0.1" max="9999.9"
@@ -138,8 +139,8 @@
 <div class="collapse {% if boat.is_comfort_boat %}show{% endif %}" id="collapseComfortBoat">
     <h4 class="mb-3">Удобства</h4>
     <fieldset {% if not boat.is_comfort_boat %}disabled{% endif %}>
-        <div class="row">
-            <div class="col-auto">
+        <div class="row row-cols-lg-auto">
+            <div class="col">
                 <div class="form-floating mb-3">                 
                     <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="false"
                         required min="1" max="99"
@@ -149,7 +150,7 @@
                     <div class="invalid-tooltip">Укажите кол-во спальных мест</div>
                 </div>
             </div>
-            <div class="col-auto">
+            <div class="col">
                 <div class="form-floating mb-3">                 
                     <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="false"
                         required min="1" max="99"
@@ -159,7 +160,7 @@
                     <div class="invalid-tooltip">Укажите кол-во кают</div>
                 </div>
             </div>
-            <div class="col-auto">
+            <div class="col">
                 <div class="form-floating mb-3">                 
                     <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="false"
                         required min="1" max="9"
