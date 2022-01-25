@@ -1,6 +1,11 @@
 **/migrations/*
 !**/migrations/__init__.py
-uploads/
 
+*.js
+!*.min.js
+
+uploads/
+venv/
+nodejs/
 *.pyc
 .env
