@@ -18,7 +18,7 @@
 <h4 class="mb-3">Основная информация</h4>
 
 <div class="form-floating mb-3">                 
-    <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="false" aria-describedby="invalidInputName"             
+    <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="off" aria-describedby="invalidInputName"             
         required maxlength="255"
         value="{{ boat.name }}"
     />
@@ -27,7 +27,7 @@
 </div>
 
 <div class="form-floating mb-3">                 
-    <textarea id="textareaText" name="text" class="form-control" placeholder="Описание лодки" autocomplete="false" style="height: 200px">{{ boat.text|default:"" }}</textarea>
+    <textarea id="textareaText" name="text" class="form-control" placeholder="Описание лодки" autocomplete="off" style="height: 200px">{{ boat.text|default:"" }}</textarea>
     <label for="textareaText">Описание лодки</label>
 </div>
 
@@ -60,7 +60,7 @@
 <div class="row row-cols-lg-auto">
     <div class="col">
         <div class="form-floating mb-3">                 
-            <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="false"
+            <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="off"
                 required min="1" max="99"
                 value="{{ boat.capacity }}"      
             />
@@ -74,7 +74,7 @@
 <div class="row row-cols-lg-auto">
     <div class="col">
         <div class="form-floating mb-3">                 
-            <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="false"
+            <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="off"
                 step=".1" min="0.1" max="999.9"
                 required
                 value="{{ boat.length|unlocalize }}"
@@ -85,7 +85,7 @@
     </div>
     <div class="col">
         <div class="form-floating mb-3">                 
-            <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="false"
+            <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="off"
                 step=".1" min="0.1" max="99.9"
                 required    
                 value="{{ boat.width|unlocalize }}"     
@@ -96,7 +96,7 @@
     </div>
     <div class="col">
         <div class="form-floating mb-3">                 
-            <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="false"
+            <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="off"
                 step=".1" min="0.1" max="9.9"
                 required
                 value="{{ boat.draft|unlocalize }}"
@@ -113,7 +113,7 @@
         <div class="row row-cols-lg-auto">
             <div class="col">
                 <div class="form-floating mb-3">                 
-                    <input type="number" id="motorAmountInput" name="motor_amount" class="form-control" placeholder="Укажите кол-во двигателей" autocomplete="false"
+                    <input type="number" id="motorAmountInput" name="motor_amount" class="form-control" placeholder="Укажите кол-во двигателей" autocomplete="off"
                         required min="1" max="9"
                         value="{{ boat.motor_boat.motor_amount }}"     
                     />
@@ -123,7 +123,7 @@
             </div>
             <div class="col">
                 <div class="form-floating mb-3">                 
-                    <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="false"
+                    <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="off"
                         step=".1" min="0.1" max="9999.9"
                         required
                         value="{{ boat.motor_boat.motor_power|unlocalize }}"     
@@ -142,7 +142,7 @@
         <div class="row row-cols-lg-auto">
             <div class="col">
                 <div class="form-floating mb-3">                 
-                    <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="false"
+                    <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="off"
                         required min="1" max="99"
                         value="{{ boat.comfort_boat.berth_amount }}"     
                     />
@@ -152,7 +152,7 @@
             </div>
             <div class="col">
                 <div class="form-floating mb-3">                 
-                    <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="false"
+                    <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="off"
                         required min="1" max="99"
                         value="{{ boat.comfort_boat.cabin_amount }}"     
                     />
@@ -162,7 +162,7 @@
             </div>
             <div class="col">
                 <div class="form-floating mb-3">                 
-                    <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="false"
+                    <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="off"
                         required min="1" max="9"
                         value="{{ boat.comfort_boat.bathroom_amount }}"     
                     />

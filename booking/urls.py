@@ -10,6 +10,6 @@ apiurlpatterns = [
 ]
 
 urlpatterns = [
-    #path('my_boats/', views.my_boats, name='my_boats'),
+    path('my_bookings', views.my_bookings, name='my_bookings'),
     path('api/', include(apiurlpatterns))
 ]

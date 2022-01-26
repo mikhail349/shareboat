@@ -21,6 +21,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Флот</a></li>
+                                <li><a class="dropdown-item" href="{% url 'booking:my_bookings' %}">Бронирования</a></li>
                                 {% if perms.boat.can_view_boats_on_moderation %}
                                     <li>
                                         <a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">

@@ -184,7 +184,6 @@ class BoatPrice(models.Model):
         )
 
         if existing_boat_prices.exists():
-            print(existing_boat_prices)
             errors.append(ValidationError(
                 _('Период действия цены для типа "%(value)s" пересекается с другим периодом этого же типа'), 
                 params={'value': self.get_type_display()},

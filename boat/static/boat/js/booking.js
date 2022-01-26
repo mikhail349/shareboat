@@ -1,23 +1,26 @@
 $(document).ready(() => {
     $('#bookingdaterangepicker').daterangepicker({
+        format: 'DD.MM.YYYY',
         drops: 'up',
         autoUpdateInput: false,
         minDate: new Date(Math.max.apply(null,[firstPriceDate, new Date()])),
         maxDate: lastPriceDate,
         isInvalidDate: function(date) {
+
+            for (let acceptedBookingRange of acceptedBookingsRanges) {
+                if (date._d >= acceptedBookingRange.startDate && date._d <= acceptedBookingRange.endDate) {
+                    return true;
+                }
+            }
+
             for (let priceRange of priceRanges) {
                 if (date._d >= priceRange.startDate && date._d <= priceRange.endDate) {
                     return false;
                 }
             }
+
             return true;
         },
-        /*isCustomDate: function(date) {
-            const d = new Date(2021, 10, 30);
-            if (date._d.getTime() == d.getTime()) {
-                return 'booked';
-            }            
-        },*/
         locale: {
             format: 'DD.MM.YYYY',
             applyLabel: "Ок",
@@ -51,9 +54,15 @@ $(document).ready(() => {
             firstDay: 1
         }
     })
+    
     var xhr = null;
-    $('#bookingdaterangepicker').on('apply.daterangepicker', function(e, picker) {
+    function calc_booking() {
+        const picker = $('#bookingdaterangepicker').data('daterangepicker');
+        
         var range = picker.startDate.format(picker.locale.format) + ' - ' + picker.endDate.format(picker.locale.format);
+        window.selectedStartDate = picker.startDate;
+        window.selectedEndDate = picker.endDate;
+        window.totalSum = null;
 
         if (!!xhr) xhr.abort();
         xhr = $.ajax({ 
@@ -69,11 +78,13 @@ $(document).ready(() => {
         $('#priceAlert').removeClass('alert-success');
         $('#priceAlert').addClass('alert-secondary');
         $('#priceAlert').html(`
-            <h5>Идет расчет цены за период ${range}...</h5>
+            <strong>Идет расчет цены...</strong>
         `);
        
         function onSuccess(data) {
             $('#bookingdaterangepicker').val(range);
+
+            window.totalSum = data.sum;
             
             $('#priceAlert').removeClass('alert-danger');
             $('#priceAlert').removeClass('alert-secondary');
@@ -81,12 +92,15 @@ $(document).ready(() => {
             let sumStr = data.sum.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
             $('#priceAlert').html(`
-                <h4>${sumStr}</h4>
-                <div>за ${data.days} ${daysStr}</div>
+                <strong>${sumStr}</strong><span> за ${data.days} ${daysStr}</span>
             `)
         }
     
         function onError(error) {
+            window.selectedStartDate = null;
+            window.selectedEndDate = null;
+            window.totalSum = null;
+
             if (error.status == 0) return;
             $('#bookingdaterangepicker').val('');
             
@@ -96,6 +110,52 @@ $(document).ready(() => {
             $('#priceAlert').html(`
                 <h5>${parseJSONError(error.responseJSON)}</h5>
             `);
+        }        
+    }
+
+    var xhr = null;
+    $('#bookingdaterangepicker').on('apply.daterangepicker', function(e) {
+        calc_booking();
+    });
+
+    $("form").on('submit', function(e) {
+        e.preventDefault();
+        const $datePicker = $('#bookingdaterangepicker');
+        $datePicker.removeAttr('readonly');
+
+        if (!$(this).checkValidity()) return;
+        
+        showOverlayPanel("Бронирование...");
+        const url = $(this).attr("action");
+        const formData = new FormData();
+        formData.append('start_date', window.selectedStartDate.format('YYYY-MM-DD'));
+        formData.append('end_date', window.selectedEndDate.format('YYYY-MM-DD'));
+        formData.append('total_sum', window.totalSum);
+        formData.append('boat_id', window.boatId);
+
+        $.ajax({ 
+            type: "POST",
+            url: url,
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: onSuccess,
+            error: onError
+        }); 
+       
+        function onSuccess(data) {
+            $datePicker.attr('readonly', true);
+            hideOverlayPanel();
+            //window.location.href = data.redirect;
+        }
+    
+        function onError(error) {
+            $datePicker.attr('readonly', true);
+            hideOverlayPanel();
+            showErrorToast(error.responseJSON.message);
+            if (error.responseJSON?.code === 'outdated_price') {
+                calc_booking();
+            }
         }
     });
 })

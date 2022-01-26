@@ -9,7 +9,12 @@
         var boatId = {{ boat.pk }}
             firstPriceDate = new Date('{{ first_price_date.isoformat }}'),
             lastPriceDate = new Date('{{ last_price_date.isoformat }}'),
-            priceRanges = []
+            priceRanges = [],
+            acceptedBookingsRanges = [],
+
+            selectedStartDate = null,
+            selectedEndDate = null,
+            totalSum = null
 
         {% for price_range in price_ranges %}
             priceRanges.push({
@@ -17,36 +22,53 @@
                 endDate: new Date(new Date('{{ price_range.1.isoformat }}').toDateString())
             })
         {% endfor %}
+
+        {% for accepted_booking_range in accepted_bookings_ranges %}
+            acceptedBookingsRanges.push({
+                startDate: new Date(new Date('{{ accepted_booking_range.0.isoformat }}').toDateString()),
+                endDate: new Date(new Date('{{ accepted_booking_range.1.isoformat }}').toDateString())
+            })
+        {% endfor %}       
     </script>
 
     <script type="text/javascript" src="{% static 'boat/js/booking.min.js' %}"></script>
     {% include 'daterangepicker.html' %}
 
     <div class="container-lg">
-        <section class="jumbotron text-center">
-            <h1 class="jumbotron-heading">Бронирование лодки</h1>    
-        </section>
+        <form method="post" action="{% url 'booking:api_create' %}" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
+            {% csrf_token %}
 
-        {% include 'boat/view_base.html' %}
-        
-        <h4 class="mb-3">Бронирование</h4>
-        {% if prices_exist %}
-            <div class="row gy-3 mb-3 ">
-                <div class="col-lg-auto">
-                    <div class="form-floating">                 
-                        <input id="bookingdaterangepicker" type="text" class="form-control" placeholder="Укажите период" required />
-                        <label>Период</label>
-                        <div class="invalid-tooltip">Укажите период</div>
+            <section class="jumbotron text-center">
+                <h1 class="jumbotron-heading">Бронирование лодки</h1>    
+            </section>
+
+            {% include 'boat/view_base.html' %}
+            
+            <h4 class="mb-3">Бронирование</h4>
+            {% if prices_exist %}
+                <div class="row gy-3">
+                    <div class="col-lg-auto">
+                        <div class="form-floating">                 
+                            <input id="bookingdaterangepicker" autocomplete="off"
+                                type="text" class="form-control" placeholder="Укажите период" required readonly style="cursor:pointer; background-color: #FFFFFF"/>
+                            <label>Период</label>
+                            <div class="invalid-tooltip">Укажите период</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div id="priceAlert" class="alert alert-secondary text-center">
+                            <strong>Для расчета цены выберите период</strong>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div id="priceAlert" class="alert alert-secondary text-center">
-                        <h5>Для расчета цены выберите период</h5>
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <div class="text-danger mb-3">Нет расценок</div>
-        {% endif %}
+                {% if user.is_authenticated %}
+                    <button type="submit" class="btn btn-outline-success mb-3">Забронировать</button>
+                {% else %}
+                    <a href="{% url 'user:login' %}?next={{ request.get_full_path }}" class="btn btn-outline-primary mb-3">Войти для бронирования</a>
+                {% endif %}
+            {% else %}
+                <div class="text-danger mb-3">Нет расценок</div>
+            {% endif %}
+        </form>
     </div>
 {% endblock  %}

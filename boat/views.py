@@ -26,6 +26,7 @@ from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from notification.models import BoatDeclinedModeration
 from base.models import Base
+from booking.models import Booking
 
 import json
 
@@ -234,12 +235,15 @@ def booking(request, pk):
             boat = Boat.objects.published().get(pk=pk)
             price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
             prices = boat.prices.values('start_date', 'end_date')
+            accepted_bookings = boat.bookings.filter(status=Booking.Status.ACCEPTED).values('start_date', 'end_date') 
+
             context = {
                 'boat': boat,
                 'first_price_date': price_dates.get('first'),
                 'last_price_date': price_dates.get('last'),
                 'prices_exist': price_dates.get('last') is not None and price_dates.get('last') >= timezone.localdate(),
-                'price_ranges': [[e['start_date'], e['end_date']] for e in prices]
+                'price_ranges': [[e['start_date'], e['end_date']] for e in prices],
+                'accepted_bookings_ranges': [[e['start_date'], e['end_date']] for e in accepted_bookings]
             }
             return render(request, 'boat/booking.html', context=context)
         except Boat.DoesNotExist:

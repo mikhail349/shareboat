@@ -21,5 +21,5 @@ $(document).ready(() => {
             hideOverlayPanel();
             showErrorToast((error.responseJSON.message));
         }
-    })
+    });
 })
