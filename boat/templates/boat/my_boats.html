@@ -57,7 +57,7 @@
                                 </div>
                                 {% if boat.status != Status.SAVED %}
                                     <h5>
-                                        <span class="position-absolute top-0 start-100 translate-95-right badge {{ boat.status|get_status_color }}">
+                                        <span class="position-absolute top-0 start-0 translate-middle-y badge {{ boat.status|get_status_color }}">
                                             {{ boat.get_status_display }}
                                         </span>
                                     </h5>

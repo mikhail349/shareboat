@@ -43,10 +43,6 @@
 .form-control[required] ~ label::after, .form-select[required] ~ label::after {
     content:" *";
     color:red;
-  }
-
-.translate-95-right {
-    transform: translate(-95%,-50%)!important;
 }
 
 .form-floating > label {
