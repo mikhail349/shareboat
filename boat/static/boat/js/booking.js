@@ -146,7 +146,7 @@ $(document).ready(() => {
         function onSuccess(data) {
             $datePicker.attr('readonly', true);
             hideOverlayPanel();
-            //window.location.href = data.redirect;
+            window.location.href = data.redirect;
         }
     
         function onError(error) {

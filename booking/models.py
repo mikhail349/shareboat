@@ -11,8 +11,8 @@ class Booking(models.Model):
 
     class Status(models.IntegerChoices):
         PENDING     = 0, _("Ожидание подтверждения")
-        DECLINED    = -1, _("Отменена")
-        ACCEPTED    = 1, _("Подтверждена")
+        DECLINED    = -1, _("Отменено")
+        ACCEPTED    = 1, _("Подтверждено")
 
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')
@@ -21,6 +21,9 @@ class Booking(models.Model):
     start_date  = models.DateField()
     end_date    = models.DateField()
     total_sum   = models.DecimalField(max_digits=8, decimal_places=2)
+
+    #def get_days_count(self):
+    #    return self.d
 
     def clean(self):
         if self.pk is None:

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 from boat.utils import calc_booking
 from .models import Booking
@@ -32,9 +33,30 @@ def create(request):
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 
-        return JsonResponse({})
+        return JsonResponse({'redirect': reverse('booking:my_bookings')})
 
 @login_required
 def my_bookings(request):
-    bookings = Booking.objects.filter(renter=request.user).order_by('id')
+    bookings = Booking.objects.filter(renter=request.user).order_by('-status','-start_date')
     return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'Status': Booking.Status})
+
+@login_required
+def set_status(request, pk):
+    
+    ALLOWED_STATUSES = {
+        Booking.Status.PENDING: (Booking.Status.DECLINED,),
+    }
+
+    try:
+        new_status = int(request.POST.get('status'))
+        booking = Booking.objects.get(pk=pk, renter=request.user)
+
+        if not new_status in ALLOWED_STATUSES.get(booking.status):
+            return JsonResponse({'message': 'Некорректный статус'}, status=400)
+
+        booking.status = new_status
+        booking.save()
+
+        return JsonResponse({})
+    except Booking.DoesNotExist:
+        return JsonResponse({'message': 'Бронь не найдена'}, status=404)   
