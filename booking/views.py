@@ -8,6 +8,7 @@ from boat.utils import calc_booking
 from .models import Booking
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
+from django.db.models import Q
 
 @login_required
 def create(request):
@@ -37,8 +38,11 @@ def create(request):
 
 @login_required
 def my_bookings(request):
-    bookings = Booking.objects.filter(renter=request.user).order_by('-status','-start_date')
-    return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'Status': Booking.Status})
+    my_bookings = Booking.objects.filter(renter=request.user)
+    
+    bookings = my_bookings.filter(~Q(status=Booking.Status.DECLINED)).order_by('-status','-start_date')
+    declined_bookings = my_bookings.filter(status=Booking.Status.DECLINED).order_by('-start_date')
+    return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'declined_bookings': declined_bookings, 'Status': Booking.Status})
 
 @login_required
 def set_status(request, pk):

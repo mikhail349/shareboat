@@ -1,0 +1,45 @@
+{% load booking_extras %}
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            {% for booking in bookings %}
+            <div class="col-lg-4 col-md-4">
+                <div class="card box-shadow h-100">
+                    <a href="{% url 'boat:view' booking.boat.id %}" >
+                        {% include 'boat/carousel.html' with boat=booking.boat %}
+                    </a>    
+                    
+                    <div class="card-body d-flex flex-column">
+                        {% include 'boat/card.html' with boat=booking.boat %}
+                        <div class="alert alert-secondary" role="alert">
+                            <div>
+                                {{ booking.start_date|date:'d.m.Y' }} - {{ booking.end_date|date:'d.m.Y' }}
+                            </div>
+                            <div class="text-success">
+                                <strong>{{ booking.total_sum }}&nbsp;₽</strong>
+                            </div>
+                        </div>
+                        <div class="dropdown mt-auto">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuStatus{{ booking.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                Действия
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ booking.pk }}">
+                                {% if booking.status == Status.PENDING %}
+                                    <li><a class="dropdown-item" href="#" data-booking-id="{{ booking.pk }}" data-status="{{ Status.DECLINED }}">Отменить бронь</a></li>
+                                {% else%}
+                                    <li class="dropdown-item disabled">Действий нет</li>
+                                {% endif %}                                    
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <h5>
+                        <span style="left: 5px; top: 5px;" class="position-absolute badge {{ booking.status|get_status_color }}">{{ booking.get_status_display }}</span>
+                    </h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
