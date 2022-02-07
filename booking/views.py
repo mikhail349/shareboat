@@ -21,7 +21,7 @@ def create(request):
         boat_pk     = data.get('boat_id')
 
         try:
-            boat = Boat.objects.published().get(pk=boat_pk)
+            boat = Boat.published.get(pk=boat_pk)
         except Boat.DoesNotExist:
             return JsonResponse({'message': 'Лодка не найдена'}, status=404)
 

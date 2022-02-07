@@ -85,7 +85,7 @@ def handle_boat_prices(boat, prices):
 
 @login_required
 def my_boats(request):
-    boats = Boat.objects.filter(owner=request.user).order_by('id')
+    boats = Boat.active.filter(owner=request.user).order_by('id')
     return render(request, 'boat/my_boats.html', context={'boats': boats, 'Status': Boat.Status}) 
 
 @permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
@@ -196,7 +196,7 @@ def boats(request):
     #if q_date_to:
     #    boat_prices = boat_prices.filter(end_date__gte=q_date_to)
  
-    boats = Boat.objects.published()
+    boats = Boat.published
     if q_boat_types:
         boats = boats.filter(type__in=q_boat_types)
 
@@ -232,7 +232,7 @@ def boats(request):
 def booking(request, pk):
     if request.method == 'GET':
         try:
-            boat = Boat.objects.published().get(pk=pk)
+            boat = Boat.published.get(pk=pk)
             price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
             prices = boat.prices.values('start_date', 'end_date')
             accepted_bookings = boat.bookings.filter(status=Booking.Status.ACCEPTED).values('start_date', 'end_date') 
@@ -263,7 +263,7 @@ def calc_booking(request, pk):
 @login_required
 def view(request, pk):
     try:
-        boat = Boat.objects.get(pk=pk, owner=request.user)
+        boat = Boat.active.get(pk=pk, owner=request.user)
         context = {
             'boat': boat,
             #'coordinates': serializers.serialize('json', [boat.coordinates], fields=('lat', 'lon')) if boat.is_custom_location() else [],
@@ -285,7 +285,7 @@ def update(request, pk):
 
     if request.method == 'GET':
         try:
-            boat = Boat.objects.get(pk=pk, owner=request.user)
+            boat = Boat.active.get(pk=pk, owner=request.user)
             context = {
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
@@ -303,10 +303,17 @@ def update(request, pk):
 @api_view(['POST'])
 def delete(request, pk):
     try:
-        Boat.objects.get(pk=pk, owner=request.user).delete()
-        return JsonResponse({'redirect': reverse('boat:my_boats')})
+        boat = Boat.active.get(pk=pk, owner=request.user)
     except Boat.DoesNotExist:
         return response_not_found()
+
+    boat.bookings.filter(status=Booking.Status.PENDING).update(status=Booking.Status.DECLINED)
+    if boat.bookings.filter(status=Booking.Status.ACCEPTED).exists():
+        return JsonResponse({'message': "По этой лодке уже есть подтвержденные бронирования"}, status=status.HTTP_400_BAD_REQUEST)    
+
+    boat.status = Boat.Status.DELETED
+    boat.save()
+    return JsonResponse({'redirect': reverse('boat:my_boats')})
 
 @login_required
 def get_files(request, pk):

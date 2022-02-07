@@ -11,16 +11,15 @@ from user.models import User
 from file import utils, signals
 from base.models import Base
 
-class BoatQuerySet(models.QuerySet):
-    def published(self):
-        return self.filter(status=Boat.Status.PUBLISHED)
 
-class BoatManager(models.Manager):
+class ActiveBoatManager(models.Manager):
     def get_queryset(self):
-        return BoatQuerySet(self.model, using=self._db)
-    
-    def published(self):
-        return self.get_queryset().published()
+        return super().get_queryset().exclude(status=Boat.Status.DELETED)
+
+class PublishedBoatManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=Boat.Status.PUBLISHED)
+
 
 class Boat(models.Model):
 
@@ -31,6 +30,7 @@ class Boat(models.Model):
         ]
 
     class Status(models.IntegerChoices):
+        DELETED         = -2, _("Удалена")
         DECLINED        = -1, _("Отклонена")
         SAVED           = 0, _("Сохранена")
         ON_MODERATION   = 1, _("На проверке")  
@@ -61,8 +61,10 @@ class Boat(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     base    = models.ForeignKey(Base, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)
-    objects = BoatManager()
 
+    objects = models.Manager()
+    active = ActiveBoatManager()
+    published = PublishedBoatManager()
 
     @property
     def is_draft(self):
