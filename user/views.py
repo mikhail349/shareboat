@@ -123,7 +123,7 @@ def send_restore_password_email(request):
 def register(request):
 
     def render_error(msg):
-        return render(request, 'user/register.html', context={'errors': msg})  
+        return render(request, 'user/register.html', context={'errors': msg, 'first_name': data.get('first_name')})  
 
     if request.method == 'GET':
         return render(request, 'user/register.html')

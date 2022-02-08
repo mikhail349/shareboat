@@ -16,23 +16,23 @@
         {% endif %}
         
         <div class="form-floating mb-3">           
-            <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" area-describedby="invalidInputName">
+            <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" area-describedby="invalidInputName" autofocus autocomplete="username">
             <label for="email">Эл. почта</label>
             <div class="invalid-tooltip">Введите эл. почту</div>
         </div>
         <div class="form-floating mb-3">                   
-            <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control">
+            <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control" autocomplete="new-password">
             <label for="password1">Пароль</label>
             <div class="invalid-tooltip">Введите пароль</div>
         </div>
         <div class="form-floating mb-3">          
-            <input id="password2" type="password" name="password2" placeholder="Повторите пароль" required class="form-control">
+            <input id="password2" type="password" name="password2" placeholder="Повторите пароль" required class="form-control" autocomplete="new-password">
             <label for="password2">Повторите пароль</label>
             <div class="invalid-tooltip">Повторите пароль</div>
         </div>
 
         <div class="form-floating mb-3">          
-            <input id="first_name" type="text" name="first_name" class="form-control" placeholder="Имя">
+            <input id="first_name" type="text" name="first_name" class="form-control" placeholder="Имя" value="{{ first_name }}">
             <label for="first_name">Имя</label>
         </div>
 
