@@ -5,6 +5,9 @@ from boat.exceptions import PriceDateRangeException
 from shareboat.date_utils import daterange
 from .models import Boat
 
+import json
+import decimal 
+
 
 def calc_booking(boat_pk, start_date, end_date):
     boat = Boat.objects.get(pk=boat_pk)
@@ -25,3 +28,9 @@ def my_boats(request, context=None):
         context = {}
     boats = Boat.objects.filter(owner=request.user).order_by('id')
     return render(request, 'boat/my_boats.html', context={'boats': boats, 'Status': Boat.Status, **context}) 
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return str(o)
+        return super(DecimalEncoder, self).default(o)

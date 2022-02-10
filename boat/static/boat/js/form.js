@@ -62,9 +62,12 @@ $(document).ready(() => {
         }
         
         formData.append('prices', JSON.stringify(window.prices));
-        if (!$.isEmptyObject(marker)) {
-            formData.append('custom_coordinates', JSON.stringify(marker.getLatLng()));
-            formData.append('custom_address', window.customAddress);
+
+        if ($("#switchCustomLocation").is(":checked")) {
+            const latlng = marker.getLatLng();
+            window.boatCoordinates.lat = latlng.lat;
+            window.boatCoordinates.lon = latlng.lng;
+            formData.append('boat_coordinates', JSON.stringify(window.boatCoordinates));
         }
 
         const url = $form.attr("action");
@@ -88,17 +91,6 @@ $(document).ready(() => {
             showErrorToast(parseJSONError(error.responseJSON));
         }
     })
-
-    if (window.customCoordinates.length > 0) {
-        var latlng = {
-            lat: window.customCoordinates[0].fields.lat,
-            lng: window.customCoordinates[0].fields.lon
-        }
-        createMarker(latlng);
-        $('.addressLabel').text(window.customAddress);
-        $('.addressLabel').addClass('text-primary');
-    }
-
 
     $("#addressMapModal").on("shown.bs.modal", function (e) {
         var defaultLanLng = [55.72524,37.62896];
@@ -136,9 +128,18 @@ $(document).ready(() => {
         }
     })
 
-    if (window.customCoordinates.length > 0) {
+    if (!$.isEmptyObject(window.boatCoordinates)) {
+        var latlng = {
+            lat: window.boatCoordinates.lat,
+            lng: window.boatCoordinates.lon
+        }
+        createMarker(latlng);
+        $('.addressLabel').text(window.boatCoordinates.address);
+        $('.addressLabel').addClass('text-primary');
+
         $("#switchCustomLocation").trigger('click');
     }
+
 
     function createMarker(latlng) {
         map?.removeLayer(marker);
@@ -150,42 +151,6 @@ $(document).ready(() => {
             marker?.addTo(map);
         }
     }
-
-    /*var addressInputTimeout;
-
-    
-    $('#addressInput').on('input', function(e) {
-        //console.log(e, e.target.value);
-
-        function onSuccess(data) {
-            //if (data.display_name) {
-            //    $("#addressInput").val(data.display_name);
-            //    $("#addressInput").attr('disabled', false);
-            //}
-            
-            //for (let item of data) {
-            //    $("#addressList").append($("<option>").attr('value', 'item.display_name'));
-            //}
-
-            $.each(data, function(i, item) {
-                //if (item.class !== 'boundary') {
-                    //console.log(item);
-                    $("#addressList").append($("<li>").text(item.display_name));
-                //}
-                
-            });
-        }
-
-        clearTimeout(addressInputTimeout);
-        addressInputTimeout = setTimeout(function() {
-            $("#addressList").empty();
-            $.ajax({
-                type: 'GET',
-                url: `https://nominatim.openstreetmap.org/search?q=${e.target.value}&format=json&accept-language=ru`,
-                success: onSuccess
-            });
-        }, 300);
-    })*/
 
     function reverseGeocode(latlng) {
         $("form button[type=submit").attr('disabled', true);
@@ -203,7 +168,8 @@ $(document).ready(() => {
             if (data.display_name) {
                 $('.addressLabel').text(data.display_name);
                 $('.addressLabel').addClass('text-primary');
-                window.customAddress = data.display_name;
+                window.boatCoordinates.address = data.display_name;
+                window.boatCoordinates.state = data?.address?.state;
                 $("form button[type=submit").attr('disabled', false);
             }
         }

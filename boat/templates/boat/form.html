@@ -11,8 +11,7 @@
         comfortBoatTypes = {{ comfort_boat_types|safe }},
         priceTypes = {{ price_types|safe }},
         prices = {{ prices|safe|default:"[]" }},
-        customCoordinates = {{ custom_coordinates|safe|default:"[]" }},
-        customAddress = '{{ custom_address|safe }}';
+        boatCoordinates = {{ boat_coordinates|safe }};
 </script>
 
 <h4 class="mb-3">Основная информация</h4>
@@ -31,19 +30,15 @@
     <label for="textareaText">Описание лодки</label>
 </div>
 
-<div class="row row-cols-lg-auto">
-    <div class="col">
-        <div class="form-floating mb-3" >
-            <select class="form-select" id="typeSelect" name="type" required>
-                <option selected disabled value="">Выберите из списка</option>
-                {% for boat_type in boat_types %}
-                <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
-                {% endfor %}
-            </select>
-            <label for="typeSelect">Тип лодки</label>
-            <div class="invalid-tooltip">Выберите тип лодки</div>
-        </div>
-    </div>
+<div class="form-floating mb-3" >
+    <select class="form-select" id="typeSelect" name="type" required>
+        <option selected disabled value="">Выберите из списка</option>
+        {% for boat_type in boat_types %}
+        <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
+        {% endfor %}
+    </select>
+    <label for="typeSelect">Тип лодки</label>
+    <div class="invalid-tooltip">Выберите тип лодки</div>
 </div>
     
 <div class="row row-cols-lg-auto">
@@ -195,7 +190,7 @@
         <select class="form-select" id="baseSelect" name="base">
             <option selected value="">Не указана</option>
             {% for base in bases %}
-            <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }}</option> 
+            <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }} ({{ base.state }})</option> 
             {% endfor %}
         </select>
         <label for="baseSelect">База</label>
@@ -216,7 +211,6 @@
             </div>
             <div class="modal-footer">             
                 <button id="btnOkAddressMapModal" type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
-                <!--<button id="btnCancelAddressMapModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>-->
               </div>
         </div>
     </div>

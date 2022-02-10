@@ -29,6 +29,7 @@ from base.models import Base
 from booking.models import Booking
 
 import json
+from .utils import DecimalEncoder 
 
 
 def response_not_found():
@@ -296,11 +297,22 @@ def update(request, pk):
     if request.method == 'GET':
         try:
             boat = Boat.active.get(pk=pk, owner=request.user)
+
+            boat_coordinates = {}
+            
+            if boat.is_custom_location():
+                boat_coordinates = {
+                    'lat': boat.coordinates.lat,
+                    'lon': boat.coordinates.lon,
+                    'address': boat.coordinates.address,
+                    'state': boat.coordinates.state
+                }
+
             context = {
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
-                'custom_coordinates': serializers.serialize('json', [boat.coordinates], fields=('lat', 'lon')) if boat.is_custom_location() else [],
-                'custom_address': boat.coordinates.address if boat.is_custom_location() else '',
+                'boat_coordinates': json.dumps(boat_coordinates, cls=DecimalEncoder),
+                #'custom_coordinates': serializers.serialize('json', [boat.coordinates], fields=('lat', 'lon')) if boat.is_custom_location() else [],
                 **get_form_context()
             }
             return render(request, 'boat/update.html', context=context)
@@ -336,7 +348,7 @@ def create_or_update(request, pk=None):
     files = request.FILES.getlist('file')
     prices = json.loads(data.get('prices'))
     is_custom_location = get_bool(data.get('is_custom_location'))
-    custom_coordinates = json.loads(data.get('custom_coordinates')) if data.get('custom_coordinates') and is_custom_location else None
+    #custom_coordinates = json.loads(data.get('custom_coordinates')) if data.get('custom_coordinates') and is_custom_location else None
     base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
     
     try:
@@ -413,19 +425,21 @@ def create_or_update(request, pk=None):
                 ComfortBoat.objects.filter(boat=boat).delete()
 
             if is_custom_location:
-
-                lat = round(custom_coordinates.get('lat'), 6)
-                lon = round(custom_coordinates.get('lng'), 6)
-                address = data.get('custom_address')
-
+                boat_coordinates = json.loads(data.get('boat_coordinates'))
+                lat = round(boat_coordinates.get('lat'), 6)
+                lon = round(boat_coordinates.get('lon'), 6)
+                address = boat_coordinates.get('address')
+                state = boat_coordinates.get('state')
+                
                 try:
-                    boat_coordinates = BoatCoordinates.objects.get(boat=boat)
-                    boat_coordinates.lat = lat
-                    boat_coordinates.lon = lon
-                    boat_coordinates.address = address
-                    boat_coordinates.save()
+                    bc = BoatCoordinates.objects.get(boat=boat)
+                    bc.lat = lat
+                    bc.lon = lon
+                    bc.address = address
+                    bc.state = state
+                    bc.save()
                 except BoatCoordinates.DoesNotExist:
-                    BoatCoordinates.objects.create(boat=boat, lat=lat, lon=lon, address=address) 
+                    BoatCoordinates.objects.create(boat=boat, lat=lat, lon=lon, address=address, state=state) 
             else:
                 BoatCoordinates.objects.filter(boat=boat).delete()
 

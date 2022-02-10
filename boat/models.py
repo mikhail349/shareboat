@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.db.models import Q
 from django.db.models.signals import pre_save, post_save, post_delete
@@ -139,6 +140,7 @@ class BoatCoordinates(models.Model):
     lon = models.DecimalField(max_digits=9, decimal_places=6)
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     address = models.TextField()
+    state = models.CharField(max_length=255)
 
 class Specification(models.Model):
     

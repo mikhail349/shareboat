@@ -10,6 +10,7 @@ class Base(models.Model):
     lon     = models.DecimalField(max_digits=9, decimal_places=6)
     lat     = models.DecimalField(max_digits=9, decimal_places=6)
     address = models.TextField()
+    state   = models.CharField(max_length=255)
     
     website = models.URLField(max_length=255, null=True, blank=True)
     phone   = models.CharField(
@@ -26,7 +27,7 @@ class Base(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return f'{self.name} ({self.state})'
 
 class BaseImage(models.Model):
     image = models.ImageField(upload_to=utils.get_file_path)
