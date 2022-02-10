@@ -85,8 +85,18 @@ def handle_boat_prices(boat, prices):
 
 @login_required
 def my_boats(request):
+    page = request.GET.get('page', 1)
+
     boats = Boat.active.filter(owner=request.user).order_by('id')
-    return render(request, 'boat/my_boats.html', context={'boats': boats, 'Status': Boat.Status}) 
+    p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(page)
+
+    context = {
+        'boats': p.object_list, 
+        'Status': Boat.Status,
+        'p': p
+    }
+
+    return render(request, 'boat/my_boats.html', context=context) 
 
 @permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
 def boats_on_moderation(request):

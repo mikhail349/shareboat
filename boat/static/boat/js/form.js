@@ -37,7 +37,7 @@ $(document).ready(() => {
         if (!$form.checkValidity()) return;
 
         if ($("#switchCustomLocation").is(":checked") && $.isEmptyObject(marker)) {
-            showErrorToast('Поставьте точку на карте');
+            showErrorToast('Укажите адрес');
             return;
         }
         
@@ -65,8 +65,6 @@ $(document).ready(() => {
         if (!$.isEmptyObject(marker)) {
             formData.append('custom_coordinates', JSON.stringify(marker.getLatLng()));
             formData.append('custom_address', window.customAddress);
-        } else {
-            //formData.append('custom_coordinates', {});
         }
 
         const url = $form.attr("action");
@@ -97,34 +95,43 @@ $(document).ready(() => {
             lng: window.customCoordinates[0].fields.lon
         }
         createMarker(latlng);
-        $('#addressLabel').text(window.customAddress);
+        $('.addressLabel').text(window.customAddress);
+        $('.addressLabel').addClass('text-primary');
     }
+
+
+    $("#addressMapModal").on("shown.bs.modal", function (e) {
+        var defaultLanLng = [55.72524,37.62896];
+
+        if (!$.isEmptyObject(marker)) {
+            defaultLanLng = marker.getLatLng();
+        }
+         
+        map = L.map('map', { dragging: true }).setView(defaultLanLng, 12);
+        if (!$.isEmptyObject(marker)) {
+            marker.addTo(map);
+        }
+        map.on('click', function(e) {
+           createMarker(e.latlng);
+           reverseGeocode(e.latlng);
+        });            
+    
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+    });
+
+    $("#addressMapModal").on("hidden.bs.modal", function (e) {
+        map.remove();
+        map = null;
+    });
 
     $("#switchCustomLocation").on('click', function () {
         if ($(this).is(":checked")) {
             $("#baseSelect").attr('disabled', true);
-            $("#mapContainer").show();
-
-            var defaultLanLng = [55.72524,37.62896];
-
-            if (!$.isEmptyObject(marker)) {
-                defaultLanLng = marker.getLatLng();
-            }
-             
-            map = L.map('map', { dragging: true }).setView(defaultLanLng, 12);
-            if (!$.isEmptyObject(marker)) {
-                marker.addTo(map);
-            }
-            map.on('click', function(e) {
-               createMarker(e.latlng);
-               reverseGeocode(e.latlng);
-            });            
-        
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+            $("#collapseBase").collapse('hide');
+            $("#collapseCustomAddress").collapse('show');
         } else {
-            $("#mapContainer").hide();
-            map.remove();
-            map = null;
+            $("#collapseBase").collapse('show');
+            $("#collapseCustomAddress").collapse('hide');
             $("#baseSelect").attr('disabled', false);
         }
     })
@@ -182,8 +189,10 @@ $(document).ready(() => {
 
     function reverseGeocode(latlng) {
         $("form button[type=submit").attr('disabled', true);
-        //$("#addressInput").attr('disabled', true);
-        $('#addressLabel').text('Идет поиск...');
+        
+        $('.addressLabel').text('Идет поиск...');
+        $('.addressLabel').removeClass('text-primary');
+
         $.ajax({
             type: 'GET',
             url: `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&accept-language=ru`,
@@ -192,7 +201,8 @@ $(document).ready(() => {
         })
         function onSuccess(data) {
             if (data.display_name) {
-                $('#addressLabel').text(data.display_name);
+                $('.addressLabel').text(data.display_name);
+                $('.addressLabel').addClass('text-primary');
                 window.customAddress = data.display_name;
                 $("form button[type=submit").attr('disabled', false);
             }

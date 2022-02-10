@@ -18,8 +18,10 @@
     </section>
 
     {% if boats %}
+        {% include 'paginator.html' with class="mb-3" %}
         <div class="album py-5 bg-light">
             <div class="container">
+                
                 <div class="row g-4">
                     {% for boat in boats %}
                         <div class="col-lg-4 col-md-4">
@@ -67,8 +69,10 @@
 
                     {% endfor %}
                 </div>
+                
             </div>
         </div>
+        {% include 'paginator.html' with class="my-3" %}
 
         {% include 'boat/delete_modal.html' %}
     {% endif %}

@@ -35,4 +35,15 @@ body > header > nav.navbar {
     text-transform: uppercase;
     letter-spacing: 3vw;
     text-align: center;
+    opacity: 0;
+
+    animation-name: fade-in;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+    100% {
+        opacity: 1;
+    }
 }

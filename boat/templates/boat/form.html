@@ -31,15 +31,19 @@
     <label for="textareaText">Описание лодки</label>
 </div>
 
-<div class="form-floating mb-3">
-    <select class="form-select" id="typeSelect" name="type" required>
-        <option selected disabled value="">Выберите из списка</option>
-        {% for boat_type in boat_types %}
-        <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
-        {% endfor %}
-    </select>
-    <label for="typeSelect">Тип лодки</label>
-    <div class="invalid-tooltip">Выберите тип лодки</div>
+<div class="row row-cols-lg-auto">
+    <div class="col">
+        <div class="form-floating mb-3" >
+            <select class="form-select" id="typeSelect" name="type" required>
+                <option selected disabled value="">Выберите из списка</option>
+                {% for boat_type in boat_types %}
+                <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
+                {% endfor %}
+            </select>
+            <label for="typeSelect">Тип лодки</label>
+            <div class="invalid-tooltip">Выберите тип лодки</div>
+        </div>
+    </div>
 </div>
     
 <div class="row row-cols-lg-auto">
@@ -175,46 +179,47 @@
 </div>
 
 <h4 class="mb-3">Местоположение</h4>
-<div class="form-floating mb-3">
-    <select class="form-select" id="baseSelect" name="base">
-        <option selected value="">Не указана</option>
-        {% for base in bases %}
-        <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }}</option> 
-        {% endfor %}
-    </select>
-    <label for="baseSelect">База</label>
-</div>
 
 <div class="form-check form-switch mb-3">
     <input class="form-check-input" type="checkbox" role="switch" id="switchCustomLocation" name="is_custom_location">
     <label class="form-check-label" for="switchCustomLocation">Своё местоположение</label>
 </div>
 
-<div id="mapContainer" style="display: none">
-    <div class="form-floating mb-3">            
-        <!--   
-        <input class="form-control" list="addressList" id="addressInput" placeholder="Введите адрес...">
-        <label for="exampleDataList">Адрес</label>
-        <datalist id="addressList">
-            <option value="San Francisco">
-            <option value="New York">
-            <option value="Seattle">
-            <option value="Los Angeles">
-            <option value="Chicago">
-        </datalist>   
-        -->
-        <!--
-        <input type="text" id="addressInput" name="address" class="form-control" placeholder="Введите адрес" />
-        
-        <label for="addressInput">Адрес</label>
-        -->
-        <!--   
-        <ul id="addressList" class="list-group">
-        </ul>
-        -->
+<div class="collapse" id="collapseCustomAddress">
+    <div class="addressLabel mb-3">Адрес не указан</div>  
+    <button id="btnShowAddressMapModal" type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#addressMapModal">Указать адрес</button>
+</div>
+
+<div class="collapse show" id="collapseBase">
+    <div class="form-floating mb-3">
+        <select class="form-select" id="baseSelect" name="base">
+            <option selected value="">Не указана</option>
+            {% for base in bases %}
+            <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }}</option> 
+            {% endfor %}
+        </select>
+        <label for="baseSelect">База</label>
     </div>
-    <div id="map" class="mb-3"></div>
-    <label id="addressLabel" class="form-label">Поставьте точку на карте</label>
+</div>
+
+<div id="addressMapModal" class="modal" tabindex="-1" role="dialog" style="display: none">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down" role="document">
+        <div class="modal-content shadow">
+            <div class="modal-header">
+                <h5 class="modal-title">Укажите адрес</h5>
+            </div>
+            <div class="modal-body">
+                <div id="mapContainer">
+                    <div id="map" class="mb-3"></div>
+                    <label class="addressLabel">Поставьте точку на карте</label>
+                </div>
+            </div>
+            <div class="modal-footer">             
+                <button id="btnOkAddressMapModal" type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+                <!--<button id="btnCancelAddressMapModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>-->
+              </div>
+        </div>
+    </div>
 </div>
 
 <div class="mb-3">
@@ -227,21 +232,6 @@
     <script type="text/javascript" src="{% static 'boat/js/form-prices.min.js' %}"></script>
 </div>
 
-<!--<h4 class="mb-3">Доп. оборудование</h4>
-{% for category in categories %}
-    <div class="row g-3 ">
-        <div class="col-auto">
-            <h3><span class="badge bg-secondary">{{ category.1 }}</span></h3>
-        </div>
-        <div class="col-auto input-group w-auto">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
-        </div>
-        <div class="col-auto">
-            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
-        </div>
-    </div>
-{% endfor %}-->
 
 <div class="mb-3">
     <h4 class="mb-3">Фотографии</h4>
