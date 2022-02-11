@@ -51,7 +51,6 @@ def get_form_context():
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
         'price_types': BoatPrice.get_types(),
         'bases': Base.objects.all()
-        #'categories': Specification.get_сategories()
     }
 
 def get_bool(value):
@@ -286,7 +285,11 @@ def view(request, pk):
 @login_required
 def create(request):
     if request.method == 'GET':
-        return render(request, 'boat/create.html', context=get_form_context())
+        context = {
+            'boat_coordinates': json.dumps({}),
+            **get_form_context()
+        }
+        return render(request, 'boat/create.html', context=context)
 
     elif request.method == 'POST':
         return create_or_update(request, None)
@@ -312,7 +315,6 @@ def update(request, pk):
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
                 'boat_coordinates': json.dumps(boat_coordinates, cls=DecimalEncoder),
-                #'custom_coordinates': serializers.serialize('json', [boat.coordinates], fields=('lat', 'lon')) if boat.is_custom_location() else [],
                 **get_form_context()
             }
             return render(request, 'boat/update.html', context=context)
