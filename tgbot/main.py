@@ -45,7 +45,7 @@ dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CallbackQueryHandler(get_boats_count, pattern='get_boats_count'))
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
 
-updater.start_polling(poll_interval=0.1, timeout=5)
+updater.start_polling(poll_interval=0.1)
 updater.idle()
 
 
