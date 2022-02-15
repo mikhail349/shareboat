@@ -93,7 +93,7 @@ $(document).ready(() => {
     })
 
     $("#addressMapModal").on("shown.bs.modal", function (e) {
-        var defaultLanLng = [55.72524,37.62896];
+        var defaultLanLng = [55.75524,37.62896];
 
         if (!$.isEmptyObject(marker)) {
             defaultLanLng = marker.getLatLng();

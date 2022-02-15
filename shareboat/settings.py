@@ -207,6 +207,14 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'verbose',
         },
+        'tgbot_file': {   
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(os.environ['LOGGER_ROOT'], 'tgbot_shareboat.log'),
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
@@ -221,6 +229,11 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'tgbot': {
+            'handlers': ['tgbot_file', 'console'],
             'level': 'INFO',
             'propagate': False,
         },
