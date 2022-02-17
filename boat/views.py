@@ -53,25 +53,6 @@ def get_form_context():
         'bases': Base.objects.all()
     }
 
-def get_json_coordinates(boat):
-
-    if boat.is_custom_location():
-        coordinates = boat.coordinates
-    elif boat.base:
-        coordinates = boat.base
-    else:
-        return '{}'
-
-    res = {
-        'lat': coordinates.lat,
-        'lon': coordinates.lon,
-        'address': coordinates.address,
-        'state': coordinates.state
-    }        
-
-    return json.dumps(res, cls=DecimalEncoder)
-
-
 def get_bool(value):
     if value in (True, 'True', 'true', '1', 'on'):
         return True
@@ -129,8 +110,7 @@ def moderate(request, pk):
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
             context = {
                 'boat': boat,
-                'reasons': BoatDeclinedModeration.get_reasons(),
-                'coordinates': get_json_coordinates(boat)
+                'reasons': BoatDeclinedModeration.get_reasons()
             }
             return render(request, 'boat/moderate.html', context=context)
         except Boat.DoesNotExist:
@@ -273,8 +253,7 @@ def booking(request, pk):
                 'last_price_date': price_dates.get('last'),
                 'prices_exist': price_dates.get('last') is not None and price_dates.get('last') >= timezone.localdate(),
                 'price_ranges': [[e['start_date'], e['end_date']] for e in prices],
-                'accepted_bookings_ranges': [[e['start_date'], e['end_date']] for e in accepted_bookings],
-                'coordinates': get_json_coordinates(boat)
+                'accepted_bookings_ranges': [[e['start_date'], e['end_date']] for e in accepted_bookings]
             }
             return render(request, 'boat/booking.html', context=context)
         except Boat.DoesNotExist:
@@ -297,8 +276,7 @@ def view(request, pk):
         boat = Boat.active.get(pk=pk, owner=request.user)
 
         context = {
-            'boat': boat,
-            'coordinates': get_json_coordinates(boat)
+            'boat': boat
         }
         return render(request, 'boat/view.html', context=context)
     except Boat.DoesNotExist:
@@ -325,7 +303,6 @@ def update(request, pk):
             context = {
                 'boat': boat, 
                 'prices': serializers.serialize('json', boat.prices.all()),
-                'boat_coordinates': get_json_coordinates(boat),
                 **get_form_context()
             }
             return render(request, 'boat/update.html', context=context)

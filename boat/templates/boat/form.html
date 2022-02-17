@@ -1,10 +1,13 @@
 {% load static %}
 {% load l10n %}
+{% load boat_extras %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/form.css' %}">
 <script type="text/javascript" src="{% static 'boat/js/form.min.js' %}"></script>
 {% include 'react.html' %}
 {% include 'leaflet.html' %}
+
+{% get_boat_coordinates boat as boat_coordinates %}
 
 <script type="text/javascript">
     var motorBoatTypes = {{ motor_boat_types|safe }},

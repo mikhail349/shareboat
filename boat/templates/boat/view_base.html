@@ -1,6 +1,10 @@
 {% load l10n %}
 {% load static %}
+{% load boat_extras %}
+
 {% include 'leaflet.html' %}
+
+{% get_boat_coordinates boat as coordinates %}
 
 <script type="text/javascript">
     var coordinates = {{ coordinates|safe }};

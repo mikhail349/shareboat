@@ -1,10 +1,30 @@
 from django import template
 from datetime import datetime
 from decimal import Decimal
+import json
+from boat.utils import DecimalEncoder
 
 from boat.models import BoatPrice, Boat
 
 register = template.Library()
+
+@register.simple_tag
+def get_boat_coordinates(boat):
+    if boat.is_custom_location():
+        coordinates = boat.coordinates
+    elif boat.base:
+        coordinates = boat.base
+    else:
+        return '{}'
+
+    res = {
+        'lat': coordinates.lat,
+        'lon': coordinates.lon,
+        'address': coordinates.address,
+        'state': coordinates.state
+    }        
+
+    return json.dumps(res, cls=DecimalEncoder)
 
 @register.filter
 def strptime(value, arg):
