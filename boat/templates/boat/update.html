@@ -13,24 +13,30 @@
         </section>
 
         {% include 'boat/alert_boat_declined.html' %}
+    </div>
 
         <form method="post" action="/boats/api/update/{{ boat.id }}/" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
             {% csrf_token %}
-            {% include 'boat/form.html' %}                
-            <hr/>
-            <fieldset {% if boat.is_read_only %}disabled{% endif %}>
-                <div class="row g-3">            
-                    <div class="col-auto pe-0">
-                        <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>                          
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
-                    </div>
+            <div class="container-lg" style='margin-bottom: 70px'>
+                {% include 'boat/form.html' %}                
+            </div>
+            <div class="fixed-bottom bg-light py-3">
+                <div class="container-lg">
+                    <fieldset {% if boat.is_read_only %}disabled{% endif %}>
+                        <div class="row g-3">            
+                            <div class="col-auto pe-0">
+                                <button type="submit" class="btn btn-outline-success">Сохранить</button>                          
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
-            </fieldset>
+            </div>
         </form>
 
         {% include 'boat/delete_modal.html' %}
-    </div>
+    
 
 {% endblock  %}

@@ -11,6 +11,8 @@
 #map {
     border-radius: 0.25rem;
     z-index: 5;
+    height: 500px;
+    max-height: 65vh;
 }
 
 .form-input-min-width input[type="date"], .form-input-min-width input[type="number"], .form-input-min-width input[type="text"], .form-input-min-width select {

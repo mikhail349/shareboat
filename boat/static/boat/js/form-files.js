@@ -102,12 +102,12 @@ function FilesList(props) {
                 }                
             </div>
             <div class="row align-items-center">
-                <div class="col-auto">
+                <div class="col-auto mb-3">
                     <button type="button" className="btn btn-outline-primary" onClick={() => fileInputRef.current.click()}>
                         Добавить {!!props?.files?.length && 'ещё '}фото
                     </button>  
                 </div> 
-                <div class="col-auto">
+                <div class="col-auto mb-3">
                     {
                         isFileUploadHover() ? (
                             <span className="text-success">

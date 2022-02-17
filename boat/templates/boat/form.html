@@ -11,7 +11,8 @@
         comfortBoatTypes = {{ comfort_boat_types|safe }},
         priceTypes = {{ price_types|safe }},
         prices = {{ prices|safe|default:"[]" }},
-        boatCoordinates = {{ boat_coordinates|safe }};
+        boatCoordinates = {{ boat_coordinates|safe }},
+        isCustomLocation = {{ boat.is_custom_location|yesno:"true,false" }};
 </script>
 
 <h4 class="mb-3">Основная информация</h4>

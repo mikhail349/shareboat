@@ -2,12 +2,16 @@
 {% load static %}
 {% include 'leaflet.html' %}
 
+<script type="text/javascript">
+    var coordinates = {{ coordinates|safe }};
+</script>
+
 <script type="text/javascript" src="{% static 'boat/js/view_base.min.js' %}"></script>
 
 <div class="row g-3"> 
     <div class="col-lg">
         {% if boat.files.exists %}
-            <div class="card box-shadow text-end">
+            <div class="card box-shadow text-end mb-3">
                 {% if boat.files.count > 1 %}  
                     <div id="fileCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
                         <ol class="carousel-indicators">
@@ -42,30 +46,27 @@
                 {% endif %}
             </div>           
         {% endif %}
-        <div class="mt-3 d-none d-lg-block">{{ boat.text|default_if_none:""|linebreaks }}</div>
-    </div>
-
-    <div class="col-lg">
         <h2>{{ boat.name }}</h2>   
         <h4 class="text-muted">{{ boat.get_type_display }}</h4>   
+        
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0d6efd" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
             <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
         </svg>
         {% if boat.base %}
-            <span class="text-primary">{{ boat.base.name }}</span>
-            <div id="map" style="height: 200px" data-lat="{{ boat.base.lat }}" data-lng="{{ boat.base.lon }}" class="mb-3"></div>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#addressMapModal" class="text-primary">{{ boat.base.name }}, {{ boat.base.state }}</a>
+            <!--<div id="map" style="height: 200px" data-lat="{{ boat.base.lat }}" data-lng="{{ boat.base.lon }}" class="mb-3"></div>-->
         {% elif boat.is_custom_location %}
-            <span class="text-primary">{{ boat.coordinates.address }}</span>
-            <div id="map" style="height: 200px" data-lat="{{ boat.coordinates.lat }}" data-lng="{{ boat.coordinates.lon }}" class="mb-3"></div>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#addressMapModal" >{{ boat.coordinates.state }}</a>
+            <!--<div id="map" style="height: 200px" data-lat="{{ boat.coordinates.lat }}" data-lng="{{ boat.coordinates.lon }}" class="mb-3"></div>-->
         {% else %}
             <span class="text-muted">Местоположение не указано</span>
         {% endif %}
+        <div class="mt-3">{{ boat.text|default_if_none:""|linebreaks }}</div>
+    </div>
 
-        <div class="mt-3 d-lg-none">{{ boat.text|default_if_none:""|linebreaks }}</div>
-
+    <div class="col-lg">
         <div class="row row-cols-3 gx-3">   
             <div class="col-12">
-                <hr/>
                 <h5>Основная информация</h5>
             </div>                
             <div class="col">
@@ -163,4 +164,23 @@
 
 
     </div>           
+</div>
+
+<div id="addressMapModal" class="modal" tabindex="-1" role="dialog" style="display: none">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down" role="document">
+        <div class="modal-content shadow">
+            <div class="modal-header">
+                <h5 class="modal-title">Местоположение лодки</h5>
+            </div>
+            <div class="modal-body">
+                <div id="mapContainer">
+                    <div id="map" class="mb-3"></div>
+                    <label class="addressLabel">Поставьте точку на карте</label>
+                </div>
+            </div>
+            <div class="modal-footer">             
+                <button id="btnOkAddressMapModal" type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+              </div>
+        </div>
+    </div>
 </div>

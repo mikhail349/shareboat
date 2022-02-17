@@ -7,19 +7,22 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'boat/js/moderate.min.js' %}"></script>
 
-    <div class="container-lg" data-boat-modified="{{ boat.modified.isoformat }}">
+    <div class="container-lg" style='margin-bottom: 70px' data-boat-modified="{{ boat.modified.isoformat }}">
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Модерация лодки</h1>    
         </section>
 
         {% include 'boat/view_base.html' with show_prices=True %}
-
-        <div class="row g-3">            
-            <div class="col-auto pe-0">
-                <a id="btnAcceptBoat" class="btn btn-outline-success mb-3" href="{% url 'boat:api_accept_boat' boat.pk %}">Акцептовать</a>                          
-            </div>
-            <div class="col-auto">
-                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
+    </div>
+    <div class="fixed-bottom bg-light py-3">
+        <div class="container-lg">
+            <div class="row g-3">            
+                <div class="col-auto pe-0">
+                    <a id="btnAcceptBoat" class="btn btn-outline-success" href="{% url 'boat:api_accept_boat' boat.pk %}">Акцептовать</a>                          
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
+                </div>
             </div>
         </div>
     </div>

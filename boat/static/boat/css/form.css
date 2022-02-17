@@ -2,8 +2,3 @@
   border-radius: .25rem;
   transition: background-color .15s ease-in-out;
 }
-
-#map {
-  height: 500px;
-  max-height: 65vh;
-}

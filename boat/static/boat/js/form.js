@@ -128,7 +128,7 @@ $(document).ready(() => {
         }
     })
 
-    if (!$.isEmptyObject(window.boatCoordinates)) {
+    if (window.isCustomLocation) {
         var latlng = {
             lat: window.boatCoordinates.lat,
             lng: window.boatCoordinates.lon

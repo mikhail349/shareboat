@@ -9,13 +9,17 @@
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Добавить лодку</h1>    
         </section>
-        
-        <form method="post" action="." enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
-            {% csrf_token %}
-            {% include 'boat/form.html' %}                
-            <hr/>
-            <button type="submit" class="btn btn-outline-success mb-3">Сохранить</button>
-        </form>
     </div>
-
+        
+    <form method="post" action="." enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
+        {% csrf_token %}
+        <div class="container-lg" style='margin-bottom: 70px'>
+            {% include 'boat/form.html' %}                
+        </div>
+        <div class="fixed-bottom bg-light py-3">
+            <div class="container-lg">
+                <button type="submit" class="btn btn-outline-success">Сохранить</button>
+            </div>
+        </div>
+    </form>
 {% endblock  %}
