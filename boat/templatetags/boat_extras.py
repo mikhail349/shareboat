@@ -10,6 +10,8 @@ register = template.Library()
 
 @register.simple_tag
 def get_boat_coordinates(boat):
+    if not isinstance(boat, Boat):
+        return '{}'
     if boat.is_custom_location():
         coordinates = boat.coordinates
     elif boat.base:
