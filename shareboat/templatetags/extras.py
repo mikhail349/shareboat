@@ -1,5 +1,4 @@
 from django import template
-from notification.models import BoatDeclinedModeration
 
 register = template.Library()
 _hasattr = hasattr

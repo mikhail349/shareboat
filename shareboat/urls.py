@@ -23,6 +23,7 @@ from user import urls as user_urls
 from boat import urls as boat_urls
 from booking import urls as booking_urls
 from notification import urls as notification_urls 
+from telegram_bot import urls as telegram_bot_urls 
 
 from . import views
 
@@ -34,5 +35,6 @@ urlpatterns += [
     path('user/', include(user_urls)),
     path('boats/', include(boat_urls)),
     path('bookings/', include(booking_urls)),
-    path('notifications/', include(notification_urls))
+    path('notifications/', include(notification_urls)),
+    path('telegram_bot/', include(telegram_bot_urls))
 ]

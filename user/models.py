@@ -53,6 +53,19 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
+class TelegramUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    verification_code = models.CharField(max_length=6)
+    chat_id = models.IntegerField(null=True, blank=True)
+
+    @classmethod
+    def get_user(cls, update):
+        try:
+            chat_id = update.message.from_user.id
+            return cls.objects.get(chat_id=chat_id).user
+        except cls.DoesNotExist:
+            return None
+
 pre_save.connect(signals.verify_imagefile, sender=User)
 pre_save.connect(signals.delete_old_file, sender=User)
 post_save.connect(signals.compress_imagefile, sender=User)

@@ -29,7 +29,6 @@ from base.models import Base
 from booking.models import Booking
 
 import json
-from .utils import DecimalEncoder 
 
 
 def response_not_found():

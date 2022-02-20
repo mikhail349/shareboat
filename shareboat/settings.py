@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'emails',
     'booking',
     'notification',
-    'base'
+    'base',
+    'telegram_bot'
 ]
 
 REST_FRAMEWORK = {
@@ -179,6 +180,9 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_USE_SSL = os.environ['EMAIL_USE_SSL']
 DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
 SERVER_EMAIL = os.environ['SERVER_EMAIL']
+
+# Telegram bot
+TGBOT_TOKEN = os.environ['TGBOT_TOKEN']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

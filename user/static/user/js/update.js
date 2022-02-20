@@ -76,6 +76,29 @@ $(document).ready(() => {
         }   
     })
 
+    $("#btnGenerateTgCode").on('click', function (e) {
+        e.preventDefault();
+        
+        $btn = $(this);
+        $btn.attr("disabled", true);
+        $.ajax({ 
+            type: "GET",
+            url: "/user/api/generate_telegram_code/",
+            success: onSuccess,
+            error: onError
+        });    
+        
+        function onSuccess(data, status) {
+            $btn.remove();
+            $("#tgAuth").remove();
+            $("#tgCode").html(data.message);
+        }
+
+        function onError(error) {
+            $btn.attr("disabled", false);
+        }
+    })
+
     $("#formProfile").on('submit', async (e) => {
         e.preventDefault();   
 

@@ -10,12 +10,15 @@ import jwt
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
 from emails.models import UserEmail
-from .models import User
+from .models import User, TelegramUser
+import random
 
 import logging
 logger_admin_mails = logging.getLogger('mail_admins')
 logger = logging.getLogger(__name__)
 
+def get_tgcode_message(code):
+    return f'Ваш код для авторизации в Телеграм боте: <strong>{code}</strong>. Отправьте боту команду <span class="text-primary">/auth</span> и следуйте инструкциям.'
 
 def verify(request, token):
     User = get_user_model()
@@ -48,7 +51,15 @@ def send_verification_email(request):
 def update(request):
     if request.method == 'GET':
         next_verification_email_datetime = UserEmail.get_next_email_datetime(request.user, type=UserEmail.Type.VERIFICATION)
-        return render(request, 'user/update.html', context={'next_verification_email_datetime': next_verification_email_datetime})
+        tgcode_message = ''
+        if hasattr(request.user, 'telegramuser') and not request.user.telegramuser.chat_id:
+            tgcode_message = get_tgcode_message(request.user.telegramuser.verification_code)
+
+        context = {
+            'next_verification_email_datetime': next_verification_email_datetime,
+            'tgcode_message': tgcode_message
+        }
+        return render(request, 'user/update.html', context=context)
     elif request.method == 'POST':
         with transaction.atomic():
             data = request.POST
@@ -87,6 +98,27 @@ def logout(request):
 
 def restore_password(request):
     return render(request, 'user/restore_password.html')
+
+@login_required
+def generate_telegram_code(request):
+    def _gen_code():
+        code = str(random.randint(1,999999))
+        code = '0' * 5 + code
+        code = code[-6:]
+        return code
+
+    code = _gen_code()
+    while TelegramUser.objects.filter(chat_id__isnull=True, verification_code=code).exists():
+        code = _gen_code()
+
+    TelegramUser.objects.filter(user=request.user).delete()
+    TelegramUser.objects.create(user=request.user, verification_code=code)
+    return JsonResponse({
+        'verification_code': code,
+        'message': get_tgcode_message(code)
+    })
+
+
 
 def change_password(request, token):
     User = get_user_model() 
