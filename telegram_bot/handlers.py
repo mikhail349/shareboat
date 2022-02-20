@@ -73,6 +73,10 @@ def error(update, context):
     update.message.reply_text("Я Вас не понимаю.") 
     update.message.reply_text("Чтобы начать общение, выполните команду /start") 
 
+def no_conv(update, context):
+    update.message.reply_text("Нет активных диалогов") 
+    update.message.reply_text("Чтобы начать общение, выполните команду /start")     
+
 @login_required()
 def myboats(update, context, user):
     cnt = Boat.objects.filter(owner=user).count()
@@ -103,8 +107,9 @@ def setup_handlers(dispatcher):
 
     dispatcher.add_handler(conv_handler)
     dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(CommandHandler('myboats', myboats)),
-    dispatcher.add_handler(CommandHandler('mybookings', mybookings)),
+    dispatcher.add_handler(CommandHandler('myboats', myboats))
+    dispatcher.add_handler(CommandHandler('mybookings', mybookings))
+    dispatcher.add_handler(CommandHandler('cancel', no_conv))
     dispatcher.add_handler(MessageHandler(Filters.text, error))
 
 def setup_commands(bot):
