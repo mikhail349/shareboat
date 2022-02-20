@@ -55,8 +55,8 @@ class User(AbstractUser):
 
 class TelegramUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    verification_code = models.CharField(max_length=6)
-    chat_id = models.IntegerField(null=True, blank=True)
+    verification_code = models.CharField("Код верификации", max_length=6)
+    chat_id = models.IntegerField("Telegram ИД", null=True, blank=True)
 
     @classmethod
     def get_user(cls, update):
@@ -65,6 +65,9 @@ class TelegramUser(models.Model):
             return cls.objects.get(chat_id=chat_id).user
         except cls.DoesNotExist:
             return None
+
+    class Meta:
+        verbose_name = 'Учетная запись в Telegram'
 
 pre_save.connect(signals.verify_imagefile, sender=User)
 pre_save.connect(signals.delete_old_file, sender=User)
