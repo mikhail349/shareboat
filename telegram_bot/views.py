@@ -18,6 +18,6 @@ def webhook(request):
 
 
 bot = Bot(settings.TGBOT_TOKEN)
-dispatcher = Dispatcher(bot, None, workers=0)
+dispatcher = Dispatcher(bot=bot, update_queue=None, use_context=True)
 setup_commands(bot)
 setup_handlers(dispatcher)
