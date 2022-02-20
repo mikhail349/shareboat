@@ -1,24 +1,34 @@
+from turtle import st
 from telegram import ParseMode, BotCommand
 from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, Filters
 from .decorators import login_required
 
 from booking.models import Booking
 from boat.models import Boat
-from user.models import TelegramUser
+from user.models import TelegramUser, User
 from user.utils import verify_tg_code  
 
 AUTH = 0
+SETNAME = 1
 
-anon_commands = [
+commands = [
     BotCommand('start', 'начать общение'),
     BotCommand('cancel', 'завершить диалог'),
     BotCommand('auth', 'авторизоваться'),
-]
 
-auth_commands = [
     BotCommand('myboats', 'мои лодки'),
     BotCommand('mybookings', 'мои бронирования'),
+    BotCommand('setname', 'сменить свое имя')
 ]
+
+def build_auth_commands_list():
+    return "\
+\n<b>Общие:</b>\n\
+/myboats - мои лодки\n\
+/mybookings - мои бронирования\n\
+\n<b>Учетная запись:</b>\n\
+/setname - сменить имя\n\
+    "
 
 def start(update, context):
     #update.message.reply_text("Вас приветствует <b>Sharebot</b>!", parse_mode=ParseMode.HTML)
@@ -26,8 +36,7 @@ def start(update, context):
     user = TelegramUser.get_user(update)
     if user:
         msg += "Вам доступны команды:\n"
-        for auth_command in auth_commands:
-            msg += f'\n/{auth_command.command} - {auth_command.description}'
+        msg += build_auth_commands_list()
         update.message.reply_text(msg, parse_mode=ParseMode.HTML)
         return 
 
@@ -41,8 +50,7 @@ def auth(update, context):
 
     update.message.reply_text(
         """Пожалуйста, введите шестизначный код авторизации.\n""" +
-        """Чтобы его получить перейдите на <a href="https://sbtest.posse.ru/user/update/">страницу своего профиля</a>.\n\n""" + 
-        """Вы всегда можете прекратить этот диалог командой /cancel""", 
+        """Чтобы его получить перейдите на <a href="https://sbtest.posse.ru/user/update/">страницу своего профиля</a>.\n\n""", 
     parse_mode=ParseMode.HTML)
     return AUTH
 
@@ -54,19 +62,18 @@ def verify_code(update, context):
     
     if res:
         msg = "Отлично! Теперь Вам доступны следующие команды:\n"
-        for auth_command in auth_commands:
-            msg += f'\n/{auth_command.command} - {auth_command.description}'
+        msg += build_auth_commands_list()
 
-        update.message.reply_text(msg)
+        update.message.reply_text(msg, parse_mode=ParseMode.HTML)
         return ConversationHandler.END
 
     update.message.reply_text('Неверный код.') 
 
 def wrong_code(update, context):
-    update.message.reply_text('Это не похоже на шестизначный код.') 
+    update.message.reply_text('Это не похоже на шестизначный код.\n\nЕсли Вы хотите прекратить процесс авторизации, выполните команду /cancel') 
 
 def cancel(update, context):
-    update.message.reply_text("До встречи!")
+    update.message.reply_text("Диалог завершен.")
     return ConversationHandler.END
 
 def error(update, context):
@@ -85,21 +92,37 @@ def mybookings(update, context, user):
     cnt = Booking.objects.filter(renter=user).count()
     update.message.reply_text('У Вас бронирований: %s' % cnt)    
 
+@login_required()
+def setname(update, context, user):
+    update.message.reply_text("Введите Ваше имя.")
+    return SETNAME
+
+@login_required()
+def set_new_name(update, context, user):
+    user.first_name = update.message.text
+    user.save()
+    update.message.reply_text("Имя изменено.")
+    return ConversationHandler.END
+
+
 def setup_handlers(dispatcher):
 
     conv_handler = ConversationHandler(
         entry_points=[
-            CommandHandler('auth', auth)
+            CommandHandler('auth', auth),
+            CommandHandler('setname', setname)
         ],
         states={
             AUTH: [
-                CommandHandler('cancel', cancel),
                 MessageHandler(Filters.regex('^\d{6}$'), verify_code),
-                MessageHandler(Filters.text, wrong_code)
+                MessageHandler(Filters.text & ~Filters.command, wrong_code)
+            ],
+            SETNAME: [            
+                MessageHandler(Filters.text & ~Filters.command, set_new_name),
             ]
         },
         fallbacks=[
-            CommandHandler('cancel', cancel)
+            MessageHandler(Filters.command, cancel)
         ],
     )
 
@@ -111,4 +134,4 @@ def setup_handlers(dispatcher):
     dispatcher.add_handler(MessageHandler(Filters.text, error))
 
 def setup_commands(bot):
-    bot.set_my_commands(anon_commands + auth_commands)
+    bot.set_my_commands(commands)

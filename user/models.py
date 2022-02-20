@@ -53,6 +53,11 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
+    def get_telegram_id(self):
+        if hasattr(self, 'telegramuser'):
+            return self.telegramuser.chat_id
+        return None
+
 class TelegramUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     verification_code = models.CharField("Код верификации", max_length=6)

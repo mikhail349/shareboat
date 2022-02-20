@@ -9,6 +9,7 @@ from .models import Booking
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
 from django.db.models import Q
+from telegram_bot.notifications import send_message
 
 @login_required
 def create(request):
@@ -31,6 +32,7 @@ def create(request):
 
         try:
             Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
+            #send_message(boat.owner, f'Добавлена бронь на лодку <a href="{request.build_absolute_uri(reverse("booking:my_bookings"))}">{boat.name}</a>.')
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 
