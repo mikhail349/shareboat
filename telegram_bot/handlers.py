@@ -21,17 +21,17 @@ auth_commands = [
 ]
 
 def start(update, context):
-    update.message.reply_text("Вас приветствует <b>Sharebot</b>!", parse_mode=ParseMode.HTML)
-
+    #update.message.reply_text("Вас приветствует <b>Sharebot</b>!", parse_mode=ParseMode.HTML)
+    msg = "Вас приветствует <b>Sharebot</b>!\n\n"
     user = TelegramUser.get_user(update)
     if user:
-        msg = "Чем могу быть полезен?\n"
+        msg += "Чем могу быть полезен?\n"
         for auth_command in auth_commands:
             msg += f'\n/{auth_command.command} - {auth_command.description}'
         update.message.reply_text(msg)
         return 
 
-    update.message.reply_text("Похоже, вы еще не авторизованы.\n\nЧтобы сделать это, выполните команду /auth")
+    update.message.reply_text(msg + "Похоже, вы еще не авторизованы.\nЧтобы сделать это, выполните команду /auth", parse_mode=ParseMode.HTML)
 
 def auth(update, context):
     chat_id = update.message.from_user.id
@@ -39,11 +39,11 @@ def auth(update, context):
         update.message.reply_text("Вы уже авторизованы.")
         return
 
-    update.message.reply_text("""
-        Пожалуйста, введите шестизначный код авторизации.\n\n""" +
-        """Чтобы его получить перейдите на <a href="https://sbtest.posse.ru/user/update/">страницу своего профиля</a>.""", 
+    update.message.reply_text(
+        """Пожалуйста, введите шестизначный код авторизации.\n""" +
+        """Чтобы его получить перейдите на <a href="https://sbtest.posse.ru/user/update/">страницу своего профиля</a>.\n\n""" + 
+        """Вы всегда можете прекратить этот диалог командой /cancel""", 
     parse_mode=ParseMode.HTML)
-    update.message.reply_text("Вы всегда можете прекратить этот диалог командой /cancel")
     return AUTH
 
 def verify_code(update, context):
@@ -70,12 +70,10 @@ def cancel(update, context):
     return ConversationHandler.END
 
 def error(update, context):
-    update.message.reply_text("Я Вас не понимаю.") 
-    update.message.reply_text("Чтобы начать общение, выполните команду /start") 
+    update.message.reply_text("Я Вас не понимаю.\n\nЧтобы начать общение, выполните команду /start") 
 
 def no_conv(update, context):
-    update.message.reply_text("Нет активных диалогов") 
-    update.message.reply_text("Чтобы начать общение, выполните команду /start")     
+    update.message.reply_text("Нет активных диалогов.\n\nЧтобы начать общение, выполните команду /start")    
 
 @login_required()
 def myboats(update, context, user):
