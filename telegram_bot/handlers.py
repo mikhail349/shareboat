@@ -25,10 +25,10 @@ def start(update, context):
     msg = "Вас приветствует <b>Sharebot</b>!\n\n"
     user = TelegramUser.get_user(update)
     if user:
-        msg += "Чем могу быть полезен?\n"
+        msg += "Вам доступны команды:\n"
         for auth_command in auth_commands:
             msg += f'\n/{auth_command.command} - {auth_command.description}'
-        update.message.reply_text(msg)
+        update.message.reply_text(msg, parse_mode=ParseMode.HTML)
         return 
 
     update.message.reply_text(msg + "Похоже, вы еще не авторизованы.\nЧтобы сделать это, выполните команду /auth", parse_mode=ParseMode.HTML)
