@@ -1,0 +1,13 @@
+<div class="alert alert-secondary" role="alert">
+    {% if show_name %}
+        <div>
+            <strong>{{ booking.boat.name }}</strong>
+        </div>
+    {% endif %}
+    <div>
+        {{ booking.start_date|date:'d.m.Y' }} - {{ booking.end_date|date:'d.m.Y' }}
+    </div>
+    <div class="text-success">
+        <strong>{{ booking.total_sum }}&nbsp;₽</strong>
+    </div>
+</div>

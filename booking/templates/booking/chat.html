@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Чат{% endblock %}
+
+{% block content %}
+    <div class="container-lg mt-3" style='margin-bottom: calc(70px + 1rem)'>
+        {% include 'booking/booking_data.html' with show_name=True %} 
+    </div>
+    <div class="fixed-bottom bg-light py-3">
+        <div class="container-lg">           
+            <div class="row g-3">
+                <div class="col">
+                    <input type="text" id="text" class="form-control" name="text" placeholder="Сообщение..." autocomplete="off" autofocus />
+                </div>
+                <div class="col-auto">
+                    <button type="button" id="btnSendMessage" class="btn btn-outline-primary" autocomplete="off">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock  %}

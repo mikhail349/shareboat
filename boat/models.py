@@ -7,11 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
 from django.utils import timezone
+from shareboat.utils import has_swear
 
 from user.models import User
 from file import utils, signals
 from base.models import Base
-
 
 class ActiveBoatManager(models.Manager):
     def get_queryset(self):
@@ -90,6 +90,18 @@ class Boat(models.Model):
             self.text = None
         if self.issue_year == "":
             self.issue_year = None 
+
+        '''
+        errors = []
+        if has_swear(self.name):
+            errors.append(ValidationError("Похоже, название лодки содержит нецензурное слово", code="swear"))
+
+        if has_swear(self.text):
+            errors.append(ValidationError("Похоже, описание лодки содержит нецензурное слово", code="swear"))
+
+        if errors:
+            raise ValidationError(errors)
+        '''
 
     def save(self, *args, **kwargs):
         self.full_clean()

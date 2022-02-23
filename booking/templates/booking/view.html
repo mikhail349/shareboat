@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Просмотр бронирования{% endblock %}
+
+{% block content %}
+    <div class="container-lg" style='margin-bottom: calc(70px + 1rem)'>
+        <section class="jumbotron text-center">
+            <h1 class="jumbotron-heading">Просмотр бронирования</h1>    
+        </section>
+        {% include 'boat/view_base.html' with boat=booking.boat %}    
+        <h5>Информация о бронировании</h5>    
+        {% include 'booking/booking_data.html' %}   
+    </div>
+    <div class="fixed-bottom bg-light py-3">
+        <div class="container-lg">
+            <a class="btn btn-outline-primary" href="{% url 'booking:chat' booking.pk %}" role="button">Перейти в чат</a>
+        </div>
+    </div>
+{% endblock  %}

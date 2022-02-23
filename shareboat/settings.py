@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'booking',
     'notification',
     'base',
-    'telegram_bot'
+    'telegram_bot',
+    'chat'
 ]
 
 REST_FRAMEWORK = {

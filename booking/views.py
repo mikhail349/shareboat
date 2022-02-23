@@ -31,12 +31,12 @@ def create(request):
             return JsonResponse({'message': 'Цена на лодку изменилась', 'code': 'outdated_price'}, status=400)
 
         try:
-            Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
+            booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
             #send_message(boat.owner, f'Добавлена бронь на лодку <a href="{request.build_absolute_uri(reverse("booking:my_bookings"))}">{boat.name}</a>.')
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 
-        return JsonResponse({'redirect': reverse('booking:my_bookings')})
+        return JsonResponse({'redirect': reverse('booking:view', kwargs={'pk': booking.pk})})
 
 @login_required
 def my_bookings(request):
@@ -45,6 +45,30 @@ def my_bookings(request):
     bookings = my_bookings.filter(~Q(status=Booking.Status.DECLINED)).order_by('-status','-start_date')
     declined_bookings = my_bookings.filter(status=Booking.Status.DECLINED).order_by('-start_date')
     return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'declined_bookings': declined_bookings, 'Status': Booking.Status})
+
+@login_required
+def chat(request, pk):
+    try:
+        booking = Booking.objects.get(pk=pk, renter=request.user)
+
+        context = {
+            'booking': booking
+        }
+        return render(request, 'booking/chat.html', context=context)
+    except Boat.DoesNotExist:
+        return render(request, 'not_found.html')    
+
+@login_required
+def view(request, pk):
+    try:
+        booking = Booking.objects.get(pk=pk, renter=request.user)
+
+        context = {
+            'booking': booking
+        }
+        return render(request, 'booking/view.html', context=context)
+    except Boat.DoesNotExist:
+        return render(request, 'not_found.html')
 
 @login_required
 def set_status(request, pk):
