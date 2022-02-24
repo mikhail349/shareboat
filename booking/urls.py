@@ -13,6 +13,5 @@ apiurlpatterns = [
 urlpatterns = [
     path('my_bookings', views.my_bookings, name='my_bookings'),
     path('view/<int:pk>/', views.view, name='view'),
-    path('chat/<int:pk>/', views.chat, name='chat'),
     path('api/', include(apiurlpatterns))
 ]

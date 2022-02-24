@@ -47,18 +47,6 @@ def my_bookings(request):
     return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'declined_bookings': declined_bookings, 'Status': Booking.Status})
 
 @login_required
-def chat(request, pk):
-    try:
-        booking = Booking.objects.get(pk=pk, renter=request.user)
-
-        context = {
-            'booking': booking
-        }
-        return render(request, 'booking/chat.html', context=context)
-    except Boat.DoesNotExist:
-        return render(request, 'not_found.html')    
-
-@login_required
 def view(request, pk):
     try:
         booking = Booking.objects.get(pk=pk, renter=request.user)

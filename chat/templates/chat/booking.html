@@ -5,6 +5,8 @@
 {% block title %}Чат{% endblock %}
 
 {% block content %}
+    <script type="text/javascript" src="{% static 'chat/js/booking.min.js' %}"></script>
+
     <div class="container-lg mt-3" style='margin-bottom: calc(70px + 1rem)'>
         {% include 'booking/booking_data.html' with show_name=True %} 
     </div>
@@ -15,7 +17,7 @@
                     <input type="text" id="text" class="form-control" name="text" placeholder="Сообщение..." autocomplete="off" autofocus />
                 </div>
                 <div class="col-auto">
-                    <button type="button" id="btnSendMessage" class="btn btn-outline-primary" autocomplete="off">Отправить</button>
+                    <button type="button" id="btnSendMessage" class="btn btn-outline-primary" autocomplete="off" disabled data-booking-id="{{ booking.pk }}">Отправить</button>
                 </div>
             </div>
         </div>
