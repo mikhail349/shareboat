@@ -48,14 +48,6 @@ $(document).ready(() => {
 
 });
 
-$(document).keypress(
-    function(event){
-        if (event.which == '13') {
-            event.preventDefault();
-        }
-    }
-);
-
 function parseJSONError(json) {
     if (!json) return null;
     if ('message' in json) {

@@ -11,6 +11,8 @@ class Message(models.Model):
     recipient   = models.ForeignKey(User, on_delete=models.PROTECT, related_name="messages_as_recipient")
     read        = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f'{self.sender}: {self.text}'
 
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
