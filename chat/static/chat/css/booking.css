@@ -1,0 +1,7 @@
+html, body {
+    scroll-behavior: unset !important;
+}
+
+#textArea {
+    resize: none;
+}

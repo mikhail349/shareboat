@@ -20,7 +20,7 @@ def get_new_messages_booking(request, pk):
             while True:
                 messages = MessageBooking.objects.filter(booking=booking, read=False, recipient=request.user).order_by('sent_at')
                 if messages:
-                    ser = MessageBookingSerializerList(messages, many=True)
+                    ser = MessageBookingSerializerList(messages, many=True, context={'request': request})
                     data = ser.data
                     messages.update(read=True)   
                     return JsonResponse({'data': data})
