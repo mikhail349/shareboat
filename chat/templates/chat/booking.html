@@ -14,10 +14,14 @@
     <script type="text/javascript" src="{% static 'chat/js/booking.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/booking.css' %}">
 
-    <div class="container-lg mt-3" style='margin-bottom: calc(70px)'>
-        {% include 'booking/booking_data.html' with show_name=True %} 
+    <div id="bookingData" class="container-lg position-fixed start-50 translate-middle-x mt-3 top-0-header">
+        {% include 'booking/booking_data.html' with show_name=True %}     
+    </div>
+
+    <div class="container-lg mt-3">
         <div id="msgContainer" class="list-group overflow-auto"></div>
     </div>
+    
     <div class="fixed-bottom bg-light py-3">
         <div class="container-lg">                 
             <div class="row g-3">

@@ -74,7 +74,6 @@
 
 .toast-container, .alert-container {
     z-index: 6;
-    transition: top ease-in-out .2s;
 }
 
 .carousel.full-screen {

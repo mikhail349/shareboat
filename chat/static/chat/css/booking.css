@@ -5,3 +5,12 @@ html, body {
 #textArea {
     resize: none;
 }
+
+#msgContainer {
+    margin-top: calc(106px + 2rem);
+    margin-bottom: 70px;
+}
+
+#bookingData {
+    z-index: 1029;
+}
