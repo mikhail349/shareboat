@@ -52,10 +52,16 @@ $(document).ready(() => {
         return '<div style="width:32px; height:32px"></div>'
     }
 
+    function formatSentAt(dt) {
+        const d = dt.getDate();
+        const m = dt.getMonth() + 1;
+        return `${(d>9 ? '' : '0') + d}.${(m>9 ? '' : '0') + m}.${dt.getFullYear()}, ${dt.getHours()}:${dt.getMinutes()}`
+    }
+
     function appendMessage(message) {
         const bg = message.is_out ? 'list-group-item-primary ' : 'list-group-item-secondary ';
         
-        /*
+        $msgContainer.append(`
             <div class="list-group-item ${bg} mb-3 rounded border pb-0" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + getAvatar(message) + `
@@ -63,18 +69,9 @@ $(document).ready(() => {
                         ${message.text.replaceAll('\r\n', '<br>')}
                     </div>
                 </div>
-                <small>3 lds</small>
+                <small class="float-end">${formatSentAt(new Date(message.sent_at))}</small>
             </div>  
-        */
-
-        $msgContainer.append(`
-            <div class="list-group-item ${bg} mb-3 rounded border d-flex gap-3" style="width: fit-content;">
-                ` + getAvatar(message) + `
-                <div class="d-flex">
-                    ${message.text.replaceAll('\r\n', '<br>')}
-                </div>            
-            </div>  
-        `)       
+        `);   
     }
     
     if (window.messages.length > 0) {
