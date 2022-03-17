@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
 
 {% load static %}
+{% load booking_extras %}
 
 {% block title %}Чат{% endblock %}
 
@@ -14,11 +15,13 @@
     <script type="text/javascript" src="{% static 'chat/js/booking.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/booking.css' %}">
 
-    <div id="bookingData" class="container-lg position-fixed start-50 translate-middle-x mt-3 top-0-header">
-        {% include 'booking/booking_data.html' with show_name=True %}     
+    <div id="bookingData" class="fixed-top top-0-header alert rounded-0 {{ booking.status|get_status_color }}" role="alert">
+        <div class="container-lg">
+            {% include 'booking/booking_data.html' with show_name=True %}     
+        </div>
     </div>
 
-    <div class="container-lg mt-3">
+    <div class="container-lg">
         <div id="msgContainer" class="list-group overflow-auto"></div>
     </div>
     

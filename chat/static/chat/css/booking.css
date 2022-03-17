@@ -7,7 +7,7 @@ html, body {
 }
 
 #msgContainer {
-    margin-top: calc(106px + 2rem);
+    margin-top: calc(106px + 1rem);
     margin-bottom: 70px;
 }
 

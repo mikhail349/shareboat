@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from boat.utils import calc_booking
+from chat.models import MessageBooking
 from .models import Booking
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
@@ -45,6 +46,42 @@ def my_bookings(request):
     bookings = my_bookings.filter(~Q(status=Booking.Status.DECLINED)).order_by('-status','-start_date')
     declined_bookings = my_bookings.filter(status=Booking.Status.DECLINED).order_by('-start_date')
     return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'declined_bookings': declined_bookings, 'Status': Booking.Status})
+
+@login_required
+def requests(request):
+    all_requests = Booking.objects.filter(boat__owner=request.user).order_by('-start_date')
+    
+    requests = all_requests.filter(status=Booking.Status.PENDING)
+    moderated_requests = all_requests.filter(~Q(status=Booking.Status.PENDING))
+    return render(request, 'booking/requests.html', context={'requests': requests, 'moderated_requests': moderated_requests, 'Status': Booking.Status})
+
+@login_required
+def set_request_status(request, pk):
+    
+    ALLOWED_STATUSES = {
+        Booking.Status.PENDING: (Booking.Status.DECLINED, Booking.Status.ACCEPTED),
+    }
+
+    try:
+        new_status = int(request.POST.get('status'))
+        booking = Booking.objects.get(pk=pk, boat__owner=request.user)
+
+        if not new_status in ALLOWED_STATUSES.get(booking.status):
+            return JsonResponse({'message': 'Некорректный статус'}, status=400)
+
+        if new_status == Booking.Status.DECLINED:
+            message = request.POST.get('message')
+            if not message:
+                return JsonResponse({'message': 'Необходимо добавить сообщение'}, status=400)
+
+            MessageBooking.objects.create(text=message, sender=request.user, recipient=booking.renter, booking=booking)
+
+        booking.status = new_status
+        booking.save()
+
+        return JsonResponse({'redirect': reverse('booking:requests')})
+    except Booking.DoesNotExist:
+        return JsonResponse({'message': 'Бронь не найдена'}, status=404) 
 
 @login_required
 def view(request, pk):

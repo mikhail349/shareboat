@@ -1,9 +1,6 @@
 **/migrations/*
 !**/migrations/__init__.py
 
-*.js
-!*.min.js
-
 uploads/
 venv/
 nodejs/

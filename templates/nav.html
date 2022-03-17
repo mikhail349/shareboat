@@ -22,8 +22,14 @@
                                 <span>{{ user.first_name|default:user.email }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
+                                
+                                <li><a class="dropdown-item" href="{% url 'booking:my_bookings' %}">Мои бронирования</a></li>
+                                
+                                <li><h6 class="dropdown-header">Владелец</h6></li>
                                 <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Флот</a></li>
-                                <li><a class="dropdown-item" href="{% url 'booking:my_bookings' %}">Бронирования</a></li>
+                                <li><a class="dropdown-item" href="{% url 'booking:requests' %}">Заявки на бронирование</a></li>
+                                
+                                <li><h6 class="dropdown-header">Профиль</h6></li>
                                 {% if perms.boat.can_view_boats_on_moderation %}
                                     <li>
                                         <a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">
@@ -31,13 +37,12 @@
                                         </a>
                                     </li>
                                 {% endif %}
-                                <div class="dropdown-divider"></div>
                                 <li>
                                     <button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNotifications" aria-controls="offcanvasNotifications">
                                         Уведомления {% if user.notifications.exists %}<span class="badge bg-danger">{{ user.notifications.count }}</span>{% endif %}
                                     </button>
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
+                                <li><a class="dropdown-item" href="{% url 'user:update' %}">Настройки</a></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'user:logout' %}">Выйти</a></li>
                             </ul>
                         </li>

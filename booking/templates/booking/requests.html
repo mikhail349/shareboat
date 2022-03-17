@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Заявки на бронирование{% endblock  %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'booking/js/requests.min.js' %}"></script>
+    
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">Заявки на бронирование</h1>
+            <p class="lead text-muted">Здесь {% if not requests %}будут{% endif %} представлены все заявки на бронирование</p>
+        </div>
+    </section>
+
+    {% if requests %}
+        {% include 'booking/requests_list_card.html' %}
+    {% endif %}
+
+    {% if moderated_requests %}
+        <section class="jumbotron text-center">
+            <div class="container">
+                <p class="lead text-muted">Отработанные заявки</p>
+            </div>
+        </section>
+        {% include 'booking/requests_list_card.html' with requests=moderated_requests %}
+    {% endif %}
+
+    <div id="declineRequestModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 380px;">
+            <div class="modal-content rounded shadow">
+                <form id="formDecline" method="post" action="." class="needs-validation" novalidate>
+                    <div class="modal-body p-4 text-center">
+                        <h5 class="mb-3">Отмена бронирования</h5>                    
+                        <div class="form-floating">                 
+                            <textarea id="textareaText" required name="message" class="form-control" placeholder="Комментарий" autocomplete="off" style="height: 100px" autofocus></textarea>
+                            <label for="textareaText">Сообщение</label>
+                            <div class="invalid-tooltip">Введите сообщение</div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="status" value="{{ Status.DECLINED }}">
+                    <div class="modal-footer flex-nowrap p-0">
+                        <button type="submit" class="btn btn-l btn-link fs-6 text-decoration-none text-danger col-6 m-0 rounded-0 border-end"><strong>Отменить</strong></button>
+                        <button id="dismissModal" type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Закрыть</button>               
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock  %}

@@ -12,7 +12,9 @@
                     
                     <div class="card-body d-flex flex-column">
                         {% include 'boat/card.html' with boat=booking.boat %}
-                        {% include 'booking/booking_data.html' %}
+                        <div class="alert {{ booking.status|get_status_color }}" role="alert">
+                            {% include 'booking/booking_data.html' %}
+                        </div>
                         <div class="dropdown mt-auto">
                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuStatus{{ booking.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
                                 Действия
@@ -20,9 +22,8 @@
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ booking.pk }}">
                                 {% if booking.status == Status.PENDING %}
                                     <li><a class="dropdown-item" href="#" data-booking-id="{{ booking.pk }}" data-status="{{ Status.DECLINED }}">Отменить бронь</a></li>
-                                {% else%}
-                                    <li class="dropdown-item disabled">Действий нет</li>
-                                {% endif %}                                    
+                                {% endif %}      
+                                <li><a class="dropdown-item" href="{% url 'chat:booking' booking.pk %}">Перейти в чат</a></li>                           
                             </ul>
                         </div>
                     </div>
