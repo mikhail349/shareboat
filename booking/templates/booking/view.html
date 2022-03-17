@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
 
 {% load static %}
+{% load booking_extras %}
 
 {% block title %}Просмотр бронирования{% endblock %}
 
@@ -10,8 +11,10 @@
             <h1 class="jumbotron-heading">Просмотр бронирования</h1>    
         </section>
         {% include 'boat/view_base.html' with boat=booking.boat %}    
-        <h5>Информация о бронировании</h5>    
-        {% include 'booking/booking_data.html' %}   
+        <h5>Информация о бронировании</h5>   
+        <div class="alert {{ booking.status|get_status_color }}" role="alert"> 
+            {% include 'booking/booking_data.html' %}   
+        </div>
     </div>
     <div class="fixed-bottom bg-light py-3">
         <div class="container-lg">
