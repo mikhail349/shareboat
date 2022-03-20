@@ -46,7 +46,7 @@ $(document).ready(() => {
         }
     })
 
-    $('#acceptRequest').on('click', function(e) {
+    $('a.accept-request').on('click', function(e) {
         e.preventDefault();
         const bookingId = $(this).attr('data-booking-id');
         const status = $(this).attr('data-status');

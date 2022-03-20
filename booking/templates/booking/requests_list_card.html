@@ -22,7 +22,7 @@
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ request.pk }}">
                                     {% if request.status == Status.PENDING %}
                                         <li>
-                                            <a id="acceptRequest" class="dropdown-item" href="#" data-booking-id="{{ request.pk }}" data-status="{{ Status.ACCEPTED }}">
+                                            <a class="dropdown-item accept-request" href="#" data-booking-id="{{ request.pk }}" data-status="{{ Status.ACCEPTED }}">
                                                 Подтвердить бронь
                                             </a>
                                         </li>

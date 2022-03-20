@@ -2,20 +2,6 @@ var isOnBottom = false;
 
 $(document).ready(() => {
 
-    /*window.removeEventListener('scroll', mainMenuHide, false);
-    window.addEventListener("scroll", function () {
-        var st = window.pageYOffset || document.documentElement.scrollTop;
-        if (st > lastScrollTop && st > 180){
-            $('body > header > nav').css("top", "-80px");
-            $('.scroll-hiding').attr('style', `top: -${($('.scroll-hiding').outerHeight() + 62)}px !important;`);
-        } else {
-            $('body > header > nav').css("top", "0");
-            $('.scroll-hiding').attr('style', `top: 62px !important;`);
-        }
-        lastScrollTop = st <= 0 ? 0 : st;
-    }, false);*/
-
-
     let lastScrollTop = 0,
         currentBookingDataTop = 62;
 
