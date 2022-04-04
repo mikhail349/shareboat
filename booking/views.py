@@ -74,6 +74,7 @@ def set_request_status(request, pk):
             if not message:
                 return JsonResponse({'message': 'Необходимо добавить сообщение'}, status=400)
 
+            #MessageBooking.objects.create(text='Лодка отклонена', sender=request.user, recipient=booking.renter, booking=booking, by_system=True)
             MessageBooking.objects.create(text=message, sender=request.user, recipient=booking.renter, booking=booking)
 
         booking.status = new_status

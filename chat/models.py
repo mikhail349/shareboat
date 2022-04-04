@@ -9,7 +9,8 @@ class Message(models.Model):
     sender      = models.ForeignKey(User, on_delete=models.PROTECT, related_name="messages_as_sender")  
     sent_at     = models.DateTimeField(auto_now_add=True)
     recipient   = models.ForeignKey(User, on_delete=models.PROTECT, related_name="messages_as_recipient")
-    read        = models.BooleanField(default=False)
+    by_system   = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f'{self.sender}: {self.text}'

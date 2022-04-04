@@ -26,7 +26,6 @@ def get_new_messages_booking(request, pk):
                 if messages:
                     ser = MessageBookingSerializerList(messages, many=True, context={'request': request})
                     data = ser.data
-                    messages.update(read=True)   
                     return JsonResponse({'data': data})
                 time.sleep(1)
             

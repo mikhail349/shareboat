@@ -39,22 +39,20 @@ $(document).ready(() => {
     }
 
     function formatSentAt(dt) {
-        const d = dt.getDate();
-        const m = dt.getMonth() + 1;
-        return `${(d>9 ? '' : '0') + d}.${(m>9 ? '' : '0') + m}.${dt.getFullYear()}, ${dt.getHours()}:${dt.getMinutes()}`
+        return `${('0' + dt.getDate()).slice(-2)}.${('0' + (dt.getMonth() + 1)).slice(-2)}.${dt.getFullYear()}, ${('0' + dt.getHours()).slice(-2)}:${('0'+dt.getMinutes()).slice(-2)}`;
     }
 
     function getMessageHtml(message) {
         const bg = message.is_out ? 'list-group-item-primary ' : 'list-group-item-secondary ';
         return `
-            <div id="msg${message.id}" class="list-group-item ${bg} mb-3 rounded border pb-0" style="width: fit-content;">
+            <div id="msg${message.id}" class="list-group-item ${bg} mb-3 rounded border pb-0 pe-0" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + getAvatar(message) + `
-                    <div class="d-flex">
+                    <div class="d-flex pe-3">
                         ${message.text.replaceAll('\r\n', '<br>')}
                     </div>
                 </div>
-                <small class="float-end">${formatSentAt(new Date(message.sent_at))}</small>
+                <small class="float-end pe-1" style="font-size: 12px;">${formatSentAt(new Date(message.sent_at))}</small>
             </div>  
         `;
     }
