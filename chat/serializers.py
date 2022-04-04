@@ -18,4 +18,4 @@ class MessageBookingSerializerList(serializers.ModelSerializer):
 
     class Meta:
         model = MessageBooking
-        fields = ('text', 'sender', 'is_out', 'sent_at')
+        fields = ('id', 'text', 'sender', 'is_out', 'sent_at')

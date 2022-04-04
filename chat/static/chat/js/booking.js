@@ -44,11 +44,10 @@ $(document).ready(() => {
         return `${(d>9 ? '' : '0') + d}.${(m>9 ? '' : '0') + m}.${dt.getFullYear()}, ${dt.getHours()}:${dt.getMinutes()}`
     }
 
-    function appendMessage(message) {
+    function getMessageHtml(message) {
         const bg = message.is_out ? 'list-group-item-primary ' : 'list-group-item-secondary ';
-        
-        $msgContainer.append(`
-            <div class="list-group-item ${bg} mb-3 rounded border pb-0" style="width: fit-content;">
+        return `
+            <div id="msg${message.id}" class="list-group-item ${bg} mb-3 rounded border pb-0" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + getAvatar(message) + `
                     <div class="d-flex">
@@ -57,7 +56,16 @@ $(document).ready(() => {
                 </div>
                 <small class="float-end">${formatSentAt(new Date(message.sent_at))}</small>
             </div>  
-        `);   
+        `;
+    }
+
+    function appendMessage(message) {      
+        window.lastMessageId = message.id;
+        $msgContainer.append(getMessageHtml(message));
+    }
+
+    function prependMessage(message) {
+        $msgContainer.prepend(getMessageHtml(message));
     }
     
     if (window.messages.length > 0) {
@@ -79,6 +87,29 @@ $(document).ready(() => {
     $btnSend.on('click', function(e) {
         sendMessage();        
     });
+
+    $("#btnLoadPreviousPage").on('click', function(e) {
+        
+        const pageNum = window.messagesPage - 1;
+
+        if (pageNum == 1) {
+            $(this).remove();
+        }
+        
+        $.ajax({
+            type: 'GET',
+            url: `/chat/api/get_messages_booking/${window.bookingId}?page_num=${pageNum}`,
+        }).done(function(data) {
+            if (data?.data?.length > 0) {
+                const messages = data.data.reverse();
+                for (let message of messages) {
+                    prependMessage(message);
+                }
+                $("html, body").scrollTop($(`#msg${messages[0].id}`).offset().top - 10);
+            }      
+            window.messagesPage = pageNum;
+        });       
+    })
 
     function sendMessage() {
         const text = getValue();
@@ -116,9 +147,8 @@ $(document).ready(() => {
     function getNewMessages() {
         $.ajax({
             type: 'GET',
-            url: `/chat/api/get_new_messages_booking/${window.bookingId}/`,
+            url: `/chat/api/get_new_messages_booking/${window.bookingId}?last_message_id=${window.lastMessageId}`,
         }).done(function(data) {
-            console.log(data.data);
             if (data?.data?.length > 0) {
                 for (let message of data.data) {
                     appendMessage(message);

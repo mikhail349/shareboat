@@ -6,7 +6,7 @@ html, body {
     resize: none;
 }
 
-#msgContainer {
+#wrapperMsgContainer {
     margin-top: calc(106px + 1rem);
     margin-bottom: 70px;
 }
