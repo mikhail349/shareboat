@@ -1,4 +1,4 @@
-from turtle import st
+#from turtle import st
 from telegram import ParseMode, BotCommand
 from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, Filters
 from .decorators import login_required
