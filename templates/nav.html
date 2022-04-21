@@ -8,7 +8,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <a class="navbar-brand me-auto p-2 pe-4" href="/">ShareBoat</a>
+            {% if request.get_full_path != '/' %} <a class="navbar-brand me-auto p-2 pe-4" href="/">ShareBoat</a>{% endif %}
             <div class="collapse navbar-collapse" id="menu">
                 <ul class="navbar-nav me-auto">   
                     <li class="nav-item">

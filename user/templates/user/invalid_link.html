@@ -7,11 +7,7 @@
     <div class="container">
       <h1 class="jumbotron-heading mb-4">{{msg}}</h1>
       <p>
-          {% if user.is_authenticated %}
-            <a href="{% url 'user:update' %}" class="btn btn-primary my-2">Перейти в профиль</a>
-          {% else %}
-            <a href="{% url 'user:login' %}?next=/" class="btn btn-primary my-2">Войти в учетную запись</a>
-          {% endif %}
+        <a href="/" class="btn btn-primary my-2">Вернуться на главную страницу</a>
       </p>
     </div>
   </section>
