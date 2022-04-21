@@ -101,7 +101,7 @@ def login(request):
         if user is not None:
             if user.email_confirmed:
                 django_login(request, user)
-                return redirect(request.POST.get('next'))
+                return redirect(request.POST.get('next') or '/')
             
             try:
                 UserEmail.send_verification_email(request, user)
