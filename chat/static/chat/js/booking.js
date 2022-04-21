@@ -43,16 +43,14 @@ $(document).ready(() => {
     }
 
     function getMessageHtml(message) {
-        const bg = message.is_out ? 'list-group-item-primary ' : 'list-group-item-secondary ';
+        const bg = message.is_out ? 'bg-primary ' : 'bg-secondary ';
         return `
-            <div id="msg${message.id}" class="list-group-item ${bg} mb-3 rounded border pb-0 pe-0" style="width: fit-content;">
+            <div id="msg${message.id}" class="list-group-item border-0" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + getAvatar(message) + `
-                    <div class="d-flex pe-3">
-                        ${message.text.replaceAll('\r\n', '<br>')}
-                    </div>
+                    <div class="d-flex ${bg} text-white rounded p-1 px-2" style="font-size: 18px; height: fit-content">${message.text.replaceAll('\r\n', '<br>')}</div>
+                    <small class="float-end pe-1 align-self-end" style="font-size: 12px;">${formatSentAt(new Date(message.sent_at))}</small>
                 </div>
-                <small class="float-end pe-1" style="font-size: 12px;">${formatSentAt(new Date(message.sent_at))}</small>
             </div>  
         `;
     }
@@ -81,6 +79,19 @@ $(document).ready(() => {
         const text = getValue();
         $btnSend.attr('disabled', !text);
     });
+
+    $textArea.on('keydown', function(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+        }
+    })
+
+    $textArea.on('keyup', function(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            sendMessage();
+        }
+    })
 
     $btnSend.on('click', function(e) {
         sendMessage();        

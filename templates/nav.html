@@ -42,7 +42,7 @@
                                         Уведомления {% if user.notifications.exists %}<span class="badge bg-danger">{{ user.notifications.count }}</span>{% endif %}
                                     </button>
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'user:update' %}">Настройки</a></li>
+                                <li><a class="dropdown-item" href="{% url 'user:update' %}">Профиль</a></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'user:logout' %}">Выйти</a></li>
                             </ul>
                         </li>

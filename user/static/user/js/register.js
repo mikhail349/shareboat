@@ -1,3 +1,7 @@
+function recaptchaCallback() {
+    $('form button[type="submit"]').removeAttr('disabled');
+}
+
 $(document).ready(() => {
     $("form").on("input", (e) => {
 
