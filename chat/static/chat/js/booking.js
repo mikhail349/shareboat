@@ -30,12 +30,12 @@ $(document).ready(() => {
                     height="32"
                     width="32"
                     src="${message.sender.avatar}" 
-                    class="rounded-circle"
+                    class="rounded-circle chat-avatar"
                     alt 
                 />
             `
         }
-        return '<div style="width:32px; height:32px"></div>'
+        return '<div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>'
     }
 
     function formatSentAt(dt) {

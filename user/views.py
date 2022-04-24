@@ -56,15 +56,22 @@ def send_verification_email(request, email):
     return JsonResponse({})
 
 @login_required
+def update_avatar(request):
+    avatar = request.FILES.get('avatar')
+    user = request.user
+    user.avatar = avatar
+    user.save()
+    return JsonResponse({'data': user.avatar.url})     
+
+@login_required
 def update(request):
     if request.method == 'GET':
-        next_verification_email_datetime = UserEmail.get_next_email_datetime(request.user, type=UserEmail.Type.VERIFICATION)
+
         tgcode_message = ''
         if hasattr(request.user, 'telegramuser') and not request.user.telegramuser.chat_id:
             tgcode_message = get_tgcode_message(request.user.telegramuser.verification_code)
 
         context = {
-            'next_verification_email_datetime': next_verification_email_datetime,
             'tgcode_message': tgcode_message
         }
         return render(request, 'user/update.html', context=context)
@@ -72,12 +79,7 @@ def update(request):
         with transaction.atomic():
             data = request.POST
             user = request.user
-            avatar = request.FILES.get('avatar')
             user.first_name = data.get('first_name')
-
-            if user.avatar != avatar:
-                user.avatar = avatar
-
             user.save()  
         return JsonResponse({})
 

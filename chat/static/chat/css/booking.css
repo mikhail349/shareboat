@@ -14,3 +14,8 @@ html, body {
 #bookingData {
     z-index: 1029;
 }
+
+img.chat-avatar {
+    min-width: 32px;
+    min-height: 32px;
+}
