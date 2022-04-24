@@ -116,11 +116,15 @@ $(document).ready(() => {
         map = null;
     });
 
-    $("#switchCustomLocation").on('click', function () {
+    $("#switchCustomLocation").on('click', function (e) {
+        console.log(e);
         if ($(this).is(":checked")) {
             $("#baseSelect").attr('disabled', true);
             $("#collapseBase").collapse('hide');
             $("#collapseCustomAddress").collapse('show');
+            if (e?.originalEvent?.isTrusted) {
+                $('#btnShowAddressMapModal').click();
+            }
         } else {
             $("#collapseBase").collapse('show');
             $("#collapseCustomAddress").collapse('hide');
