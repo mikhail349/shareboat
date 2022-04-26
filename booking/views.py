@@ -87,7 +87,7 @@ def set_request_status(request, pk):
 @login_required
 def view(request, pk):
     try:
-        booking = Booking.objects.get(pk=pk, renter=request.user)
+        booking = Booking.objects.get(Q(pk=pk), Q(renter=request.user) | Q(boat__owner=request.user))
 
         context = {
             'booking': booking
