@@ -9,9 +9,7 @@
     
     <script type="text/javascript">
         var messages = {{ messages|safe }},
-            bookingId = {{ booking.pk }},
-            messagesPage = {{ messages_page }},
-            lastMessageId = -1;
+            bookingId = {{ booking.pk }};
     </script>
 
     <script type="text/javascript" src="{% static 'chat/js/booking.min.js' %}"></script>
@@ -23,10 +21,7 @@
         </div>
     </div>
 
-    <div id="wrapperMsgContainer" class="container-lg">
-        {% if messages_page > 1 %}
-            <button id="btnLoadPreviousPage" type="button" class="btn btn-outline-primary mb-3 w-100">Загрузить предыдущие сообщения</button>
-        {% endif %}        
+    <div id="wrapperMsgContainer" class="container-lg">    
         <div id="msgContainer" class="list-group overflow-auto"></div>
     </div>
     
