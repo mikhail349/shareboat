@@ -1,13 +1,8 @@
 <div>
-    {% if show_name %}
-        <div>
-            <strong>Бронь #{{ booking.pk }}</strong> {{ booking.boat.name }}
-        </div>
-    {% else %}
-        <div>
-            <strong>Бронь #{{ booking.pk }}</strong>
-        </div>
-    {% endif %}
+    <div>
+        <h5>{{ booking.get_status_display }}</h5>
+        <strong>Бронь #{{ booking.pk }}</strong>
+    </div>
     <div>
         {{ booking.start_date|date:'d.m.Y' }} - {{ booking.end_date|date:'d.m.Y' }}
     </div>

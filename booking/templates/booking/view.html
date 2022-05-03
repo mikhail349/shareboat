@@ -12,7 +12,6 @@
         </section>
 
         <div class="alert {{ booking.status|get_status_color }}" role="alert"> 
-            <h4>{{ booking.get_status_display }}</h4>
             {% include 'booking/booking_data.html' %}   
         </div>
 
