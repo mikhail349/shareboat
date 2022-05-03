@@ -62,7 +62,11 @@
                     </div>
                 </div>
                 {% if user.is_authenticated %}
-                    <button type="submit" class="btn btn-outline-success mb-3">Забронировать</button>
+                    <div class="row row-cols-lg-auto g-3">
+                        <div class="col">
+                            <button type="submit" class="btn btn-outline-success mb-3 w-100">Забронировать</button>
+                        </div>
+                    </div>
                 {% else %}
                     <a href="{% url 'user:login' %}?next={{ request.get_full_path }}" class="btn btn-outline-primary mb-3">Войти для бронирования</a>
                 {% endif %}

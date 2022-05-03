@@ -14,6 +14,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'boat:boats' %}">Объявления</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'booking:my_bookings' %}">Бронирования</a>
+                    </li>
                 </ul>  
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
@@ -23,20 +26,20 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 
-                                <li><a class="dropdown-item" href="{% url 'booking:my_bookings' %}">Мои бронирования</a></li>
+                                {% if perms.boat.view_boat %}  
+                                    <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Мой флот</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'booking:requests' %}">Заявки на бронирование</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
                                 
-                                <li><h6 class="dropdown-header">Владелец</h6></li>
-                                <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Флот</a></li>
-                                <li><a class="dropdown-item" href="{% url 'booking:requests' %}">Заявки на бронирование</a></li>
-                                
-                                <li><h6 class="dropdown-header">Профиль</h6></li>
-                                {% if perms.boat.can_view_boats_on_moderation %}
+                                {% if perms.boat.can_view_boats_on_moderation %}                                   
                                     <li>
                                         <a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">
                                             Модерация лодок <span class="badge bg-secondary">{{ nav_counters.boats_on_moderation_count }}</span>
                                         </a>
                                     </li>
                                 {% endif %}
+
                                 <li>
                                     <button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNotifications" aria-controls="offcanvasNotifications">
                                         Уведомления {% if user.notifications.exists %}<span class="badge bg-danger">{{ user.notifications.count }}</span>{% endif %}

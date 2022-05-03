@@ -18,15 +18,6 @@
         {% include 'booking/requests_list_card.html' %}
     {% endif %}
 
-    {% if moderated_requests %}
-        <section class="jumbotron text-center">
-            <div class="container">
-                <p class="lead text-muted">Отработанные заявки</p>
-            </div>
-        </section>
-        {% include 'booking/requests_list_card.html' with requests=moderated_requests %}
-    {% endif %}
-
     <div id="declineRequestModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 380px;">
             <div class="modal-content rounded shadow">

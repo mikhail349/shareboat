@@ -101,25 +101,29 @@ function FilesList(props) {
                     ))
                 }                
             </div>
-            <div class="row align-items-center">
-                <div class="col-auto mb-3">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => fileInputRef.current.click()}>
-                        Добавить {!!props?.files?.length && 'ещё '}фото
+            <div class="row row-cols-lg-auto align-items-center">
+                <div class="col mb-3">
+                    <button type="button" className="btn btn-outline-primary w-100" onClick={() => fileInputRef.current.click()}>
+                        Добавить фото
                     </button>  
                 </div> 
-                <div class="col-auto mb-3">
-                    {
-                        isFileUploadHover() ? (
-                            <span className="text-success">
-                                Отпустите, чтобы добавить фото
-                            </span>  
-                        ) : !window.isMobile() && (
-                            <span className="text-muted">
-                                Или перетащите фото сюда
-                            </span>     
-                        )
-                    }
-                </div>  
+                {
+                    !window.isMobile() && (
+                        <div class="col mb-3">
+                        {
+                            isFileUploadHover() ? (
+                                <span className="text-success">
+                                    Отпустите, чтобы добавить фото
+                                </span>  
+                            ) : (
+                                <span className="text-muted">
+                                    Или перетащите фото сюда
+                                </span>     
+                            )
+                        }
+                    </div>  
+                    )
+                }
             </div>
         </div>
     )

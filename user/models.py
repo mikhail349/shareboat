@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager 
 from django.db.models.signals import pre_save, post_save, post_delete
-
 from file import utils, signals
 
 class UserManager(BaseUserManager):
@@ -39,8 +38,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractUser):
-    
+class User(AbstractUser):   
     username = None
     last_name = None
 
@@ -58,6 +56,7 @@ class User(AbstractUser):
         if hasattr(self, 'telegramuser'):
             return self.telegramuser.chat_id
         return None
+
 
 class TelegramUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)

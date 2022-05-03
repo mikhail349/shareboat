@@ -1,7 +1,10 @@
-from http.client import ACCEPTED
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
@@ -11,8 +14,11 @@ class Booking(models.Model):
 
     class Status(models.IntegerChoices):
         PENDING     = 0, _("Ожидание подтверждения")
-        DECLINED    = -1, _("Отменено")
-        ACCEPTED    = 1, _("Подтверждено")
+        DECLINED    = -1, _("Отменена")
+        ACCEPTED    = 1, _("Подтверждена")
+        PREPAYMENT_REQUIRED = 2, _("Требуется предоплата")
+        ACTIVE      = 3, _("Активна")
+        DONE        = 4, _("Завершена")
 
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')
@@ -21,9 +27,6 @@ class Booking(models.Model):
     start_date  = models.DateField()
     end_date    = models.DateField()
     total_sum   = models.DecimalField(max_digits=8, decimal_places=2)
-
-    #def get_days_count(self):
-    #    return self.d
 
     def clean(self):
         if self.pk is None:
@@ -51,3 +54,8 @@ class Booking(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Booking, self).save(*args, **kwargs)
+
+
+class Prepayment(models.Model):
+    booking     = models.OneToOneField(Booking, primary_key=True, on_delete=models.CASCADE)
+    until       = models.DateTimeField()

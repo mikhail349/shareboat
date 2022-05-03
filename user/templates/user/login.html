@@ -11,7 +11,7 @@
     <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next }}" method="post" class='needs-validation form-signin' novalidate>
         {% csrf_token %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>  
+        <h1 class="h3 mb-3 font-weight-normal text-center">Авторизация</h1>  
         
         {% if errors %}
             <div class="alert alert-danger">{{ errors }}</div>
@@ -34,10 +34,10 @@
         <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
         <button class="w-100 btn btn-lg btn-primary mb-3" type="submit" disabled>Войти</button>
         
-        <p>
+        <div class="mb-2 text-center">
             <div class="mb-2"><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>
             <div><a href="{% url 'user:register' %}">Зарегистрироваться</a></div>
-        </p>
+        </div>
     </form>
     
 {% endblock %}

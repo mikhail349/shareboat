@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from emails.exceptions import EmailLagError
 import jwt
+from django.contrib.auth.models import Group
+from django.urls import reverse
 
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
@@ -14,10 +16,19 @@ from emails.models import UserEmail
 from .models import User, TelegramUser
 import random
 import requests
+from boat.models import Boat
+from django.db.models import Q
 
 import logging
 logger_admin_mails = logging.getLogger('mail_admins')
 logger = logging.getLogger(__name__)
+
+BOAT_OWNER_GROUP = 'boat_owner'
+
+def get_bool(value):
+    if value in (True, 'True', 'true', '1', 'on'):
+        return True
+    return False
 
 def check_recaptcha(request):
     recaptcha = request.POST.get('g-recaptcha-response')
@@ -65,23 +76,39 @@ def update_avatar(request):
 
 @login_required
 def update(request):
-    if request.method == 'GET':
 
+    def _get_context():
         tgcode_message = ''
         if hasattr(request.user, 'telegramuser') and not request.user.telegramuser.chat_id:
             tgcode_message = get_tgcode_message(request.user.telegramuser.verification_code)
 
-        context = {
-            'tgcode_message': tgcode_message
-        }
-        return render(request, 'user/update.html', context=context)
+        return {
+            'tgcode_message': tgcode_message,
+            'is_boat_owner': request.user.groups.filter(name=BOAT_OWNER_GROUP).exists()
+        }        
+
+    if request.method == 'GET':
+        return render(request, 'user/update.html', context=_get_context())
     elif request.method == 'POST':
+        
         with transaction.atomic():
             data = request.POST
+            is_boat_owner = get_bool(data.get('is_boat_owner'))
+
             user = request.user
             user.first_name = data.get('first_name')
-            user.save()  
-        return JsonResponse({})
+
+            boat_owner_group, _ = Group.objects.get_or_create(name=BOAT_OWNER_GROUP)
+            if is_boat_owner:              
+                user.groups.add(boat_owner_group)
+            else:
+                if user.boats.filter(~Q(status=Boat.Status.DELETED)).exists():
+                    return render(request, 'user/update.html', context={**_get_context(), 'errors': 'Для того чтобы перестать быть арендодателем, необходимо удалить свой флот'})
+                user.groups.remove(boat_owner_group)
+
+            user.save()
+
+        return redirect('/')
 
 
 def login(request):
@@ -212,6 +239,10 @@ def register(request):
         user.set_password(data['password1'])
         user.save()
         
+        if get_bool(data.get('is_boat_owner')):  
+            boat_owner_group, _ = Group.objects.get_or_create(name=BOAT_OWNER_GROUP)          
+            user.groups.add(boat_owner_group)
+
         try:
             UserEmail.send_verification_email(request, user)
             logger_admin_mails.info("Зарегистрировался новый пользователь %s" % data['email'])

@@ -59,6 +59,7 @@ class Boat(models.Model):
     draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
     type    = models.IntegerField(choices=Type.choices)
+    prepayment_required = models.BooleanField(default=False)
     modified = models.DateTimeField(auto_now=True)
 
     base    = models.ForeignKey(Base, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)

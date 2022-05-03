@@ -28,15 +28,27 @@
         </section> 
         <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %} 
+
+            {% if errors %}
+                <div class="alert alert-danger">{{ errors }}</div>
+            {% endif %}
+
             <input type="file" name="avatar" accept="image/*" hidden /> 
             <input type="text" name="email" hidden value="{{ user.email }}"/> 
+
+            <h4 class="mb-3">Профиль</h4>
             <div class="form-floating mb-3">            
-                <input type="text" name="first_name" class="form-control" 
+                <input type="text" name="first_name" class="form-control" required
                     placeholder="Введите ваше имя" 
                     autocomplete="off"
                     value="{{ user.first_name }}"
                 />
                 <label for="first_name">Имя</label>
+                <div class="invalid-tooltip">Укажите Ваше имя</div>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" role="switch" name="is_boat_owner" {% if is_boat_owner %} checked {% endif %}>
+                <label class="form-check-label">Являюсь арендодателем</label>
             </div>
             <h4 class="mb-3">Telegram бот <a target="_blank" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
             {% if user|hasattr:'telegramuser' %}

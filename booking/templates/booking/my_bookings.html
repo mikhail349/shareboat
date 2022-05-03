@@ -18,13 +18,4 @@
         {% include 'booking/bookings_list_card.html' %}
     {% endif %}
 
-    {% if declined_bookings %}
-        <section class="jumbotron text-center">
-            <div class="container">
-                <p class="lead text-muted">Отмененные бронирования</p>
-            </div>
-        </section>
-        {% include 'booking/bookings_list_card.html' with bookings=declined_bookings %}
-    {% endif %}
-
 {% endblock  %}

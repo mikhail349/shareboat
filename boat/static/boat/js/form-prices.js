@@ -48,21 +48,6 @@ function PricesList(props) {
                         }
                         <div className="row row-cols-lg-auto align-items-center gy-3 mb-3">
                             <div className="col">
-                                <div className="form-floating">
-                                    <select className="form-select" required disabled value={price.type} onChange={(e) => changeValue(e, index, 'type')}>
-                                        <option value={priceTypes[0][0]}>{priceTypes[0][1]}</option>                                     
-                                        {/*<option selected disabled value="">Выберите из списка</option>
-                                        {
-                                            priceTypes.map((priceType, index) => (
-                                                <option value={priceType[0]}>{priceType[1]}</option>
-                                            ))
-                                        }*/}
-                                    </select>
-                                    <label>Тип цены</label>
-                                    <div className="invalid-tooltip">Выберите тип цены</div>
-                                </div>
-                            </div>
-                            <div className="col">
                                 <div className="form-floating">                 
                                     <input type="number" className="form-control" placeholder="Укажите цену" autocomplete="false"
                                         required 
@@ -97,18 +82,21 @@ function PricesList(props) {
                                 </div>
                             </div>
                             <div className="col-md">
-                                <button type="button" className="btn btn-outline-danger" onClick={() => deletePrice(index)}>
+                                <button type="button" className="btn btn-outline-danger form-control" onClick={() => deletePrice(index)}>
                                     Удалить
-                                </button>                                          
+                                </button>                                     
                             </div>
                         </div>                    
                       </React.Fragment>             
                 ))
             }
-           
-            <button type="button" className="btn btn-outline-primary" onClick={addPrice}>
-                Добавить цену
-            </button>  
+            <div className="row row-cols-lg-auto align-items-center gy-3 mb-3">
+                <div className="col-md">
+                    <button type="button" className="btn btn-outline-primary form-control" onClick={addPrice}>
+                        Добавить цену
+                    </button>  
+                </div>  
+            </div>  
         </>
     )
 }

@@ -66,7 +66,7 @@ def handle_boat_prices(boat, prices):
             try:
                 boat_price = BoatPrice.objects.get(pk=price['pk'])
                 boat_price.price        = price['price']
-                boat_price.type         = price['type']
+                #boat_price.type         = price['type']
                 boat_price.start_date   = price['start_date']
                 boat_price.end_date     = price['end_date']
                 boat_price.boat         = boat
@@ -76,13 +76,14 @@ def handle_boat_prices(boat, prices):
         else:
             BoatPrice.objects.create(
                 price        =price['price'], 
-                type        = price['type'], 
+                #type        = price['type'], 
                 start_date  = price['start_date'], 
                 end_date    = price['end_date'], 
                 boat        = boat
             )
 
 @login_required
+@permission_required('boat.view_boat', raise_exception=True)
 def my_boats(request):
     page = request.GET.get('page', 1)
 
@@ -116,6 +117,7 @@ def moderate(request, pk):
             return render(request, 'not_found.html')
 
 @login_required
+@permission_required('boat.change_boat', raise_exception=True)
 def set_status(request, pk):
     
     ALLOWED_STATUSES = {
@@ -270,6 +272,7 @@ def calc_booking(request, pk):
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
+@permission_required('boat.view_boat', raise_exception=True)
 def view(request, pk):
     try:
         boat = Boat.active.get(pk=pk, owner=request.user)
@@ -282,6 +285,7 @@ def view(request, pk):
         return render(request, 'not_found.html')
 
 @login_required
+@permission_required('boat.add_boat', raise_exception=True)
 def create(request):
     if request.method == 'GET':
         context = {
@@ -294,6 +298,7 @@ def create(request):
         return create_or_update(request, None)
 
 @login_required
+@permission_required('boat.change_boat', raise_exception=True)
 def update(request, pk):
 
     if request.method == 'GET':
@@ -312,6 +317,7 @@ def update(request, pk):
 
 @login_required
 @api_view(['POST'])
+@permission_required('boat.delete_boat', raise_exception=True)
 def delete(request, pk):
     try:
         boat = Boat.active.get(pk=pk, owner=request.user)
@@ -327,6 +333,7 @@ def delete(request, pk):
     return JsonResponse({'redirect': reverse('boat:my_boats')})
 
 @login_required
+@permission_required('boat.view_boatfile', raise_exception=True)
 def get_files(request, pk):
     files = BoatFile.objects.filter(boat__pk=pk, boat__owner=request.user)
     serializer = BoatFileSerializer(files, many=True, context={'request': request})
@@ -337,7 +344,7 @@ def create_or_update(request, pk=None):
     files = request.FILES.getlist('file')
     prices = json.loads(data.get('prices'))
     is_custom_location = get_bool(data.get('is_custom_location'))
-    #custom_coordinates = json.loads(data.get('custom_coordinates')) if data.get('custom_coordinates') and is_custom_location else None
+    prepayment_required = get_bool(data.get('prepayment_required'))
     base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
     
     try:
@@ -357,6 +364,7 @@ def create_or_update(request, pk=None):
                 boat.draft      = data.get('draft')
                 boat.capacity   = data.get('capacity')
                 boat.type       = data.get('type')
+                boat.prepayment_required = prepayment_required
                 boat.base       = base
                 
                 if boat.status == Boat.Status.DECLINED:
@@ -375,6 +383,7 @@ def create_or_update(request, pk=None):
                     'draft':        data.get('draft'),
                     'capacity':     data.get('capacity'),
                     'type':         data.get('type'),
+                    'prepayment_required': prepayment_required,
                     'base':         base
                 }
 

@@ -3,14 +3,17 @@ from django.http import JsonResponse
 from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 
 from boat.utils import calc_booking
 from chat.models import MessageBooking
-from .models import Booking
+from .models import Booking, Prepayment
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
 from django.db.models import Q
 from telegram_bot.notifications import send_message
+from django.db import transaction
 
 @login_required
 def create(request):
@@ -33,7 +36,6 @@ def create(request):
 
         try:
             booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
-            #send_message(boat.owner, f'Добавлена бронь на лодку <a href="{request.build_absolute_uri(reverse("booking:my_bookings"))}">{boat.name}</a>.')
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 
@@ -41,21 +43,16 @@ def create(request):
 
 @login_required
 def my_bookings(request):
-    my_bookings = Booking.objects.filter(renter=request.user)
-    
-    bookings = my_bookings.filter(~Q(status=Booking.Status.DECLINED)).order_by('-status','-start_date')
-    declined_bookings = my_bookings.filter(status=Booking.Status.DECLINED).order_by('-start_date')
-    return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'declined_bookings': declined_bookings, 'Status': Booking.Status})
+    bookings = Booking.objects.filter(renter=request.user).order_by('-start_date')
+    return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'Status': Booking.Status})
 
 @login_required
 def requests(request):
-    all_requests = Booking.objects.filter(boat__owner=request.user).order_by('-start_date')
-    
-    requests = all_requests.filter(status=Booking.Status.PENDING)
-    moderated_requests = all_requests.filter(~Q(status=Booking.Status.PENDING))
-    return render(request, 'booking/requests.html', context={'requests': requests, 'moderated_requests': moderated_requests, 'Status': Booking.Status})
+    requests = Booking.objects.filter(boat__owner=request.user).order_by('-start_date')
+    return render(request, 'booking/requests.html', context={'requests': requests, 'Status': Booking.Status})
 
 @login_required
+@transaction.atomic
 def set_request_status(request, pk):
     
     ALLOWED_STATUSES = {
@@ -74,8 +71,18 @@ def set_request_status(request, pk):
             if not message:
                 return JsonResponse({'message': 'Необходимо добавить сообщение'}, status=400)
 
-            #MessageBooking.objects.create(text='Лодка отклонена', sender=request.user, recipient=booking.renter, booking=booking, by_system=True)
             MessageBooking.objects.create(text=message, sender=request.user, recipient=booking.renter, booking=booking)
+
+        if new_status == Booking.Status.ACCEPTED:
+            if booking.boat.prepayment_required:
+                new_status = Booking.Status.PREPAYMENT_REQUIRED
+                prepayment_until = timezone.now() + timedelta(days=5)
+                
+                try:
+                    booking.prepayment.until = prepayment_until
+                    booking.prepayment.save()
+                except Prepayment.DoesNotExist:
+                    Prepayment.objects.create(booking = booking, until=prepayment_until)
 
         booking.status = new_status
         booking.save()
