@@ -19,7 +19,11 @@
     </div>
     <div class="fixed-bottom bg-light py-3">
         <div class="container-lg">
-            <a class="btn btn-outline-primary" href="{% url 'chat:booking' booking.pk %}" role="button">Перейти в чат</a>
+            <div class="row row-cols-lg-auto g-3">
+                <div class="col">
+                    <a class="btn btn-outline-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock  %}

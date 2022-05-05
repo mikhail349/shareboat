@@ -16,12 +16,12 @@
     </div>
     <div class="fixed-bottom bg-light py-3">
         <div class="container-lg">
-            <div class="row g-3">            
-                <div class="col-auto pe-0">
-                    <a id="btnAcceptBoat" class="btn btn-outline-success" href="{% url 'boat:api_accept_boat' boat.pk %}">Акцептовать</a>                          
+            <div class="row row-cols-lg-auto g-3">            
+                <div class="col pe-0">
+                    <a id="btnAcceptBoat" class="btn btn-outline-success w-100" href="{% url 'boat:api_accept_boat' boat.pk %}">Акцептовать</a>                          
                 </div>
-                <div class="col-auto">
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
+                <div class="col">
+                    <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
                 </div>
             </div>
         </div>
