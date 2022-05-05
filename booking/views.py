@@ -4,6 +4,7 @@ from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils import timezone
+from django.conf import settings
 from datetime import timedelta
 
 from boat.utils import calc_booking
@@ -76,7 +77,7 @@ def set_request_status(request, pk):
         if new_status == Booking.Status.ACCEPTED:
             if booking.boat.prepayment_required:
                 new_status = Booking.Status.PREPAYMENT_REQUIRED
-                prepayment_until = timezone.now() + timedelta(days=5)
+                prepayment_until = timezone.now() + timedelta(days=int(settings.PREPAYMENT_DAYS_LIMIT))
                 
                 try:
                     booking.prepayment.until = prepayment_until
