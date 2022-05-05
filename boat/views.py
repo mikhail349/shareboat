@@ -66,7 +66,6 @@ def handle_boat_prices(boat, prices):
             try:
                 boat_price = BoatPrice.objects.get(pk=price['pk'])
                 boat_price.price        = price['price']
-                #boat_price.type         = price['type']
                 boat_price.start_date   = price['start_date']
                 boat_price.end_date     = price['end_date']
                 boat_price.boat         = boat
@@ -76,7 +75,6 @@ def handle_boat_prices(boat, prices):
         else:
             BoatPrice.objects.create(
                 price        =price['price'], 
-                #type        = price['type'], 
                 start_date  = price['start_date'], 
                 end_date    = price['end_date'], 
                 boat        = boat
