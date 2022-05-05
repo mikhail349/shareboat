@@ -43,13 +43,14 @@ $(document).ready(() => {
     }
 
     function getMessageHtml(message) {
-        const bg = message.is_out ? 'bg-primary ' : 'bg-secondary ';
+        const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-secondary text-white') : 'bg-white text-dark border border-dark';
+        const datetimeTitle = message.sender ? '' : 'Системное сообщение<br>'
         return `
             <div id="msg${message.id}" class="list-group-item border-0" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + getAvatar(message) + `
-                    <div class="d-flex ${bg} text-white rounded p-1 px-2" style="font-size: 18px; height: fit-content">${message.text.replaceAll('\r\n', '<br>')}</div>
-                    <small class="float-end pe-1 align-self-end" style="font-size: 12px;">${formatSentAt(new Date(message.sent_at))}</small>
+                    <div class="d-flex ${bg} rounded p-1 px-2" style="font-size: 18px; height: fit-content">${message.text.replaceAll('\r\n', '<br>')}</div>
+                    <small class="float-end pe-1 align-self-end" style="font-size: 12px;">${datetimeTitle}${formatSentAt(new Date(message.sent_at))}</small>
                 </div>
             </div>  
         `;

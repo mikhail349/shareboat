@@ -1,4 +1,3 @@
-from re import I
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -6,13 +5,12 @@ from django.db.models import Q
 
 from .models import MessageBooking
 from .serializers import MessageBookingSerializerSend, MessageBookingSerializerList
+
+from boat.models import Boat
 from booking.models import Booking
-from django.core.paginator import Paginator
 
 import json
 import time
-
-MESSAGES_PER_PAGE = 20
 
 @login_required
 def get_new_messages_booking(request, pk):
@@ -52,7 +50,7 @@ def send_message_booking(request):
 def booking(request, pk):
     try:
         booking = Booking.objects.get(Q(pk=pk), Q(renter=request.user) | Q(boat__owner=request.user))
-        messages = MessageBooking.objects.filter(booking=booking).order_by('sent_at')
+        messages = MessageBooking.objects.filter(Q(booking=booking), Q(sender=request.user) | Q(recipient=request.user)).order_by('sent_at')
         messages_serializer_data = MessageBookingSerializerList(messages, many=True, context={'request': request}).data
 
         messages.filter(recipient=request.user, read=False).update(read=True)
@@ -63,4 +61,14 @@ def booking(request, pk):
         }
         return render(request, 'chat/booking.html', context=context)
     except Booking.DoesNotExist:
+        return render(request, 'not_found.html') 
+
+@login_required
+def boat(request, pk):
+    try:
+        boat = Boat.objects.get(Q(pk=pk))
+        if not request.user.has_perm('boat.can_moderate_boats') and boat.owner != request.user:
+            return render(request, 'not_found.html') 
+        return render(request, 'chat/boat.html')
+    except Boat.DoesNotExist:
         return render(request, 'not_found.html') 
