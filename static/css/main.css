@@ -23,6 +23,10 @@
     min-width: 207px;
 }
 
+body {
+    -webkit-overflow-scrolling: touch;
+}
+
 body > .main-content-container {
     padding-top: var(--header-padding-top);
 }  
