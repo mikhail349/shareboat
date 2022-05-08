@@ -10,6 +10,12 @@
     -webkit-animation-fill-mode: forwards;
 }
 
+.card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .carousel-img {
     height: 200px;
     object-fit: cover;

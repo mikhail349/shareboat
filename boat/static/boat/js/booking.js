@@ -123,7 +123,7 @@ $(document).ready(() => {
         const $datePicker = $('#bookingdaterangepicker');
         $datePicker.removeAttr('readonly');
 
-        if (!$(this).checkValidity()) return;
+        if (!$(this).checkValidity(false)) return;
         
         showOverlayPanel("Бронирование...");
         const url = $(this).attr("action");

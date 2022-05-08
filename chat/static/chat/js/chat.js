@@ -9,6 +9,8 @@ class MessageHandler {
         this.longPollingApi = longPollingApi;
         this.sendMessageApi = sendMessageApi;
 
+        this.lastAppendedSenderId = undefined;
+
         var self = this;
         $(window).scroll(function() {
             self.isOnBottom = ($(window).scrollTop() + $(window).height() == $(document).height());
@@ -45,6 +47,13 @@ class MessageHandler {
     }
 
     getAvatar(message) {
+        const emptyAvatar = '<div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>';
+
+        if (this.lastAppendedSenderId == message?.sender?.id) {
+            return emptyAvatar;
+        }
+
+
         if (message?.sender?.avatar) {
             return `
                 <img
@@ -56,7 +65,7 @@ class MessageHandler {
                 />
             `
         }
-        return '<div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>'
+        return emptyAvatar;
     }
     
     formatSentAt(dt) {
@@ -79,6 +88,7 @@ class MessageHandler {
     
     appendMessage(message) {      
         this.msgContainer.append(this.getMessageHtml(message));
+        this.lastAppendedSenderId = message?.sender?.id;
     }
 
     appendExistingMessages() {

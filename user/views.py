@@ -156,7 +156,7 @@ def logout(request):
     return redirect('/')
 
 def restore_password(request):
-    return render(request, 'user/restore_password.html')
+    return render(request, 'user/restore_password.html', context={'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY})
 
 @login_required
 def generate_telegram_code(request):
@@ -200,6 +200,9 @@ def change_password(request, token):
     
 
 def send_restore_password_email(request):
+    if not check_recaptcha(request):
+        return render(request, 'user/restore_password.html', context={'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY, 'errors': 'Проверка "Я не робот" не пройдена'})     
+
     try:
         email = request.POST.get('email')
         user = User.objects.get(email=email)

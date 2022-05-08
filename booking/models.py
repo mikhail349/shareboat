@@ -14,11 +14,11 @@ class Booking(models.Model):
 
     class Status(models.IntegerChoices):
         PENDING     = 0, _("Ожидание подтверждения")
-        DECLINED    = -1, _("Отменена")
-        ACCEPTED    = 1, _("Подтверждена")
+        DECLINED    = -1, _("Отменено")
+        ACCEPTED    = 1, _("Подтверждено")
         PREPAYMENT_REQUIRED = 2, _("Требуется предоплата")
-        ACTIVE      = 3, _("Активна")
-        DONE        = 4, _("Завершена")
+        ACTIVE      = 3, _("Активно")
+        DONE        = 4, _("Завершено")
 
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')

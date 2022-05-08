@@ -70,10 +70,23 @@ function parseJSONError(json) {
     return json;
 }
 
-$.fn.checkValidity = function(doShowErrorToast=true) {
+$.fn.checkValidity = function(handleError=true) {
     this[0].classList.add("was-validated");
+
+    const msg = 'Устраните ошибки в полях формы';
     const res = this[0].checkValidity();
-    if (!res && doShowErrorToast) showErrorToast("Устраните ошибки в полях формы");
+
+    if (!res && handleError) {
+        $errors = $('.errors');
+        if ($errors.length) {
+            $errors.addClass(' alert alert-danger');
+            $errors.text(msg);
+        } else if (handleError) {
+            showErrorToast(msg);
+        }
+        $("html, body").scrollTop(0);
+    }
+    
     return res;
 }
 
