@@ -7,7 +7,7 @@
 
 {% block nav %}
     {% url 'booking:view' booking.id as view_url %}
-    {% include 'booking/nav_replacer.html' with back_link=view_url %}
+    {% include 'booking/nav_replacer.html' with back_link=request.GET.back|default:view_url %}
 {% endblock %}
 
 {% block content %}

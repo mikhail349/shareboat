@@ -5,7 +5,7 @@
 
 {% block nav %}
     {% url 'boat:view' boat.id as view_url %}
-    {% include 'boat/nav_replacer.html' with back_link=view_url %}
+    {% include 'boat/nav_replacer.html' with back_link=request.GET.back|default:view_url  %}
 {% endblock %}
 
 {% block content %}

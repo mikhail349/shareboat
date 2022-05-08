@@ -137,7 +137,7 @@ class MessageHandler {
                     $("html, body").animate({ scrollTop: $(document).height() });
                 }
             }
-            getNewMessages();
+            self.getNewMessages();
         }).fail(function(error) {
             if (error.status == 0) {
                 self.getNewMessages();

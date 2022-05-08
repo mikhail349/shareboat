@@ -3,43 +3,43 @@
 <div class="album py-5 bg-light">
     <div class="container">
         <div class="row g-4">
-            {% for request in requests %}
+            {% for req in requests %}
                 <div class="col-lg-4 col-md-4">
                     <div class="card box-shadow h-100">
-                        <a href="{% url 'booking:view' request.id %}" >
-                            {% include 'boat/carousel.html' with boat=request.boat %}
+                        <a href="{% url 'booking:view' req.id %}" >
+                            {% include 'boat/carousel.html' with boat=req.boat %}
                         </a>    
                         
                         <div class="card-body d-flex flex-column">
-                            {% include 'boat/card.html' with boat=request.boat %}
-                            <div class="alert {{ request.status|get_status_color }}" role="alert">
-                                {% include 'booking/booking_data.html' with booking=request %}
+                            {% include 'boat/card.html' with boat=req.boat %}
+                            <div class="alert {{ req.status|get_status_color }}" role="alert">
+                                {% include 'booking/booking_data.html' with booking=req %}
                             </div>
                             <div class="dropdown mt-auto">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuStatus{{ request.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuStatus{{ req.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
                                     Действия
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ request.pk }}">
-                                    {% if request.status == Status.PENDING %}
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ req.pk }}">
+                                    {% if req.status == Status.PENDING %}
                                         <li>
-                                            <a class="dropdown-item accept-request" href="#" data-booking-id="{{ request.pk }}" data-status="{{ Status.ACCEPTED }}">
+                                            <a class="dropdown-item accept-request" href="#" data-booking-id="{{ req.pk }}" data-status="{{ Status.ACCEPTED }}">
                                                 Подтвердить бронь
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#" data-booking-id="{{ request.pk }}" data-bs-toggle="modal" data-bs-target="#declineRequestModal">
+                                            <a class="dropdown-item" href="#" data-booking-id="{{ req.pk }}" data-bs-toggle="modal" data-bs-target="#declineRequestModal">
                                                 Отменить бронь
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                     {% endif %}      
-                                    <li><a class="dropdown-item" href="{% url 'chat:booking' request.pk %}">Чат</a></li>                           
+                                    <li><a class="dropdown-item" href="{% url 'chat:booking' req.pk %}?back={{ request.path }}">Чат</a></li>                           
                                 </ul>
                             </div>
                         </div>
                     
                         <h5>
-                            <span style="left: 5px; top: 5px;" class="position-absolute badge {{ request.status|get_status_color }}">{{ request.get_status_display }}</span>
+                            <span style="left: 5px; top: 5px;" class="position-absolute badge {{ req.status|get_status_color }}">{{ req.get_status_display }}</span>
                         </h5>
                     </div>
                 </div>

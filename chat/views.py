@@ -41,14 +41,14 @@ def get_new_messages_boat(request, pk):
             is_moderator = request.user.has_perm('boat.can_moderate_boats')
 
             while True:
-                messages = MessageBoat.objects.filter(boat=boat)
+                messages = MessageBoat.objects.filter(boat=boat, read=False)
                 if boat.owner == request.user:
-                    messages = MessageBoat.objects.filter(recipient=request.user, read=False)
+                    messages = messages.filter(recipient=request.user)
                 elif is_moderator:
-                    messages = MessageBoat.objects.filter(recipient__isnull=True, read=False)
+                    messages = messages.filter(recipient__isnull=True)
                 else:
-                    return _not_found()
-                messages = messages.order_by('sent_at') 
+                    return _not_found()      
+                messages = messages.order_by('sent_at')
 
                 if messages:
                     data = MessageSerializerList(messages, many=True, context={'request': request}).data

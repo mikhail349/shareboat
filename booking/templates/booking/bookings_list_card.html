@@ -23,7 +23,7 @@
                                 {% if booking.status == Status.PENDING %}
                                     <li><a class="dropdown-item" href="#" data-booking-id="{{ booking.pk }}" data-status="{{ Status.DECLINED }}">Отменить бронь</a></li>
                                 {% endif %}      
-                                <li><a class="dropdown-item" href="{% url 'chat:booking' booking.pk %}">Чат</a></li>                           
+                                <li><a class="dropdown-item" href="{% url 'chat:booking' booking.pk %}?back={{ request.path }}">Чат</a></li>                           
                             </ul>
                         </div>
                     </div>

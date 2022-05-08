@@ -19,7 +19,7 @@
                     <a class="btn btn-outline-primary w-100" href="{% url 'boat:update' boat.pk %}" role="button">Редактировать</a>
                 </div>
                 <div class="col">
-                    <a class="btn btn-outline-primary w-100" href="{% url 'chat:boat' boat.pk %}">Чат с поддержкой</a>
+                    <a class="btn btn-outline-primary w-100" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат с поддержкой</a>
                 </div>
             </div>
         </div>
