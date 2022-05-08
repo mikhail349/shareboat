@@ -7,7 +7,7 @@ $(document).ready(() => {
      const $mainNav = $('body > header > nav');
      const $mainToast = $('#toastContainer');
 
-     const mainNavHeight = $mainNav.outerHeight();
+     const mainNavHeight = 62;
 
      function mainMenuHide(){
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
