@@ -2,11 +2,6 @@ var lastScrollTop = 0,
      currentNavTop = 0,
      currentToastTop = 62;     
 
-/*$(document).ready(() => {
-     $('.navbar-nav a.active').removeClass('active bg-light text-dark');
-     $('.navbar-nav a[href="' + location.pathname + '"').addClass("active bg-light text-dark");
-})*/
-
 $(document).ready(() => {
 
      const $mainNav = $('body > header > nav');
@@ -15,7 +10,7 @@ $(document).ready(() => {
      const mainNavHeight = $mainNav.outerHeight();
 
      function mainMenuHide(){
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           const diffScrollTop = scrollTop - lastScrollTop;
           currentNavTop += diffScrollTop;
           currentNavTop = currentNavTop > mainNavHeight ? mainNavHeight : currentNavTop < 0 ? 0 : currentNavTop;
