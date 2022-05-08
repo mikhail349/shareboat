@@ -55,6 +55,9 @@ class Booking(models.Model):
         self.full_clean()
         super(Booking, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return f'Бронь № {self.pk} - {self.boat}'
+
 
 class Prepayment(models.Model):
     booking     = models.OneToOneField(Booking, primary_key=True, on_delete=models.CASCADE)

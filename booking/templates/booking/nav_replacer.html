@@ -1,0 +1,7 @@
+{% extends 'nav_replacer.html' %}
+{% block nav_replacer_title %}
+    <div class="title me-auto">
+        <div style="font-size: 16px;">{{ booking.boat.name }}</div>
+        <div style="font-size: 14px;">{{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}</div>
+    </div>
+{% endblock %}

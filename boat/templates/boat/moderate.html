@@ -7,10 +7,14 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'boat/js/moderate.min.js' %}"></script>
 
-    <div class="container-lg" style='margin-bottom: 70px' data-boat-modified="{{ boat.modified.isoformat }}">
+    <div class="container-lg" style='margin-bottom: 70px'>
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Модерация лодки</h1>    
         </section>
+
+        {% if errors %}
+            <div class="alert alert-danger">{{ errors }}</div>
+        {% endif %}
 
         {% include 'boat/view_base.html' with show_prices=True %}
     </div>
@@ -18,7 +22,11 @@
         <div class="container-lg">
             <div class="row row-cols-lg-auto g-3">            
                 <div class="col pe-0">
-                    <a id="btnAcceptBoat" class="btn btn-outline-success w-100" href="{% url 'boat:api_accept_boat' boat.pk %}">Акцептовать</a>                          
+                    <form action="{% url 'boat:accept' boat.pk %}" method="post">
+                        {% csrf_token %} 
+                        <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
+                        <button type="submit" class="btn btn-outline-success">Акцептовать</button>
+                    </form>                         
                 </div>
                 <div class="col">
                     <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
@@ -27,33 +35,19 @@
         </div>
     </div>
 
-    <div id="outdatedModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">
-        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 380px;">
-            <div class="modal-content rounded shadow">
-                <div class="modal-body p-4 text-center">
-                    <h5>Данные лодки устарели</h5>
-                    <p class="mb-0">Страница будет перезагружена</p>
-                </div>
-                <div class="modal-footer text-center p-0">
-                    <button type="button" class="btn btn-link text-decoration-none m-0 col-12">
-                        <strong>Понятно</strong>
-                    </button>             
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="declineModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 380px;">
             <div class="modal-content rounded shadow">
-                <form id="formDecline" method="post" action="{% url 'boat:api_decline_boat' boat.pk %}" class="needs-validation" novalidate>
+                <form action="{% url 'boat:reject' boat.pk %}" method="post" class="needs-validation" novalidate>
+                    {% csrf_token %} 
+                    <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
                     <div class="modal-body p-4 text-center">
                         
                         <div class="form-floating mb-3">
                             <select class="form-select" id="reasonSelect" name="reason" required>
-                                <option selected disabled value="">Выберите из списка</option>
+                                <option disabled value="">Выберите из списка</option>
                                 {% for reason in reasons %}
-                                    <option value="{{ reason.0 }}">{{ reason.1 }}</option> 
+                                    <option {% if reason.0 == 0 %}selected{% endif %} value="{{ reason.0 }}">{{ reason.1 }}</option> 
                                 {% endfor %}
                             </select>
                             <label for="reasonSelect">Причина отказа</label>

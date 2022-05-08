@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MessageBooking
+from .models import MessageBooking, MessageBoat, Message
 from user.serializers import MessageUserSerializer
 
 class MessageBookingSerializerSend(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class MessageBookingSerializerSend(serializers.ModelSerializer):
         model = MessageBooking
         fields = ('text', 'booking_id')
 
-class MessageBookingSerializerList(serializers.ModelSerializer):
+class MessageSerializerList(serializers.ModelSerializer):
     sender = MessageUserSerializer()
     is_out = serializers.SerializerMethodField()
 
@@ -17,5 +17,5 @@ class MessageBookingSerializerList(serializers.ModelSerializer):
         return obj.sender == self.context['request'].user
 
     class Meta:
-        model = MessageBooking
+        model = Message
         fields = ('id', 'text', 'sender', 'is_out', 'sent_at')

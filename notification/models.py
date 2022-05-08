@@ -16,17 +16,3 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-pk']
-
-class BoatDeclinedModeration(Notification):
-    
-    class REASON(models.IntegerChoices):
-        OTHER = 0, _("Прочее")
-
-    boat    = models.OneToOneField(Boat, on_delete=models.CASCADE, related_name="declined_moderation")
-    reason  = models.IntegerField(choices=REASON.choices)
-    comment = models.TextField(null=True, blank=True)
-
-    @classmethod
-    def get_reasons(cls):
-        types = cls.REASON.choices
-        return sorted(types, key=lambda tup: tup[1])

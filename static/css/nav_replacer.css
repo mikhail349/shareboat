@@ -1,0 +1,25 @@
+.nav-replacer {
+    color: var(--bs-gray-200) !important;
+}
+
+.nav-replacer svg {
+    width: 54px;
+    height: 38px;
+    color: var(--bs-gray-200) !important;
+}
+
+.nav-replacer .title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 46px;
+    max-width: 80%;
+    font-size: 1.25rem;
+    color: var(--bs-gray-200) !important;
+}
+
+.nav-replacer .title div {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

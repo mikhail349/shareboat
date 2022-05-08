@@ -24,9 +24,9 @@ from .exceptions import BoatFileCountException, PriceDateRangeException
 from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
-from notification.models import BoatDeclinedModeration
 from base.models import Base
 from booking.models import Booking
+from chat.models import MessageBoat
 
 import json
 
@@ -108,7 +108,7 @@ def moderate(request, pk):
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
             context = {
                 'boat': boat,
-                'reasons': BoatDeclinedModeration.get_reasons()
+                'reasons': MessageBoat.get_rejection_reasons()
             }
             return render(request, 'boat/moderate.html', context=context)
         except Boat.DoesNotExist:
@@ -135,48 +135,60 @@ def set_status(request, pk):
         boat.status = new_status
         boat.save()
 
-        BoatDeclinedModeration.objects.filter(boat=boat).delete()
-
         return JsonResponse({})
     except Boat.DoesNotExist:
         return response_not_found()    
 
 @permission_required('boat.can_moderate_boats', raise_exception=True)
-def accept_boat(request, pk):
-    if request.method == 'POST':
-        try:
-            boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
-                   
-            if boat.modified != parse_datetime(request.POST.get('modified')):
-                return JsonResponse({'code': 'outdated', 'message': 'Данные лодки были изменены'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            boat.status = Boat.Status.PUBLISHED
-            boat.save()
-            return JsonResponse({'redirect': reverse('boat:boats_on_moderation')})
-        except Boat.DoesNotExist:
-            return response_not_found()
+def accept(request, pk):
+    try:
+        boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
+                
+        if boat.modified != parse_datetime(request.POST.get('modified')):
+            context = {
+                'boat': boat,
+                'reasons': MessageBoat.get_rejection_reasons(),
+                'errors': 'Лодка была изменена. Выполните проверку еще раз.'
+            }
+            return render(request, 'boat/moderate.html', context=context) 
+        
+        boat.status = Boat.Status.PUBLISHED
+        boat.save()
+        return redirect(reverse('boat:boats_on_moderation'))
+    except Boat.DoesNotExist:
+        return render(request, 'not_found.html')
 
 @permission_required('boat.can_moderate_boats', raise_exception=True)
-def decline_boat(request, pk):
+def reject(request, pk):
     if request.method == 'POST':
         try:
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
-            reason = request.POST.get('reason')
+            reason = int(request.POST.get('reason'))
             comment = request.POST.get('comment')
             modified = parse_datetime(request.POST.get('modified'))
                    
+            reasons = MessageBoat.get_rejection_reasons()
+
             if boat.modified != modified:
-                return JsonResponse({'code': 'outdated', 'message': 'Данные лодки были изменены'}, status=status.HTTP_400_BAD_REQUEST)
+                context = {
+                    'boat': boat,
+                    'reasons': reasons,
+                    'errors': 'Лодка была изменена. Возможно, недочёты исправлены.'
+                }
+                return render(request, 'boat/moderate.html', context=context) 
             
             boat.status = Boat.Status.DECLINED
             boat.save()
 
-            BoatDeclinedModeration.objects.filter(boat=boat).delete()
-            BoatDeclinedModeration.objects.create(title="Лодка отклонена", text="Объявление не соответствует правилам сервиса", user=boat.owner, boat=boat, reason=reason, comment=comment)
+            #reason_display = [item[1] for item in reasons if item[0] == reason][0]
+            message_text = f'Объявление не соответствует правилам сервиса: {comment}' 
+            MessageBoat.objects.create(text=message_text, recipient=boat.owner, boat=boat)
 
-            return JsonResponse({'redirect': reverse('boat:boats_on_moderation')})
+            #BoatDeclinedModeration.objects.create(title="Лодка отклонена", text="Объявление не соответствует правилам сервиса", user=boat.owner, boat=boat, reason=reason, comment=comment)
+
+            return redirect(reverse('boat:boats_on_moderation'))
         except Boat.DoesNotExist:
-            return response_not_found()
+            return render(request, 'not_found.html')
 
 
 def boats(request):

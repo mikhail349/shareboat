@@ -18,24 +18,12 @@
                
                 <div id="notificationCard{{item.pk}}" class="card bg-light mb-3">
                     <div class="card-body">
-                        {% if item|hasattr:'boatdeclinedmoderation' %}
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title text-danger">{{ item.title }}</h5>
-                                <button data-notification-id="{{ item.pk }}" type="button" class="btn-close text-reset" aria-label="Close"></button>
-                            </div>
-                            <p class="card-text">{{ item.text }}</p>
-                            <p class="card-text"><small class="text-muted">{{ item.received_at|timesince }} назад</small></p>
-                            <a href="{% url 'boat:view' item.boatdeclinedmoderation.boat.pk  %}" class="btn btn-primary">Перейти к лодке</a>
-                        {% else %}
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title">{{ item.title }}</h5>
-                                <button data-notification-id="{{ item.pk }}" type="button" class="btn-close text-reset" aria-label="Close"></button>
-                            </div>                    
-                            <p class="card-text">{{ item.text }}</p>
-                            <p class="card-text"><small class="text-muted">{{ item.received_at|timesince }} назад</small></p>
-                        {% endif %}
-                        
-                        
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <button data-notification-id="{{ item.pk }}" type="button" class="btn-close text-reset" aria-label="Close"></button>
+                        </div>                    
+                        <p class="card-text">{{ item.text }}</p>
+                        <p class="card-text"><small class="text-muted">{{ item.received_at|timesince }} назад</small></p>                     
                     </div>
                 </div>
                 

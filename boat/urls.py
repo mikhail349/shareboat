@@ -7,13 +7,12 @@ app_name = 'boat'
 
 apiurlpatterns = [
     path('create/', views.create, name='api_create'),
-    url(r'delete/(?P<pk>[0-9]+)/', views.delete, name='api_delete'),
-    url(r'get_files/(?P<pk>[0-9]+)/', views.get_files),
+    path('update/<int:pk>/', views.update, name='api_update'),
+    path('delete/<int:pk>/', views.delete, name='api_delete'),
+
+    path('get_files/<int:pk>/', views.get_files),
     path('calc_booking/<int:pk>/', views.calc_booking, name='api_calc_booking'),
     path('set_status/<int:pk>/', views.set_status, name='api_set_status'),
-
-    path('decline_boat/<int:pk>/', views.decline_boat, name='api_decline_boat'),
-    path('accept_boat/<int:pk>/', views.accept_boat, name='api_accept_boat')
 ]
 
 urlpatterns = [
@@ -22,9 +21,13 @@ urlpatterns = [
     path('boats_on_moderation/', views.boats_on_moderation, name='boats_on_moderation'),
 
     path('create/', views.create, name='create'),
-    url(r'update/(?P<pk>[0-9]+)/', views.update, name='update'),
+    path('update/<int:pk>/', views.update, name='update'),
     path('booking/<int:pk>/', views.booking, name='booking'),
     path('view/<int:pk>/', views.view, name='view'),
+
     path('moderate/<int:pk>/', views.moderate, name='moderate'),
+    path('accept/<int:pk>/', views.accept, name='accept'),
+    path('reject/<int:pk>/', views.reject, name='reject'),
+
     path('api/', include(apiurlpatterns))
 ]

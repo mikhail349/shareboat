@@ -15,10 +15,20 @@ class Message(models.Model):
     read        = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.sender}: {self.text}'
+        sender = self.sender or '[Системное сообщение]'
+        return f'{sender}: {self.text}'
 
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
 
 class MessageBoat(Message):
+    
+    class RejectionReason(models.IntegerChoices):
+        OTHER = 0, "Прочее"
+    
     boat = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name="messages")
+
+    @classmethod
+    def get_rejection_reasons(cls):
+        types = cls.RejectionReason.choices
+        return sorted(types, key=lambda tup: tup[1])

@@ -18,13 +18,16 @@
         <script type="text/javascript" src="{% static 'js/nav.min.js' %}"></script>
         <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/nav_replacer.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'css/jumbotron.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extension.css' %}">
         <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.ico' %}"/>
     </head>
     <body>
         
-        {% include 'nav.html' %}
+        {% block nav %}
+            {% include 'nav.html' %}
+        {% endblock %}
 
         <div class="main-content-container">
             {% block content %}{% endblock %}

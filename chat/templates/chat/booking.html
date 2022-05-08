@@ -5,36 +5,25 @@
 
 {% block title %}Чат{% endblock %}
 
+{% block nav %}
+    {% url 'booking:view' booking.id as view_url %}
+    {% include 'booking/nav_replacer.html' with back_link=view_url %}
+{% endblock %}
+
 {% block content %}
     
     <script type="text/javascript">
         var messages = {{ messages|safe }},
             bookingId = {{ booking.pk }};
     </script>
-
+    
+    <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
     <script type="text/javascript" src="{% static 'chat/js/booking.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/booking.css' %}">
-
-    <div id="bookingData" class="fixed-top top-0-header alert rounded-0 {{ booking.status|get_status_color }}" role="alert">
-        <div class="container-lg">
-            {% include 'booking/booking_data.html' %}     
-        </div>
-    </div>
 
     <div id="wrapperMsgContainer" class="container-lg">    
         <div id="msgContainer" class="list-group overflow-auto"></div>
     </div>
     
-    <div class="fixed-bottom bg-light py-3">
-        <div class="container-lg">                 
-            <div class="row g-3">
-                <div class="col">
-                    <textarea id="textArea" rows="1" class="form-control" placeholder="Сообщение..." autocomplete="off" autofocus></textarea> 
-                </div>
-                <div class="col-auto">
-                    <button type="button" id="btnSendMessage" class="btn btn-outline-primary" autocomplete="off" disabled>Отправить</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'chat/footer.html' %}
 {% endblock  %}

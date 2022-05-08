@@ -7,15 +7,11 @@ html, body {
 }
 
 #wrapperMsgContainer {
-    margin-top: calc(114px + 1rem);
+    margin-top: calc(1rem);
     margin-bottom: 70px;
 }
 
-#bookingData {
-    z-index: 1029;
-}
-
-img.chat-avatar {
+#msgContainer img.chat-avatar {
     min-width: 32px;
     min-height: 32px;
 }

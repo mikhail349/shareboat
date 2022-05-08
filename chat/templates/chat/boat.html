@@ -1,18 +1,27 @@
 {% extends 'main.html' %}
+{% load static %}
 
 {% block title %}Чат{% endblock %}
 
+{% block nav %}
+    {% url 'boat:view' boat.id as view_url %}
+    {% include 'boat/nav_replacer.html' with back_link=view_url %}
+{% endblock %}
+
 {% block content %}
-    <div class="fixed-bottom bg-light py-3">
-        <div class="container-lg">                 
-            <div class="row g-3">
-                <div class="col">
-                    <textarea id="textArea" rows="1" class="form-control" placeholder="Сообщение..." autocomplete="off" autofocus></textarea> 
-                </div>
-                <div class="col-auto">
-                    <button type="button" id="btnSendMessage" class="btn btn-outline-primary" autocomplete="off" disabled>Отправить</button>
-                </div>
-            </div>
-        </div>
+    <script type="text/javascript">
+        var messages = {{ messages|safe }},
+            boatId = {{ boat.pk }},
+            boatName = "{{ boat.name }}";
+    </script>
+
+    <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+    <script type="text/javascript" src="{% static 'chat/js/boat.min.js' %}"></script>
+
+    <div id="wrapperMsgContainer" class="container-lg">    
+        <div id="msgContainer" class="list-group overflow-auto"></div>
     </div>
+
+    {% include 'chat/footer.html' %}
 {% endblock  %}
