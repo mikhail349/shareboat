@@ -16,7 +16,7 @@ class Booking(models.Model):
         PENDING     = 0, _("Ожидание подтверждения")
         DECLINED    = -1, _("Отменено")
         ACCEPTED    = 1, _("Подтверждено")
-        PREPAYMENT_REQUIRED = 2, _("Требуется предоплата")
+        PREPAYMENT_REQUIRED = 2, _("Ожидание предоплаты")
         ACTIVE      = 3, _("Активно")
         DONE        = 4, _("Завершено")
 
@@ -32,7 +32,7 @@ class Booking(models.Model):
         if self.pk is None:
             accepted_bookings_exist = Booking.objects.filter(
                 boat=self.boat,
-                status=self.Status.ACCEPTED
+                status__in=[self.Status.ACCEPTED, self.Status.ACTIVE, self.Status.DONE]
             ).filter(
                 Q(start_date__range=(self.start_date,self.end_date))|Q(end_date__range=(self.start_date,self.end_date))|Q(start_date__lt=self.start_date,end_date__gt=self.end_date)
             ).exists()

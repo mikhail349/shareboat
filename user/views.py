@@ -126,7 +126,8 @@ def login(request):
             }
             return render(request, 'user/login.html', context=context)
 
-        user = authenticate(request, email=data['email'], password=data['password'])
+        email_lower = data['email'].lower()
+        user = authenticate(request, email=email_lower, password=data['password'])
         if user is not None:
             if user.email_confirmed:
                 django_login(request, user)
@@ -232,13 +233,15 @@ def register(request):
         if not check_recaptcha(request):
             return render_error('Проверка "Я не робот" не пройдена')  
 
-        if User.objects.filter(email=data['email']).exists():
+        email_lower = data['email'].lower()
+
+        if User.objects.filter(email=email_lower).exists():
             return render_error('%s уже зарегистрирован в системе' % data['email'])      
 
         if data['password1'] != data['password2']:
             return render_error('Пароли не совпадают')  
 
-        user = User.objects.create(email=data['email'], first_name=data.get('first_name'))
+        user = User.objects.create(email=email_lower, first_name=data.get('first_name'))
         user.set_password(data['password1'])
         user.save()
         

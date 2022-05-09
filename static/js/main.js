@@ -77,14 +77,7 @@ $.fn.checkValidity = function(handleError=true) {
     const res = this[0].checkValidity();
 
     if (!res && handleError) {
-        $errors = $('.errors');
-        if ($errors.length) {
-            $errors.addClass(' alert alert-danger');
-            $errors.text(msg);
-        } else if (handleError) {
-            showErrorToast(msg);
-        }
-        $("html, body").scrollTop(0);
+        showErrorToast(msg);  
     }
     
     return res;

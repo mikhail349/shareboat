@@ -256,7 +256,8 @@ def booking(request, pk):
             boat = Boat.published.get(pk=pk)
             price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
             prices = boat.prices.values('start_date', 'end_date')
-            accepted_bookings = boat.bookings.filter(status=Booking.Status.ACCEPTED).values('start_date', 'end_date') 
+            S = Booking.Status
+            accepted_bookings = boat.bookings.filter(status__in=[S.ACCEPTED, S.ACTIVE, S.DONE]).values('start_date', 'end_date') 
 
             context = {
                 'boat': boat,
