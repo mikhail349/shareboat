@@ -1,20 +1,36 @@
 class MessageHandler {
 
-    constructor(longPollingApi, sendMessageApi) {
+    constructor(getMessagesApi, sendMessageApi) {
+        this.GET_NEW_MESSAGES_TIMER = 2
+
         this.msgContainer = $('#msgContainer');
         this.btnSend = $('#btnSendMessage');
         this.textArea = $('#textArea');
+        this.btnGoToBottom = $('.btn-go-to-bottom');
 
         this.isOnBottom = false;
-        this.longPollingApi = longPollingApi;
+        this.getMessagesApi = getMessagesApi;
         this.sendMessageApi = sendMessageApi;
 
         this.lastAppendedSenderId = undefined;
 
         var self = this;
+        self.isOnBottom = false;
         $(window).scroll(function() {
             self.isOnBottom = ($(window).scrollTop() + $(window).height() == $(document).height());
+
+            if (self.isOnBottom) {
+                self.btnGoToBottom.removeClass('show');
+                self.btnGoToBottom.addClass('hide');
+            } else {
+                self.btnGoToBottom.removeClass('hide');
+                self.btnGoToBottom.addClass('show');
+            }
         });
+
+        this.btnGoToBottom.on('click', function() {
+            $("html, body").animate({ scrollTop: $(document).height() });
+        })
 
         this.textArea.on('input', function(e) {
             const text = self.getValue();
@@ -39,7 +55,8 @@ class MessageHandler {
         });
 
         this.appendExistingMessages();
-        this.getNewMessages();
+        this.getNewMessages = this.getNewMessages.bind(this);
+        this.msgTimerId = setInterval(self.getNewMessages, this.GET_NEW_MESSAGES_TIMER * 1000);
     };
 
     getValue() {
@@ -110,6 +127,9 @@ class MessageHandler {
         formData.append('text', text);
 
         var self = this;
+        self.btnSend.attr('disabled', true);
+        clearInterval(self.msgTimerId);
+        
         $.ajax({ 
             type: "POST",
             url: self.sendMessageApi,
@@ -123,36 +143,38 @@ class MessageHandler {
         
         function onSuccess(data) {
             self.textArea.val(null);
-            self.appendMessage(data.data);
+
+            for (let message of data.data) {
+                self.appendMessage(message);
+            }
+
             $("html, body").animate({ scrollTop: $(document).height() });
+            self.msgTimerId = setInterval(self.getNewMessages, self.GET_NEW_MESSAGES_TIMER * 1000);
         }
 
         function onError(error) {
             showErrorToast(error.responseJSON.message);
+            self.btnSend.attr('disabled', false);
         }
     }
 
-    // Long polling
     getNewMessages() {
         var self = this;
+
         $.ajax({
             type: 'GET',
-            url: this.longPollingApi,
-        }).done(function(data) {
-            if (data?.data?.length > 0) {
-                for (let message of data.data) {
-                    self.appendMessage(message);
-                }
-                if (self.isOnBottom) {
-                    $("html, body").animate({ scrollTop: $(document).height() });
+            url: self.getMessagesApi,
+            success: function(data) {
+                if (data?.data?.length > 0) {
+                    for (let message of data.data) {
+                        self.appendMessage(message);
+                    }
+                    if (self.isOnBottom) {
+                        $("html, body").animate({ scrollTop: $(document).height() });
+                    }
                 }
             }
-            self.getNewMessages();
-        }).fail(function(error) {
-            if (error.status == 0) {
-                self.getNewMessages();
-            }
-        })
+        });
     }
     
         

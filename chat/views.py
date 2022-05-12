@@ -18,13 +18,11 @@ def get_new_messages_booking(request, pk):
         try:
             booking = Booking.objects.get(Q(pk=pk), Q(renter=request.user) | Q(boat__owner=request.user))
 
-            while True:
-                messages = MessageBooking.objects.filter(booking=booking, recipient=request.user, read=False).order_by('sent_at')
-                if messages:
-                    data = MessageSerializerList(messages, many=True, context={'request': request}).data
-                    messages.update(read=True)
-                    return JsonResponse({'data': data})
-                time.sleep(1)
+            messages = MessageBooking.objects.filter(booking=booking, recipient=request.user, read=False).order_by('sent_at')
+            data = MessageSerializerList(messages, many=True, context={'request': request}).data
+            messages.update(read=True)
+
+            return JsonResponse({'data': data})
             
         except Booking.DoesNotExist:
             return JsonResponse({'message': 'Бронирование не найдено'}, status=400)
@@ -40,21 +38,18 @@ def get_new_messages_boat(request, pk):
             boat = Boat.objects.get(pk=pk)
             is_moderator = request.user.has_perm('boat.can_moderate_boats')
 
-            while True:
-                messages = MessageBoat.objects.filter(boat=boat, read=False)
-                if boat.owner == request.user:
-                    messages = messages.filter(recipient=request.user)
-                elif is_moderator:
-                    messages = messages.filter(recipient__isnull=True)
-                else:
-                    return _not_found()      
-                messages = messages.order_by('sent_at')
+            messages = MessageBoat.objects.filter(boat=boat, read=False)
+            if boat.owner == request.user:
+                messages = messages.filter(recipient=request.user)
+            elif is_moderator:
+                messages = messages.filter(recipient__isnull=True)
+            else:
+                return _not_found()      
+            messages = messages.order_by('sent_at')
 
-                if messages:
-                    data = MessageSerializerList(messages, many=True, context={'request': request}).data
-                    messages.update(read=True)
-                    return JsonResponse({'data': data})
-                time.sleep(1)
+            data = MessageSerializerList(messages, many=True, context={'request': request}).data
+            messages.update(read=True)
+            return JsonResponse({'data': data})
             
         except Boat.DoesNotExist:
             return _not_found()
@@ -66,13 +61,17 @@ def send_message_booking(request, pk):
         try:
             booking = Booking.objects.get(Q(pk=pk), Q(renter=request.user) | Q(boat__owner=request.user))
             recipient = booking.boat.owner if booking.renter == request.user else booking.renter
-            message = MessageBooking.objects.create(text=data.get('text'), sender=request.user, recipient=recipient, booking=booking)
-            message_ser = MessageSerializerList(message, context={'request': request})
-            return JsonResponse({'data': message_ser.data})
+            
+            new_message = MessageBooking.objects.create(text=data.get('text'), sender=request.user, recipient=recipient, booking=booking)
+
+            messages = MessageBooking.objects.filter(Q(booking=booking), Q(read=False), Q(recipient=request.user) | Q(pk=new_message.pk)).order_by('sent_at')
+            data = MessageSerializerList(messages, many=True, context={'request': request}).data
+            messages.filter(recipient=request.user, read=False).update(read=True)
+
+            return JsonResponse({'data': data})
         except Booking.DoesNotExist:
             return JsonResponse({'message': 'Не удалось отправить сообщение. Бронирование не найдено'}, status=400)
      
-
 
 @login_required
 def send_message_boat(request, pk):
@@ -91,9 +90,13 @@ def send_message_boat(request, pk):
             else:
                 return JsonResponse({'message': 'Не удалось отправить сообщение. Лодка не найдена'}, status=400)
 
-            message = MessageBoat.objects.create(text=data.get('text'), sender=sender, recipient=recipient, boat=boat)
-            message_ser = MessageSerializerList(message, context={'request': request})
-            return JsonResponse({'data': message_ser.data})
+            new_message = MessageBoat.objects.create(text=data.get('text'), sender=sender, recipient=recipient, boat=boat)
+            
+            messages = MessageBoat.objects.filter(Q(boat=boat), Q(read=False), Q(recipient=request.user) | Q(pk=new_message.pk)).order_by('sent_at')
+            data = MessageSerializerList(messages, many=True, context={'request': request}).data
+            messages.filter(recipient=request.user, read=False).update(read=True)
+
+            return JsonResponse({'data': data})
         
         except Booking.DoesNotExist:
             return JsonResponse({'message': 'Не удалось отправить сообщение. Лодка не найдена'}, status=400)

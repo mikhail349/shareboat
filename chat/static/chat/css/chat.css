@@ -15,3 +15,37 @@ html, body {
     min-width: 32px;
     min-height: 32px;
 }
+
+.btn-go-to-bottom {
+    float: right;
+    padding-right: calc(45px + 1rem);
+    transition: transform .2s ease-in-out;
+}
+
+.btn-go-to-bottom div {
+    position: fixed;
+    bottom: calc(70px + 1rem);
+}
+
+.btn-go-to-bottom svg {
+    height: 45px;
+    width: 45px;
+}
+
+.btn-go-to-bottom.show {
+    transform: scale(1);
+}
+
+.btn-go-to-bottom.hide {
+    transform: scale(0);
+}
+
+.btn-go-to-bottom:hover {
+    cursor: pointer;
+}
+
+@keyframes show {
+    to {
+        scale: 1;
+    }
+}

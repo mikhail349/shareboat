@@ -31,7 +31,7 @@ from . import views
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += [
     path('', views.index),
-    path('admin/', admin.site.urls),
+    path(f'{settings.ADMIN_URL}/', admin.site.urls),
 
     path('user/', include(user_urls)),
     path('boats/', include(boat_urls)),
