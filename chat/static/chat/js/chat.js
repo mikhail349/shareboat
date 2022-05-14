@@ -17,7 +17,8 @@ class MessageHandler {
         var self = this;
         self.isOnBottom = false;
         $(window).scroll(function() {
-            self.isOnBottom = ($(window).scrollTop() + $(window).height() == $(document).height());
+
+            self.isOnBottom = ((window.innerHeight + window.scrollY - 70) >= document.body.offsetHeight);
 
             if (self.isOnBottom) {
                 self.btnGoToBottom.removeClass('show');
