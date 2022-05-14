@@ -4,7 +4,7 @@ var lastScrollTop = 0,
 
 $(document).ready(() => {
 
-     const $mainNav = $('body > header > nav');
+     /*const $mainNav = $('body > header > nav');
      const $mainToast = $('#toastContainer');
 
      const mainNavHeight = 62;
@@ -21,5 +21,5 @@ $(document).ready(() => {
           lastScrollTop = scrollTop;
      }
 
-     window.addEventListener("scroll", mainMenuHide, false);
+     window.addEventListener("scroll", mainMenuHide, false);*/
 });
