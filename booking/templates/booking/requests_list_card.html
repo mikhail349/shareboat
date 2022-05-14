@@ -1,6 +1,6 @@
 {% load booking_extras %}
 
-<div class="album py-5 bg-light">
+<div class="album">
     <div class="container">
         <div class="row g-4">
             {% for req in requests %}
@@ -16,7 +16,7 @@
                                 {% include 'booking/booking_data.html' with booking=req %}
                             </div>
                             <div class="dropdown mt-auto">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuStatus{{ req.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuStatus{{ req.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
                                     Действия
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ req.pk }}">

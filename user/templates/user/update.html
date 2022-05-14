@@ -64,13 +64,17 @@
                 <button id="btnGenerateTgCode" type="button" class="btn btn-outline-primary">Сгенерировать код</button>
                 <div id="tgCode"></div>
             {% endif %}
-            <hr/>
-            <div class="row g-3">
-                <div class="col-auto pe-0">
-                    <button type="submit" class="btn btn-outline-success">Сохранить</button>
-                </div>
-                <div class="col-auto">
-                    <a class="btn btn-outline-danger" href="/user/logout/">Выйти из аккаунта</a>    
+
+            <div class="fixed-bottom bg-light py-3">
+                <div class="container-lg">
+                    <div class="row row-cols-lg-auto g-3">            
+                        <div class="col pe-0">
+                            <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
+                        </div>
+                        <div class="col">
+                            <a class="btn btn-outline-danger w-100" href="/user/logout/">Выйти из аккаунта</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

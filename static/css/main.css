@@ -29,6 +29,7 @@ body {
 
 body > .main-content-container {
     padding-top: var(--header-padding-top);
+    margin-bottom: 1rem;
 }  
 
 .loading-ship-wheel {  

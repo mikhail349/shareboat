@@ -40,13 +40,13 @@
                     <br/>        
                 {% endif %}           
             </p>
-            <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр</button>
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр</button>
         </div>
     </section>
     
 
     {% if boats %}
-        <div class="album bg-light py-5">
+        <div class="album">
             <div class="container">
                 {% include 'boat/paginator.html' with class="pb-5" %}
                 <div class="row g-4">
