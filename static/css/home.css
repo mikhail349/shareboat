@@ -9,7 +9,6 @@ body > header > nav.navbar {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: rgba(0,0,0,.5);
 }
 
 .video-header {
@@ -32,7 +31,6 @@ body > header > nav.navbar {
 
 .viewport-header h1 {
     font-family: 'Syncopate', sans-serif;
-    color: white;
     text-transform: uppercase;
     letter-spacing: 3vw;
     text-align: center;

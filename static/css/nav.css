@@ -11,6 +11,10 @@
     top: var(--header-padding-top) !important;
 }
 
+.navbar {
+    min-height: 62px;
+}
+
 .nav-link, .navbar-brand {
     color: var(--bs-gray-200) !important;
 }
