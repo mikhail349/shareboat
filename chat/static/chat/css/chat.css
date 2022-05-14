@@ -43,9 +43,3 @@ html, body {
 .btn-go-to-bottom:hover {
     cursor: pointer;
 }
-
-@keyframes show {
-    to {
-        scale: 1;
-    }
-}

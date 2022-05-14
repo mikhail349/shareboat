@@ -22,6 +22,7 @@ class MessageHandler {
             if (self.isOnBottom) {
                 self.btnGoToBottom.removeClass('show');
                 self.btnGoToBottom.addClass('hide');
+                $('#hasNewMessages').hide();
             } else {
                 self.btnGoToBottom.removeClass('hide');
                 self.btnGoToBottom.addClass('show');
@@ -171,6 +172,8 @@ class MessageHandler {
                     }
                     if (self.isOnBottom) {
                         $("html, body").animate({ scrollTop: $(document).height() });
+                    } else {
+                        $('#hasNewMessages').show()
                     }
                 }
             }
