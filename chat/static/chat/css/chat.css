@@ -24,7 +24,7 @@ html, body {
 
 .btn-go-to-bottom div {
     position: fixed;
-    bottom: calc(70px + 1rem);
+    bottom: calc(70px);
 }
 
 .btn-go-to-bottom svg {

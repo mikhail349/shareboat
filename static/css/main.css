@@ -23,8 +23,9 @@
     min-width: 207px;
 }
 
-body {
-    -webkit-overflow-scrolling: touch;
+html, body {
+
+    overflow-y: scroll;
 }
 
 body > .main-content-container {
