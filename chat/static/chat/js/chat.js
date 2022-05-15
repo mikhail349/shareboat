@@ -18,7 +18,7 @@ class MessageHandler {
         self.isOnBottom = false;
         $(window).scroll(function() {
 
-            const scrollY = Math.ceil(window.scrollY);
+            const scrollY = Math.ceil(window.scrollY) - 70;
             self.isOnBottom = ((window.innerHeight + scrollY) >= document.body.offsetHeight);
 
             if (self.isOnBottom) {
