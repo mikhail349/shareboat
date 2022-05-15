@@ -23,9 +23,8 @@
     min-width: 207px;
 }
 
-html, body {
-
-    overflow-y: scroll;
+body {
+    height: 100%;
 }
 
 body > .main-content-container {
