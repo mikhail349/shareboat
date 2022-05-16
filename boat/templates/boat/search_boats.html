@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Поиск лодки{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'boat/css/search_boats.css?a=13' %}">
+
+    <div class="container-md">
+        <section class="jumbotron text-center ">      
+            <h1 class="jumbotron-heading">Поиск лодки</h1>
+        </section>
+
+        <div class="search-boats-panel d-flex justify-content-center mb-3">
+            <form action='.' method="get" class="w-100 needs-validation" novalidate>
+                <div class="form-floating mb-3">                 
+                    <input type="date" name="dateFrom" class="form-control" value="{{ q.date_from }}" required />
+                    <label>Начало периода</label>
+                    <div class="invalid-tooltip">Укажите начало периода</div>
+                </div>
+                <div class="form-floating mb-3">                 
+                    <input type="date" name="dateTo" class="form-control" value="{{ q.date_to }}" required />
+                    <label>Окончание периода</label>
+                    <div class="invalid-tooltip">Укажите окончание периода</div>
+                </div>
+
+                <button class="btn btn-primary btn-lg w-100" type="submit">Поиск</button>
+            </form>
+        </div>
+
+        {% if searched %}
+            <p class="lead text-muted">Найдено: {{ boats.count }}</p>
+        {% endif %}
+
+        <div class="album">
+            <div class="row g-4">
+                {% for boat in boats %}
+                    <div class="col-lg-4 col-md-4">
+                        <div class="card box-shadow h-100">
+                            <a href="{% url 'boat:booking' boat.id %}">
+                                {% include 'boat/carousel.html' %}
+                            </a>    
+                            <div class="card-body d-flex flex-column">
+                                {% include 'boat/card.html' %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

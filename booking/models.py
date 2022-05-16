@@ -10,6 +10,17 @@ from .exceptions import BookingDateRangeException, BookingDuplicatePendingExcept
 from boat.models import Boat
 from user.models import User
 
+
+class BookingQuerySet(models.QuerySet):
+    def in_range(self, start_date, end_date):
+        return self.filter(
+            Q(start_date__range=(start_date,end_date)) | Q(end_date__range=(start_date,end_date)) | Q(start_date__lt=start_date,end_date__gt=end_date)
+        )
+
+    def blocked_in_range(self, start_date, end_date):
+        return self.filter(status__in=Booking.BLOCKED_STATUSES).in_range(start_date, end_date)
+
+
 class Booking(models.Model):
 
     class Status(models.IntegerChoices):
@@ -20,6 +31,8 @@ class Booking(models.Model):
         ACTIVE      = 3, _("Активно")
         DONE        = 4, _("Завершено")
 
+    BLOCKED_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE, Status.DONE]
+
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')
     status      = models.IntegerField(choices=Status.choices, default=Status.PENDING)
@@ -28,14 +41,11 @@ class Booking(models.Model):
     end_date    = models.DateField()
     total_sum   = models.DecimalField(max_digits=8, decimal_places=2)
 
+    objects = models.Manager.from_queryset(BookingQuerySet)()
+
     def clean(self):
         if self.pk is None:
-            accepted_bookings_exist = Booking.objects.filter(
-                boat=self.boat,
-                status__in=[self.Status.ACCEPTED, self.Status.ACTIVE, self.Status.DONE]
-            ).filter(
-                Q(start_date__range=(self.start_date,self.end_date))|Q(end_date__range=(self.start_date,self.end_date))|Q(start_date__lt=self.start_date,end_date__gt=self.end_date)
-            ).exists()
+            accepted_bookings_exist = Booking.objects.filter(boat=self.boat).blocked_in_range(self.start_date, self.end_date).exists()
 
             if accepted_bookings_exist:
                 raise BookingDateRangeException()
@@ -44,9 +54,7 @@ class Booking(models.Model):
                 boat=self.boat,
                 renter=self.renter,
                 status=self.Status.PENDING
-            ).filter(
-                Q(start_date__range=(self.start_date,self.end_date))|Q(end_date__range=(self.start_date,self.end_date))|Q(start_date__lt=self.start_date,end_date__gt=self.end_date)
-            ).exists()
+            ).in_range(self.start_date, self.end_date).exists()
 
             if duplicate_bookings_exist:
                 raise BookingDuplicatePendingException()

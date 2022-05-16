@@ -190,6 +190,39 @@ def reject(request, pk):
         except Boat.DoesNotExist:
             return render(request, 'not_found.html')
 
+def search_boats(request):
+    q_date_from = request.GET.get('dateFrom')
+    q_date_to   = request.GET.get('dateTo') 
+
+    boats = Boat.objects.none()
+    searched = False
+
+    if q_date_from and q_date_to:
+        # prices
+        boat_prices = BoatPrice.objects.all()
+        if q_date_from:
+            boat_prices = boat_prices.filter(start_date__lte=q_date_from, end_date__gte=q_date_from)
+        if q_date_to:
+            boat_prices = boat_prices.filter(start_date__lte=q_date_to, end_date__gte=q_date_to)
+
+        # bookings
+        bookings = Booking.blocked_in_range(q_date_from, q_date_to)
+
+        boats = Boat.published.filter(prices__in=boat_prices).exclude(bookings__in=bookings)
+        searched = True
+
+    q = {
+        'date_from':    q_date_from,
+        'date_to':      q_date_to,
+    }
+
+    context = {
+        'q': q,
+        'boats': boats,
+        'searched': searched,
+    }
+
+    return render(request, 'boat/search_boats.html', context)
 
 def boats(request):
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
@@ -256,8 +289,7 @@ def booking(request, pk):
             boat = Boat.published.get(pk=pk)
             price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
             prices = boat.prices.values('start_date', 'end_date')
-            S = Booking.Status
-            accepted_bookings = boat.bookings.filter(status__in=[S.ACCEPTED, S.ACTIVE, S.DONE]).values('start_date', 'end_date') 
+            accepted_bookings = boat.bookings.filter(status__in=Booking.BLOCKED_STATUSES).values('start_date', 'end_date') 
 
             context = {
                 'boat': boat,

@@ -27,10 +27,11 @@ from telegram_bot import urls as telegram_bot_urls
 from chat import urls as chat_urls
 
 from . import views
+from boat import views as boat_views
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += [
-    path('', views.index),
+    path('', boat_views.search_boats),
     path(f'{settings.ADMIN_URL}/', admin.site.urls),
 
     path('user/', include(user_urls)),
