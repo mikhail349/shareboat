@@ -206,7 +206,7 @@ def search_boats(request):
             boat_prices = boat_prices.filter(start_date__lte=q_date_to, end_date__gte=q_date_to)
 
         # bookings
-        bookings = Booking.blocked_in_range(q_date_from, q_date_to)
+        bookings = Booking.objects.blocked_in_range(q_date_from, q_date_to)
 
         boats = Boat.published.filter(prices__in=boat_prices).exclude(bookings__in=bookings)
         searched = True
