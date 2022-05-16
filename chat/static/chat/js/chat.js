@@ -16,20 +16,9 @@ class MessageHandler {
 
         var self = this;
         self.isOnBottom = false;
-        $(window).scroll(function() {
-
-            const scrollY = Math.ceil(window.scrollY) - 70;
-            self.isOnBottom = ((window.innerHeight + scrollY) >= document.body.offsetHeight);
-
-            if (self.isOnBottom) {
-                self.btnGoToBottom.removeClass('show');
-                self.btnGoToBottom.addClass('hide');
-                $('#hasNewMessages').hide();
-            } else {
-                self.btnGoToBottom.removeClass('hide');
-                self.btnGoToBottom.addClass('show');
-            }
-        });
+        self.handleBottom = self.handleBottom.bind(self);
+        $(window).scroll(self.handleBottom);
+        $(window).on('resize', self.handleBottom);
 
         this.btnGoToBottom.on('click', function() {
             $("html, body").animate({ scrollTop: $(document).height() });
@@ -61,6 +50,21 @@ class MessageHandler {
         this.getNewMessages = this.getNewMessages.bind(this);
         this.msgTimerId = setInterval(self.getNewMessages, this.GET_NEW_MESSAGES_TIMER * 1000);
     };
+    
+    handleBottom() {
+        const self = this;
+        const scrollY = Math.ceil(window.scrollY) - 70;
+        self.isOnBottom = ((window.innerHeight + scrollY) >= document.body.offsetHeight);
+
+        if (self.isOnBottom) {
+            self.btnGoToBottom.removeClass('show');
+            self.btnGoToBottom.addClass('hide');
+            $('#hasNewMessages').hide();
+        } else {
+            self.btnGoToBottom.removeClass('hide');
+            self.btnGoToBottom.addClass('show');
+        }
+    }
 
     getValue() {
         return this.textArea.val();
