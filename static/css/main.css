@@ -25,6 +25,7 @@
 
 body {
     height: 100%;
+    color: var(--bs-primary);
 }
 
 body > .main-content-container {

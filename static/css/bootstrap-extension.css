@@ -1,3 +1,39 @@
+:root {
+    --bs-primary: #191645;
+    --bs-primary-rgb: 	25, 22, 69;
+}
+
+.btn-primary, .btn-primary:disabled, .btn-primary:visited {
+    color: var(--bs-gray-200);
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+.btn-primary:hover, .btn-outline-primary:hover, .btn-outline-primary.dropdown-toggle.show {
+    color: white;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+} 
+
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:visited,
+.btn-outline-primary.dropdown-toggle.show:focus {
+    box-shadow: 0 0 0 0.25rem rgb(25 22 69 / 50%);
+}
+
+.btn-outline-primary {
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+a {
+    color: var(--bs-primary);
+}
+
+.form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
 
 .card-img-top,
 .card-img {

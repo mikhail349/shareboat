@@ -15,38 +15,3 @@
         <div class="col text-end {% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан"|unlocalize }}</div>
     </div>
 </div>
-
-<!--
-<hr/>
-{% if boat.get_now_prices %}
-    <h6 class="card-title">Действующие цены</h6>
-    <table class="table">
-        <tbody>
-            {% for now_price in boat.get_now_prices %}
-                <tr>
-                    <td class="text-start">{{ now_price.get_type_display }}</td>
-                    <td class="text-start">{{ now_price.price }} руб.</td>
-                    <td class="text-end">до {{ now_price.end_date|date:"d.m.y" }} г.</td>
-                </tr>                                                 
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <h6 class="card-title text-danger mb-3">Нет действующих цен</h6>
-{% endif %}
-
-{% if boat.get_future_prices %}
-    <h6 class="card-title">Будущие цены</h6>
-    <table class="table">
-        <tbody>
-            {% for future_price in boat.get_future_prices %}
-                <tr>
-                    <td class="text-start">{{ future_price.get_type_display }}</td>
-                    <td class="text-start">{{ future_price.price }} руб.</td>
-                    <td class="text-end">с {{ future_price.start_date|date:"d.m.y" }} г.</td>
-                </tr>                                                 
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
--->
