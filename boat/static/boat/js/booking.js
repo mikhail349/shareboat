@@ -1,20 +1,27 @@
 $(document).ready(() => {
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const inputDatesExist = searchParams.has('dateFrom') && searchParams.has('dateTo');
+
     $('#bookingdaterangepicker').daterangepicker({
         format: 'DD.MM.YYYY',
         drops: 'up',
         autoUpdateInput: false,
+        startDate: inputDatesExist ? new Date(searchParams.get('dateFrom')) : undefined,
+        endDate: inputDatesExist ? new Date(searchParams.get('dateTo')) : undefined,
         minDate: new Date(Math.max.apply(null,[firstPriceDate, new Date()])),
         maxDate: lastPriceDate,
         isInvalidDate: function(date) {
+            const d = new Date(date._d.toDateString());
 
             for (let acceptedBookingRange of acceptedBookingsRanges) {
-                if (date._d >= acceptedBookingRange.startDate && date._d <= acceptedBookingRange.endDate) {
+                if (d >= acceptedBookingRange.startDate && d <= acceptedBookingRange.endDate) {
                     return true;
                 }
             }
 
             for (let priceRange of priceRanges) {
-                if (date._d >= priceRange.startDate && date._d <= priceRange.endDate) {
+                if (d >= priceRange.startDate && d <= priceRange.endDate) {
                     return false;
                 }
             }
@@ -54,6 +61,10 @@ $(document).ready(() => {
             firstDay: 1
         }
     })
+
+    if (inputDatesExist) {
+        calc_booking();
+    }
     
     var xhr = null;
     function calc_booking() {

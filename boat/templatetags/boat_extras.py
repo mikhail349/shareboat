@@ -1,5 +1,8 @@
 from django import template
+from django.db.models import Min
+
 from datetime import datetime
+from datetime import timedelta
 from decimal import Decimal
 import json
 from boat.utils import DecimalEncoder
@@ -68,3 +71,22 @@ def calc_sum(boat, *args, **kwargs):
             pass
 
     return None
+
+@register.simple_tag
+def get_min_price(boat, start_date, end_date):
+    start_date  = datetime.strptime(start_date, '%Y-%m-%d')
+    end_date    = datetime.strptime(end_date, '%Y-%m-%d')
+
+    counter = start_date
+    min_price = None
+    while counter <= end_date:
+        price = BoatPrice.objects.filter(boat=boat, start_date__lte=counter, end_date__gte=counter).aggregate(price=Min('price')).get('price')
+        if not min_price or price < min_price:
+            min_price = price
+        counter += timedelta(days=1)
+
+    return min_price
+
+    #BoatPrice.objects.filter(boat=boat, start_date__lte=start_date, end_date__gte=end_date)
+
+    #print(dates)

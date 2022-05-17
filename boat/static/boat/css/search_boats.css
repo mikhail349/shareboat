@@ -1,0 +1,9 @@
+.search-boats-panel div {
+    width: 100%;
+ }
+
+@media (min-width: 992px) {
+    .search-boats-panel div {
+        width: 330px;
+     }
+}

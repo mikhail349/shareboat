@@ -1,5 +1,20 @@
+{% load l10n %}
+
 <h5 class="card-title">{{ boat.name }}</h5>     
 <h6 class="card-subtitle mb-3 text-muted">{{ boat.get_type_display }}</h6>
+<div class="container text-muted px-0">
+    <div class="row row-cols-2">
+        <div class="col">Длина</div>
+        <div class="col text-end">{{ boat.length }} м.</div>
+        <div class="col">Ширина</div>
+        <div class="col text-end">{{ boat.width }} м.</div>
+        <div class="col">Осадка</div>
+        <div class="col text-end">{{ boat.draft }} м.</div>
+
+        <div class="col">Год выпуска</div>
+        <div class="col text-end {% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан"|unlocalize }}</div>
+    </div>
+</div>
 
 <!--
 <hr/>

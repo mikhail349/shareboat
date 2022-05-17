@@ -1,5 +1,3 @@
-
-from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db import transaction
 from django.db.models import Max, Min, Q
@@ -29,7 +27,7 @@ from booking.models import Booking
 from chat.models import MessageBoat
 
 import json
-
+import datetime
 
 def response_not_found():
     return JsonResponse({'message': 'Лодка не найдена'}, status=404)
@@ -198,26 +196,25 @@ def search_boats(request):
     searched = False
 
     if q_date_from and q_date_to:
-        # prices
-        boat_prices = BoatPrice.objects.all()
-        if q_date_from:
-            boat_prices = boat_prices.filter(start_date__lte=q_date_from, end_date__gte=q_date_from)
-        if q_date_to:
-            boat_prices = boat_prices.filter(start_date__lte=q_date_to, end_date__gte=q_date_to)
+        q_date_from = datetime.datetime.strptime(q_date_from, '%Y-%m-%d')
+        q_date_to = datetime.datetime.strptime(q_date_to, '%Y-%m-%d')
+        if q_date_from > q_date_to:
+            q_date_from, q_date_to = q_date_to, q_date_from
 
-        # bookings
+        counter = q_date_from
+        boats = Boat.published
+        while counter <= q_date_to:
+            boats = boats.filter(prices__start_date__lte=counter, prices__end_date__gte=counter)
+            counter += datetime.timedelta(days=1) 
+
+            if not boats:
+                break
+
         bookings = Booking.objects.blocked_in_range(q_date_from, q_date_to)
-
-        boats = Boat.published.filter(prices__in=boat_prices).exclude(bookings__in=bookings)
+        boats = boats.exclude(bookings__in=bookings)
         searched = True
 
-    q = {
-        'date_from':    q_date_from,
-        'date_to':      q_date_to,
-    }
-
     context = {
-        'q': q,
         'boats': boats,
         'searched': searched,
     }
