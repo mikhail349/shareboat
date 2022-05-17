@@ -68,7 +68,7 @@
                         </div>
                     </div>
                 {% else %}
-                    <a href="{% url 'user:login' %}?next={{ request.get_full_path }}" class="btn btn-primary mb-3">Войти для бронирования</a>
+                    <a href="{% url 'user:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary mb-3">Войти для бронирования</a>
                 {% endif %}
             {% else %}
                 <div class="text-danger mb-3">Нет расценок</div>

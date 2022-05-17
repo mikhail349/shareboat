@@ -51,7 +51,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user:login' %}?next={{ request.get_full_path }}">Войти / Регистрация</a>
+                            <a class="nav-link" href="{% url 'user:login' %}?next={{ request.get_full_path|urlencode }}">Войти / Регистрация</a>
                         </li>
                     {% endif %}
                     </li>
