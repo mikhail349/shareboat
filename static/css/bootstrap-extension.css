@@ -18,12 +18,17 @@
 .btn-primary:focus,
 .btn-primary:visited,
 .btn-outline-primary.dropdown-toggle.show:focus {
-    box-shadow: 0 0 0 0.25rem rgb(25 22 69 / 50%);
+    box-shadow: 0 0 0 0.12rem rgb(25 22 69 / 20%);
 }
 
-.btn-outline-primary {
+.btn-outline-primary, .btn-outline-primary:disabled {
     color: var(--bs-primary);
     border-color: var(--bs-primary);
+}
+
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+    border-color: var(--bs-gray-400);
+    box-shadow: 0 0 0 0.12rem rgb(25 22 69 / 20%);
 }
 
 a {
