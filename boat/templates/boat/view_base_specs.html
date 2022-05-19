@@ -1,0 +1,94 @@
+{% load l10n %}
+<div class="row row-cols-3 gx-3">   
+    <div class="col-12">
+        <h5>Основная информация</h5>
+    </div>                
+    <div class="col">
+        <p class="text-muted">
+            <strong class="d-block">Длина</strong>{{ boat.length }} м.
+        </p>
+    </div>
+    <div class="col">
+        <p class="text-muted">
+            <strong class="d-block">Ширина</strong>{{ boat.width }} м.
+        </p>
+    </div>
+    <div class="col">
+        <p class="text-muted">
+            <strong class="d-block">Осадка</strong>{{ boat.draft }} м.
+        </p>
+    </div>                      
+    <div class="col">
+        <p class="text-muted">
+            <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан"|unlocalize }}</span>
+        </p>
+    </div>
+    <div class="col-8">
+        <p class="text-muted">
+            <strong class="d-block">Вместимость</strong>{{ boat.capacity }} чел.
+        </p>
+    </div>
+
+    {% if boat.is_motor_boat %}    
+        <div class="col-12">
+            <h5>Двигатели</h5>
+        </div>                 
+        <div class="col">
+            <p class="text-muted">
+                <strong class="d-block">Кол-во</strong>{{ boat.motor_boat.motor_amount }}
+            </p>
+        </div>
+        <div class="col-8">
+            <p class="text-muted">
+                <strong class="d-block">Мощность</strong>{{ boat.motor_boat.motor_power }} л.с.
+            </p>
+        </div>                  
+    {% endif %}
+
+    {% if boat.is_comfort_boat %}    
+        <div class="col-12">
+            <h5>Удобства</h5>
+        </div>                 
+        <div class="col">
+            <p class="text-muted">
+                <strong class="d-block">Спальные места</strong>{{ boat.comfort_boat.berth_amount }}
+            </p>
+        </div>
+        <div class="col mt-auto">
+            <p class="text-muted">
+                <strong class="d-block">Каюты</strong>{{ boat.comfort_boat.cabin_amount }}
+            </p>
+        </div>           
+        <div class="col mt-auto">
+            <p class="text-muted">
+                <strong class="d-block">Сан. узлы</strong>{{ boat.comfort_boat.bathroom_amount }}
+            </p>
+        </div>          
+    {% endif %}
+
+    {% if show_prices %}
+        <div class="col-12">
+            <h5>Цена аренды</h5>
+        </div> 
+        {% if not boat.prices.exists %}
+            <div class="col">
+                <p class="text-muted">
+                    <span class="d-block text-danger">не указана</span>
+                </p>
+            </div>
+        {% else %}
+            {% for price in boat.prices.all %}
+                <div class="col">
+                    <h5 class="text-muted">
+                        {{ price.price }}&nbsp;₽
+                    </h5>
+                </div>
+                <div class="col-8">
+                    <p class="text-muted">
+                        {{ price.start_date|date:'d.m.Y' }} - {{ price.end_date|date:'d.m.Y' }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+</div>

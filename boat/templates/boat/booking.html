@@ -5,6 +5,8 @@
 {% block title %}Бронирование лодки{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'boat/css/booking.css' %}">
+
     <script type="text/javascript">
         var boatId = {{ boat.pk }}
             firstPriceDate = new Date('{{ first_price_date.isoformat }}'),
@@ -42,37 +44,42 @@
                 <h1 class="jumbotron-heading">Бронирование лодки</h1>    
             </section>
 
-            {% include 'boat/view_base.html' %}
-            
-            <h4 class="mb-3">Бронирование</h4>
-            {% if prices_exist %}
-                <div class="row gy-3">
-                    <div class="col-lg-auto">
-                        <div class="form-floating">                 
-                            <input id="bookingdaterangepicker" autocomplete="off"
-                                type="text" class="form-control" placeholder="Укажите период" required readonly style="cursor:pointer; background-color: #FFFFFF"/>
-                            <label>Период</label>
-                            <div class="invalid-tooltip">Укажите период</div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div id="priceAlert" class="alert alert-secondary text-center">
-                            <strong>Для расчета цены выберите период</strong>
-                        </div>
-                    </div>
+            <div class="row g-3"> 
+                <div class="col-lg">
+                    {% include 'boat/view_base_info.html' %}   
                 </div>
-                {% if user.is_authenticated %}
-                    <div class="row row-cols-lg-auto g-3">
-                        <div class="col">
-                            <button type="submit" class="btn btn-primary mb-3 w-100">Забронировать</button>
-                        </div>
-                    </div>
-                {% else %}
-                    <a href="{% url 'user:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary mb-3">Войти для бронирования</a>
-                {% endif %}
-            {% else %}
-                <div class="text-danger mb-3">Нет расценок</div>
-            {% endif %}
+            
+                <div class="col-lg">
+                    {% include 'boat/view_base_specs.html' %} 
+                    <div>
+                        {% if prices_exist %}
+                
+                            <div class="form-floating mb-3">                 
+                                <input id="bookingdaterangepicker" autocomplete="off"
+                                    type="text" class="form-control" placeholder="Укажите период" required readonly style="cursor:pointer; background-color: #FFFFFF"/>
+                                <label>Период бронирования</label>
+                                <div class="invalid-tooltip">Укажите период бронирования</div>
+                            </div>
+                    
+                            <div id="priceAlert" class="alert alert-secondary text-center">
+                                <strong>Для расчета цены выберите период</strong>
+                            </div>
+                    
+                            {% if user.is_authenticated %}
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">Забронировать</button>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'user:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary btn-lg w-100">Войти для бронирования</a>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-danger text-center">Нет расценок</div>
+                        {% endif %}
+                    </div>     
+                      
+                </div>           
+            </div>
+            
         </form>
     </div>
 {% endblock  %}

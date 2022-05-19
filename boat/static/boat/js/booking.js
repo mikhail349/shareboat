@@ -5,7 +5,7 @@ $(document).ready(() => {
 
     $('#bookingdaterangepicker').daterangepicker({
         format: 'DD.MM.YYYY',
-        drops: 'up',
+        drops: 'auto',
         autoUpdateInput: false,
         startDate: inputDatesExist ? new Date(searchParams.get('dateFrom')) : undefined,
         endDate: inputDatesExist ? new Date(searchParams.get('dateTo')) : undefined,
