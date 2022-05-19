@@ -5,8 +5,6 @@
 {% block title %}Бронирование лодки{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'boat/css/booking.css' %}">
-
     <script type="text/javascript">
         var boatId = {{ boat.pk }}
             firstPriceDate = new Date('{{ first_price_date.isoformat }}'),
