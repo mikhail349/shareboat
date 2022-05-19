@@ -86,61 +86,6 @@
             </div>
 
             <form id="formApplyFilter" action="{% url 'boat:boats' %}" method="get" class="needs-validation" novalidate>
-                <!--<h6 class="mb-3">Цена</h6>
-                <div class="row align-items-center gy-3 mb-3">
-                    <div class="col">
-                        <div class="form-floating">                 
-                            <input type="number" name="priceFrom" class="form-control" placeholder="Укажите цену от"
-                                step=".01" min="0" max="999999.99"
-                                value={{ q.price_from }}
-                            />
-                            <label>Цена от</label>
-                            <div class="invalid-tooltip">Укажите корректную цену</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-floating">                 
-                            <input type="number" name="priceTo" class="form-control" placeholder="Укажите цену до"
-                                step=".01" min="0" max="999999.99"  
-                                value={{ q.price_to }}
-                            />
-                            <label>Цена до</label>
-                            <div class="invalid-tooltip">Укажите корректную цену</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-floating mb-3">
-                    <select class="form-select" name="priceType">
-                        <option selected value="">Любой</option>
-                        {% for price_type in price_types %}
-                            <option value="{{ price_type.0 }}" {% if q.price_type == price_type.0|slugify %}selected{% endif %}>{{ price_type.1 }}</option>
-                        {% endfor %}
-                    </select>
-                    <label>Тип цены</label>
-                </div>
-
-                <h6 class="mb-3">Период аренды</h6>
-                <div class="row align-items-center gy-3 mb-3">
-                    <div class="col">
-                        <div class="form-floating">                 
-                            <input type="date" name="dateFrom" class="form-control" placeholder="Укажите цену от"
-                                value={{ q.date_from }}
-                            />
-                            <label>Аренда с</label>
-                            <div class="invalid-tooltip">Укажите корректную дату</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-floating">                 
-                            <input type="date" name="dateTo" class="form-control" placeholder="Укажите цену до" 
-                                value={{ q.date_to }}
-                            />
-                            <label>Аренда по</label>
-                            <div class="invalid-tooltip">Укажите корректную дату</div>
-                        </div>
-                    </div>
-                </div>-->
-
                 <div class="row">
                     <div class="col-auto pe-0">
                         <button class="btn btn-primary" type="submit">Применить</button>

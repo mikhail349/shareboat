@@ -6,7 +6,7 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/search_boats.css?a=13' %}">
-
+<form action='.' method="get" class="needs-validation" novalidate>
     <div class="container-md">
         <section class="jumbotron text-center ">      
             <h1 class="jumbotron-heading">Поиск лодки</h1>
@@ -14,20 +14,31 @@
 
         <div class="search-boats-panel d-flex justify-content-center mb-3">
             <div>
-                <form action='.' method="get" class="needs-validation" novalidate>
-                    <div class="form-floating mb-3">                 
-                        <input type="date" name="dateFrom" class="form-control" value="{{ request.GET.dateFrom }}" required />
-                        <label>Начало периода</label>
-                        <div class="invalid-tooltip">Укажите начало периода</div>
-                    </div>
-                    <div class="form-floating mb-3">                 
-                        <input type="date" name="dateTo" class="form-control" value="{{ request.GET.dateTo }}" required />
-                        <label>Окончание периода</label>
-                        <div class="invalid-tooltip">Укажите окончание периода</div>
-                    </div>
+         
+                <div class="form-floating mb-3">                 
+                    <input type="date" name="dateFrom" class="form-control" value="{{ request.GET.dateFrom }}" required />
+                    <label>Начало периода</label>
+                    <div class="invalid-tooltip">Укажите начало периода</div>
+                </div>
+                <div class="form-floating mb-3">                 
+                    <input type="date" name="dateTo" class="form-control" value="{{ request.GET.dateTo }}" required />
+                    <label>Окончание периода</label>
+                    <div class="invalid-tooltip">Укажите окончание периода</div>
+                </div>
 
-                    <button class="btn btn-primary btn-lg w-100" type="submit">Поиск</button>
-                </form>
+                <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">Поиск</button>
+                {% if searched %}
+                    <button class="btn btn-outline-primary btn-lg w-100 position-relative" type="button" 
+                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
+                        {% if request.GET.boatType %}
+                            <span class="badge bg-danger">1</span>
+                            <!--<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>-->
+                        {% endif %}
+                    </button>
+                {% endif %}
+                
             </div>
         </div>
 
@@ -54,4 +65,7 @@
             </div>
         </div>
     </div>
+
+    {% include 'boat/filter.html' %}
+</form>
 {% endblock %}

@@ -72,6 +72,10 @@ def calc_sum(boat, *args, **kwargs):
 
     return None
 
+@register.filter
+def get_list(dictionary, key):
+    return dictionary.getlist(key)
+
 @register.simple_tag
 def get_min_price(boat, start_date, end_date):
     start_date  = datetime.strptime(start_date, '%Y-%m-%d')

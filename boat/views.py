@@ -191,6 +191,7 @@ def reject(request, pk):
 def search_boats(request):
     q_date_from = request.GET.get('dateFrom')
     q_date_to   = request.GET.get('dateTo') 
+    q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
 
     boats = Boat.objects.none()
     searched = False
@@ -202,7 +203,11 @@ def search_boats(request):
             q_date_from, q_date_to = q_date_to, q_date_from
 
         counter = q_date_from
+        
         boats = Boat.published
+        if q_boat_types:
+            boats = boats.filter(type__in=q_boat_types)
+
         while counter <= q_date_to:
             boats = boats.filter(prices__start_date__lte=counter, prices__end_date__gte=counter)
             counter += datetime.timedelta(days=1) 
@@ -215,6 +220,7 @@ def search_boats(request):
         searched = True
 
     context = {
+        'boat_types': Boat.get_types(),
         'boats': boats,
         'searched': searched,
     }

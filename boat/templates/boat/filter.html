@@ -1,0 +1,33 @@
+{% load boat_extras %}
+{% load static %}
+<script type="text/javascript" src="{% static 'boat/js/filter.min.js' %}"></script>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasBoatFilter">
+    
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBoatFilterLabel">Фильтр</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body">
+        <h6 class="mb-3">Типы лодок</h6>
+        <div class="list-group mb-3">
+            {% for boat_type in boat_types %}
+                <label class="list-group-item">
+                    <input name="boatType" class="form-check-input me-1" value="{{ boat_type.0 }}" type="checkbox" {% if boat_type.0|stringformat:'i' in request.GET|get_list:'boatType' %}checked{% endif %}>
+                    {{ boat_type.1 }}
+                </label>                   
+            {% endfor %}
+        </div>
+
+
+        <div class="row row-cols-lg-auto g-3">
+            <div class="col pe-0">
+                <button class="btn btn-primary w-100" type="submit">Применить</button>
+            </div>
+            <div class="col">
+                <button id="btnOffcanvasBoatFilterClear" class="btn btn-outline-danger w-100" type="button">Сбросить</button>
+            </div>
+        </div>
+    </div>
+</div>
