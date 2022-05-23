@@ -19,9 +19,9 @@
     max-height: 65vh;
 }
 
-.form-input-min-width input[type="date"], .form-input-min-width input[type="number"], .form-input-min-width input[type="text"], .form-input-min-width select {
+/*.form-input-min-width input[type="date"], .form-input-min-width input[type="number"], .form-input-min-width input[type="text"], .form-input-min-width select {
     min-width: 207px;
-}
+}*/
 
 body {
     height: 100%;

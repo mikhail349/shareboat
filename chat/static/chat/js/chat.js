@@ -98,13 +98,15 @@ class MessageHandler {
     
     getMessageHtml(message) {
         const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-secondary text-white') : 'bg-white text-dark border border-dark';
-        const datetimeTitle = message.sender ? '' : 'Системное сообщение<br>'
+        const datetimeTitle = message.sender ? '' : 'Системное сообщение - '
         return `
             <div id="msg${message.id}" class="list-group-item border-0" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + this.getAvatar(message) + `
-                    <div class="d-flex ${bg} rounded p-1 px-2" style="font-size: 18px; height: fit-content">${message.text.replaceAll('\r\n', '<br>')}</div>
-                    <small class="float-end pe-1 align-self-end" style="font-size: 12px;">${datetimeTitle}${this.formatSentAt(new Date(message.sent_at))}</small>
+                    <div class="${bg} rounded-3">
+                        <div class="d-flex p-1 px-2" style="font-size: 18px; height: fit-content">${message.text.replaceAll('\r\n', '<br>')}</div>
+                        <small class="float-end pe-1 align-self-end ps-3 mt-2" style="font-size: 11px;">${datetimeTitle}${this.formatSentAt(new Date(message.sent_at))}</small>
+                    </div>  
                 </div>
             </div>  
         `;

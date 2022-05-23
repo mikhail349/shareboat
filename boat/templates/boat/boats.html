@@ -34,5 +34,7 @@
                 {% include 'boat/paginator.html' with class="pt-5" %}
             </div>
         </div>
+    {% else %}
+        <div class="text-center text-muted">В данный момент опубликованных лодок нет.</div>
     {% endif %}
 {% endblock  %}

@@ -46,8 +46,8 @@ function PricesList(props) {
                         {
                             index != 0 && <hr/> 
                         }
-                        <div className="row row-cols-lg-auto align-items-center gy-3 mb-3">
-                            <div className="col">
+                        <div className="row align-items-center g-3 mb-3">
+                            <div className="col-lg-3">
                                 <div className="form-floating">                 
                                     <input type="number" className="form-control" placeholder="Укажите цену" autocomplete="false"
                                         required 
@@ -59,7 +59,7 @@ function PricesList(props) {
                                     <div className="invalid-tooltip">Укажите цену</div>
                                 </div>
                             </div>
-                            <div className="col">
+                            <div className="col-6 col-lg-3">
                                 <div className="form-floating">                 
                                     <input type="date" className="form-control" placeholder="Укажите начало действия"
                                         required 
@@ -70,7 +70,7 @@ function PricesList(props) {
                                     <div className="invalid-tooltip">Укажите начало действия</div>
                                 </div>
                             </div>
-                            <div className="col">
+                            <div className="col-6 col-lg-3">
                                 <div className="form-floating">                 
                                     <input type="date" className="form-control" placeholder="Укажите окончание действия"
                                         required 
@@ -81,7 +81,7 @@ function PricesList(props) {
                                     <div className="invalid-tooltip">Укажите окончание действия</div>
                                 </div>
                             </div>
-                            <div className="col-md">
+                            <div className="col-lg-auto">
                                 <button type="button" className="btn btn-outline-danger form-control" onClick={() => deletePrice(index)}>
                                     Удалить
                                 </button>                                     
