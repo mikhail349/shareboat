@@ -6,8 +6,7 @@
 
 {% block content %}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script type="text/javascript" src="{% static 'user/js/login.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'user/css/login.css' %}">
+
     <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next|urlencode }}" method="post" class='needs-validation form-signin' novalidate>
         {% csrf_token %}
 
@@ -15,7 +14,7 @@
         
         {% if errors %}
             <div class="alert alert-danger">{{ errors }}</div>
-        {% endif %}  
+        {% endif %}
         
         <div class="form-floating mb-3">            
             <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="username email" placeholder="Эл. почта" required class="form-control" >
