@@ -21,6 +21,8 @@ class PublishedBoatManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=Boat.Status.PUBLISHED)
 
+class Manufacturer(models.Model):
+    name = models.CharField("Название", max_length=255)
 
 class Boat(models.Model):
 
@@ -51,6 +53,7 @@ class Boat(models.Model):
     name    = models.CharField(max_length=255)
     text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, related_name="boats", null=True)
     status  = models.IntegerField(choices=Status.choices, default=Status.SAVED)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
