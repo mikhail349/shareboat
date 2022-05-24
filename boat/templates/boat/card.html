@@ -3,16 +3,26 @@
 <h5 class="card-title">{{ boat.model.manufacturer.name }} {{ boat.model.name }} "{{ boat.name }}"</h5>     
 <h6 class="card-subtitle mb-1 text-muted">{{ boat.get_type_display }}</h6>
 {% include 'boat/location.html' %}
-<div class="container text-muted px-0">
-    <div class="row row-cols-2">
-        <div class="col">Длина</div>
-        <div class="col text-end">{{ boat.length }} м.</div>
-        <div class="col">Ширина</div>
-        <div class="col text-end">{{ boat.width }} м.</div>
-        <div class="col">Осадка</div>
-        <div class="col text-end">{{ boat.draft }} м.</div>
+<div class="container text-muted px-0 mt-3 small">
+    <div class="row">
+        <div class="col-6 col-lg-2">Год</div>
+        <div class="col-6 col-lg-3 text-end text-black">{{ boat.issue_year|default:"-"|unlocalize }}</div>
+        <div class="col-6 col-lg-3">Двигатель</div>
+        <div class="col-6 col-lg-4 text-end text-black">
+            {% if boat.is_motor_boat %}{{ boat.motor_boat.motor_amount }}&nbsp;x&nbsp;{{ boat.motor_boat.motor_power }}&nbsp;л.с.{% else %}-{% endif %}
+        </div>
 
-        <div class="col">Год выпуска</div>
-        <div class="col text-end {% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан"|unlocalize }}</div>
+        <div class="col-6 col-lg-3">Длина, м.</div>
+        <div class="col-6 col-lg-2 text-end text-black">{{ boat.length }}</div>
+        <div class="col-6 col-lg-3">Осадка, м.</div>
+        <div class="col-6 col-lg-4 text-end text-black">{{ boat.draft }}</div>
+
+        <div class="col-6 col-lg-4">Спальных мест</div>
+        <div class="col-6 col-lg-1 text-end text-black">{{ boat.comfort_boat.berth_amount|default:'-' }}</div>
+        <div class="col-6 col-lg-3">Кают</div>
+        <div class="col-6 col-lg-4 text-end text-black">{{ boat.comfort_boat.cabin_amount|default:'-' }}</div>
+
+        <div class="col-6 col-lg-3">WC</div>
+        <div class="col-6 col-lg-2 text-end text-black">{{ boat.comfort_boat.bathroom_amount|default:'-' }}</div>
     </div>
 </div>
