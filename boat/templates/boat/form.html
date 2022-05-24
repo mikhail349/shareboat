@@ -29,6 +29,34 @@
     <div class="invalid-tooltip">Введите название лодки</div>
 </div>
 
+<div class="row g-3 mb-3">
+    <div class="col-lg-3">
+        <div class="form-floating" >
+            <select class="form-select" id="manufacturerSelect" name="manufacturer" required>
+                <option selected disabled value="">Выберите из списка</option>
+                {% for manufacturer in manufacturers %}
+                    <option value="{{ manufacturer.pk }}" {% if manufacturer.pk == boat.model.manufacturer.pk %}selected{% endif %}>{{ manufacturer.name }}</option> 
+                {% endfor %}
+            </select>
+            <label for="manufacturerSelect">Производитель</label>
+            <div class="invalid-tooltip">Выберите производителя</div>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="form-floating" >
+            <select class="form-select" id="modelSelect" name="model" required data-saved-model-id="{{ boat.model.pk }}">
+                <option selected disabled value="">Выберите из списка</option>
+                {% for model in boat.model.manufacturer.models.all %}
+                    <option value="{{ model.pk }}" {% if model.pk == boat.model.pk %}selected{% endif %}>{{ model.name }}</option> 
+                {% endfor %}
+            </select>
+            <label for="modelSelect">Модель</label>
+            <div class="invalid-tooltip">Выберите модель</div>
+        </div>
+    </div>
+</div>
+
 <div class="form-floating mb-3">                 
     <textarea id="textareaText" name="text" class="form-control" placeholder="Описание лодки" autocomplete="off" style="height: 80px">{{ boat.text|default:"" }}</textarea>
     <label for="textareaText">Описание лодки</label>

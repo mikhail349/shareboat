@@ -19,8 +19,8 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
-from .serializers import BoatFileSerializer
+from .models import Boat, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
+from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from base.models import Base
 from booking.models import Booking
@@ -47,7 +47,8 @@ def get_form_context():
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
         'price_types': BoatPrice.get_types(),
-        'bases': Base.objects.all()
+        'bases': Base.objects.all(),
+        'manufacturers': Manufacturer.objects.all()
     }
 
 def get_bool(value):
@@ -77,6 +78,11 @@ def handle_boat_prices(boat, prices):
                 end_date    = price['end_date'], 
                 boat        = boat
             )
+
+@login_required
+def get_models(request, pk):
+    models = Model.objects.filter(manufacturer__pk=pk)
+    return JsonResponse({'data': ModelSerializer(models, many=True).data})
 
 @login_required
 @permission_required('boat.view_boat', raise_exception=True)

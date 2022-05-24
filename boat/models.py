@@ -24,9 +24,21 @@ class PublishedBoatManager(models.Manager):
 class Manufacturer(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
 class Model(models.Model):
     name = models.CharField(max_length=255)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, related_name="models")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
 
 class Boat(models.Model):
 
@@ -57,7 +69,7 @@ class Boat(models.Model):
     name    = models.CharField(max_length=255, null=True, blank=True)
     text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
-    #model = models.ForeignKey(Model, on_delete=models.PROTECT, related_name="boats")
+    model   = models.ForeignKey(Model, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)
     status  = models.IntegerField(choices=Status.choices, default=Status.SAVED)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])

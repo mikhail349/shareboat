@@ -3,6 +3,30 @@ $(document).ready(() => {
     var map;
     var marker = {};
 
+    const $manufacturerSelect = $("#manufacturerSelect");
+    const $modelSelect = $("#modelSelect");
+
+    $manufacturerSelect.on('change', function(e) {
+        $modelSelect.html('<option selected disabled value="">Выберите из списка</option>');
+        
+        const pk = parseInt($("#manufacturerSelect option:selected").val());
+        if (isNaN(pk)) {
+            return;
+        }
+        
+        $.ajax({ 
+            type: "GET",
+            url: `/boats/api/get_models/${pk}/`,
+            success: (data) => {
+                for (let model of data.data) {
+                    $modelSelect.append(`
+                        <option value="${model.id}">${model.name}</option>
+                    `);
+                }
+            }
+        }); 
+    })
+
     $("#typeSelect").on('change', (e) => {
 
         const boatType = parseInt($("#typeSelect option:selected").val());

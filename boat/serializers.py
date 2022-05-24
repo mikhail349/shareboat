@@ -1,7 +1,11 @@
 import os
 from rest_framework import serializers
-from .models import Boat, BoatFile, BoatPrice
+from .models import Boat, BoatFile, BoatPrice, Model
 
+class ModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Model
+        fields = ('id', 'name')
 
 class BoatSerializer(serializers.ModelSerializer):
     class Meta:
