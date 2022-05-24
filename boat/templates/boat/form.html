@@ -46,7 +46,7 @@
     <div class="col-lg-3">
         <div class="form-floating" >
             <select class="form-select" id="modelSelect" name="model" required data-saved-model-id="{{ boat.model.pk }}">
-                <option selected disabled value="">Выберите из списка</option>
+                <option selected disabled value="">Выберите производителя</option>
                 {% for model in boat.model.manufacturer.models.all %}
                     <option value="{{ model.pk }}" {% if model.pk == boat.model.pk %}selected{% endif %}>{{ model.name }}</option> 
                 {% endfor %}
