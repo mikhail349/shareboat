@@ -4,14 +4,6 @@
 
 {% include 'leaflet.html' %}
 
-{% get_boat_coordinates boat as coordinates %}
-
-<script type="text/javascript">
-    var coordinates = {{ coordinates|safe }};
-</script>
-
-<script type="text/javascript" src="{% static 'boat/js/view_base_info.min.js' %}"></script>
-
 {% if boat.files.exists %}
     <div class="card box-shadow text-end mb-3">
         {% if boat.files.count > 1 %}  
@@ -45,33 +37,6 @@
 <h2>{{ boat.name }}</h2>   
 <h4 class="text-muted">{{ boat.get_type_display }}</h4>   
 
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0d6efd" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
-    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-</svg>
-{% if boat.base %}
-    <a href="#" data-bs-toggle="modal" data-bs-target="#addressMapModal" class="text-primary">{{ boat.base.name }}, {{ boat.base.state }}</a>
-{% elif boat.is_custom_location %}
-    <a href="#" data-bs-toggle="modal" data-bs-target="#addressMapModal" >{{ boat.coordinates.state }}</a>
-{% else %}
-    <span class="text-muted">Местоположение не указано</span>
-{% endif %}
+{% include 'boat/location.html' %}
 <div class="mt-3">{{ boat.text|default_if_none:""|linebreaks }}</div>
-
-<div id="addressMapModal" class="modal" tabindex="-1" role="dialog" style="display: none">
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down" role="document">
-        <div class="modal-content shadow">
-            <div class="modal-header">
-                <h5 class="modal-title">Местоположение лодки</h5>
-            </div>
-            <div class="modal-body">
-                <div id="mapContainer">
-                    <div id="map" class="mb-3"></div>
-                    <label class="addressLabel">Поставьте точку на карте</label>
-                </div>
-            </div>
-            <div class="modal-footer">             
-                <button id="btnOkAddressMapModal" type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
-              </div>
-        </div>
-    </div>
-</div>
+{% include 'modal_map.html' %}

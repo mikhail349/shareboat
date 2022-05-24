@@ -14,6 +14,7 @@
     </section>
     
     {% if boats %}
+        {% include 'leaflet.html' %}
         <div class="album">
             <div class="container">
                 {% include 'boat/paginator.html' with class="pb-5" %}
@@ -34,6 +35,7 @@
                 {% include 'boat/paginator.html' with class="pt-5" %}
             </div>
         </div>
+        {% include 'modal_map.html' %}
     {% else %}
         <div class="text-center text-muted">В данный момент опубликованных лодок нет.</div>
     {% endif %}

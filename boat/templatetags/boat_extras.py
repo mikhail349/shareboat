@@ -1,3 +1,4 @@
+from base64 import encode
 from django import template
 from django.db.models import Min
 
@@ -27,9 +28,13 @@ def get_boat_coordinates(boat):
         'lon': coordinates.lon,
         'address': coordinates.address,
         'state': coordinates.state
-    }        
+    }   
 
-    return json.dumps(res, cls=DecimalEncoder)
+    return res
+
+@register.filter
+def to_json(value):
+    return json.dumps(value, cls=DecimalEncoder)
 
 @register.filter
 def strptime(value, arg):

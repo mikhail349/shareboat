@@ -1,7 +1,8 @@
 {% load l10n %}
 
-<h5 class="card-title">{{ boat.name }}</h5>     
-<h6 class="card-subtitle mb-3 text-muted">{{ boat.get_type_display }}</h6>
+<h5 class="card-title">{{ boat.model.manufacturer.name }} {{ boat.model.name }} "{{ boat.name }}"</h5>     
+<h6 class="card-subtitle mb-1 text-muted">{{ boat.get_type_display }}</h6>
+{% include 'boat/location.html' %}
 <div class="container text-muted px-0">
     <div class="row row-cols-2">
         <div class="col">Длина</div>

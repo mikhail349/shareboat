@@ -14,7 +14,7 @@
         comfortBoatTypes = {{ comfort_boat_types|safe }},
         priceTypes = {{ price_types|safe }},
         prices = {{ prices|safe|default:"[]" }},
-        boatCoordinates = {{ boat_coordinates|safe }},
+        boatCoordinates = {{ boat_coordinates|to_json|safe }},
         isCustomLocation = {{ boat.is_custom_location|yesno:"true,false" }};
 </script>
 
@@ -66,7 +66,7 @@
     <select class="form-select" id="typeSelect" name="type" required>
         <option selected disabled value="">Выберите из списка</option>
         {% for boat_type in boat_types %}
-        <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
+            <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
         {% endfor %}
     </select>
     <label for="typeSelect">Тип лодки</label>
@@ -80,7 +80,7 @@
                 min="1900"
                 max="2999"
                 step="1"
-                value="{{ boat.issue_year|unlocalize|default:"" }}"
+                value="{{ boat.issue_year|default_if_none:""|unlocalize }}"
             />
             <label for="name">Год выпуска</label>
             <div class="invalid-tooltip">Введите год выпуска</div>

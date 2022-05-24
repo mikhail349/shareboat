@@ -32,9 +32,6 @@
                         data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
                         {% if request.GET.boatType %}
                             <span class="badge bg-danger">1</span>
-                            <!--<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                                <span class="visually-hidden">New alerts</span>
-                            </span>-->
                         {% endif %}
                     </button>
                 {% endif %}
@@ -46,6 +43,7 @@
             <p class="lead text-muted">Найдено: {{ boats.count }}</p>
         {% endif %}
 
+        {% include 'leaflet.html' %}   
         <div class="album">
             <div class="row g-4">
                 {% for boat in boats %}
@@ -65,7 +63,7 @@
             </div>
         </div>
     </div>
-
     {% include 'boat/filter.html' %}
+    {% include 'modal_map.html' %}
 </form>
 {% endblock %}

@@ -141,7 +141,6 @@ $(document).ready(() => {
     });
 
     $("#switchCustomLocation").on('click', function (e) {
-        console.log(e);
         if ($(this).is(":checked")) {
             $("#baseSelect").attr('disabled', true);
             $("#collapseBase").collapse('hide');

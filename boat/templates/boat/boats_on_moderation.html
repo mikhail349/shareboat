@@ -5,6 +5,7 @@
 {% block title %}Модерация лодок{% endblock  %}
 
 {% block content %}   
+     
     <section class="jumbotron text-center">
         <div class="container">
             <h1 class="jumbotron-heading">Модерация лодок</h1>
@@ -12,6 +13,7 @@
     </section>
 
     {% if boats %}
+        {% include 'leaflet.html' %}   
         <div class="album">
             <div class="container">
                 <div class="row g-4">
@@ -30,5 +32,6 @@
                 </div>
             </div>
         </div>
+        {% include 'modal_map.html' %}
     {% endif %}
 {% endblock  %}
