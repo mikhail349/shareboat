@@ -349,6 +349,11 @@ def create_or_update(request, pk=None):
     base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
     
     try:
+        model = Model.objects.get(pk=data.get('model'))
+    except Model.DoesNotExist:
+        model = None
+    
+    try:
         if len(files) > FILES_LIMIT_COUNT:
             raise BoatFileCountException()
 
@@ -367,6 +372,7 @@ def create_or_update(request, pk=None):
                 boat.type       = data.get('type')
                 boat.prepayment_required = prepayment_required
                 boat.base       = base
+                boat.model      = model
                 
                 if boat.status == Boat.Status.DECLINED:
                     boat.status = Boat.Status.SAVED
@@ -385,7 +391,8 @@ def create_or_update(request, pk=None):
                     'capacity':     data.get('capacity'),
                     'type':         data.get('type'),
                     'prepayment_required': prepayment_required,
-                    'base':         base
+                    'base':         base,
+                    'model':        model
                 }
 
                 boat = Boat.objects.create(**fields, owner=request.user)        
