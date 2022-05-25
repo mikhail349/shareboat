@@ -172,7 +172,7 @@
             <div class="col-lg-3">
                 <div class="form-floating">                 
                     <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="off"
-                        required min="1" max="99"
+                        required min="0" max="99"
                         value="{{ boat.comfort_boat.berth_amount }}"     
                     />
                     <label for="widthInput">Кол-во спальных мест</label>
@@ -182,7 +182,7 @@
             <div class="col-lg-3">
                 <div class="form-floating">                 
                     <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="off"
-                        required min="1" max="99"
+                        required min="0" max="99"
                         value="{{ boat.comfort_boat.cabin_amount }}"     
                     />
                     <label for="widthInput">Кол-во кают</label>
@@ -192,7 +192,7 @@
             <div class="col-lg-3">
                 <div class="form-floating">                 
                     <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="off"
-                        required min="1" max="9"
+                        required min="0" max="9"
                         value="{{ boat.comfort_boat.bathroom_amount }}"     
                     />
                     <label for="widthInput">Кол-во сан. узлов</label>

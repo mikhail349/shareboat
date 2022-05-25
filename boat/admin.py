@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db import models
-from .models import Boat, BoatPrice, Manufacturer, Model
+from .models import Boat, BoatPrice, BoatPricePeriod, Manufacturer, Model
 
 class BoatPriceInline(admin.TabularInline):
     model = BoatPrice
@@ -14,5 +14,6 @@ class ModelInline(admin.TabularInline):
 class ManufacturerAdmin(admin.ModelAdmin):
     inlines = [ModelInline]
 
+admin.site.register(BoatPricePeriod)
 admin.site.register(Boat, BoatAdmin)
 admin.site.register(Manufacturer, ManufacturerAdmin)

@@ -197,6 +197,7 @@ $(document).ready(() => {
                 $('.addressLabel').addClass('text-primary');
                 window.boatCoordinates.address = data.display_name;
                 window.boatCoordinates.state = data?.address?.state;
+                console.log(window.boatCoordinates);
                 $("form button[type=submit").attr('disabled', false);
             }
         }

@@ -5,66 +5,62 @@
     </div>                
     <div class="col">
         <p class="text-muted">
-            <strong class="d-block">Длина</strong>{{ boat.length }} м.
+            <span class="d-block">Длина, м.</span><span class="text-black">{{ boat.length }}</span>
         </p>
     </div>
     <div class="col">
         <p class="text-muted">
-            <strong class="d-block">Ширина</strong>{{ boat.width }} м.
+            <span class="d-block">Ширина, м.</span><span class="text-black">{{ boat.width }}</span>
         </p>
     </div>
     <div class="col">
         <p class="text-muted">
-            <strong class="d-block">Осадка</strong>{{ boat.draft }} м.
+            <span class="d-block">Осадка, м.</span><span class="text-black">{{ boat.draft }}</span>
         </p>
     </div>                      
     <div class="col">
         <p class="text-muted">
-            <strong class="d-block">Год выпуска</strong><span class="{% if not boat.issue_year %}text-danger{% endif %}">{{ boat.issue_year|default:"не указан"|unlocalize }}</span>
+            <span class="d-block">Год выпуска</span><span class="text-black">{{ boat.issue_year|default:"-"|unlocalize }}</span>
         </p>
     </div>
     <div class="col-8">
         <p class="text-muted">
-            <strong class="d-block">Вместимость</strong>{{ boat.capacity }} чел.
+            <span class="d-block">Вместимость</span><span class="text-black">{{ boat.capacity }}</span>
         </p>
     </div>
-
-    {% if boat.is_motor_boat %}    
-        <div class="col-12">
-            <h5>Двигатели</h5>
-        </div>                 
-        <div class="col">
-            <p class="text-muted">
-                <strong class="d-block">Кол-во</strong>{{ boat.motor_boat.motor_amount }}
-            </p>
-        </div>
-        <div class="col-8">
-            <p class="text-muted">
-                <strong class="d-block">Мощность</strong>{{ boat.motor_boat.motor_power }} л.с.
-            </p>
-        </div>                  
-    {% endif %}
-
-    {% if boat.is_comfort_boat %}    
-        <div class="col-12">
-            <h5>Удобства</h5>
-        </div>                 
-        <div class="col">
-            <p class="text-muted">
-                <strong class="d-block">Спальные места</strong>{{ boat.comfort_boat.berth_amount }}
-            </p>
-        </div>
-        <div class="col mt-auto">
-            <p class="text-muted">
-                <strong class="d-block">Каюты</strong>{{ boat.comfort_boat.cabin_amount }}
-            </p>
-        </div>           
-        <div class="col mt-auto">
-            <p class="text-muted">
-                <strong class="d-block">Сан. узлы</strong>{{ boat.comfort_boat.bathroom_amount }}
-            </p>
-        </div>          
-    {% endif %}
+ 
+    <div class="col-12">
+        <h5>Двигатели</h5>
+    </div>                 
+    <div class="col">
+        <p class="text-muted">
+            <span class="d-block">Кол-во</span><span class="text-black">{{ boat.motor_boat.motor_amount|default:"-" }}</span>
+        </p>
+    </div>
+    <div class="col-8">
+        <p class="text-muted">
+            <span class="d-block">Мощность, л.с.</span><span class="text-black">{% if boat.is_motor_boat %}{{ boat.motor_boat.motor_power }}{% else %}-{% endif%}</span>
+        </p>
+    </div>                  
+  
+    <div class="col-12">
+        <h5>Удобства</h5>
+    </div>                 
+    <div class="col">
+        <p class="text-muted">
+            <span class="d-block">Спальные места</span><span class="text-black">{{ boat.comfort_boat.berth_amount|default:"-" }}</span>
+        </p>
+    </div>
+    <div class="col mt-auto">
+        <p class="text-muted">
+            <span class="d-block">Каюты</span><span class="text-black">{{ boat.comfort_boat.cabin_amount|default:"-" }}</span>
+        </p>
+    </div>           
+    <div class="col mt-auto">
+        <p class="text-muted">
+            <span class="d-block">WC</span><span class="text-black">{{ boat.comfort_boat.bathroom_amount|default:"-" }}</span>
+        </p>
+    </div>          
 
     {% if show_prices %}
         <div class="col-12">

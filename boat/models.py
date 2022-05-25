@@ -163,9 +163,9 @@ class MotorBoat(models.Model):
 
 class ComfortBoat(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="comfort_boat")
-    berth_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
-    cabin_amount    = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(99)])
-    bathroom_amount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(9)])
+    berth_amount    = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
+    cabin_amount    = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
+    bathroom_amount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(9)])
 
 class BoatCoordinates(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="coordinates")
@@ -188,6 +188,15 @@ class Specification(models.Model):
     def get_сategories(cls):
         сategories = cls.Category.choices
         return sorted(сategories, key=lambda tup: tup[1])
+
+
+class BoatPricePeriod(models.Model):
+    boat        = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices_period")
+    start_date  = models.DateField()
+    end_date    = models.DateField()    
+
+    def __str__(self):
+        return f'{self.start_date} - {self.end_date}'
 
 class BoatPrice(models.Model):
     class Type(models.IntegerChoices):

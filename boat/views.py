@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db import transaction
-from django.db.models import Max, Min, Q
+from django.db.models import Max, Min, Q, Prefetch
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -19,7 +19,7 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
+from .models import Boat, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from base.models import Base
@@ -59,25 +59,33 @@ def get_bool(value):
 FILES_LIMIT_COUNT = 10
 
 def handle_boat_prices(boat, prices):
-    BoatPrice.objects.filter(boat=boat).exclude(id__in=[price.get('pk') for price in prices]).delete()
+    BoatPrice.objects.filter(boat=boat).delete()
     for price in prices:
-        if 'pk' in price:
-            try:
-                boat_price = BoatPrice.objects.get(pk=price['pk'])
-                boat_price.price        = price['price']
-                boat_price.start_date   = price['start_date']
-                boat_price.end_date     = price['end_date']
-                boat_price.boat         = boat
-                boat_price.save()
-            except BoatPrice.DoesNotExist:
-                pass
-        else:
-            BoatPrice.objects.create(
-                price        =price['price'], 
-                start_date  = price['start_date'], 
-                end_date    = price['end_date'], 
-                boat        = boat
-            )
+        BoatPrice.objects.create(
+            price        =price['price'], 
+            start_date  = price['start_date'], 
+            end_date    = price['end_date'], 
+            boat        = boat
+        )
+
+    BoatPricePeriod.objects.filter(boat=boat).delete()
+    price_period = None
+    for price in sorted(prices, key=lambda item: item['start_date']):
+
+        price_start_date = datetime.datetime.strptime(price['start_date'], '%Y-%m-%d')
+        price_end_date = datetime.datetime.strptime(price['end_date'], '%Y-%m-%d')
+
+        if price_period is None:
+            price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price_start_date, end_date=price_end_date)
+            continue
+        
+        if price_start_date == price_period.end_date + datetime.timedelta(days=1):
+            price_period.end_date = price_end_date
+            price_period.save()
+            continue
+
+        price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price_start_date, end_date=price_end_date)
+
 
 @login_required
 def get_models(request, pk):
@@ -188,8 +196,6 @@ def reject(request, pk):
             message_text = f'Объявление не соответствует правилам сервиса: {comment}' 
             MessageBoat.objects.create(text=message_text, recipient=boat.owner, boat=boat)
 
-            #BoatDeclinedModeration.objects.create(title="Лодка отклонена", text="Объявление не соответствует правилам сервиса", user=boat.owner, boat=boat, reason=reason, comment=comment)
-
             return redirect(reverse('boat:boats_on_moderation'))
         except Boat.DoesNotExist:
             return render(request, 'not_found.html')
@@ -205,24 +211,13 @@ def search_boats(request):
     if q_date_from and q_date_to:
         q_date_from = datetime.datetime.strptime(q_date_from, '%Y-%m-%d')
         q_date_to = datetime.datetime.strptime(q_date_to, '%Y-%m-%d')
-        if q_date_from > q_date_to:
-            q_date_from, q_date_to = q_date_to, q_date_from
 
-        counter = q_date_from
-        
-        boats = Boat.published
+        boats = Boat.published.all()
         if q_boat_types:
             boats = boats.filter(type__in=q_boat_types)
 
-        while counter <= q_date_to:
-            boats = boats.filter(prices__start_date__lte=counter, prices__end_date__gte=counter)
-            counter += datetime.timedelta(days=1) 
-
-            if not boats:
-                break
-
-        bookings = Booking.objects.blocked_in_range(q_date_from, q_date_to)
-        boats = boats.exclude(bookings__in=bookings)
+        boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
+        boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
         searched = True
 
     context = {

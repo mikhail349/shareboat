@@ -27,6 +27,12 @@
                                 </a>    
                                 <div class="card-body d-flex flex-column">
                                     {% include 'boat/card.html' %}
+                                    {% get_min_actual_price boat=boat as min_actual_price %}
+                                    {% if min_actual_price %}
+                                        <div class="text-success fs-3 text-end">от {{ min_actual_price }}&nbsp;₽ / день</div>
+                                    {% else %}
+                                        <div class="text-danger fs-3 text-end">Нет расценок</div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
