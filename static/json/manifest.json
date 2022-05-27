@@ -13,5 +13,10 @@
             "src": "/static/img/boat-512.png",
             "sizes": "512x512"
         }
+    ],
+    "url_handlers": [
+        {
+          "origin": "https://sbtest.posse.ru/"
+        }
     ]
 }

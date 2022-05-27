@@ -58,6 +58,23 @@ def get_bool(value):
 
 FILES_LIMIT_COUNT = 10
 
+def refresh_boat_price_period(boat):
+    BoatPricePeriod.objects.filter(boat=boat).delete()
+    price_period = None
+    prices = BoatPrice.objects.filter(boat=boat)
+    for price in sorted(prices, key=lambda item: item.start_date):
+
+        if price_period is None:
+            price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price.start_date, end_date=price.end_date)
+            continue
+        
+        if price.start_date == price_period.end_date + datetime.timedelta(days=1):
+            price_period.end_date = price.end_date
+            price_period.save()
+            continue
+
+        price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price.start_date, end_date=price.end_date)
+
 def handle_boat_prices(boat, prices):
     BoatPrice.objects.filter(boat=boat).delete()
     for price in prices:
@@ -67,25 +84,7 @@ def handle_boat_prices(boat, prices):
             end_date    = price['end_date'], 
             boat        = boat
         )
-
-    BoatPricePeriod.objects.filter(boat=boat).delete()
-    price_period = None
-    for price in sorted(prices, key=lambda item: item['start_date']):
-
-        price_start_date = datetime.datetime.strptime(price['start_date'], '%Y-%m-%d')
-        price_end_date = datetime.datetime.strptime(price['end_date'], '%Y-%m-%d')
-
-        if price_period is None:
-            price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price_start_date, end_date=price_end_date)
-            continue
-        
-        if price_start_date == price_period.end_date + datetime.timedelta(days=1):
-            price_period.end_date = price_end_date
-            price_period.save()
-            continue
-
-        price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price_start_date, end_date=price_end_date)
-
+    refresh_boat_price_period(boat) 
 
 @login_required
 def get_models(request, pk):
