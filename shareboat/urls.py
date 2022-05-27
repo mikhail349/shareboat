@@ -33,6 +33,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += [
     path('', boat_views.search_boats),
     path(f'{settings.ADMIN_URL}/', admin.site.urls),
+    path('sw.js', views.sw),
 
     path('user/', include(user_urls)),
     path('boats/', include(boat_urls)),
