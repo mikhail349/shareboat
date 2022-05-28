@@ -5,10 +5,10 @@
 {% include 'boat/location.html' %}
 <div class="container text-muted px-0 mt-3 small">
     <div class="row">
-        <div class="col-2 pe-0">Год</div>
-        <div class="col-4 ps-0 text-end text-black">{{ boat.issue_year|default:"-"|unlocalize }}</div>
-        <div class="col-4 pe-0">Двигатель, л.с.</div>
-        <div class="col-2 ps-0 text-end text-black">
+        <div class="col-6 col-lg-2 pe-0">Год</div>
+        <div class="col-6 col-lg-4 ps-0 text-end text-black">{{ boat.issue_year|default:"-"|unlocalize }}</div>
+        <div class="col-6 col-lg-4 pe-0">Двигатель, л.с.</div>
+        <div class="col-6 col-lg-2 ps-0 text-end text-black">
             {% if boat.is_motor_boat %}{{ boat.motor_boat.motor_amount }}&nbsp;x&nbsp;{{ boat.motor_boat.motor_power }}{% else %}-{% endif %}
         </div>
 
