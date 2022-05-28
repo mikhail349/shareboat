@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db import transaction
-from django.db.models import Max, Min, Q, Prefetch
+from django.db.models import Max, Min, Value, DecimalField, F
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -203,6 +203,7 @@ def search_boats(request):
     q_date_from = request.GET.get('dateFrom')
     q_date_to   = request.GET.get('dateTo') 
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
+    q_sort = request.GET.get('sort', 'sum_asc')
 
     boats = Boat.objects.none()
     searched = False
@@ -217,9 +218,17 @@ def search_boats(request):
 
         boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
         boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
+        
+        boats = list(boats) 
+        for boat in boats:
+            boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
+
+        boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
+
         searched = True
 
     context = {
+        'sort_list': [('sum_asc', 'Сначала дешевые'), ('sum_desc', 'Сначала дорогие')],
         'boat_types': Boat.get_types(),
         'boats': boats,
         'searched': searched,

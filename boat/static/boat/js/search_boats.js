@@ -16,4 +16,8 @@ $(document).ready(() => {
         }
 
     });
+
+    $('#sortSelect').on('change', () => {
+        $("form").submit();
+    })
 });

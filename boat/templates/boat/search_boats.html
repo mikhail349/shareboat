@@ -30,19 +30,29 @@
 
                 <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">Поиск</button>
                 {% if searched %}
-                    <button class="btn btn-outline-primary btn-lg w-100 position-relative" type="button" 
-                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
-                        {% if request.GET.boatType %}
-                            <span class="badge bg-danger">1</span>
-                        {% endif %}
-                    </button>
-                {% endif %}
-                
+                    <p class="lead text-muted text-center mb-0">Найдено: {{ boats|length }}</p>
+                {% endif %}            
             </div>
         </div>
 
         {% if searched %}
-            <p class="lead text-muted">Найдено: {{ boats.count }}</p>
+            <div class='row align-items-center g-2 mb-3'>
+                <div class="col-lg-auto">
+                    <button class="btn btn-outline-primary w-100 position-relative" type="button" 
+                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
+                        {% if request.GET.boatType %}
+                            <span class="badge bg-danger">1</span>
+                        {% endif %}
+                    </button>       
+                </div>
+                <div class="col-lg-auto">
+                    <select id="sortSelect" class="form-select w-100 border-primary" name="sort">
+                        {% for sort in sort_list %}
+                            <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
         {% endif %}
 
         {% include 'leaflet.html' %}   
@@ -56,8 +66,7 @@
                             </a>    
                             <div class="card-body d-flex flex-column">
                                 {% include 'boat/card.html' %}
-                                {% calc_booking boat=boat start_date=request.GET.dateFrom end_date=request.GET.dateTo as total_sum %}
-                                <div class="text-success fs-3 text-end">{{ total_sum.sum }}&nbsp;₽</div>
+                                <div class="text-success fs-3 text-end">{{ boat.calculated_booking.sum }}&nbsp;₽</div>
                             </div>
                         </div>
                     </div>

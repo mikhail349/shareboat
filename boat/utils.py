@@ -3,16 +3,15 @@ from django.shortcuts import render
 from decimal import Decimal
 from boat.exceptions import PriceDateRangeException
 from shareboat.date_utils import daterange
-from .models import Boat
+from .models import Boat, BoatPrice
 
 import json
 import decimal 
 
 
 def calc_booking(boat_pk, start_date, end_date):
-    boat = Boat.objects.get(pk=boat_pk)
-    prices = boat.prices #for cache
-    
+    prices = BoatPrice.objects.filter(boat__pk=boat_pk)
+
     sum = Decimal()
     days = 0
     for date in daterange(start_date, end_date):       
