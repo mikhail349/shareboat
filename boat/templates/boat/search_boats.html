@@ -1,5 +1,6 @@
 {% extends 'main.html' %}
 {% load static %}
+{% load l10n %}
 {% load boat_extras %}
 
 {% block title %}Поиск лодки{% endblock %}
@@ -8,7 +9,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/search_boats.css' %}">
 <script type="text/javascript" src="{% static 'boat/js/search_boats.min.js' %}"></script>
 
-<form action='.' method="get" class="needs-validation" novalidate>
+<form id="formSearch" action='.' method="get" class="needs-validation" novalidate>
     <div class="container-md">
         <section class="jumbotron text-center ">      
             <h1 class="jumbotron-heading">Поиск лодки</h1>
@@ -56,7 +57,11 @@
                 </div>
             </div>
         {% endif %}
-
+    
+        {% include 'boat/filter.html' %}
+    </div>
+</form>
+    <div class="container-md">
         {% include 'leaflet.html' %}   
         <div class="album">
             <div class="row g-4">
@@ -68,7 +73,16 @@
                             </a>    
                             <div class="card-body d-flex flex-column">
                                 {% include 'boat/card.html' %}
-                                <div class="text-success fs-3 text-end">{{ boat.calculated_booking.sum }}&nbsp;₽</div>
+                                <div class="text-success fs-3 text-end mb-1">{{ boat.calculated_booking.sum }}&nbsp;₽</div>
+                                {% if user.is_authenticated %}
+                                    <form class='form-book-boat' action="{% url 'booking:api_create' %}" method='post'>
+                                        <input type="hidden" name="start_date" value="{{ request.GET.dateFrom }}" />
+                                        <input type="hidden" name="end_date" value="{{ request.GET.dateTo }}" />
+                                        <input type="hidden" name="boat_id" value="{{ boat.pk }}" />
+                                        <input type="hidden" name="total_sum" value="{{ boat.calculated_booking.sum|unlocalize }}" />
+                                        <button type="submit" class="btn btn-primary w-100">Забронировать</button>
+                                    </form>           
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -77,7 +91,6 @@
         </div>
     </div>
     {% include 'paginator.html' with class="mt-3" %}
-    {% include 'boat/filter.html' %}
     {% include 'modal_map.html' %}
-</form>
+
 {% endblock %}
