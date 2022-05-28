@@ -5,7 +5,11 @@
         <div class="container-md">
       
             <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon position-relative">
+                    {% if nav_counters.total > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle-x p-2 bg-danger border border-light rounded-circle"></span>
+                    {% endif %}
+                </span>
             </button>
             
             <a class="navbar-brand me-auto p-2 pe-4" href="/">ShareBoat</a>
@@ -25,20 +29,27 @@
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle align-middle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span>{{ user.first_name|default:user.email }}</span>
+                                <span>{{ user.first_name|default:user.email }}</span> 
+                                {% if nav_counters.total > 0 %}<span class="badge bg-danger">{{ nav_counters.total }}</span>{% endif %}                                                 
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 
                                 {% if perms.boat.view_boat %}  
                                     <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Мой флот</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'booking:requests' %}">Заявки на бронирование</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'booking:requests' %}">
+                                            Заявки на бронирование
+                                            {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
+                                        </a>
+                                    </li>
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 
                                 {% if perms.boat.can_view_boats_on_moderation %}                                   
                                     <li>
                                         <a class="dropdown-item" href="{% url 'boat:boats_on_moderation' %}">
-                                            Модерация лодок <span class="badge bg-secondary">{{ nav_counters.boats_on_moderation_count }}</span>
+                                            Модерация лодок
+                                            {% if nav_counters.boats_on_moderation_count > 0 %}<span class="badge bg-danger">{{ nav_counters.boats_on_moderation_count }}</span>{% endif %}
                                         </a>
                                     </li>
                                 {% endif %}
