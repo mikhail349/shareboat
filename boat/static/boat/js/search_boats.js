@@ -20,4 +20,16 @@ $(document).ready(() => {
     $('#sortSelect').on('change', () => {
         $("form").submit();
     })
+
+    $(".pagination a").on('click', function(e) {
+        
+        const params = new Proxy(new URLSearchParams($(this).attr('href')), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+
+        $('form input[name="page"]').val(params.page);
+        $("form").submit();
+
+        e.preventDefault();
+    })
 });

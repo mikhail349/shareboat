@@ -204,6 +204,7 @@ def search_boats(request):
     q_date_to   = request.GET.get('dateTo') 
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
     q_sort = request.GET.get('sort', 'sum_asc')
+    q_page = request.GET.get('page', 1)
 
     boats = Boat.objects.none()
     searched = False
@@ -224,14 +225,16 @@ def search_boats(request):
             boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
 
         boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
-
         searched = True
+
+    p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
 
     context = {
         'sort_list': [('sum_asc', 'Сначала дешевые'), ('sum_desc', 'Сначала дорогие')],
         'boat_types': Boat.get_types(),
-        'boats': boats,
+        'boats': p.object_list,
         'searched': searched,
+        'p': p
     }
 
     return render(request, 'boat/search_boats.html', context)
@@ -435,6 +438,7 @@ def create_or_update(request, pk=None):
 
             if is_custom_location:
                 boat_coordinates = json.loads(data.get('boat_coordinates'))
+                print(data.get('boat_coordinates'))
                 lat = round(boat_coordinates.get('lat'), 6)
                 lon = round(boat_coordinates.get('lon'), 6)
                 address = boat_coordinates.get('address')
