@@ -7,13 +7,13 @@ logger = logging.getLogger(__name__)
 from . import utils, exceptions
 
 def verify_imagefile(sender, instance, *args, **kwargs):
-    MAX_FILE_SIZE = 7 * 1024 * 1024
+    MAX_FILE_SIZE_MB = 7
     for field in sender._meta.fields:
         if isinstance(field, models.ImageField):
             image_file = getattr(instance, field.name)
             if image_file:
-                if image_file.size > MAX_FILE_SIZE:
-                    raise exceptions.FileSizeException()
+                if image_file.size > (MAX_FILE_SIZE_MB * 1024 * 1024):
+                    raise exceptions.FileSizeException(MAX_FILE_SIZE_MB)
 
                 img = Image.open(image_file)
                 img.verify()

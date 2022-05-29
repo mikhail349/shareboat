@@ -1,4 +1,4 @@
-var lastScrollTop = 0,
+/*var lastScrollTop = 0,
      currentNavTop = 0,
      currentToastTop = 62;     
 
@@ -22,4 +22,4 @@ $(document).ready(() => {
      }
 
      window.addEventListener("scroll", mainMenuHide, false);
-});
+});*/     

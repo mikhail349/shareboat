@@ -361,7 +361,7 @@ def create_or_update(request, pk=None):
     
     try:
         if len(files) > FILES_LIMIT_COUNT:
-            raise BoatFileCountException()
+            raise BoatFileCountException(FILES_LIMIT_COUNT)
 
         with transaction.atomic(): 
 
@@ -438,7 +438,6 @@ def create_or_update(request, pk=None):
 
             if is_custom_location:
                 boat_coordinates = json.loads(data.get('boat_coordinates'))
-                print(data.get('boat_coordinates'))
                 lat = round(boat_coordinates.get('lat'), 6)
                 lon = round(boat_coordinates.get('lon'), 6)
                 address = boat_coordinates.get('address')
