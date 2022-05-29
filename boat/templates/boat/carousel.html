@@ -1,5 +1,5 @@
 {% if boat.files.count > 1 %}
-
+    
     <div id="fileCarousel{{forloop.counter0}}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
         <ol class="carousel-indicators">
             {% for file in boat.files.all %} 
@@ -21,6 +21,10 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </a>
+        <!--<button type="button" class="carousel-control-full-screen" data-bs-target="#fileCarousel{{forloop.counter0}}">
+            <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Full screen</span>
+        </a>-->
     </div>
 
 {% elif boat.files.exists %}

@@ -72,6 +72,17 @@ a {
     -webkit-animation-fill-mode: forwards;
 }
 
+.card-img-small {
+    height: 50px;
+    width: 50px;
+}
+
+.card-img-small:hover, 
+.card-img-small.active {
+    cursor: pointer;
+    box-shadow: 0 0 0 1px rgb(25 22 69 / 50%);
+}
+
 .card-title {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -94,7 +105,8 @@ a {
 }
 
 @media (min-width: 992px) {
-    .carousel-img {
+    .carousel-img,
+    .card-img-lg-big {
         height: 400px;
     }
 }

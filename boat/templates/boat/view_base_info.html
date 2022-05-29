@@ -5,35 +5,21 @@
 {% include 'leaflet.html' %}
 
 {% if boat.files.exists %}
+    <script type="text/javascript" src="{% static 'boat/js/img_viewer.min.js' %}"></script>
     <div class="card box-shadow text-end mb-3">
-        {% if boat.files.count > 1 %}  
-            <div id="fileCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
-                <ol class="carousel-indicators">
-                    {% for file in boat.files.all %} 
-                        <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
-                    {% endfor %}
-                </ol> 
-                <div class="carousel-inner">
-                    {% for file in boat.files.all %} 
-                        <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}">
-                            <img class="d-block w-100 rounded carousel-img" src="{{ file.file.url }}" />
-                        </div>
-                    {% endfor %}
+        <img class="d-block w-100 card-img card-img-lg-big" src="{{ boat.files.first.file.url }}" />
+    </div>  
+    {% if boat.files.count > 1%}
+        <div class="row g-1 mb-3">
+            {% for file in boat.files.all %}
+                <div class="col-auto">
+                    <img class="card-img card-img-small {% if forloop.counter0 == 0  %}active{% endif %}" src="{{ file.file.url }}" />
                 </div>
-                <button type="button" class="carousel-control-prev" data-bs-target="#fileCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button type="button" class="carousel-control-next" data-bs-target="#fileCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-        {% elif boat.files.exists %}
-            <img class="carousel-img rounded" src="{{ boat.files.first.file.url }}" />
-        {% endif %}
-    </div>           
+            {% endfor %}
+        </div>  
+    {% endif %}       
 {% endif %}
+
 <h2>{{ boat.name }}</h2>   
 <h4 class="text-muted">{{ boat.get_type_display }}</h4>   
 

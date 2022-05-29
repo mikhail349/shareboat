@@ -56,7 +56,6 @@ $(document).ready(() => {
             $carousel.addClass('full-screen');
         }
     })
-
 });
 
 function parseJSONError(json) {

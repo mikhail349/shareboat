@@ -64,4 +64,8 @@ body > .main-content-container {
     height: 100%;
 }
 
+.carousel.slide {
+    transition: all 2.s ease-in-out;
+}
+
 
