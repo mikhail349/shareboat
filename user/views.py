@@ -87,8 +87,16 @@ def update(request):
             'is_boat_owner': request.user.groups.filter(name=BOAT_OWNER_GROUP).exists()
         }        
 
+    def _render(success=None, errors=None):
+        context = _get_context()
+        if errors:
+            context['errors'] = errors
+        if success:
+            context['success'] = success
+        return render(request, 'user/update.html', context=context)
+
     if request.method == 'GET':
-        return render(request, 'user/update.html', context=_get_context())
+        return _render()
     elif request.method == 'POST':
         
         with transaction.atomic():
@@ -103,12 +111,12 @@ def update(request):
                 user.groups.add(boat_owner_group)
             else:
                 if user.boats.filter(~Q(status=Boat.Status.DELETED)).exists():
-                    return render(request, 'user/update.html', context={**_get_context(), 'errors': 'Для того чтобы перестать быть арендодателем, необходимо удалить свой флот'})
+                    return _render(errors='Для того чтобы перестать быть арендодателем, необходимо удалить свой флот.')
                 user.groups.remove(boat_owner_group)
 
             user.save()
 
-        return redirect('/')
+        return _render(success='Профиль сохранен.')
 
 
 def login(request):

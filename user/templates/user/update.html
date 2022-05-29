@@ -33,6 +33,10 @@
                 <div class="alert alert-danger">{{ errors }}</div>
             {% endif %}
 
+            {% if success %}
+                <div class="alert alert-success">{{ success }}</div>
+            {% endif %}
+
             <input type="file" name="avatar" accept="image/*" hidden /> 
             <input type="text" name="email" hidden value="{{ user.email }}"/> 
 

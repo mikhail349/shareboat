@@ -3,12 +3,34 @@
     --bs-primary-rgb: 	25, 22, 69;
 }
 
-.btn-primary, .btn-primary:disabled, .btn-primary:visited {
+.btn-primary, 
+.btn-primary.disabled,
+.btn-primary:disabled {
     color: var(--bs-gray-200);
+    border-color: var(--bs-primary);
     background-color: var(--bs-primary);
+}
+
+.btn-primary:hover {
+    color: white;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);   
+}
+
+.btn-outline-primary {
+    color: var(--bs-primary);
     border-color: var(--bs-primary);
 }
-.btn-primary:hover, .btn-outline-primary:hover, .btn-outline-primary.dropdown-toggle.show {
+
+.btn-outline-primary.disabled, 
+.btn-outline-primary:disabled {
+    color: var(--bs-primary);
+    background-color: transparent;
+}
+
+.btn-primary:hover, 
+.btn-outline-primary:hover, 
+.btn-outline-primary.dropdown-toggle.show {
     color: white;
     background-color: var(--bs-primary);
     border-color: var(--bs-primary);
@@ -23,11 +45,6 @@
 .btn-primary:visited,
 .btn-outline-primary.dropdown-toggle.show:focus {
     box-shadow: 0 0 0 0.12rem rgb(25 22 69 / 20%);
-}
-
-.btn-outline-primary, .btn-outline-primary:disabled {
-    color: var(--bs-primary);
-    border-color: var(--bs-primary);
 }
 
 .form-control:focus, .form-select:focus, .form-check-input:focus {

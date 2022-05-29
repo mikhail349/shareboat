@@ -56,7 +56,7 @@ class MessageHandler {
         const scrollY = Math.ceil(window.scrollY) - 70;
         self.isOnBottom = ((window.innerHeight + scrollY) >= document.body.offsetHeight);
 
-        if (self.isOnBottom) {
+        if (document.body.offsetHeight - (window.innerHeight + scrollY) <= scrollY / 3) {
             self.btnGoToBottom.removeClass('show');
             self.btnGoToBottom.addClass('hide');
             $('#hasNewMessages').hide();
@@ -138,7 +138,7 @@ class MessageHandler {
         var self = this;
         self.btnSend.attr('disabled', true);
         clearInterval(self.msgTimerId);
-        
+        self.textArea.focus();
         $.ajax({ 
             type: "POST",
             url: self.sendMessageApi,
