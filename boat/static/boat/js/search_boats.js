@@ -17,6 +17,7 @@ $(document).ready(() => {
         autoClose: true,
         minDate: new Date(),
         altFieldDateFormat: 'yyyy-MM-dd',
+        isMobile: window.isMobile()
     }
 
     new AirDatepicker('#dateFrom', {

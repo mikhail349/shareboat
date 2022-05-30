@@ -9,6 +9,7 @@ $(document).ready(() => {
             inputDatesExist ? new Date(searchParams.get('dateTo')) : undefined
         ],
         autoClose: true,
+        isMobile: window.isMobile(),
         range: true,
         minDate: new Date(Math.max.apply(null,[firstPriceDate, new Date()])),
         maxDate: lastPriceDate,
