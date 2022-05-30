@@ -3,64 +3,40 @@ $(document).ready(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const inputDatesExist = searchParams.has('dateFrom') && searchParams.has('dateTo');
 
-    $('#bookingdaterangepicker').daterangepicker({
-        format: 'DD.MM.YYYY',
-        drops: 'auto',
-        autoUpdateInput: false,
-        startDate: inputDatesExist ? new Date(searchParams.get('dateFrom')) : undefined,
-        endDate: inputDatesExist ? new Date(searchParams.get('dateTo')) : undefined,
+    const dateRange = new AirDatepicker('#dateRange', {
+        selectedDates: [
+            inputDatesExist ? new Date(searchParams.get('dateFrom')) : undefined,
+            inputDatesExist ? new Date(searchParams.get('dateTo')) : undefined
+        ],
+        autoClose: true,
+        range: true,
         minDate: new Date(Math.max.apply(null,[firstPriceDate, new Date()])),
         maxDate: lastPriceDate,
-        isInvalidDate: function(date) {
-            const d = new Date(date._d.toDateString());
-
+        multipleDatesSeparator: ' - ',
+        position: 'top left',
+        onHide: (isFinished) => {if (isFinished) calc_booking()},
+        onRenderCell: ({date}) => {
             for (let acceptedBookingRange of acceptedBookingsRanges) {
-                if (d >= acceptedBookingRange.startDate && d <= acceptedBookingRange.endDate) {
-                    return true;
+                if (date >= acceptedBookingRange.startDate && date <= acceptedBookingRange.endDate) {
+                    return {
+                        disabled: true
+                    };
                 }
             }
 
             for (let priceRange of priceRanges) {
-                if (d >= priceRange.startDate && d <= priceRange.endDate) {
-                    return false;
+                if (date >= priceRange.startDate && date <= priceRange.endDate) {
+                    return {
+                        disabled: false
+                    };
                 }
             }
 
-            return true;
-        },
-        locale: {
-            format: 'DD.MM.YYYY',
-            applyLabel: "Ок",
-            "cancelLabel": "Отмена",
-            "fromLabel": "От",
-            "toLabel": "До",
-            "customRangeLabel": "Произвольный",
-            "daysOfWeek": [
-                "Вс",
-                "Пн",
-                "Вт",
-                "Ср",
-                "Чт",
-                "Пт",
-                "Сб"
-            ],
-            "monthNames": [
-                "Январь",
-                "Февраль",
-                "Март",
-                "Апрель",
-                "Май",
-                "Июнь",
-                "Июль",
-                "Август",
-                "Сентябрь",
-                "Октябрь",
-                "Ноябрь",
-                "Декабрь"
-            ],
-            firstDay: 1
+            return {
+                disabled: true
+            };
         }
-    })
+    });
 
     if (inputDatesExist) {
         calc_booking();
@@ -68,17 +44,19 @@ $(document).ready(() => {
     
     var xhr = null;
     function calc_booking() {
-        const picker = $('#bookingdaterangepicker').data('daterangepicker');
         
-        var range = picker.startDate.format(picker.locale.format) + ' - ' + picker.endDate.format(picker.locale.format);
-        window.selectedStartDate = picker.startDate;
-        window.selectedEndDate = picker.endDate;
+        if (dateRange.selectedDates.length !== 2) {
+            return;
+        }
+
+        window.selectedStartDate = dateRange.selectedDates[0];
+        window.selectedEndDate = dateRange.selectedDates[1];
         window.totalSum = null;
 
         if (!!xhr) xhr.abort();
         xhr = $.ajax({ 
             type: "GET",
-            url: `/boats/api/calc_booking/${boatId}/?start_date=${picker.startDate.format('YYYY-MM-DD')}&end_date=${picker.endDate.format('YYYY-MM-DD')}`,
+            url: `/boats/api/calc_booking/${boatId}/?start_date=${toJSONLocal(dateRange.selectedDates[0])}&end_date=${toJSONLocal(dateRange.selectedDates[1])}`,
             processData: false,
             contentType: false,
             success: onSuccess,
@@ -93,8 +71,6 @@ $(document).ready(() => {
         `);
        
         function onSuccess(data) {
-            $('#bookingdaterangepicker').val(range);
-
             window.totalSum = data.sum;
             
             $('#priceAlert').removeClass('alert-danger');
@@ -113,7 +89,6 @@ $(document).ready(() => {
             window.totalSum = null;
 
             if (error.status == 0) return;
-            $('#bookingdaterangepicker').val('');
             
             $('#priceAlert').removeClass('alert-success');
             $('#priceAlert').removeClass('alert-secondary');
@@ -121,26 +96,21 @@ $(document).ready(() => {
             $('#priceAlert').html(`
                 <h5>${parseJSONError(error.responseJSON)}</h5>
             `);
-        }        
+        }   
     }
 
     var xhr = null;
-    $('#bookingdaterangepicker').on('apply.daterangepicker', function(e) {
-        calc_booking();
-    });
 
     $("form").on('submit', function(e) {
         e.preventDefault();
-        const $datePicker = $('#bookingdaterangepicker');
-        $datePicker.removeAttr('readonly');
 
         if (!$(this).checkValidity(false)) return;
         
         showOverlayPanel("Бронирование...");
         const url = $(this).attr("action");
         const formData = new FormData();
-        formData.append('start_date', window.selectedStartDate.format('YYYY-MM-DD'));
-        formData.append('end_date', window.selectedEndDate.format('YYYY-MM-DD'));
+        formData.append('start_date', toJSONLocal(window.selectedStartDate));
+        formData.append('end_date', toJSONLocal(window.selectedEndDate));
         formData.append('total_sum', window.totalSum);
         formData.append('boat_id', window.boatId);
 
@@ -155,13 +125,11 @@ $(document).ready(() => {
         }); 
        
         function onSuccess(data) {
-            $datePicker.attr('readonly', true);
             hideOverlayPanel();
             window.location.href = data.redirect;
         }
     
         function onError(error) {
-            $datePicker.attr('readonly', true);
             hideOverlayPanel();
             showErrorToast(error.responseJSON.message);
             if (error.responseJSON?.code === 'outdated_price') {

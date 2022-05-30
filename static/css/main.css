@@ -68,4 +68,7 @@ body > .main-content-container {
     transition: all 2.s ease-in-out;
 }
 
+input[readonly].false-readonly {
+    background-color: white !important;
+}
 

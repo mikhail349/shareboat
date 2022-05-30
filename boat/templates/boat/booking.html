@@ -32,7 +32,9 @@
     </script>
 
     <script type="text/javascript" src="{% static 'boat/js/booking.min.js' %}"></script>
-    {% include 'daterangepicker.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
+    <script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
 
     <div class="container-lg">
         <form method="post" action="{% url 'booking:api_create' %}" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
@@ -53,8 +55,7 @@
                         {% if prices_exist %}
                 
                             <div class="form-floating mb-3">                 
-                                <input id="bookingdaterangepicker" autocomplete="off"
-                                    type="text" class="form-control" placeholder="Укажите период" required readonly style="cursor:pointer; background-color: #FFFFFF"/>
+                                <input id="dateRange" type="text" placeholder="Укажите период" class="form-control false-readonly" required autocomplete="off" readonly />
                                 <label>Период бронирования</label>
                                 <div class="invalid-tooltip">Укажите период бронирования</div>
                             </div>

@@ -1,4 +1,36 @@
 $(document).ready(() => {
+
+    const params = new URLSearchParams(window.location.search);
+
+    var dateFrom,
+        dateTo;
+
+    if (params.has('dateFrom')) {
+        dateFrom = new Date(params.get('dateFrom'));
+    }
+    
+    if (params.has('dateTo')) {
+        dateTo = new Date(params.get('dateTo'));
+    }
+
+    const defaultDatePickerOptions = {
+        autoClose: true,
+        minDate: new Date(),
+        altFieldDateFormat: 'yyyy-MM-dd',
+    }
+
+    new AirDatepicker('#dateFrom', {
+        selectedDates: [dateFrom],
+        altField: '#hiddenDateFrom',
+        ...defaultDatePickerOptions
+    });
+
+    new AirDatepicker('#dateTo', {
+        selectedDates: [dateTo],
+        altField: '#hiddenDateTo',
+        ...defaultDatePickerOptions
+    });
+
     $('#formSearch').on('submit', function(e) {
 
         var isInvalid = false;
@@ -47,12 +79,12 @@ $(document).ready(() => {
     })
 
     $(".pagination a").on('click', function(e) {
-        
-        const params = new Proxy(new URLSearchParams($(this).attr('href')), {
+
+        const pageParams = new Proxy(new URLSearchParams($(this).attr('href')), {
             get: (searchParams, prop) => searchParams.get(prop),
         });
-
-        $('#formSearch input[name="page"]').val(params.page);
+        
+        $('#formSearch input[name="page"]').val(pageParams.page);
         $("#formSearch").submit();
 
         e.preventDefault();

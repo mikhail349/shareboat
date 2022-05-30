@@ -9,6 +9,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'boat/css/search_boats.css' %}">
 <script type="text/javascript" src="{% static 'boat/js/search_boats.min.js' %}"></script>
 
+<link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
+<script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
+
 <form id="formSearch" action='.' method="get" class="needs-validation" novalidate>
     <div class="container-md">
         <section class="jumbotron text-center ">      
@@ -17,17 +20,21 @@
 
         <div class="search-boats-panel d-flex justify-content-center mb-3">
             <div>
-         
+        
                 <div class="form-floating mb-3">                 
-                    <input type="date" name="dateFrom" class="form-control" value="{{ request.GET.dateFrom }}" required />
+                    <input id="dateFrom" type="text" class="form-control false-readonly" required autocomplete="off" readonly />
                     <label>Начало периода</label>
                     <div class="invalid-tooltip">Укажите начало периода</div>
                 </div>
+
                 <div class="form-floating mb-3">                 
-                    <input type="date" name="dateTo" class="form-control" value="{{ request.GET.dateTo }}" required />
+                    <input id="dateTo" type="text" class="form-control false-readonly" required autocomplete="off" />
                     <label>Окончание периода</label>
                     <div class="invalid-tooltip">Укажите окончание периода</div>
                 </div>
+
+                <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
+                <input id="hiddenDateTo" name="dateTo" type="hidden" />
                 <input name="page" type="hidden" />
 
                 <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">Поиск</button>

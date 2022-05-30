@@ -213,18 +213,19 @@ def search_boats(request):
         q_date_from = datetime.datetime.strptime(q_date_from, '%Y-%m-%d')
         q_date_to = datetime.datetime.strptime(q_date_to, '%Y-%m-%d')
 
-        boats = Boat.published.all()
-        if q_boat_types:
-            boats = boats.filter(type__in=q_boat_types)
+        if q_date_from <= q_date_to:
+            boats = Boat.published.all()
+            if q_boat_types:
+                boats = boats.filter(type__in=q_boat_types)
 
-        boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
-        boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
-        
-        boats = list(boats) 
-        for boat in boats:
-            boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
+            boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
+            boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
+            
+            boats = list(boats) 
+            for boat in boats:
+                boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
 
-        boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
+            boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
         searched = True
 
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
