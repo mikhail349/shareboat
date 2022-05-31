@@ -47,7 +47,13 @@ $(document).ready(() => {
     function calc_booking() {
         
         if (dateRange.selectedDates.length !== 2) {
-            return;
+            window.selectedStartDate = null;
+            window.selectedEndDate = null;
+            window.totalSum = null;
+
+            $('#priceAlert').removeClass('alert-danger alert-success');
+            $('#priceAlert').addClass('alert-secondary');
+            $('#priceAlert').html('<strong>Для расчета цены выберите период</strong>');
         }
 
         window.selectedStartDate = dateRange.selectedDates[0];
@@ -64,24 +70,18 @@ $(document).ready(() => {
             error: onError
         }); 
 
-        $('#priceAlert').removeClass('alert-danger');
-        $('#priceAlert').removeClass('alert-success');
+        $('#priceAlert').removeClass('alert-danger alert-success');
         $('#priceAlert').addClass('alert-secondary');
-        $('#priceAlert').html(`
-            <strong>Идет расчет цены...</strong>
-        `);
+        $('#priceAlert').html('<strong>Идет расчет цены...</strong>');
        
         function onSuccess(data) {
             window.totalSum = data.sum;
-            
-            $('#priceAlert').removeClass('alert-danger');
-            $('#priceAlert').removeClass('alert-secondary');
-            $('#priceAlert').addClass('alert-success');
             let sumStr = data.sum.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
-            $('#priceAlert').html(`
-                <strong>${sumStr}</strong><span> за ${data.days} ${daysStr}</span>
-            `)
+
+            $('#priceAlert').removeClass('alert-danger alert-secondary');
+            $('#priceAlert').addClass('alert-success');
+            $('#priceAlert').html(`<strong>${sumStr}</strong><span> за ${data.days} ${daysStr}</span>`)
         }
     
         function onError(error) {
@@ -91,12 +91,9 @@ $(document).ready(() => {
 
             if (error.status == 0) return;
             
-            $('#priceAlert').removeClass('alert-success');
-            $('#priceAlert').removeClass('alert-secondary');
+            $('#priceAlert').removeClass('alert-success alert-secondary');
             $('#priceAlert').addClass('alert-danger');
-            $('#priceAlert').html(`
-                <h5>${parseJSONError(error.responseJSON)}</h5>
-            `);
+            $('#priceAlert').html(`<h5>${parseJSONError(error.responseJSON)}</h5>`);
         }   
     }
 
@@ -106,6 +103,11 @@ $(document).ready(() => {
         e.preventDefault();
 
         if (!$(this).checkValidity(false)) return;
+
+        if (!window.selectedStartDate || !window.selectedEndDate) {
+            showErrorToast('Выберите период');
+            return;
+        }
         
         showOverlayPanel("Бронирование...");
         const url = $(this).attr("action");

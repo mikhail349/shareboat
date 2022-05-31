@@ -20,13 +20,13 @@ $(document).ready(() => {
         isMobile: window.isMobile()
     }
 
-    new AirDatepicker('#dateFrom', {
+    const dpFrom = new AirDatepicker('#dateFrom', {
         selectedDates: [dateFrom],
         altField: '#hiddenDateFrom',
         ...defaultDatePickerOptions
     });
 
-    new AirDatepicker('#dateTo', {
+    const dpTo = new AirDatepicker('#dateTo', {
         selectedDates: [dateTo],
         altField: '#hiddenDateTo',
         ...defaultDatePickerOptions
@@ -34,19 +34,15 @@ $(document).ready(() => {
 
     $('#formSearch').on('submit', function(e) {
 
-        var isInvalid = false;
-        for (let input of $("#formSearch input")) {
-            if ($(input).is(':invalid')) {
-                isInvalid = true;
-                break;
-            }
+        if (dpFrom.selectedDates.length == 0 || dpTo.selectedDates.length == 0) {
+            showErrorToast('Выберите период');
+            e.preventDefault();
+            return;
         }
-        
-        if (!isInvalid) {
-            const $btnSubmit = $('#formSearch button[type=submit]');
-            $btnSubmit.attr('disabled', true);
-            $btnSubmit.text('Идет поиск...');
-        }
+
+        const $btnSubmit = $('#formSearch button[type=submit]');
+        $btnSubmit.attr('disabled', true);
+        $btnSubmit.text('Идет поиск...');
 
     });
 
