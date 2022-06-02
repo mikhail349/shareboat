@@ -1,3 +1,4 @@
+from enum import unique
 from pyexpat import model
 from django.db import models
 from django.db.models import Q
@@ -252,6 +253,13 @@ class BoatFile(models.Model):
 
     def __str__(self):
         return '%s - %s' % (self.file, self.boat)
+
+class BoatFav(models.Model):
+   boat = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='favs')
+   user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="fav_boats")
+
+   class Meta:
+       unique_together = [['boat', 'user']]
 
 pre_save.connect(signals.verify_imagefile, sender=BoatFile)
 pre_save.connect(signals.delete_old_file, sender=BoatFile)

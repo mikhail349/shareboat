@@ -13,7 +13,8 @@ apiurlpatterns = [
     path('get_files/<int:pk>/', views.get_files),
     path('calc_booking/<int:pk>/', views.calc_booking, name='api_calc_booking'),
     path('set_status/<int:pk>/', views.set_status, name='api_set_status'),
-    path('get_models/<int:pk>/', views.get_models)
+    path('get_models/<int:pk>/', views.get_models),
+    path('switch_fav/<int:pk>/', views.switch_fav)
 ]
 
 urlpatterns = [

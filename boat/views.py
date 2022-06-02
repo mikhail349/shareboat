@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db import transaction
-from django.db.models import Max, Min, Value, DecimalField, F
+from django.db.models import Max, Min, Exists, OuterRef
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -19,7 +19,7 @@ from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
-from .models import Boat, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
+from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
 from base.models import Base
@@ -220,7 +220,7 @@ def search_boats(request):
 
             boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
             boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
-            
+            boats = boats.annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=request.user)))
             boats = list(boats) 
             for boat in boats:
                 boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
@@ -241,12 +241,26 @@ def search_boats(request):
     return render(request, 'boat/search_boats.html', context)
 
 def boats(request):
-    boats = Boat.published.all()
+    boats = Boat.published.all().annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=request.user)))
     context = {
         'boats': boats,
     }
 
-    return render(request, 'boat/boats.html', context=context)   
+    return render(request, 'boat/boats.html', context=context)
+
+@login_required
+def switch_fav(request, pk):
+    res = None
+    try:
+        boat = Boat.objects.get(pk=pk)
+        BoatFav.objects.get(boat=boat, user=request.user).delete()
+        res = 'deleted'
+    except BoatFav.DoesNotExist:
+        BoatFav.objects.create(boat=boat, user=request.user)
+        res = 'added'
+    except Boat.DoesNotExist:
+        pass
+    return JsonResponse({'data': res})
     
 def booking(request, pk):
     if request.method == 'GET':

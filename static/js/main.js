@@ -118,8 +118,7 @@ function hideOverlayPanel() {
 }
 
 function removeToastBGs() {
-    $("#toast").removeClass("bg-light");
-    $("#toast").removeClass("bg-success");
+    $("#toast").removeClass("bg-light bg-success");
 }
 
 function showSuccessToast(msg="Изменения сохранены.") {
@@ -145,7 +144,7 @@ function showErrorToast(body, header="Ошибка") {
     `
 
     removeToastBGs();
-    $("#toast").addClass("bg-light");
+    $("#toast").addClass("bg-white");
     $("#toast").html(html);
     $("#toast").toast('show');
 }

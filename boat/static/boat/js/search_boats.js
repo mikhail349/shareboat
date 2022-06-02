@@ -13,32 +13,28 @@ $(document).ready(() => {
         dateTo = new Date(params.get('dateTo'));
     }
 
-    const defaultDatePickerOptions = {
+    const dpRange = new AirDatepicker('#dpRange', {
+        selectedDates: [
+            dateFrom,
+            dateTo
+        ],
         autoClose: true,
+        isMobile: window.isMobile(),
+        range: true,
         minDate: new Date(),
-        altFieldDateFormat: 'yyyy-MM-dd',
-        isMobile: window.isMobile()
-    }
-
-    const dpFrom = new AirDatepicker('#dateFrom', {
-        selectedDates: [dateFrom],
-        altField: '#hiddenDateFrom',
-        ...defaultDatePickerOptions
-    });
-
-    const dpTo = new AirDatepicker('#dateTo', {
-        selectedDates: [dateTo],
-        altField: '#hiddenDateTo',
-        ...defaultDatePickerOptions
+        multipleDatesSeparator: ' - ',
     });
 
     $('#formSearch').on('submit', function(e) {
 
-        if (dpFrom.selectedDates.length == 0 || dpTo.selectedDates.length == 0) {
-            showErrorToast('Выберите период');
+        if (dpRange.selectedDates.length !== 2) {
+            showErrorToast('Выберите период бронирования');
             e.preventDefault();
             return;
         }
+
+        $("#hiddenDateFrom").val(toJSONLocal(dpRange.selectedDates[0]));
+        $("#hiddenDateTo").val(toJSONLocal(dpRange.selectedDates[1]));
 
         const $btnSubmit = $('#formSearch button[type=submit]');
         $btnSubmit.attr('disabled', true);
