@@ -44,7 +44,7 @@ def create(request):
 
 @login_required
 def my_bookings(request):
-    status = request.GET.get('status')
+    status = request.GET.get('status', 'active')
     bookings = Booking.objects.filter(renter=request.user).order_by('-start_date')
     if status == 'active':
         bookings = bookings.filter(status__in=Booking.ACTIVE_STATUSES)
@@ -54,7 +54,7 @@ def my_bookings(request):
 
 @login_required
 def requests(request):
-    status = request.GET.get('status')
+    status = request.GET.get('status', 'active')
     requests = Booking.objects.filter(boat__owner=request.user).order_by('-start_date')
     if status == 'active':
         requests = requests.filter(status__in=Booking.ACTIVE_STATUSES)

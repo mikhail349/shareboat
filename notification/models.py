@@ -1,7 +1,6 @@
 from django.db import models
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from boat.models import Boat
 from user.models import User
 
 class Notification(models.Model):
