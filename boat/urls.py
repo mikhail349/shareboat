@@ -21,6 +21,7 @@ urlpatterns = [
     path('', views.boats, name="boats"),
     path('my_boats/', views.my_boats, name='my_boats'),
     path('boats_on_moderation/', views.boats_on_moderation, name='boats_on_moderation'),
+    path('favs/', views.favs, name='favs'),
 
     path('create/', views.create, name='create'),
     path('update/<int:pk>/', views.update, name='update'),

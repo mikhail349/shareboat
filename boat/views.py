@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db import transaction
-from django.db.models import Max, Min, Exists, OuterRef
+from django.db.models import Max, Min, Exists, OuterRef, Value
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -14,8 +14,6 @@ from rest_framework import status
 from PIL import UnidentifiedImageError
 from django.core.exceptions import ValidationError
 from django.core import serializers
-
-from shareboat.date_utils import daterange
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
@@ -106,6 +104,21 @@ def my_boats(request):
     }
 
     return render(request, 'boat/my_boats.html', context=context) 
+
+@login_required
+@permission_required('boat.view_boat', raise_exception=True)
+def favs(request):
+    page = request.GET.get('page', 1)
+
+    boats = Boat.published.filter(favs__user=request.user).annotate(in_fav=Value(True)).order_by('id')
+    p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(page)
+
+    context = {
+        'boats': p.object_list, 
+        'p': p
+    }
+
+    return render(request, 'boat/favs.html', context=context) 
 
 @permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
 def boats_on_moderation(request):

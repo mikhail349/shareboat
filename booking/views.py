@@ -44,12 +44,22 @@ def create(request):
 
 @login_required
 def my_bookings(request):
+    status = request.GET.get('status')
     bookings = Booking.objects.filter(renter=request.user).order_by('-start_date')
+    if status == 'active':
+        bookings = bookings.filter(status__in=Booking.ACTIVE_STATUSES)
+    elif status == 'done':
+        bookings = bookings.exclude(status__in=Booking.ACTIVE_STATUSES)
     return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'Status': Booking.Status})
 
 @login_required
 def requests(request):
+    status = request.GET.get('status')
     requests = Booking.objects.filter(boat__owner=request.user).order_by('-start_date')
+    if status == 'active':
+        requests = requests.filter(status__in=Booking.ACTIVE_STATUSES)
+    elif status == 'done':
+        requests = requests.exclude(status__in=Booking.ACTIVE_STATUSES)
     return render(request, 'booking/requests.html', context={'requests': requests, 'Status': Booking.Status})
 
 @login_required

@@ -7,6 +7,10 @@ $(document).ready(() => {
             url: `/boats/api/switch_fav/${pk}/`
         }); 
 
+        $(this).removeClass('scale-anim');
+        $(this)[0].offsetWidth; // reflow
+        $(this).addClass('scale-anim');
+
         if ($(this).hasClass('text-primary')) {
             $(this).removeClass('text-primary');
             $(this).addClass('text-danger');            

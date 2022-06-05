@@ -21,6 +21,7 @@
 {% endif %}
 
 <h2>{{ boat.name }}</h2>   
+<h4>{{ boat.model.manufacturer.name }} {{ boat.model.name }}</h4> 
 <h4 class="text-muted">{{ boat.get_type_display }}</h4>   
 
 {% include 'boat/location.html' %}

@@ -3,18 +3,18 @@
 {% load static %}
 {% load boat_extras %}
 
-{% block title %}Лодки{% endblock  %}
+{% block title %}Избранное{% endblock  %}
 
 {% block content %}
     <section class="jumbotron text-center ">
         <div class="container-md">
-            <h1 class="jumbotron-heading">Лодки</h1>
+            <h1 class="jumbotron-heading">Избранное</h1>
         </div>
     </section>
     
     {% if boats %}
         {% include 'boat/boats_list.html' %}
     {% else %}
-        <div class="text-center text-muted">В данный момент опубликованных лодок нет.</div>
+        <div class="text-center text-muted">Избранных лодок нет</div>
     {% endif %}
 {% endblock  %}

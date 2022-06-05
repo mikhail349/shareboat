@@ -13,6 +13,8 @@
         </div>
     </section>
 
+    {% include 'booking/nav_status.html' %}
+
     {% if bookings %}
         {% include 'booking/bookings_list_card.html' %}
     {% else %}

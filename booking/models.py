@@ -32,6 +32,7 @@ class Booking(models.Model):
         DONE        = 4, _("Завершено")
 
     BLOCKED_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE, Status.DONE]
+    ACTIVE_STATUSES = [Status.PENDING, Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE]
 
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')

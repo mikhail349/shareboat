@@ -96,6 +96,11 @@ class Boat(models.Model):
     def is_published(self):
         return self.status == self.Status.PUBLISHED
 
+    def get_full_name(self):
+        if self.model is not None:
+            return f'{self.model.manufacturer.name} {self.model.name} "{self.name}"'
+        return f'"{self.name}"'
+
     def get_now_prices(self):
         now = timezone.now()
         return BoatPrice.objects.filter(boat=self, start_date__lte=now, end_date__gte=now)

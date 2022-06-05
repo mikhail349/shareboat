@@ -22,7 +22,10 @@
                         <a class="nav-link" href="{% url 'boat:boats' %}">Лодки</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'booking:my_bookings' %}">Бронирования</a>
+                        <a class="nav-link" href="{% url 'booking:my_bookings' %}?status=active">Бронирования</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'boat:favs' %}">Избранное</a>
                     </li>
                 </ul>  
                 <ul class="navbar-nav">
@@ -37,7 +40,7 @@
                                 {% if perms.boat.view_boat %}  
                                     <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Мой флот</a></li>
                                     <li>
-                                        <a class="dropdown-item" href="{% url 'booking:requests' %}">
+                                        <a class="dropdown-item" href="{% url 'booking:requests' %}?status=active">
                                             Заявки на бронирование
                                             {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
                                         </a>
