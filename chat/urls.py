@@ -16,5 +16,7 @@ apiurlpatterns = [
 urlpatterns = [
     path('booking/<int:pk>/', views.booking, name='booking'),
     path('boat/<int:pk>/', views.boat, name='boat'),
+    path('list/', views.list, name='list'),
+
     path('api/', include(apiurlpatterns))
 ]

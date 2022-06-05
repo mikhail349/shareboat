@@ -4,13 +4,16 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 from .models import MessageBoat, MessageBooking
-from .serializers import MessageBookingSerializerSend, MessageSerializerList
+from .serializers import MessageSerializerList
 
 from boat.models import Boat
 from booking.models import Booking
 
 import json
-import time
+
+@login_required
+def list(request):
+    return render(request, 'chat/list.html')
 
 @login_required
 def get_new_messages_booking(request, pk):
