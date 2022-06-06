@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef, Subquery
 
 from .models import MessageBoat, MessageBooking
 from .serializers import MessageSerializerList
@@ -13,7 +13,16 @@ import json
 
 @login_required
 def list(request):
-    return render(request, 'chat/list.html')
+    user = request.user
+
+    bookings = Booking.objects.filter(
+        Q(renter=user) | Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk')))
+    )
+    for booking in bookings:
+        booking.last_message = MessageBooking.objects.filter(booking=booking).last()
+
+    bookings = sorted(bookings, key=lambda booking: booking.last_message.pk, reverse=True)
+    return render(request, 'chat/list.html', context={'bookings': bookings})
 
 @login_required
 def get_new_messages_booking(request, pk):
