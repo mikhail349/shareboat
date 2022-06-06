@@ -5,11 +5,11 @@
     <div>
         {{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}
     </div>
-    <div class="mb-2">
+    <div>
         <strong>{{ booking.total_sum }}&nbsp;₽</strong>
     </div>
     {% if booking.renter != user %}
-        <div>
+        <div class="mt-2">
             {% if booking.renter.avatar %}
                 <img height="32" width="32" src="{{ booking.renter.avatar.url }}" class="rounded-circle">
             {% endif %}

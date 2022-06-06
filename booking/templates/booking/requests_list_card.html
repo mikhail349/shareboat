@@ -33,7 +33,7 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                     {% endif %}      
-                                    <li><a class="dropdown-item" href="{% url 'chat:booking' req.pk %}?back={{ request.path }}">Чат</a></li>                           
+                                    <li><a class="dropdown-item" href="{% url 'chat:booking' req.pk %}?back={{ request.get_full_path }}">Чат</a></li>                           
                                 </ul>
                             </div>
                         </div>
