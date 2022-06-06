@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db.models import Q, Exists, OuterRef, Subquery
 
+from django.urls import reverse
 from .models import MessageBoat, MessageBooking
 from .serializers import MessageSerializerList
 
@@ -14,15 +15,24 @@ import json
 @login_required
 def list(request):
     user = request.user
+    messages = []
 
     bookings = Booking.objects.filter(
         Q(renter=user) | Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk')))
     )
     for booking in bookings:
-        booking.last_message = MessageBooking.objects.filter(booking=booking).last()
+        last_message = MessageBooking.objects.filter(booking=booking).last()
+        last_message.href = reverse('chat:booking', kwargs={'pk': booking.pk})
+        messages.append(last_message)
 
-    bookings = sorted(bookings, key=lambda booking: booking.last_message.pk, reverse=True)
-    return render(request, 'chat/list.html', context={'bookings': bookings})
+    boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
+    for boat in boats:
+        last_message = MessageBoat.objects.filter(boat=boat).last()
+        last_message.href = reverse('chat:boat', kwargs={'pk': boat.pk})
+        messages.append(last_message)
+
+    messages = sorted(messages, key=lambda message: message.pk, reverse=True)
+    return render(request, 'chat/list.html', context={'messages': messages})
 
 @login_required
 def get_new_messages_booking(request, pk):

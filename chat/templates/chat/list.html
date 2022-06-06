@@ -8,15 +8,17 @@
     <section class="jumbotron text-center">
         <div class="container">
             <h1 class="jumbotron-heading">Сообщения</h1>
-
-            <div class="list-group">
-                {% for booking in bookings %}
-                    <a class="list-group-item list-group-item-action d-flex gap-3 py-3" href="#">
-                        {{booking.last_message.sent_at|timesince }}
-                    </a>
-                {% endfor %}
-            </div>
         </div>
     </section>
+
+    <div class="container">
+        <div class="list-group">
+            {% for message in messages %}
+                <a class="list-group-item list-group-item-action d-flex gap-3 py-3" href="{{ message.href }}?back={{ request.get_full_path }}">
+                    {{message.text }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
     
 {% endblock  %}
