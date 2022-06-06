@@ -8,10 +8,12 @@
     <div class="mb-2">
         <strong>{{ booking.total_sum }}&nbsp;₽</strong>
     </div>
-    <div>
-        {% if booking.renter.avatar %}
-            <img height="32" width="32" src="{{ booking.renter.avatar.url }}" class="rounded-circle">
-        {% endif %}
-        <span class="text-muted align-middle">{{ booking.renter.first_name }}</span>
-    </div>
+    {% if booking.renter != user %}
+        <div>
+            {% if booking.renter.avatar %}
+                <img height="32" width="32" src="{{ booking.renter.avatar.url }}" class="rounded-circle">
+            {% endif %}
+            <span class="text-muted align-middle">{{ booking.renter.first_name }}</span>
+        </div>
+    {% endif %}
 </div>

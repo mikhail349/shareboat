@@ -41,7 +41,7 @@ class Booking(models.Model):
         DONE        = 4, _("Завершено")
 
     BLOCKED_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE, Status.DONE]
-    PENDING_STATUSES = [Status.PENDING]
+    PENDING_STATUSES = [Status.PENDING,]
     ACTIVE_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE]
     DONE_STATUSES = [Status.DONE, Status.DECLINED]
 
