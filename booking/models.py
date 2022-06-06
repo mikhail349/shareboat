@@ -20,6 +20,15 @@ class BookingQuerySet(models.QuerySet):
     def blocked_in_range(self, start_date, end_date):
         return self.filter(status__in=Booking.BLOCKED_STATUSES).in_range(start_date, end_date)
 
+    def filter_by_status(self, status):
+        if status == 'pending':
+            return self.filter(status__in=Booking.PENDING_STATUSES)
+        if status == 'active':
+            return self.filter(status__in=Booking.ACTIVE_STATUSES)
+        elif status == 'done':
+            return self.filter(status__in=Booking.DONE_STATUSES)
+        return self
+
 
 class Booking(models.Model):
 
@@ -32,7 +41,9 @@ class Booking(models.Model):
         DONE        = 4, _("Завершено")
 
     BLOCKED_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE, Status.DONE]
-    ACTIVE_STATUSES = [Status.PENDING, Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE]
+    PENDING_STATUSES = [Status.PENDING]
+    ACTIVE_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE]
+    DONE_STATUSES = [Status.DONE, Status.DECLINED]
 
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')

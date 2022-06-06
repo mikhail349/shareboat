@@ -40,7 +40,7 @@
                                 {% if perms.boat.view_boat %}  
                                     <li><a class="dropdown-item" href="{% url 'boat:my_boats' %}">Мой флот</a></li>
                                     <li>
-                                        <a class="dropdown-item" href="{% url 'booking:requests' %}?status=active">
+                                        <a class="dropdown-item" href="{% url 'booking:requests' %}?status={% if nav_counters.bookings_on_pending_count > 0 %}pending{% else %}active{% endif %}">
                                             Заявки на бронирование
                                             {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
                                         </a>

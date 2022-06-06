@@ -1,10 +1,19 @@
 <div class="container mb-3">
     <ul class="nav nav-pills flex-column flex-sm-row">
         <li class="nav-item">
-            <a class="nav-link {% if not request.GET.status or request.GET.status == 'active' %}active{% endif %}" href="?status=active">Активные</a>
+            <a class="nav-link {% if request.GET.status == 'pending' %}active{% endif %}" href="?status=pending">
+                На рассмотрении
+                {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.status == 'active' %}active{% endif %}" href="?status=active">Активные</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {% if request.GET.status == 'done' %}active{% endif %}" href="?status=done">Завершенные</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if not request.GET.status %}active{% endif %}" href="?">Все</a>
         </li>
     </ul>
 </div>

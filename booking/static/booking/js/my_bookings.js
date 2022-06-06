@@ -7,6 +7,7 @@ $(document).ready(() => {
         const status = $(this).attr('data-status');
         const formData = new FormData();
         formData.append('status', status);
+        formData.append('search', window.location.search);
 
         const $btn = $(`#dropdownMenuStatus${bookingId}`);
         $btn.attr("disabled", true);
@@ -22,7 +23,7 @@ $(document).ready(() => {
         }); 
 
         function onSuccess() {
-            document.location.reload();
+            window.location.href = data.redirect;
         }
 
         function onError(error) {

@@ -23,6 +23,7 @@ $(document).ready(() => {
 
         const bookingId = $declineModal.attr('data-booking-id');
         const formData = new FormData($(this)[0]);
+        formData.append('search', window.location.search);
         const $btnSubmit = $('#formDecline button[type="submit"]')
 
         $btnSubmit.attr('disabled', true);
@@ -54,6 +55,7 @@ $(document).ready(() => {
         
         const formData = new FormData();
         formData.append('status', status);
+        formData.append('search', window.location.search);
 
         $btn.attr('disabled', true);
         $.ajax({ 

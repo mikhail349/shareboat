@@ -44,22 +44,14 @@ def create(request):
 
 @login_required
 def my_bookings(request):
-    status = request.GET.get('status', 'active')
-    bookings = Booking.objects.filter(renter=request.user).order_by('-start_date')
-    if status == 'active':
-        bookings = bookings.filter(status__in=Booking.ACTIVE_STATUSES)
-    elif status == 'done':
-        bookings = bookings.exclude(status__in=Booking.ACTIVE_STATUSES)
+    status = request.GET.get('status')
+    bookings = Booking.objects.filter(renter=request.user).filter_by_status(status).order_by('-start_date')
     return render(request, 'booking/my_bookings.html', context={'bookings': bookings, 'Status': Booking.Status})
 
 @login_required
 def requests(request):
-    status = request.GET.get('status', 'active')
-    requests = Booking.objects.filter(boat__owner=request.user).order_by('-start_date')
-    if status == 'active':
-        requests = requests.filter(status__in=Booking.ACTIVE_STATUSES)
-    elif status == 'done':
-        requests = requests.exclude(status__in=Booking.ACTIVE_STATUSES)
+    status = request.GET.get('status')
+    requests = Booking.objects.filter(boat__owner=request.user).filter_by_status(status).order_by('-pk')
     return render(request, 'booking/requests.html', context={'requests': requests, 'Status': Booking.Status})
 
 @login_required
@@ -98,7 +90,7 @@ def set_request_status(request, pk):
         booking.status = new_status
         booking.save()
 
-        return JsonResponse({'redirect': reverse('booking:requests')})
+        return JsonResponse({'redirect': reverse('booking:requests') + request.POST.get('search', '')})
     except Booking.DoesNotExist:
         return JsonResponse({'message': 'Бронь не найдена'}, status=404) 
 
@@ -131,6 +123,6 @@ def set_status(request, pk):
         booking.status = new_status
         booking.save()
 
-        return JsonResponse({})
+        return JsonResponse({'redirect': reverse('booking:my_bookings') + request.POST.get('search', '')})
     except Booking.DoesNotExist:
         return JsonResponse({'message': 'Бронь не найдена'}, status=404)   

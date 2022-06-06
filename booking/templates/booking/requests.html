@@ -17,6 +17,8 @@
 
     {% if requests %}
         {% include 'booking/requests_list_card.html' %}
+    {% else %}
+        <div class="text-center text-muted">Нет заявок</div>
     {% endif %}
 
     <div id="declineRequestModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">

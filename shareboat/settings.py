@@ -91,7 +91,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'shareboat.context_processors.nav_counters',
-                'shareboat.context_processors.notifications',
+                #'shareboat.context_processors.notifications',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',

@@ -68,7 +68,17 @@
         <p class="text-muted">
             <span class="d-block">WC</span><span class="text-black">{{ boat.comfort_boat.bathroom_amount|default:"-" }}</span>
         </p>
-    </div>          
+    </div>     
+    
+    <div class="col-12">
+        <h5>Владелец</h5>
+    </div>  
+    <div class="col-12 mb-3">
+        {% if boat.owner.avatar %}
+            <img height="32" width="32" src="{{ boat.owner.avatar.url }}" class="rounded-circle">
+        {% endif %}
+        <span class="text-muted align-middle">{{ boat.owner.first_name }}</span>
+    </div>
 
     {% if show_prices %}
         <div class="col-12">
