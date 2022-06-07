@@ -9,15 +9,15 @@ def nav_counters(request):
     
     if request.user.is_authenticated:
         bookings_on_pending_count = Booking.objects.filter(boat__owner=request.user, status=Booking.Status.PENDING).count()
-        from chat.models import Message
-        new_messages_count = Message.objects.filter(recipient=request.user, read=False).count()
+        #from chat.models import Message
+        #new_messages_count = Message.objects.filter(recipient=request.user, read=False).count()
     
     return {
         'nav_counters': {
             'boats_on_moderation_count': boats_on_moderation_count,
             'bookings_on_pending_count': bookings_on_pending_count,
             'new_messages_count': new_messages_count,
-            'total': boats_on_moderation_count + bookings_on_pending_count + new_messages_count
+            'total': boats_on_moderation_count + bookings_on_pending_count #+ new_messages_count
         }
     } 
     
