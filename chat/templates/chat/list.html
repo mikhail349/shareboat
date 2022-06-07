@@ -7,7 +7,7 @@
     
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">Сообщения</h1>
+            <h1 class="jumbotron-heading mb-0">Сообщения</h1>
         </div>
     </section>
 
@@ -16,7 +16,7 @@
             {% for message in messages %}
                 <a class="list-group-item d-flex gap-3 py-3" href="{{ message.href }}?back={{ request.get_full_path }}">
                     {% if message.sender.avatar %}
-                        <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle">
+                        <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle chat-avatar">
                     {% else %}
                         <div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>
                     {% endif %}

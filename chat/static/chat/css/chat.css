@@ -11,7 +11,7 @@ html, body {
     margin-bottom: 70px;
 }
 
-#msgContainer img.chat-avatar {
+img.chat-avatar {
     min-width: 32px;
     min-height: 32px;
 }
