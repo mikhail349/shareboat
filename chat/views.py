@@ -34,10 +34,11 @@ def list(request):
         messages.append(last_message)
 
     system_messages = Message.objects.filter(Q(messageboat__pk__isnull=True), Q(messagebooking__pk__isnull=True), Q(sender=request.user) | Q(recipient=request.user))
-    system_message = system_messages.last()
-    system_message.href = '#'
-    system_message.title = f'<span class="badge bg-secondary">Shareboat</span>'
-    messages.append(system_message)
+    if system_messages:
+        system_message = system_messages.last()
+        system_message.href = '#'
+        system_message.title = f'<span class="badge bg-secondary">Shareboat</span>'
+        messages.append(system_message)
 
     messages = sorted(messages, key=lambda message: message.pk, reverse=True)
     return render(request, 'chat/list.html', context={'messages': messages})
