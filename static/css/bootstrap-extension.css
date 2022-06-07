@@ -109,6 +109,10 @@ a {
     .card-img-lg-big {
         height: 400px;
     }
+
+    .md-container {
+        max-width: 700px;
+    }
 }
 
 .carousel.full-screen .carousel-img {

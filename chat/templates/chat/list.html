@@ -11,11 +11,25 @@
         </div>
     </section>
 
-    <div class="container">
+    <div class="container md-container">
         <div class="list-group">
             {% for message in messages %}
-                <a class="list-group-item list-group-item-action d-flex gap-3 py-3" href="{{ message.href }}?back={{ request.get_full_path }}">
-                    {{message.text }}
+                <a class="list-group-item d-flex gap-3 py-3" href="{{ message.href }}?back={{ request.get_full_path }}">
+                    {% if message.sender.avatar %}
+                        <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle">
+                    {% else %}
+                        <div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>
+                    {% endif %}
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                        <div>
+                          <h6 class="mb-0">{{ message.title|safe }}</h6>
+                          <p class="mb-0 opacity-75">{% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}{{ message.text }}</p>
+                        </div>
+                        <div>
+                            <div class="opacity-50 text-nowrap">{{ message.sent_at|date:'d b. Y' }}</div>
+                            <div class="opacity-50 text-nowrap text-end">{{ message.sent_at|date:'H:i' }}</div>
+                        </div>
+                    </div>
                 </a>
             {% endfor %}
         </div>

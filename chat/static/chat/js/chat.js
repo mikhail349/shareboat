@@ -56,7 +56,9 @@ class MessageHandler {
         const scrollY = Math.ceil(window.scrollY) - 70;
         self.isOnBottom = ((window.innerHeight + scrollY) >= document.body.offsetHeight);
 
-        if (document.body.offsetHeight - (window.innerHeight + scrollY) <= scrollY / 3) {
+        const scrollDown = document.body.offsetHeight - (window.innerHeight + scrollY);
+
+        if (scrollDown < window.innerHeight / 2) {
             self.btnGoToBottom.removeClass('show');
             self.btnGoToBottom.addClass('hide');
             $('#hasNewMessages').hide();

@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Exists, OuterRef, Subquery
 
 from django.urls import reverse
-from .models import MessageBoat, MessageBooking
+from .models import Message, MessageBoat, MessageBooking
 from .serializers import MessageSerializerList
 
 from boat.models import Boat
@@ -23,13 +23,21 @@ def list(request):
     for booking in bookings:
         last_message = MessageBooking.objects.filter(booking=booking).last()
         last_message.href = reverse('chat:booking', kwargs={'pk': booking.pk})
+        last_message.title = f'<span class="badge bg-secondary">Бронирование</span><div>{booking.boat.name}</div>'
         messages.append(last_message)
 
     boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
     for boat in boats:
         last_message = MessageBoat.objects.filter(boat=boat).last()
         last_message.href = reverse('chat:boat', kwargs={'pk': boat.pk})
+        last_message.title = f'<span class="badge bg-secondary">Лодка</span><div>{boat.name}</div>'
         messages.append(last_message)
+
+    system_messages = Message.objects.filter(Q(messageboat__pk__isnull=True), Q(messagebooking__pk__isnull=True), Q(sender=request.user) | Q(recipient=request.user))
+    system_message = system_messages.last()
+    system_message.href = '#'
+    system_message.title = f'<span class="badge bg-secondary">Shareboat</span>'
+    messages.append(system_message)
 
     messages = sorted(messages, key=lambda message: message.pk, reverse=True)
     return render(request, 'chat/list.html', context={'messages': messages})
