@@ -23,21 +23,23 @@ def list(request):
     for booking in bookings:
         last_message = MessageBooking.objects.filter(booking=booking).last()
         last_message.href = reverse('chat:booking', kwargs={'pk': booking.pk})
-        last_message.title = f'<span class="badge bg-secondary">Бронирование</span><div>{booking.boat.name}</div>'
+        last_message.title = booking.boat.name
+        last_message.badge = '<div class="badge bg-light text-primary">Бронирование</div>' 
         messages.append(last_message)
 
     boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
     for boat in boats:
         last_message = MessageBoat.objects.filter(boat=boat).last()
         last_message.href = reverse('chat:boat', kwargs={'pk': boat.pk})
-        last_message.title = f'<span class="badge bg-secondary">Лодка</span><div>{boat.name}</div>'
+        last_message.title = boat.name
+        last_message.badge = '<div class="badge bg-light text-primary">Лодка</div>' 
         messages.append(last_message)
 
     system_messages = Message.objects.filter(Q(messageboat__pk__isnull=True), Q(messagebooking__pk__isnull=True), Q(sender=request.user) | Q(recipient=request.user))
     if system_messages:
         system_message = system_messages.last()
-        system_message.href = '#'
-        system_message.title = f'<span class="badge bg-secondary">Shareboat</span>'
+        system_message.href = reverse('chat:message')
+        system_message.badge = '<div class="badge bg-warning text-primary">Shareboat</div>' 
         messages.append(system_message)
 
     messages = sorted(messages, key=lambda message: message.pk, reverse=True)
@@ -57,6 +59,21 @@ def get_new_messages_booking(request, pk):
             
         except Booking.DoesNotExist:
             return JsonResponse({'message': 'Бронирование не найдено'}, status=400)
+
+@login_required
+def get_new_messages(request):
+    if request.method == 'GET':
+        messages = Message.objects.filter(
+            messageboat__pk__isnull=True, 
+            messagebooking__pk__isnull=True,
+            recipient=request.user, 
+            read=False
+        ).order_by('sent_at')
+        data = MessageSerializerList(messages, many=True, context={'request': request}).data
+        messages.update(read=True)
+
+        return JsonResponse({'data': data})
+            
 
 @login_required
 def get_new_messages_boat(request, pk):
@@ -131,6 +148,37 @@ def send_message_boat(request, pk):
         
         except Booking.DoesNotExist:
             return JsonResponse({'message': 'Не удалось отправить сообщение. Лодка не найдена'}, status=400)
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        data = request.POST
+        new_message = Message.objects.create(text=data.get('text'), sender=request.user, recipient=None)
+
+        messages = Message.objects.filter(
+            Q(messageboat__pk__isnull=True), 
+            Q(messagebooking__pk__isnull=True),
+            Q(read=False), 
+            Q(recipient=request.user) | Q(pk=new_message.pk)
+        ).order_by('sent_at')
+        
+        data = MessageSerializerList(messages, many=True, context={'request': request}).data
+        messages.filter(recipient=request.user, read=False).update(read=True)
+
+        return JsonResponse({'data': data})
+        
+
+@login_required
+def message(request):
+    messages = Message.objects.filter(Q(messageboat__pk__isnull=True), Q(messagebooking__pk__isnull=True), Q(sender=request.user) | Q(recipient=request.user)).order_by('sent_at')
+    messages_serializer_data = MessageSerializerList(messages, many=True, context={'request': request}).data
+
+    messages.filter(recipient=request.user, read=False).update(read=True)
+    
+    context = {
+        'messages': json.dumps(messages_serializer_data)
+    }
+    return render(request, 'chat/message.html', context=context)
 
 @login_required
 def booking(request, pk):

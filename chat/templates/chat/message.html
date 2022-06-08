@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Чат{% endblock %}
+
+{% block nav %}
+    {% include 'nav_replacer_message.html' with back_link=request.GET.back|default:'/'  %}
+{% endblock %}
+
+{% block content %}
+    <script type="text/javascript">
+        var messages = {{ messages|safe }};
+    </script>
+
+    <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+    <script type="text/javascript" src="{% static 'chat/js/message.min.js' %}"></script>
+
+    <div id="wrapperMsgContainer" class="container-lg">    
+        <div id="msgContainer" class="list-group overflow-auto"></div>
+    </div>
+
+    {% include 'chat/footer.html' %}
+{% endblock  %}

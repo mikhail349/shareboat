@@ -22,12 +22,13 @@
                     {% endif %}
                     <div class="d-flex gap-2 w-100 justify-content-between">
                         <div>
-                          <h6 class="mb-0">{{ message.title|safe }}</h6>
+                          <h6 class="mb-0">{{ message.title }}</h6>
                           <p class="mb-0 opacity-75">{% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}{{ message.text }}</p>
                         </div>
-                        <div>
-                            <div class="opacity-50 text-nowrap">{{ message.sent_at|date:'d b. Y' }}</div>
-                            <div class="opacity-50 text-nowrap text-end">{{ message.sent_at|date:'H:i' }}</div>
+                        <div class="text-nowrap text-end">
+                            <div class="text-muted">{{ message.sent_at|date:'d b. Y' }}</div>
+                            <div class="text-muted">{{ message.sent_at|date:'H:i' }}</div>
+                            {{ message.badge|safe }}
                         </div>
                     </div>
                 </a>

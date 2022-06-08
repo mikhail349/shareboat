@@ -15,7 +15,7 @@
     height: 46px;
     max-width: 80%;
     font-size: 1.25rem;
-    color: var(--bs-gray-200) !important;
+    color: var(--bs-gray-200);
 }
 
 .nav-replacer .title div {
