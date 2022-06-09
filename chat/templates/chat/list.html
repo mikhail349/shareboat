@@ -24,12 +24,22 @@
                             <div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>
                         {% endif %}
                         <div class="w-100">
-                            <div class="d-flex gap-2 w-100 justify-content-between align-items-center">
-                                <h6 class="mb-0">{{ message.get_title }}</h6>
-                                <div class="text-muted text-nowrap">{{ message.sent_at|date:'d b. Y, H:i' }}</div>
-                            </div>
-                            <p class="mb-0 opacity-75">{% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}{{ message.text }}</p>
-                            <div class="text-end">{{ message.get_badge|safe }}</div>
+                            <div class="row">
+                                <div class="col">
+                                    <h6>{{ message.get_title }}</h6>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="text-muted text-nowrap">{{ message.sent_at|date:'d b. Y, H:i' }}</div>
+                                </div>
+                            </div>     
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p class="mb-0 opacity-75">{% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}{{ message.text }}</p>
+                                </div>
+                                <div class="col">
+                                    <div class="text-end">{{ message.get_badge|safe }}</div>
+                                </div>
+                            </div>                      
                         </div>
                     </div>
                 </a>
