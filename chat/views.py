@@ -1,7 +1,11 @@
+import imp
+from re import M
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.db.models import Q, Exists, OuterRef, Subquery
+from django.db.models import Q, Exists, OuterRef, Subquery, F, CharField, Max
+from django.db.models.functions import Concat
+from django.db.models.expressions import Case, When, Value
 
 from django.urls import reverse
 from .models import Message, MessageBoat, MessageBooking
@@ -9,14 +13,54 @@ from .serializers import MessageSerializerList
 
 from boat.models import Boat
 from booking.models import Booking
+from itertools import chain
 
 import json
 
 @login_required
 def list(request):
     user = request.user
-    messages = []
 
+    '''
+    def _annotate(qs):
+        return (
+            qs.values(
+                'pk',
+                badge = Case(
+                    When(messageboat__pk__isnull=False, then=Value('<div class="badge bg-light text-primary">Лодка</div>')),
+                    When(messagebooking__pk__isnull=False, then=Value('<div class="badge bg-light text-primary">Бронирование</div>')), 
+                    default=Value('<div class="badge bg-warning text-primary">Shareboat</div>')
+                ),
+                href = Case(
+                    When(messageboat__pk__isnull=False, then=Concat(Value('/chat/boat/'), F('messageboat__boat__pk'))), 
+                    When(messagebooking__pk__isnull=False, then=Concat(Value('/chat/booking/'), F('messagebooking__booking__pk'))),
+                    output_field=CharField(),
+                    default=Value('/chat/message/')
+                )
+            ).values(
+                'badge',
+                'href'
+            ).annotate(
+                last_message_pk=Max('pk')
+            ).values(
+                'badge',
+                'href',
+                'last_message_pk',
+                last_message=Subquery()
+            )   
+        )
+
+    messages = _annotate(Message.objects.filter(sender=user)) | _annotate(Message.objects.filter(recipient=user))
+    '''
+    res = []
+    messages = Message.objects.filter(sender=user).union(Message.objects.filter(recipient=user)).values_list('pk', flat=True)
+    
+    for booking in Booking.objects.filter(messages__pk__in=messages).distinct():
+        last_message = MessageBooking.objects.filter(booking=booking).last()
+        res.append(last_message)
+    
+
+    '''
     bookings = Booking.objects.filter(
         Q(renter=user) | Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk')))
     )
@@ -41,9 +85,9 @@ def list(request):
         system_message.href = reverse('chat:message')
         system_message.badge = '<div class="badge bg-warning text-primary">Shareboat</div>' 
         messages.append(system_message)
-
-    messages = sorted(messages, key=lambda message: message.pk, reverse=True)
-    return render(request, 'chat/list.html', context={'messages': messages})
+    '''
+    #messages = sorted(messages, key=lambda message: message.pk, reverse=True)
+    return render(request, 'chat/list.html', context={'messages': res})
 
 @login_required
 def get_new_messages_booking(request, pk):

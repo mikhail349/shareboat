@@ -1,6 +1,7 @@
 from asyncore import read
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 from boat.models import Boat
 from booking.models import Booking
@@ -14,12 +15,30 @@ class Message(models.Model):
     recipient   = models.ForeignKey(User, on_delete=models.PROTECT, related_name="messages_as_recipient", null=True, blank=True)
     read        = models.BooleanField(default=False)
 
+    def get_title(self):
+        return None
+
+    def get_href(self):
+        return reverse('chat:message')
+
+    def get_badge(self):
+        return '<div class="badge bg-warning text-primary">Shareboat</div>'
+
     def __str__(self):
         sender = self.sender or '[Системное сообщение]'
         return f'{sender}: {self.text}'
 
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
+
+    def get_title(self):
+        return self.booking.boat.name
+
+    def get_href(self):
+        return reverse('chat:booking', kwargs={'pk': self.booking.pk})
+
+    def get_badge(self):
+        return '<div class="badge bg-light text-primary">Бронирование</div>' 
 
 class MessageBoat(Message):
     

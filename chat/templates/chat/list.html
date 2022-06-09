@@ -14,7 +14,7 @@
     <div class="container md-container">
         <div class="list-group">
             {% for message in messages %}
-                <a class="list-group-item d-flex gap-3 py-3" href="{{ message.href }}?back={{ request.get_full_path }}">
+                <a class="list-group-item d-flex gap-3 py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     {% if message.sender.avatar %}
                         <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle chat-avatar">
                     {% else %}
@@ -22,13 +22,13 @@
                     {% endif %}
                     <div class="d-flex gap-2 w-100 justify-content-between">
                         <div>
-                          <h6 class="mb-0">{{ message.title }}</h6>
+                          <h6 class="mb-0">{{ message.get_title }}</h6>
                           <p class="mb-0 opacity-75">{% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}{{ message.text }}</p>
                         </div>
                         <div class="text-nowrap text-end">
                             <div class="text-muted">{{ message.sent_at|date:'d b. Y' }}</div>
                             <div class="text-muted">{{ message.sent_at|date:'H:i' }}</div>
-                            {{ message.badge|safe }}
+                            {{ message.get_badge|safe }}
                         </div>
                     </div>
                 </a>
