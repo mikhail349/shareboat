@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Message, MessageBooking, MessageBoat
+from .models import Message, MessageBooking, MessageBoat, MessageSupport
 
 class MessageAdmin(admin.ModelAdmin):
     model = Message
@@ -15,4 +15,5 @@ class MessageBoatAdmin(MessageAdmin):
 
 admin.site.register(MessageBooking, MessageBookingAdmin)
 admin.site.register(MessageBoat, MessageBoatAdmin)
+admin.site.register(MessageSupport)
 admin.site.register(Message)

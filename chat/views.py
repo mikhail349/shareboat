@@ -8,86 +8,49 @@ from django.db.models.functions import Concat
 from django.db.models.expressions import Case, When, Value
 
 from django.urls import reverse
-from .models import Message, MessageBoat, MessageBooking
+from .models import Message, MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
 
 from boat.models import Boat
 from booking.models import Booking
 from itertools import chain
+from django.utils import timezone
 
 import json
 
 @login_required
 def list(request):
     user = request.user
-
-    '''
-    def _annotate(qs):
-        return (
-            qs.values(
-                'pk',
-                badge = Case(
-                    When(messageboat__pk__isnull=False, then=Value('<div class="badge bg-light text-primary">Лодка</div>')),
-                    When(messagebooking__pk__isnull=False, then=Value('<div class="badge bg-light text-primary">Бронирование</div>')), 
-                    default=Value('<div class="badge bg-warning text-primary">Shareboat</div>')
-                ),
-                href = Case(
-                    When(messageboat__pk__isnull=False, then=Concat(Value('/chat/boat/'), F('messageboat__boat__pk'))), 
-                    When(messagebooking__pk__isnull=False, then=Concat(Value('/chat/booking/'), F('messagebooking__booking__pk'))),
-                    output_field=CharField(),
-                    default=Value('/chat/message/')
-                )
-            ).values(
-                'badge',
-                'href'
-            ).annotate(
-                last_message_pk=Max('pk')
-            ).values(
-                'badge',
-                'href',
-                'last_message_pk',
-                last_message=Subquery()
-            )   
-        )
-
-    messages = _annotate(Message.objects.filter(sender=user)) | _annotate(Message.objects.filter(recipient=user))
-    '''
-    res = []
-    messages = Message.objects.filter(sender=user).union(Message.objects.filter(recipient=user)).values_list('pk', flat=True)
+    messages = []
     
-    for booking in Booking.objects.filter(messages__pk__in=messages).distinct():
-        last_message = MessageBooking.objects.filter(booking=booking).last()
-        res.append(last_message)
-    
-
-    '''
-    bookings = Booking.objects.filter(
-        Q(renter=user) | Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk')))
-    )
+    bookings = Booking.objects.filter(Q(renter=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk'))))
     for booking in bookings:
-        last_message = MessageBooking.objects.filter(booking=booking).last()
-        last_message.href = reverse('chat:booking', kwargs={'pk': booking.pk})
-        last_message.title = booking.boat.name
-        last_message.badge = '<div class="badge bg-light text-primary">Бронирование</div>' 
+        last_message = booking.messages.filter(Q(sender=user)).union(booking.messages.filter(Q(recipient=user))).last()
+        last_message.get_badge = lambda: '<div class="badge bg-light text-primary">Бронирование</div>'
+        messages.append(last_message)
+
+    requests = Booking.objects.filter(Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk'))))
+    for req in requests:
+        last_message = req.messages.filter(Q(sender=user)).union(req.messages.filter(Q(recipient=user))).last()
+        last_message.get_badge = lambda: '<div class="badge bg-light text-primary">Заявка на бронирование</div>'
         messages.append(last_message)
 
     boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
     for boat in boats:
-        last_message = MessageBoat.objects.filter(boat=boat).last()
-        last_message.href = reverse('chat:boat', kwargs={'pk': boat.pk})
-        last_message.title = boat.name
-        last_message.badge = '<div class="badge bg-light text-primary">Лодка</div>' 
+        last_message = boat.messages.filter(Q(sender=user)).union(boat.messages.filter(Q(recipient=user))).last()
         messages.append(last_message)
 
-    system_messages = Message.objects.filter(Q(messageboat__pk__isnull=True), Q(messagebooking__pk__isnull=True), Q(sender=request.user) | Q(recipient=request.user))
-    if system_messages:
-        system_message = system_messages.last()
-        system_message.href = reverse('chat:message')
-        system_message.badge = '<div class="badge bg-warning text-primary">Shareboat</div>' 
-        messages.append(system_message)
-    '''
-    #messages = sorted(messages, key=lambda message: message.pk, reverse=True)
-    return render(request, 'chat/list.html', context={'messages': res})
+    last_message_support = MessageSupport.objects.filter(sender=user).union(MessageSupport.objects.filter(recipient=user)).last()
+    if last_message_support:
+        messages.append(last_message_support)
+    
+    messages = sorted(messages, key=lambda message: message.pk, reverse=True)
+
+    if not last_message_support:
+        last_message_support = MessageSupport(text='Сообщений пока нет')       
+        messages.insert(0, last_message_support)
+
+    return render(request, 'chat/list.html', context={'messages': messages})
 
 @login_required
 def get_new_messages_booking(request, pk):
@@ -107,9 +70,7 @@ def get_new_messages_booking(request, pk):
 @login_required
 def get_new_messages(request):
     if request.method == 'GET':
-        messages = Message.objects.filter(
-            messageboat__pk__isnull=True, 
-            messagebooking__pk__isnull=True,
+        messages = MessageSupport.objects.filter(
             recipient=request.user, 
             read=False
         ).order_by('sent_at')
@@ -197,11 +158,9 @@ def send_message_boat(request, pk):
 def send_message(request):
     if request.method == 'POST':
         data = request.POST
-        new_message = Message.objects.create(text=data.get('text'), sender=request.user, recipient=None)
+        new_message = MessageSupport.objects.create(text=data.get('text'), sender=request.user, recipient=None)
 
-        messages = Message.objects.filter(
-            Q(messageboat__pk__isnull=True), 
-            Q(messagebooking__pk__isnull=True),
+        messages = MessageSupport.objects.filter(
             Q(read=False), 
             Q(recipient=request.user) | Q(pk=new_message.pk)
         ).order_by('sent_at')
@@ -214,7 +173,7 @@ def send_message(request):
 
 @login_required
 def message(request):
-    messages = Message.objects.filter(Q(messageboat__pk__isnull=True), Q(messagebooking__pk__isnull=True), Q(sender=request.user) | Q(recipient=request.user)).order_by('sent_at')
+    messages = MessageSupport.objects.filter(Q(sender=request.user) | Q(recipient=request.user)).order_by('sent_at')
     messages_serializer_data = MessageSerializerList(messages, many=True, context={'request': request}).data
 
     messages.filter(recipient=request.user, read=False).update(read=True)

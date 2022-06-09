@@ -16,7 +16,7 @@ class Message(models.Model):
     read        = models.BooleanField(default=False)
 
     def get_title(self):
-        return None
+        return ''
 
     def get_href(self):
         return reverse('chat:message')
@@ -27,6 +27,16 @@ class Message(models.Model):
     def __str__(self):
         sender = self.sender or '[Системное сообщение]'
         return f'{sender}: {self.text}'
+
+class MessageSupport(Message):
+    def get_title(self):
+        return 'Поддержка'
+
+    def get_href(self):
+        return reverse('chat:message')
+
+    def get_badge(self):
+        return '<div class="badge bg-warning text-primary">Поддержка</div>'     
 
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
@@ -46,6 +56,15 @@ class MessageBoat(Message):
         OTHER = 0, "Прочее"
     
     boat = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name="messages")
+
+    def get_title(self):
+        return self.boat.name
+
+    def get_href(self):
+        return reverse('chat:boat', kwargs={'pk': self.boat.pk})
+
+    def get_badge(self):
+        return '<div class="badge bg-light text-primary">Лодка</div>' 
 
     @classmethod
     def get_rejection_reasons(cls):
