@@ -1,7 +1,7 @@
 from enum import unique
 from pyexpat import model
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef, Value
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -21,6 +21,12 @@ class ActiveBoatManager(models.Manager):
 class PublishedBoatManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=Boat.Status.PUBLISHED)
+
+class BoatQuerySet(models.QuerySet):
+    def annotate_in_fav(self, user):
+        if user.is_authenticated:
+            return self.annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=user)))
+        return self.annotate(in_fav=Value(False))
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=255)
@@ -86,7 +92,7 @@ class Boat(models.Model):
 
     objects = models.Manager()
     active = ActiveBoatManager()
-    published = PublishedBoatManager()
+    published = PublishedBoatManager.from_queryset(BoatQuerySet)()
 
     @property
     def is_draft(self):

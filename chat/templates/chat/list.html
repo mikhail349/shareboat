@@ -15,6 +15,9 @@
         <div class="list-group">
             {% for message in messages %}
                 <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
+                    <!--{% if not message.read %}
+                        <div class="badge bg-danger text-end mb-1">Новое сообщение</div>
+                    {% endif %}-->
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar %}
                             <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle chat-avatar">
@@ -25,8 +28,8 @@
                         {% endif %}
                         <div class="w-100">
                             <div class="row">
-                                <div class="col">
-                                    <h6>{{ message.get_title }}</h6>
+                                <div class="col ">
+                                    <div class="fw-bold">{{ message.get_title }}</div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="text-muted text-nowrap">{{ message.sent_at|date:'d b. Y, H:i' }}</div>
@@ -34,7 +37,10 @@
                             </div>     
                             <div class="row">
                                 <div class="col-auto">
-                                    <p class="mb-0 opacity-75">{% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}{{ message.text }}</p>
+                                    <p class="mb-0 text-muted">
+                                        {% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}
+                                        {{ message.text }}
+                                    </p>                  
                                 </div>
                                 <div class="col">
                                     <div class="text-end">{{ message.get_badge|safe }}</div>
@@ -42,6 +48,9 @@
                             </div>                      
                         </div>
                     </div>
+                    {% if not message.read %}
+                        <span class="position-absolute top-0 end-0 p-1 bg-danger border border-light rounded-circle me-1 mt-1" title="Новое сообщение"></span>
+                    {% endif %}
                 </a>
             {% endfor %}
         </div>

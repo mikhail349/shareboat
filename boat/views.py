@@ -233,7 +233,7 @@ def search_boats(request):
 
             boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
             boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
-            boats = boats.annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=request.user)))
+            boats = boats.annotate_in_fav(user=request.user)
             boats = list(boats) 
             for boat in boats:
                 boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
@@ -254,15 +254,19 @@ def search_boats(request):
     return render(request, 'boat/search_boats.html', context)
 
 def boats(request):
-    boats = Boat.published.all().annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=request.user)))
+    boats = Boat.published.all().annotate_in_fav(user=request.user)
     context = {
         'boats': boats,
     }
 
     return render(request, 'boat/boats.html', context=context)
 
-@login_required
+
 def switch_fav(request, pk):
+    if not request.user.is_authenticated:
+        print(request.get_full_path())
+        return JsonResponse({'data': 'redirect', 'url': reverse('user:login')})
+
     res = None
     try:
         boat = Boat.objects.get(pk=pk)

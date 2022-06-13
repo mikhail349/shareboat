@@ -4,7 +4,7 @@
     <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top border-bottom">
         <div class="container-md">
       
-            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler collapsed no-focus" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon position-relative">
                     {% if nav_counters.total > 0 %}
                         <span class="position-absolute top-0 start-100 translate-middle-x p-2 bg-danger border border-light rounded-circle"></span>
@@ -13,10 +13,15 @@
             </button>
             
             <a class="navbar-brand me-auto p-2 pe-4" href="/">ShareBoat</a>
-            <a class="nav-link d-md-none" href="{% url 'chat:list' %}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-envelope" viewBox="0 0 16 16">
-                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
-                </svg>
+            <a class="nav-link d-md-none position-relative" href="{% url 'chat:list' %}">
+                <div class="position-relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-envelope" viewBox="0 0 16 16">
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                    </svg>
+                    {% if nav_counters.new_messages_count > 0 %}
+                        <span class="position-absolute top-0 start-100 p-1 translate-middle-x bg-danger border border-light rounded-circle"></span>
+                    {% endif %}
+                </div>
             </a>
 
             <div class="collapse navbar-collapse" id="menu">
@@ -38,15 +43,20 @@
                     {% if user.is_authenticated %}
                         <li class="nav-item d-none d-md-block">
                             <a class="nav-link position-relative" href="{% url 'chat:list' %}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-envelope" viewBox="0 0 16 16">
-                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
-                                </svg>
+                                <div class="position-relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-envelope"viewBox="0 0 16 16">
+                                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                                    </svg>
+                                    {% if nav_counters.new_messages_count > 0 %}
+                                        <span class="position-absolute top-0 start-100 p-1 translate-middle-x bg-danger border border-light rounded-circle"></span>
+                                    {% endif %}
+                                </div>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle align-middle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span>{{ user.first_name|default:user.email }}</span> 
-                                {% if nav_counters.total > 0 %}<span class="badge bg-danger">{{ nav_counters.total }}</span>{% endif %}                                                 
+                                {% if nav_counters.total > 0 %}<span class="badge bg-danger rounded-pill">{{ nav_counters.total }}</span>{% endif %}                                                 
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 
@@ -55,7 +65,7 @@
                                     <li>
                                         <a class="dropdown-item" href="{% url 'booking:requests' %}?status={% if nav_counters.bookings_on_pending_count > 0 %}pending{% else %}active{% endif %}">
                                             Заявки на бронирование
-                                            {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
+                                            {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger rounded-pill">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>

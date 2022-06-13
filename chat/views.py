@@ -47,7 +47,7 @@ def list(request):
     messages = sorted(messages, key=lambda message: message.pk, reverse=True)
 
     if not last_message_support:
-        last_message_support = MessageSupport(text='Сообщений пока нет')       
+        last_message_support = MessageSupport(text='Сообщений пока нет', read=True)       
         messages.insert(0, last_message_support)
 
     return render(request, 'chat/list.html', context={'messages': messages})
