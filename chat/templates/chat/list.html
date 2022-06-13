@@ -48,7 +48,7 @@
                             </div>                      
                         </div>
                     </div>
-                    {% if not message.read %}
+                    {% if not message.read and message.recipient == request.user %}
                         <span class="position-absolute top-0 end-0 p-1 bg-danger border border-light rounded-circle me-1 mt-1" title="Новое сообщение"></span>
                     {% endif %}
                 </a>
