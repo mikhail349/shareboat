@@ -32,7 +32,12 @@
                                     <div class="fw-bold">{{ message.get_title }}</div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="text-muted text-nowrap">{{ message.sent_at|date:'d b. Y, H:i' }}</div>
+                                    <div class="text-muted text-nowrap position-relative">
+                                        {{ message.sent_at|date:'d b. Y, H:i' }}
+                                        {% if not message.read and message.recipient == request.user %}
+                                            <span class="position-absolute translate-middle-y top-50 start-m14 p-1 bg-danger border border-light rounded-circle" title="Новое сообщение"></span>
+                                        {% endif %}                            
+                                    </div>
                                 </div>
                             </div>     
                             <div class="row">
@@ -48,9 +53,6 @@
                             </div>                      
                         </div>
                     </div>
-                    {% if not message.read and message.recipient == request.user %}
-                        <span class="position-absolute top-0 end-0 p-1 bg-danger border border-light rounded-circle me-1 mt-1" title="Новое сообщение"></span>
-                    {% endif %}
                 </a>
             {% endfor %}
         </div>

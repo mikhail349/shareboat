@@ -5,11 +5,7 @@
         <div class="container-md">
       
             <button class="navbar-toggler collapsed no-focus" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon position-relative">
-                    {% if nav_counters.total > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle-x p-2 bg-danger border border-light rounded-circle"></span>
-                    {% endif %}
-                </span>
+                <span class="navbar-toggler-icon position-relative"></span>
             </button>
             
             <a class="navbar-brand me-auto p-2 pe-4" href="/">ShareBoat</a>
@@ -55,8 +51,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdownUserProfile" class="nav-link dropdown-toggle align-middle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span>{{ user.first_name|default:user.email }}</span> 
-                                {% if nav_counters.total > 0 %}<span class="badge bg-danger rounded-pill">{{ nav_counters.total }}</span>{% endif %}                                                 
+                                <span class="position-relative">{{ user.first_name|default:user.email }}</span>                                                 
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUserProfile">                            
                                 
@@ -65,7 +60,6 @@
                                     <li>
                                         <a class="dropdown-item" href="{% url 'booking:requests' %}?status={% if nav_counters.bookings_on_pending_count > 0 %}pending{% else %}active{% endif %}">
                                             Заявки на бронирование
-                                            {% if nav_counters.bookings_on_pending_count > 0 %}<span class="badge bg-danger rounded-pill">{{ nav_counters.bookings_on_pending_count }}</span>{% endif %}
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
