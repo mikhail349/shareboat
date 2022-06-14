@@ -32,8 +32,9 @@ def list(request):
     requests = Booking.objects.filter(Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk'))))
     for req in requests:
         last_message = req.messages.filter(Q(sender=user)).union(req.messages.filter(Q(recipient=user))).last()
-        last_message.get_badge = lambda: '<div class="badge bg-light text-primary">Заявка на бронирование</div>'
-        messages.append(last_message)
+        if last_message:
+            last_message.get_badge = lambda: '<div class="badge bg-light text-primary">Заявка на бронирование</div>'
+            messages.append(last_message)
 
     boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
     for boat in boats:

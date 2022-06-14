@@ -124,6 +124,7 @@ function removeToastBGs() {
 function showSuccessToast(msg="Изменения сохранены.") {
     const html = `
         <div class="d-flex text-white">
+            <div class="toast-timer opacity-50"></div>
             <div class="toast-body">${msg}</div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
@@ -136,6 +137,7 @@ function showSuccessToast(msg="Изменения сохранены.") {
 
 function showErrorToast(body, header="Ошибка") {
     const html = `
+        <div class="toast-timer opacity-50"></div>
         <div class="toast-header text-white bg-danger">
             <span class="me-auto">${header}</span>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>

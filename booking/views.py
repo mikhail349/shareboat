@@ -37,6 +37,7 @@ def create(request):
 
         try:
             booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
+            MessageBooking.objects.create(booking=booking, sender=None, recipient=boat.owner, text='Новый запрос')
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 

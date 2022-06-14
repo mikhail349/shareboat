@@ -208,3 +208,20 @@ a {
 .start-m14 {
     left: -14px !important;
 }
+
+.toast-timer {
+    height: 3px;
+    width: 100%;
+    background-color: var(--bs-light);
+    position: absolute;
+    animation-name: slide-back;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slide-back {
+    100% {
+        width: 0%;
+    }
+}

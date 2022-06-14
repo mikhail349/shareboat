@@ -105,13 +105,15 @@ class MessageHandler {
         const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-secondary text-white') : 'bg-white text-dark border border-dark';
         const align = message.is_out ? 'align-self-end' : 'align-self-start';
         const datetimeTitle = message.sender ? '' : 'Системное сообщение - ';
-        const text = $('<div/>').text(message.text).html().replaceAll('\r\n', '<br>');
+        
+        var text = $('<div/>').text(message.text).html().replaceAll('\n', '<br>');
+        
         return `
             <div id="msg${message.id}" class="list-group-item border-0 ${align}" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + this.getAvatar(message) + `
                     <div class="${bg} rounded-3">
-                        <div class="d-flex p-1 px-2" style="font-size: 18px; height: fit-content">${text}</div>
+                        <div class="p-1 px-2" style="font-size: 18px; height: fit-content">${text}</div>
                         <small class="float-end pe-1 align-self-end ps-3 mt-2" style="font-size: 11px;">${datetimeTitle}${this.formatSentAt(new Date(message.sent_at))}</small>
                     </div>  
                 </div>
