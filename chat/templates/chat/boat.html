@@ -12,7 +12,8 @@
     <script type="text/javascript">
         var messages = {{ messages|safe }},
             boatId = {{ boat.pk }},
-            boatName = "{{ boat.name }}";
+            boatName = "{{ boat.name }}",
+            sbImg = "{% static 'img/boat.png' %}";
     </script>
 
     <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>

@@ -37,7 +37,7 @@ def create(request):
 
         try:
             booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
-            MessageBooking.objects.create(booking=booking, sender=None, recipient=boat.owner, text='Новый запрос')
+            MessageBooking.objects.send_initial_msg(booking)
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 
@@ -90,6 +90,7 @@ def set_request_status(request, pk):
 
         booking.status = new_status
         booking.save()
+        MessageBooking.objects.send_status_to_renter(booking)
 
         return JsonResponse({'redirect': reverse('booking:requests') + request.POST.get('search', '')})
     except Booking.DoesNotExist:

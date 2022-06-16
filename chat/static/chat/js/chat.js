@@ -75,12 +75,24 @@ class MessageHandler {
     getAvatar(message) {
         const emptyAvatar = '<div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>';
 
+        if (!message?.sender) {
+            return `
+                <img
+                    height="32"
+                    width="32"
+                    src="${window.sbImg}" 
+                    class="rounded-circle chat-avatar"
+                    alt 
+                />
+            `
+        }
+
         if (this.lastAppendedSenderId == message?.sender?.id) {
             return emptyAvatar;
         }
 
         if (message.is_out) {
-            return emptyAvatar;
+            return '';
         }
 
         if (message?.sender?.avatar) {
@@ -94,6 +106,7 @@ class MessageHandler {
                 />
             `
         }
+
         return emptyAvatar;
     }
     
@@ -102,11 +115,15 @@ class MessageHandler {
     }
     
     getMessageHtml(message) {
-        const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-secondary text-white') : 'bg-white text-dark border border-dark';
+        const bg = message.sender ? 'bg-secondary text-white' : 'bg-white text-dark border border-dark';
         const align = message.is_out ? 'align-self-end' : 'align-self-start';
         const datetimeTitle = message.sender ? '' : 'Системное сообщение - ';
         
-        var text = $('<div/>').text(message.text).html().replaceAll('\n', '<br>');
+        var text = message.text;
+        if (message.sender) {
+            text = $('<div/>').text(text).html();  
+            text = text.replaceAll('\n', '<br>');
+        }
         
         return `
             <div id="msg${message.id}" class="list-group-item border-0 ${align}" style="width: fit-content;">

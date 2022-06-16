@@ -38,8 +38,28 @@ class MessageSupport(Message):
     def get_badge(self):
         return '<div class="badge bg-warning text-primary">Поддержка</div>'     
 
+class BookingManager(models.Manager):
+    def get_link(self, booking):
+        return '<a class="btn btn-primary mt-2" href="%s" role="button">Перейти в бронь</a>' % reverse('booking:view', kwargs={'pk': booking.pk})
+
+    def send_initial_msg(self, booking):
+        text = '<div>Новый запрос</div><a class="btn btn-primary mt-2" href="%s" role="button">Перейти в бронь</a>' % reverse('booking:view', kwargs={'pk': booking.pk})
+        return self.create(booking=booking, recipient=booking.boat.owner, text=text)
+
+    def send_status_to_renter(self, booking):
+        def get_msg():
+            if booking.status in [Booking.Status.ACCEPTED, Booking.Status.DECLINED]:
+                return f'Бронирование {booking.get_status_display().lower()}.'
+            if booking.status == Booking.Status.PREPAYMENT_REQUIRED:
+                return f'Бронирование подтверждено. {booking.get_status_display()}.'
+            return ''
+
+        text = f'<div>{get_msg()}</div>{self.get_link(booking)}'
+        return self.create(booking=booking, recipient=booking.renter, text=text)        
+
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
+    objects = BookingManager()
 
     def get_title(self):
         return self.booking.boat.name

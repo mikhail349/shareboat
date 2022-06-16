@@ -9,14 +9,15 @@
 
 {% block content %}
     <script type="text/javascript">
-        var messages = {{ messages|safe }};
+        var messages = {{ messages|safe }},
+            sbImg = "{% static 'img/boat.png' %}";
     </script>
 
     <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
     <script type="text/javascript" src="{% static 'chat/js/message.min.js' %}"></script>
 
-    <div id="wrapperMsgContainer" class="container-lg">    
+    <div id="wrapperMsgContainer" class="container md-container">    
         <div id="msgContainer" class="list-group overflow-auto"></div>
     </div>
 

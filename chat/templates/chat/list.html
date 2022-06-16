@@ -15,9 +15,6 @@
         <div class="list-group">
             {% for message in messages %}
                 <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
-                    <!--{% if not message.read %}
-                        <div class="badge bg-danger text-end mb-1">Новое сообщение</div>
-                    {% endif %}-->
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar %}
                             <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle chat-avatar">
@@ -42,10 +39,10 @@
                             </div>     
                             <div class="row">
                                 <div class="col-auto">
-                                    <p class="mb-0 text-muted">
+                                    <div class="mb-0 text-muted" style="max-height: 50px;">
                                         {% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}
-                                        {{ message.text }}
-                                    </p>                  
+                                        {{ message.text|striptags }}
+                                    </div>                  
                                 </div>
                                 <div class="col">
                                     <div class="text-end">{{ message.get_badge|safe }}</div>

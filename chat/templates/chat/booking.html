@@ -14,7 +14,8 @@
     
     <script type="text/javascript">
         var messages = {{ messages|safe }},
-            bookingId = {{ booking.pk }};
+            bookingId = {{ booking.pk }},
+            sbImg = "{% static 'img/boat.png' %}";
     </script>
     
     <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>
