@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import sys
+from turtle import width
 
 import dotenv
 
@@ -49,6 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
+    'django_summernote',
+
     'user',
     'file',
     'boat',
@@ -57,8 +60,16 @@ INSTALLED_APPS = [
     'notification',
     'base',
     'telegram_bot',
-    'chat'
+    'chat',
+    'portal'
 ]
+
+SUMMERNOTE_THEME = 'bs5'
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        'width': '100%'
+    }
+}
 
 REST_FRAMEWORK = {
 

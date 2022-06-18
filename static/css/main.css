@@ -88,3 +88,8 @@ input[readonly].false-readonly {
         transform: scale(1);
     }
 }
+
+.django-summernote-container img {
+    max-width: 100% !important;
+    object-fit: cover;
+}

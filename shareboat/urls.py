@@ -25,6 +25,7 @@ from booking import urls as booking_urls
 from notification import urls as notification_urls 
 from telegram_bot import urls as telegram_bot_urls 
 from chat import urls as chat_urls
+from portal import urls as portal_urls
 
 from . import views
 from boat import views as boat_views
@@ -40,5 +41,8 @@ urlpatterns += [
     path('bookings/', include(booking_urls)),
     path('notifications/', include(notification_urls)),
     path('telegram_bot/', include(telegram_bot_urls)),
-    path('chat/', include(chat_urls))
+    path('chat/', include(chat_urls)),
+    path('portal/', include(portal_urls)),
+
+    path('summernote/', include('django_summernote.urls')),
 ]

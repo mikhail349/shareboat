@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+{% block title %}Портал{% endblock %}
+
+{% block content %}
+    <div class="container-lg">
+        <section class="jumbotron text-center">
+            <h1 class="jumbotron-heading">Портал</h1>    
+        </section>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              {% for cat in category.get_list_parent reversed %}
+                {% if request.get_full_path == cat.full_path %}
+                    <li class="breadcrumb-item active">{{ cat.name }}</li>                
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ cat.full_path }}">{{ cat.name }}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ol>
+        </nav>
+
+        <h2>{{ category.name }}</h2>
+        <div class="django-summernote-container">{{ category.description|safe }}</div>
+
+        <ul class="list-group">
+            {% for subcat in category.categories.all %}
+                <li class="list-group-item"><a href="{{ subcat.full_path }}">{{ subcat.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock  %}
