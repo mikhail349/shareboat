@@ -24,11 +24,27 @@
             <h2>{{ category.name }}</h2>
             <div class="django-summernote-container">{{ category.description|safe }}</div>
 
-            <ul class="list-group">
+            <ul class="list-group mb-3">
                 {% for subcat in category.categories.published %}
                     <li class="list-group-item"><a href="{{ subcat.full_path }}">{{ subcat.name }}</a></li>
                 {% endfor %}
             </ul>
+
+            <div class="row g-3">
+                {% for article in category.articles.published %}
+                    <div class="col-md-4">
+                        <div class="card box-shadow h-100">
+                            {% if article.preview_img %}
+                                <img src="{{ article.preview_img.url }}" class="card-img-top">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ article.name }}</h5>
+                                <p class="card-text">{{ article.preview_text }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
         {% else %}
             

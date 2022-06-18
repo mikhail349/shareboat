@@ -1,8 +1,10 @@
 from django.db import models
 from django.forms import ValidationError
+from file.utils import get_file_path
+from user.models import User
 
 
-class CategoryQuerySet(models.QuerySet):
+class BaseQuerySet(models.QuerySet):
     def published(self):
         return self.filter(published=True)
 
@@ -14,7 +16,7 @@ class Category(models.Model):
     published = models.BooleanField('Опубликована', default=False) 
     full_path = models.CharField('Полный путь', max_length=255, null=True, blank=True, db_index=True)
 
-    objects = models.Manager.from_queryset(CategoryQuerySet)()
+    objects = models.Manager.from_queryset(BaseQuerySet)()
 
     def get_list_parent(self):
         def set_parent(item):
@@ -51,3 +53,25 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
         unique_together = [['url', 'parent']]
         ordering = ['full_path']
+
+class Article(models.Model):
+    name = models.CharField('Название', max_length=255)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='articles', verbose_name='Категория')
+    url = models.CharField('Ссылка', max_length=255, null=True, blank=True)
+    published = models.BooleanField('Опубликована', default=False)
+    creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name='articles', verbose_name='Создатель')
+    created_at = models.DateTimeField('Дата и время создания', auto_now_add=True)
+    updated_at = models.DateTimeField('Дата и время изменения', auto_now=True)
+    preview_text = models.TextField('Превью', null=True, blank=True)
+    preview_img = models.ImageField('Картинка', upload_to=get_file_path, null=True, blank=True)
+    content = models.TextField('Содержимое')
+
+    objects = models.Manager.from_queryset(BaseQuerySet)()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Статья'
+        verbose_name_plural = 'Статьи'
+        unique_together = [['url', 'category']]
