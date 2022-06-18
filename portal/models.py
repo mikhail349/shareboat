@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -27,13 +28,23 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self, *args, **kwargs):
+        if self.pk and self.parent:
+            if self.pk == self.parent.pk:
+                raise ValidationError({
+                    'parent': ['В качестве родителя нельзя выбирать эту же категорию',]
+                })
+        super().clean(*args, **kwargs)
+
     def save(self, *args, **kwargs):
+        self.full_clean()
+
         self.full_path = (self.parent.full_path + (self.url or '') if self.parent else '/' + (self.url or '')) + '/'
         
         for item in self.categories.all():
             item.save()
 
-        return super(Category, self).save(*args, **kwargs)
+        super(Category, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Категория'
