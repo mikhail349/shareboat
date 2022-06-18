@@ -1,9 +1,9 @@
-from enum import unique
 from django.db import models
 
-class PublishedCategoryManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(published=True)
+
+class CategoryQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(published=True)
 
 class Category(models.Model):
     name = models.CharField('Название', max_length=255)
@@ -13,8 +13,7 @@ class Category(models.Model):
     published = models.BooleanField('Опубликована', default=False) 
     full_path = models.CharField('Полный путь', max_length=255, null=True, blank=True, db_index=True)
 
-    objects = models.Manager()
-    m_published = PublishedCategoryManager()
+    objects = models.Manager.from_queryset(CategoryQuerySet)()
 
     def get_list_parent(self):
         def set_parent(item):
