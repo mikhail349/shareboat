@@ -1,0 +1,11 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+    {% for cat in category.get_list_parent reversed %}
+        {% if request.path == cat.full_path %}
+            <li class="breadcrumb-item active">{{ cat.name }}</li>                
+        {% else %}
+            <li class="breadcrumb-item"><a href="{{ cat.full_path }}">{{ cat.name }}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ol>
+</nav>

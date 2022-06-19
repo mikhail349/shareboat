@@ -2,24 +2,10 @@
 {% block title %}Портал{% endblock %}
 
 {% block content %}
-    <div class="container-lg">
-        <section class="jumbotron text-center">
-            <h1 class="jumbotron-heading">Портал</h1>    
-        </section>
-
+    <div class="container-lg pt-3">
         {% if category %}
 
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                {% for cat in category.get_list_parent reversed %}
-                    {% if request.get_full_path == cat.full_path %}
-                        <li class="breadcrumb-item active">{{ cat.name }}</li>                
-                    {% else %}
-                        <li class="breadcrumb-item"><a href="{{ cat.full_path }}">{{ cat.name }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                </ol>
-            </nav>
+            {% include 'portal/breadcrumb.html' %}
 
             <h2>{{ category.name }}</h2>
             <div class="django-summernote-container">{{ category.description|safe }}</div>
@@ -30,21 +16,29 @@
                 {% endfor %}
             </ul>
 
+            {% include 'paginator.html' with class="mb-3" %}
+
             <div class="row g-3">
-                {% for article in category.articles.published %}
-                    <div class="col-md-4">
-                        <div class="card box-shadow h-100">
-                            {% if article.preview_img %}
-                                <img src="{{ article.preview_img.url }}" class="card-img-top">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ article.name }}</h5>
-                                <p class="card-text">{{ article.preview_text }}</p>
-                            </div>
-                        </div>
+                {% for article in articles %}
+                    <div class="col-md-4">       
+                        <a href="{{ article.full_path }}" class="text-decoration-none">       
+                            <div class="card box-shadow h-100">
+                            
+                                {% if article.preview_img %}
+                                    <img src="{{ article.preview_img.url }}" class="card-img-top">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ article.name }}</h5>
+                                    <p class="card-text">{{ article.preview_text }}</p>
+                                </div>
+                            
+                            </div>     
+                        </a>     
                     </div>
                 {% endfor %}
             </div>
+
+            {% include 'paginator.html' with class="mt-3" %}
 
         {% else %}
             

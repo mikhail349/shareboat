@@ -1,6 +1,8 @@
 from django.db import models
 from django.forms import ValidationError
-from file.utils import get_file_path
+from django.db.models.signals import post_save
+
+from file import signals
 from user.models import User
 
 
@@ -45,6 +47,9 @@ class Category(models.Model):
         
         for item in self.categories.all():
             item.save()
+        
+        for article in self.articles.all():
+            article.save()
 
         super(Category, self).save(*args, **kwargs)
 
@@ -55,6 +60,11 @@ class Category(models.Model):
         ordering = ['full_path']
 
 class Article(models.Model):
+    def get_file_path(instance, filename):
+        import uuid
+        ext = filename.split('.')[-1]
+        return "portal/%s.%s" % (uuid.uuid4(), ext)
+
     name = models.CharField('Название', max_length=255)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='articles', verbose_name='Категория')
     url = models.CharField('Ссылка', max_length=255, null=True, blank=True)
@@ -62,6 +72,7 @@ class Article(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name='articles', verbose_name='Создатель')
     created_at = models.DateTimeField('Дата и время создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата и время изменения', auto_now=True)
+    full_path = models.CharField('Полный путь', max_length=255, null=True, blank=True, db_index=True)
     preview_text = models.TextField('Превью', null=True, blank=True)
     preview_img = models.ImageField('Картинка', upload_to=get_file_path, null=True, blank=True)
     content = models.TextField('Содержимое')
@@ -71,7 +82,13 @@ class Article(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.full_path = self.category.full_path + self.url + '/' 
+        super(Article, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Статья'
         verbose_name_plural = 'Статьи'
         unique_together = [['url', 'category']]
+
+post_save.connect(signals.compress_imagefile, sender=Article)

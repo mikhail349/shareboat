@@ -170,9 +170,12 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 USE_THOUSAND_SEPARATOR = True
-PAGINATOR_BOAT_PER_PAGE = os.environ.get('PAGINATOR_BOAT_PER_PAGE', 15)
 PREPAYMENT_DAYS_LIMIT = os.environ.get('PREPAYMENT_DAYS_LIMIT', 5)
 ADMIN_URL = os.environ.get('ADMIN_URL', 'admin')
+
+# Paginator
+PAGINATOR_BOAT_PER_PAGE = os.environ.get('PAGINATOR_BOAT_PER_PAGE', 15)
+PAGINATOR_ARTICLE_PER_PAGE = os.environ.get('PAGINATOR_ARTICLE_PER_PAGE', 15)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

@@ -6,7 +6,7 @@
 {% include 'leaflet.html' %}
 <div class="album">
     <div class="container">
-        {% include 'boat/paginator.html' with class="pb-5" %}
+        {% include 'paginator.html' with class="mb-3" %}
         <div class="row g-4">
             {% for boat in boats %}
                 <div class="col-lg-4 col-md-4">
@@ -40,7 +40,7 @@
                 </div>
             {% endfor %}
         </div>
-        {% include 'boat/paginator.html' with class="pt-5" %}
+        {% include 'paginator.html' with class="mt-3" %}
     </div>
 </div>
 {% include 'modal_map.html' %}

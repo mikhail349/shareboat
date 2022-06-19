@@ -11,8 +11,8 @@ class CategoryAdmin(SummernoteModelAdmin):
 
 class ArticleAdmin(SummernoteModelAdmin):
     summernote_fields = ('content',)
-    list_display = ('name', 'url', 'preview_text', 'category', 'published')
-    readonly_fields = ('created_at', 'updated_at')
+    list_display = ('name', 'url', 'full_path', 'preview_text', 'category', 'published')
+    readonly_fields = ('created_at', 'updated_at', 'full_path')
 
     def get_changeform_initial_data(self, request):
         return {'creator': request.user}

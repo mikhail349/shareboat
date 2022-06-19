@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% block title %}Портал{% endblock %}
+
+{% block content %}
+    <div class="container-lg pt-3">
+        {% if article %}
+
+            {% include 'portal/breadcrumb.html' with category=article.category %}
+
+            <h2>{{ article.name }}</h2>
+            <div class="text-muted mb-3">{{ article.created_at }}</div>
+            <div class="django-summernote-container">{{ article.content|safe }}</div>
+
+        {% else %}
+            
+            {% include  'not_found.html' %}
+            <div class="text-center">
+                <a class="" href="{% url 'portal:portal' %}">На главную</a>
+            </div>
+
+        {% endif %}
+    </div>
+{% endblock  %}
