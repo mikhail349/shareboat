@@ -1,10 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
+from booking.utils import send_initial_to_owner, send_status_to_renter
 
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
@@ -55,6 +52,12 @@ class Booking(models.Model):
 
     objects = models.Manager.from_queryset(BookingQuerySet)()
 
+    #__original_status = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        #self.__original_status = self.status
+
     def clean(self):
         if self.pk is None:
             accepted_bookings_exist = Booking.objects.filter(boat=self.boat).blocked_in_range(self.start_date, self.end_date).exists()
@@ -73,7 +76,15 @@ class Booking(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
+        #created = not self.pk
+
         super(Booking, self).save(*args, **kwargs)
+        
+        #if created:
+        #    send_initial_to_owner(self)
+        #if self.status != self.__original_status:
+        #    send_status_to_renter(self)
+        #self.__original_status = self.status
 
     def __str__(self):
         return f'Бронь № {self.pk} - {self.boat}'

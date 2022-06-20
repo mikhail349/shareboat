@@ -22,7 +22,7 @@ $(document).ready(() => {
             error: onError
         }); 
 
-        function onSuccess() {
+        function onSuccess(data) {
             window.location.href = data.redirect;
         }
 

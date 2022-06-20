@@ -2,6 +2,9 @@
     <div>
         <h5>{{ booking.get_status_display }}</h5>
     </div>
+    <div class="text-muted">
+        Бронирование № {{ booking.pk }}
+    </div>
     <div>
         {{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}
     </div>

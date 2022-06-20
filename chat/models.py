@@ -35,27 +35,23 @@ class MessageSupport(Message):
     def get_href(self):
         return reverse('chat:message')
 
-    def get_badge(self):
-        return '<div class="badge bg-warning text-primary">Поддержка</div>'     
-
 class BookingManager(models.Manager):
     def get_link(self, booking):
         return '<a class="btn btn-primary mt-2" href="%s" role="button">Перейти в бронь</a>' % reverse('booking:view', kwargs={'pk': booking.pk})
 
-    def send_initial_msg(self, booking):
-        text = '<div>Новый запрос</div><a class="btn btn-primary mt-2" href="%s" role="button">Перейти в бронь</a>' % reverse('booking:view', kwargs={'pk': booking.pk})
+    def send_initial_to_owner(self, booking):
+        text = f"""
+            <div>Новый запрос на бронирование</div>
+            {self.get_link(booking)}
+        """
         return self.create(booking=booking, recipient=booking.boat.owner, text=text)
 
-    def send_status_to_renter(self, booking):
-        def get_msg():
-            if booking.status in [Booking.Status.ACCEPTED, Booking.Status.DECLINED]:
-                return f'Бронирование {booking.get_status_display().lower()}.'
-            if booking.status == Booking.Status.PREPAYMENT_REQUIRED:
-                return f'Бронирование подтверждено. {booking.get_status_display()}.'
-            return ''
-
-        text = f'<div>{get_msg()}</div>{self.get_link(booking)}'
-        return self.create(booking=booking, recipient=booking.renter, text=text)        
+    def send_status(self, booking, recipient):
+        text = f"""
+            <div>Статус бронирования изменился на "{booking.get_status_display()}"</div>
+            {self.get_link(booking)}
+        """
+        return self.create(booking=booking, recipient=recipient, text=text)        
 
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
@@ -66,9 +62,6 @@ class MessageBooking(Message):
 
     def get_href(self):
         return reverse('chat:booking', kwargs={'pk': self.booking.pk})
-
-    def get_badge(self):
-        return '<div class="badge bg-light text-primary">Бронирование</div>' 
 
 class MessageBoat(Message):
     
@@ -82,9 +75,6 @@ class MessageBoat(Message):
 
     def get_href(self):
         return reverse('chat:boat', kwargs={'pk': self.boat.pk})
-
-    def get_badge(self):
-        return '<div class="badge bg-light text-primary">Лодка</div>' 
 
     @classmethod
     def get_rejection_reasons(cls):
