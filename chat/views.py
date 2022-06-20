@@ -53,7 +53,7 @@ def list(request):
 
     if not last_message_support:
         last_message_support = MessageSupport(text='Сообщений пока нет', read=True)    
-        last_message_support.get_badge = lambda: '<div class="badge bg-warning text-primary">Поддержка</div>'   
+        last_message_support.get_badge = '<div class="badge bg-warning text-primary">Поддержка</div>'   
         messages.insert(0, last_message_support)
 
     return render(request, 'chat/list.html', context={'messages': messages})
