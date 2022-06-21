@@ -27,33 +27,33 @@ def list(request):
     for booking in bookings:
         last_message = booking.messages.filter(Q(sender=user)).union(booking.messages.filter(Q(recipient=user))).last()
         if last_message:
-            last_message.get_badge = f'<div class="badge bg-light text-primary">Бронирование № {booking.pk}</div>'
+            last_message.badge = f'<div class="badge bg-light text-primary">Бронирование № {booking.pk}</div>'
             messages.append(last_message)
 
     requests = Booking.objects.filter(Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk'))))
     for req in requests:
         last_message = req.messages.filter(Q(sender=user)).union(req.messages.filter(Q(recipient=user))).last()
         if last_message:
-            last_message.get_badge = f'<div class="badge bg-light text-primary">Заявка на бронирование № {req.pk}</div>'
+            last_message.badge = f'<div class="badge bg-light text-primary">Заявка на бронирование № {req.pk}</div>'
             messages.append(last_message)
 
     boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
     for boat in boats:
         last_message = boat.messages.filter(Q(sender=user)).union(boat.messages.filter(Q(recipient=user))).last()
         if last_message:
-            last_message.get_badge = '<div class="badge bg-light text-primary">Лодка</div>' 
+            last_message.badge = '<div class="badge bg-light text-primary">Лодка</div>' 
             messages.append(last_message)
 
     last_message_support = MessageSupport.objects.filter(sender=user).union(MessageSupport.objects.filter(recipient=user)).last()
     if last_message_support:
-        last_message_support.get_badge = '<div class="badge bg-warning text-primary">Поддержка</div>'
+        last_message_support.badge = '<div class="badge bg-warning text-primary">Поддержка</div>'
         messages.append(last_message_support)
     
     messages = sorted(messages, key=lambda message: message.pk, reverse=True)
 
     if not last_message_support:
         last_message_support = MessageSupport(text='Сообщений пока нет', read=True)    
-        last_message_support.get_badge = '<div class="badge bg-warning text-primary">Поддержка</div>'   
+        last_message_support.badge = '<div class="badge bg-warning text-primary">Поддержка</div>'   
         messages.insert(0, last_message_support)
 
     return render(request, 'chat/list.html', context={'messages': messages})

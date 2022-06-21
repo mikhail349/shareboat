@@ -7,7 +7,8 @@ html, body {
 }
 
 #wrapperMsgContainer {
-    margin-top: 0.5rem;
+    /*margin-top: 0.5rem;*/
+    margin-top: var(--header-padding-top);
     margin-bottom: 70px;
 }
 

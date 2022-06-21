@@ -24,30 +24,24 @@
                             <div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>
                         {% endif %}
                         <div class="w-100">
-                            <div class="row">
-                                <div class="col ">
-                                    <div class="fw-bold">{{ message.get_title }}</div>
+                            <div>
+                                <div class="col float-end text-muted position-relative">
+                                    {{ message.sent_at|date:'d b. Y, H:i' }}
+                                    {% if not message.read and message.recipient == request.user %}
+                                        <span class="position-absolute translate-middle-y top-50 start-m14 p-1 bg-danger border border-light rounded-circle" title="Новое сообщение"></span>
+                                    {% endif %}      
                                 </div>
-                                <div class="col-auto">
-                                    <div class="text-muted text-nowrap position-relative">
-                                        {{ message.sent_at|date:'d b. Y, H:i' }}
-                                        {% if not message.read and message.recipient == request.user %}
-                                            <span class="position-absolute translate-middle-y top-50 start-m14 p-1 bg-danger border border-light rounded-circle" title="Новое сообщение"></span>
-                                        {% endif %}                            
-                                    </div>
-                                </div>
-                            </div>     
-                            <div class="row">
-                                <div class="col-auto">
-                                    <div class="mb-0 text-muted" style="max-height: 50px;">
-                                        {% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}
-                                        {{ message.text|striptags }}
-                                    </div>                  
-                                </div>
-                                <div class="col">
-                                    <div class="text-end">{{ message.get_badge|safe }}</div>
-                                </div>
-                            </div>                      
+                                <div class="fw-bold">{{ message.get_title }}</div>
+                            </div>
+                            <div>
+                                <div class="col float-end">
+                                    {{ message.badge|safe }}
+                                </div>   
+                                <div class="mb-0 text-muted" style="max-height: 150px;">
+                                    {% if not message.sender %}{% elif message.sender == user %}Вы: {% else %}{{ message.sender.first_name }}: {% endif %}
+                                    {{ message.text|striptags }}
+                                </div>                   
+                            </div>                
                         </div>
                     </div>
                 </a>

@@ -21,9 +21,6 @@ class Message(models.Model):
     def get_href(self):
         return reverse('chat:message')
 
-    def get_badge(self):
-        return '<div class="badge bg-warning text-primary">Shareboat</div>'
-
     def __str__(self):
         sender = self.sender or '[Системное сообщение]'
         return f'{sender}: {self.text}'

@@ -22,4 +22,4 @@ $(document).ready(() => {
      }
 
      window.addEventListener("scroll", mainMenuHide, false);
-});*/     
+});*/

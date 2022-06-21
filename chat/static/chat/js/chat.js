@@ -115,7 +115,7 @@ class MessageHandler {
     }
     
     getMessageHtml(message) {
-        const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-secondary text-white') : 'bg-white text-dark border border-dark';
+        const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-light') : 'bg-white text-dark border border-dark';
         const align = message.is_out ? 'align-self-end' : 'align-self-start';
         const datetimeTitle = message.sender ? '' : 'Системное сообщение - ';
         
