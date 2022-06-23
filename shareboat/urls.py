@@ -22,7 +22,6 @@ from django.conf.urls import url
 from user import urls as user_urls
 from boat import urls as boat_urls
 from booking import urls as booking_urls
-from notification import urls as notification_urls 
 from telegram_bot import urls as telegram_bot_urls 
 from chat import urls as chat_urls
 from portal import urls as portal_urls
@@ -39,7 +38,6 @@ urlpatterns += [
     path('user/', include(user_urls)),
     path('boats/', include(boat_urls)),
     path('bookings/', include(booking_urls)),
-    path('notifications/', include(notification_urls)),
     path('telegram_bot/', include(telegram_bot_urls)),
     path('chat/', include(chat_urls)),
     path('portal/', include(portal_urls)),

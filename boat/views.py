@@ -14,6 +14,7 @@ from rest_framework import status
 from PIL import UnidentifiedImageError
 from django.core.exceptions import ValidationError
 from django.core import serializers
+from notification import utils as notify
 
 from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
@@ -178,6 +179,7 @@ def accept(request, pk):
         
         boat.status = Boat.Status.PUBLISHED
         boat.save()
+        notify.send_boat_published_to_owner(boat)
         return redirect(reverse('boat:boats_on_moderation'))
     except Boat.DoesNotExist:
         return render(request, 'not_found.html')
@@ -205,8 +207,7 @@ def reject(request, pk):
             boat.save()
 
             #reason_display = [item[1] for item in reasons if item[0] == reason][0]
-            message_text = f'Объявление не соответствует правилам сервиса: {comment}' 
-            MessageBoat.objects.create(text=message_text, recipient=boat.owner, boat=boat)
+            notify.send_boat_declined_to_owner(boat, comment)
 
             return redirect(reverse('boat:boats_on_moderation'))
         except Boat.DoesNotExist:
@@ -218,6 +219,7 @@ def search_boats(request):
     q_boat_types=[int(e) for e in request.GET.getlist('boatType')]
     q_sort = request.GET.get('sort', 'sum_asc')
     q_page = request.GET.get('page', 1)
+    q_state = request.GET.get('state')
 
     boats = Boat.objects.none()
     searched = False
@@ -234,6 +236,10 @@ def search_boats(request):
             boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
             boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
             boats = boats.annotate_in_fav(user=request.user)
+
+            if q_state:
+                boats = boats.filter(coordinates__state=q_state).union(boats.filter(base__state=q_state))
+
             boats = list(boats) 
             for boat in boats:
                 boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
@@ -243,12 +249,17 @@ def search_boats(request):
 
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
 
+    boats_states = set(Boat.published.filter(coordinates__pk__isnull=False).values_list('coordinates__state', flat=True))
+    bases_states = set(Boat.published.filter(base__pk__isnull=False).values_list('base__state', flat=True))
+    states = sorted(boats_states | bases_states)
+
     context = {
         'sort_list': [('sum_asc', 'Сначала дешевые'), ('sum_desc', 'Сначала дорогие')],
         'boat_types': Boat.get_types(),
         'boats': p.object_list,
         'searched': searched,
-        'p': p
+        'p': p,
+        'states': states
     }
 
     return render(request, 'boat/search_boats.html', context)

@@ -182,7 +182,7 @@ class BoatCoordinates(models.Model):
     lon = models.DecimalField(max_digits=9, decimal_places=6)
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     address = models.TextField()
-    state = models.CharField(max_length=255)
+    state = models.CharField(max_length=255, db_index=True)
 
 class Specification(models.Model):
     

@@ -9,6 +9,7 @@ from datetime import timedelta
 
 from boat.utils import calc_booking
 from chat.models import MessageBooking
+from notification import utils as notify 
 from .models import Booking, Prepayment
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from boat.models import Boat
@@ -37,7 +38,7 @@ def create(request):
 
         try:
             booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
-            MessageBooking.objects.send_initial_to_owner(booking)
+            notify.send_initial_booking_to_owner(booking)
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
 
@@ -90,7 +91,7 @@ def set_request_status(request, pk):
 
         booking.status = new_status
         booking.save()
-        MessageBooking.objects.send_status(booking, booking.renter)
+        notify.send_booking_status(booking, booking.renter)
 
         return JsonResponse({'redirect': reverse('booking:requests') + request.POST.get('search', '')})
     except Booking.DoesNotExist:
@@ -124,7 +125,7 @@ def set_status(request, pk):
 
         booking.status = new_status
         booking.save()
-        MessageBooking.objects.send_status(booking, booking.boat.owner)
+        notify.send_booking_status(booking, booking.boat.owner)
 
         return JsonResponse({'redirect': reverse('booking:my_bookings') + request.POST.get('search', '')})
     except Booking.DoesNotExist:

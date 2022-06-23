@@ -22,10 +22,20 @@
         <div class="search-boats-panel d-flex justify-content-center mb-3">
             <div>
         
-                <div class="form-floating mb-3">                 
+                <div class="form-floating mb-2">                 
                     <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
                     <label>Период бронирования</label>
                     <div class="invalid-tooltip">Укажите период бронирования</div>
+                </div>
+
+                <div class="form-floating mb-2" >
+                    <select class="form-select" id="stateSelect" name="state">
+                        <option selected value="">Любое</option>
+                        {% for state in states %}
+                            <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="stateSelect">Местоположение</label>
                 </div>
 
                 <input id="hiddenDateFrom" name="dateFrom" type="hidden" />

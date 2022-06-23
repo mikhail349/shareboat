@@ -9,6 +9,7 @@ from emails.exceptions import EmailLagError
 import jwt
 from django.contrib.auth.models import Group
 from django.urls import reverse
+from notification import utils as notify
 
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
@@ -49,6 +50,7 @@ def verify(request, token):
             user.email_confirmed = True
             user.save()
             django_login(request, user)
+            notify.send_greetings_to_user(user)
         return render(request, 'user/verified.html')
     except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError):
         msg = 'Неверная ссылка'
