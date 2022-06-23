@@ -2,6 +2,7 @@ class MessageHandler {
 
     constructor(getMessagesApi, sendMessageApi) {
         this.GET_NEW_MESSAGES_TIMER = 2
+        this.isMobile = window.isMobile();
 
         this.msgContainer = $('#msgContainer');
         this.btnSend = $('#btnSendMessage');
@@ -91,7 +92,7 @@ class MessageHandler {
             return emptyAvatar;
         }
 
-        if (message.is_out) {
+        if (message.is_out && this.isMobile) {
             return '';
         }
 
@@ -116,7 +117,11 @@ class MessageHandler {
     
     getMessageHtml(message) {
         const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-light') : 'bg-light';
-        const align = message.is_out ? 'align-self-end' : 'align-self-start';
+        var align = 'align-self-start';
+        if (this.isMobile) {
+            align = message.is_out ? 'align-self-end' : 'align-self-start';
+        }
+        
         const datetimeTitle = message.sender ? '' : 'Системное сообщение - ';
         
         var text = message.text;
