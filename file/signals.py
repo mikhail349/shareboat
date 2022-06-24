@@ -6,6 +6,16 @@ logger = logging.getLogger(__name__)
 
 from . import utils, exceptions
 
+def compress_avatar(sender, instance, created, *args, **kwargs):
+    try: 
+        if instance.avatar_sm:
+            img = Image.open(instance.avatar_sm.path)
+            img = img.resize(utils.limit_size(img.width, img.height, 64, 64), Image.ANTIALIAS)
+            img.save(instance.avatar_sm.path, quality=70, optimize=True) 
+    except Exception as e:
+        logger.error(str(e))
+    
+
 def verify_imagefile(sender, instance, *args, **kwargs):
     MAX_FILE_SIZE_MB = 7
     for field in sender._meta.fields:
@@ -31,6 +41,7 @@ def delete_old_file(sender, instance, *args, **kwargs):
 
                                   
 def compress_imagefile(sender, instance, created, *args, **kwargs):
+    print('compress_imagefile')
     try: 
         for field in sender._meta.fields:
             if isinstance(field, models.ImageField):

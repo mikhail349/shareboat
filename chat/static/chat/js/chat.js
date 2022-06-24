@@ -96,12 +96,12 @@ class MessageHandler {
             return '';
         }
 
-        if (message?.sender?.avatar) {
+        if (message?.sender?.avatar_sm) {
             return `
                 <img
                     height="32"
                     width="32"
-                    src="${message.sender.avatar}" 
+                    src="${message.sender.avatar_sm}" 
                     class="rounded-circle chat-avatar"
                     alt 
                 />

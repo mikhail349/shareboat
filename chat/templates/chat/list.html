@@ -17,7 +17,7 @@
                 <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar %}
-                            <img height="32" width="32" src="{{ message.sender.avatar.url }}" class="rounded-circle chat-avatar">
+                            <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle chat-avatar">
                         {% elif not message.sender %}
                             <img height="32" width="32" src="{% static 'img/boat.png' %}" class="rounded-circle chat-avatar">
                         {% else %}

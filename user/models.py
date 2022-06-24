@@ -46,6 +46,7 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     email_confirmed = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
+    avatar_sm = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
     
     objects = UserManager()
 
@@ -74,7 +75,10 @@ class TelegramUser(models.Model):
     class Meta:
         verbose_name = 'Учетная запись в Telegram'
 
+
 pre_save.connect(signals.verify_imagefile, sender=User)
 pre_save.connect(signals.delete_old_file, sender=User)
 post_save.connect(signals.compress_imagefile, sender=User)
+post_save.connect(signals.compress_avatar, sender=User)
 post_delete.connect(signals.delete_file, sender=User)
+

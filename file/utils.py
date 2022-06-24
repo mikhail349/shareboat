@@ -16,10 +16,7 @@ def remove_file(path):
     except Exception as e:
         logger.error(str(e))
 
-def limit_size(width, height):
-    max_width = 1920
-    max_height = 1080
-
+def limit_size(width, height, max_width = 1920, max_height = 1080):
     while width > max_width or height > max_height:
         if width > max_width:
             height = round(max_width / width * height)

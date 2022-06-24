@@ -73,6 +73,7 @@ def update_avatar(request):
     avatar = request.FILES.get('avatar')
     user = request.user
     user.avatar = avatar
+    user.avatar_sm = avatar
     user.save()
     return JsonResponse({'data': user.avatar.url})     
 
