@@ -220,6 +220,10 @@ a {
     animation-fill-mode: forwards;
 }
 
+#toast:hover .toast-timer {
+    animation: unset;
+}
+
 @keyframes slide-back {
     100% {
         width: 0%;

@@ -41,7 +41,6 @@ def delete_old_file(sender, instance, *args, **kwargs):
 
                                   
 def compress_imagefile(sender, instance, created, *args, **kwargs):
-    print('compress_imagefile')
     try: 
         for field in sender._meta.fields:
             if isinstance(field, models.ImageField):
