@@ -1,3 +1,4 @@
+from PIL import UnidentifiedImageError
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
@@ -74,7 +75,10 @@ def update_avatar(request):
     user = request.user
     user.avatar = avatar
     user.avatar_sm = avatar
-    user.save()
+    try:
+        user.save()
+    except UnidentifiedImageError:
+        return JsonResponse({'data': 'error'}, status=404) 
     return JsonResponse({'data': user.avatar.url})     
 
 @login_required

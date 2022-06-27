@@ -13,8 +13,9 @@
         <section class="jumbotron text-center">     
             <img
                 {% if user.avatar %}data-do-save{% endif %}
+                width="150" height="150"
                 src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" 
-                class="img-fluid rounded-circle avatar mb-3" 
+                class="rounded-circle avatar mb-3" 
                 title="Сменить аватар"
             >
             <p class="lead text-muted">
