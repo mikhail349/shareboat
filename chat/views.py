@@ -3,18 +3,13 @@ from re import M
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.db.models import Q, Exists, OuterRef, Subquery, F, CharField, Max
-from django.db.models.functions import Concat
-from django.db.models.expressions import Case, When, Value
+from django.db.models import Q, Exists, OuterRef
 
-from django.urls import reverse
-from .models import Message, MessageBoat, MessageBooking, MessageSupport
+from .models import MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
 
 from boat.models import Boat
 from booking.models import Booking
-from itertools import chain
-from django.utils import timezone
 
 import json
 
