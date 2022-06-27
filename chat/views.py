@@ -225,7 +225,7 @@ def boat(request, pk):
         messages_ser_data = MessageSerializerList(messages, many=True, context={'request': request}).data
 
         if is_moderator:
-            messages.filter(recipient__isnull=True, read=False).update(read=True)
+            messages.filter(Q(sender__isnull=True) | Q(recipient__isnull=True), read=False).update(read=True)
         else:
             messages.filter(recipient=request.user, read=False).update(read=True)
         
