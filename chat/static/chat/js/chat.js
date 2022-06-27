@@ -75,6 +75,11 @@ class MessageHandler {
 
     getAvatar(message) {
         const emptyAvatar = '<div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>';
+        let senderId = message?.sender ? message?.sender.id : -1;
+
+        if (this.lastAppendedSenderId == senderId) {
+            return emptyAvatar;
+        }
 
         if (!message?.sender) {
             return `
@@ -82,14 +87,10 @@ class MessageHandler {
                     height="32"
                     width="32"
                     src="${window.sbImg}" 
-                    class="rounded-circle chat-avatar"
+                    class="rounded-circle chat-avatar align-self-end"
                     alt 
                 />
             `
-        }
-
-        if (this.lastAppendedSenderId == message?.sender?.id) {
-            return emptyAvatar;
         }
 
         if (message.is_out && this.isMobile) {
@@ -102,7 +103,7 @@ class MessageHandler {
                     height="32"
                     width="32"
                     src="${message.sender.avatar_sm}" 
-                    class="rounded-circle chat-avatar"
+                    class="rounded-circle chat-avatar align-self-end"
                     alt 
                 />
             `
@@ -145,7 +146,7 @@ class MessageHandler {
     
     appendMessage(message) {      
         this.msgContainer.append(this.getMessageHtml(message));
-        this.lastAppendedSenderId = message?.sender?.id;
+        this.lastAppendedSenderId = message?.sender ? message?.sender?.id : -1;
     }
 
     appendExistingMessages() {

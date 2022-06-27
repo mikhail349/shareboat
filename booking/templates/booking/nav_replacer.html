@@ -1,21 +1,7 @@
 {% extends 'nav_replacer.html' %}
 {% block nav_replacer_title %}
-    <div class="col-8 ps-2">
-        <div class="title">
-            <div style="font-size: 16px;">{{ booking.boat.name }}</div>
-            <div style="font-size: 14px;">{{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}</div>
-        </div>
-    </div>
-    <div class="col-auto ms-auto">
-        <div class="dropdown">
-            <a href="#" role="button" data-bs-toggle="dropdown">
-                <svg xmlns="http://www.w3.org/2000/svg" width="54" height="24" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                </svg>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">  
-                <li><a class="dropdown-item" href="{% url 'booking:view' booking.pk %}">Перейти к брони</a></li>
-            </ul>
-        </div>
-    </div>
+    <a href="{% url 'booking:view' booking.pk %}" class="navbar-brand ps-2 py-0 me-0 text-truncate">
+        <div class="text-truncate" style="font-size: 17px;">{{ booking.boat.name }}</div>
+        <div style="font-size: 14px;">{{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}</div>
+    </a>
 {% endblock %}
