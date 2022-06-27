@@ -29,8 +29,7 @@ from portal import urls as portal_urls
 from . import views
 from boat import views as boat_views
 
-urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += [
+urlpatterns = [
     path('', boat_views.search_boats),
     path(f'{settings.ADMIN_URL}/', admin.site.urls),
     path('sw.js', views.sw),
@@ -44,3 +43,6 @@ urlpatterns += [
 
     path('summernote/', include('django_summernote.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
