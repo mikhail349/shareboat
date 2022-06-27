@@ -41,15 +41,12 @@ class MessageSupport(Message):
         return reverse('chat:message')
 
 class BookingManager(models.Manager):
-    def get_link(self, booking):
-        return ' <a class="btn btn-primary mt-2" href="%s" role="button">Перейти в бронь</a>' % reverse('booking:view', kwargs={'pk': booking.pk})
-
     def send_initial_to_owner(self, booking):
-        text = f"<div>Новый запрос на бронирование</div>{self.get_link(booking)}"
+        text = "<div>Новый запрос на бронирование</div>"
         return self.create(booking=booking, recipient=booking.boat.owner, text=text)
 
     def send_status(self, booking, recipient):
-        text = f'<div>Статус бронирования изменился на "{booking.get_status_display()}"</div>{self.get_link(booking)}'
+        text = f'<div>Статус бронирования изменился на "{booking.get_status_display()}"</div>'
         return self.create(booking=booking, recipient=recipient, text=text)        
 
 class MessageBooking(Message):
@@ -63,15 +60,12 @@ class MessageBooking(Message):
         return reverse('chat:booking', kwargs={'pk': self.booking.pk})
 
 class BoatManager(models.Manager):
-    def get_link(self, boat):
-        return ' <a class="btn btn-primary mt-2" href="%s" role="button">Перейти к лодке</a>' % reverse('boat:view', kwargs={'pk': boat.pk})
-
     def send_published_to_owner(self, boat):
-        text = f"<div>Лодка опубликована!</div>{self.get_link(boat)}"
+        text = "<div>Лодка опубликована!</div>"
         return self.create(boat=boat, recipient=boat.owner, text=text)
 
     def send_declined_to_owner(self, boat, comment):
-        text = f"<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: {comment}</div>{self.get_link(boat)}"
+        text = f"<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: {comment}</div>"
         return self.create(boat=boat, recipient=boat.owner, text=text)
 
 class MessageBoat(Message):
