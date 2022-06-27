@@ -76,13 +76,9 @@ def get_new_messages_booking(request, pk):
 @login_required
 def get_new_messages(request):
     if request.method == 'GET':
-        messages = MessageSupport.objects.filter(
-            recipient=request.user, 
-            read=False
-        ).order_by('sent_at')
+        messages = MessageSupport.objects.filter(recipient=request.user, read=False).order_by('sent_at')
         data = MessageSerializerList(messages, many=True, context={'request': request}).data
         messages.update(read=True)
-
         return JsonResponse({'data': data})
             
 

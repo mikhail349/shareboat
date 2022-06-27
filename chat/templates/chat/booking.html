@@ -11,20 +11,12 @@
 {% endblock %}
 
 {% block content %}
-    
     <script type="text/javascript">
-        var messages = {{ messages|safe }},
-            bookingId = {{ booking.pk }},
-            sbImg = "{% static 'img/boat.png' %}";
+        var bookingId = {{ booking.pk }};
     </script>
-    
-    <script type="text/javascript" src="{% static 'chat/js/chat.min.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+
     <script type="text/javascript" src="{% static 'chat/js/booking.min.js' %}"></script>
 
-    <div id="wrapperMsgContainer" class="container">    
-        <div id="msgContainer" class="list-group overflow-auto"></div>
-    </div>
-    
+    {% include 'chat/chat.html' %} 
     {% include 'chat/footer.html' %}
 {% endblock  %}
