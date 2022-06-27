@@ -18,9 +18,13 @@ $(document).ready(() => {
                 processData: false,
                 contentType: false,
                 success: (data) => {
-                    showSuccessToast("Аватар изменён.");
-                    $("img.avatar").attr('src', data.data);
+                    showSuccessToast("Аватар изменён");
+                    $("img.avatar").attr('src', data.avatar);
+                    $("#navbarDropdownUserProfile > img").attr('src', data.avatar_sm);
                 },
+                error: (error) => {
+                    showErrorToast(error?.responseJSON?.data);
+                }
             });
         }
     })

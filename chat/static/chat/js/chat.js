@@ -87,7 +87,7 @@ class MessageHandler {
                     height="32"
                     width="32"
                     src="${window.sbImg}" 
-                    class="rounded-circle chat-avatar align-self-end"
+                    class="rounded-circle align-self-end of-cover"
                     alt 
                 />
             `
@@ -103,7 +103,7 @@ class MessageHandler {
                     height="32"
                     width="32"
                     src="${message.sender.avatar_sm}" 
-                    class="rounded-circle chat-avatar align-self-end"
+                    class="rounded-circle of-cover align-self-end"
                     alt 
                 />
             `

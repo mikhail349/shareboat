@@ -78,8 +78,11 @@ def update_avatar(request):
     try:
         user.save()
     except UnidentifiedImageError:
-        return JsonResponse({'data': 'error'}, status=404) 
-    return JsonResponse({'data': user.avatar.url})     
+        return JsonResponse({'data': 'Недопустимый формат файла'}, status=400) 
+    return JsonResponse({
+        'avatar': user.avatar.url,
+        'avatar_sm': user.avatar_sm.url
+    })     
 
 @login_required
 def update(request):

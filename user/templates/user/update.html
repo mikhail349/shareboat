@@ -15,7 +15,7 @@
                 {% if user.avatar %}data-do-save{% endif %}
                 width="150" height="150"
                 src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" 
-                class="rounded-circle avatar mb-3" 
+                class="rounded-circle avatar mb-3 of-cover" 
                 title="Сменить аватар"
             >
             <p class="lead text-muted">

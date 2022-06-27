@@ -11,7 +11,7 @@ def compress_avatar(sender, instance, created, *args, **kwargs):
         if instance.avatar_sm:
             img = Image.open(instance.avatar_sm.path)
             img = img.resize(utils.limit_size(img.width, img.height, 64, 64), Image.ANTIALIAS)
-            img.save(instance.avatar_sm.path, quality=70, optimize=True) 
+            img.save(instance.avatar_sm.path) 
     except Exception as e:
         logger.error(str(e))
     
