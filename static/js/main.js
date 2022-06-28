@@ -123,7 +123,7 @@ function removeToastBGs() {
 
 function showSuccessToast(msg="Изменения сохранены.") {
     const html = `
-        <div class="d-flex text-white">
+        <div class="d-flex text-white bg-success"">
             <div class="toast-timer opacity-50"></div>
             <div class="toast-body">${msg}</div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>

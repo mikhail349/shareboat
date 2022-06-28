@@ -16,7 +16,6 @@ from django.core.exceptions import ValidationError
 from django.core import serializers
 from notification import utils as notify
 
-from file.exceptions import FileSizeException
 from .exceptions import BoatFileCountException, PriceDateRangeException
 from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer, ModelSerializer
@@ -518,7 +517,5 @@ def create_or_update(request, pk=None):
         return response_invalid_file_type()
     except Boat.DoesNotExist:
         return response_not_found()
-    except FileSizeException as e:
-        return response_file_limit_size(str(e))
     except ValidationError as e:
         return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)

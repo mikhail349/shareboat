@@ -1,4 +1,5 @@
 from PIL import UnidentifiedImageError
+from django.forms import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
@@ -14,7 +15,6 @@ from notification import utils as notify
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
 from emails.models import UserEmail
-from file.exceptions import FileSizeException
 from .models import User, TelegramUser
 import random
 import requests
@@ -77,11 +77,9 @@ def update_avatar(request):
     user.avatar_sm = avatar
     try:
         user.save()
-    except UnidentifiedImageError:
-        return JsonResponse({'data': 'Недопустимый формат файла'}, status=400) 
-    except FileSizeException as e:
-        return JsonResponse({'data': str(e)}, status=400) 
-    
+    except ValidationError as e:
+        return JsonResponse({'data': list(e)}, status=400) 
+
     return JsonResponse({
         'avatar': user.avatar.url,
         'avatar_sm': user.avatar_sm.url

@@ -4,7 +4,7 @@ $(document).ready(() => {
         $('input[name=avatar]').trigger('click'); 
     })
 
-    $('input[name=avatar]').on("change", (e) => {
+    $('input[name=avatar]').on("change", function(e) {
         if (e.target.files && e.target.files[0]) {
             const avatar = e.target.files[0];
 
@@ -15,6 +15,7 @@ $(document).ready(() => {
             $("img.avatar").addClass("downsize-anim");
             $("#loadingShipWheel").delay(200).show(0);
 
+            var self = this;
             $.ajax({ 
                 type: "POST",
                 data: formData,
@@ -37,6 +38,7 @@ $(document).ready(() => {
                     $("img.avatar").addClass("enlarge-anim");
 
                     showErrorToast(error?.responseJSON?.data);
+                    $(self).val(null);
                 }
             });
         }

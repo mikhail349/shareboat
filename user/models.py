@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager 
 from django.db.models.signals import pre_save, post_save, post_delete
+
 from file import utils, signals
+from PIL import Image
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username and last_name fields."""
@@ -36,7 +38,7 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
-
+       
 
 class User(AbstractUser):   
     username = None
@@ -57,6 +59,19 @@ class User(AbstractUser):
         if hasattr(self, 'telegramuser'):
             return self.telegramuser.chat_id
         return None
+
+    def save(self, *args, **kwargs):  
+        super(User, self).save(*args, **kwargs)
+        
+        try: 
+            if self.avatar_sm:
+                img = Image.open(self.avatar_sm.path)
+                img = img.resize(utils.limit_size(img.width, img.height, 64, 64), Image.ANTIALIAS)
+                img.save(self.avatar_sm.path) 
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(str(e))
 
 
 class TelegramUser(models.Model):
@@ -79,6 +94,5 @@ class TelegramUser(models.Model):
 pre_save.connect(signals.verify_imagefile, sender=User)
 pre_save.connect(signals.delete_old_file, sender=User)
 post_save.connect(signals.compress_imagefile, sender=User)
-post_save.connect(signals.compress_avatar, sender=User)
 post_delete.connect(signals.delete_file, sender=User)
 
