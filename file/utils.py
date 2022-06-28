@@ -7,7 +7,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_file_path(instance, filename, path=""):
-    ext = filename.split('.')[-1]
+    #ext = filename.split('.')[-1]
+    ext = 'webp'
     return "%s%s.%s" % (path, uuid.uuid4(), ext)
 
 def remove_file(path):
