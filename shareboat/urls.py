@@ -32,7 +32,6 @@ from boat import views as boat_views
 urlpatterns = [
     path('', boat_views.search_boats),
     path(f'{settings.ADMIN_URL}/', admin.site.urls),
-    path('sw.js', views.sw),
 
     path('user/', include(user_urls)),
     path('boats/', include(boat_urls)),
