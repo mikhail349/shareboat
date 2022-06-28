@@ -5,6 +5,7 @@ $(document).ready(() => {
     })
 
     $("img.avatar").on("load", (e) => {
+        $("#loadingShipWheel").hide(0);
         $("img.avatar").removeClass("downsize-anim");
         $("img.avatar").addClass("enlarge-anim");
     })
@@ -28,16 +29,13 @@ $(document).ready(() => {
                 processData: false,
                 contentType: false,
                 success: (data) => {
-                    $("#loadingShipWheel").hide(0);
                     showSuccessToast("Аватар изменён");
                     
                     $("img.avatar").attr('src', data.avatar);
                     $("#navbarDropdownUserProfile > img").attr('src', data.avatar_sm);
                 },
                 error: (error) => {
-                    $("#loadingShipWheel").hide(0);
-                    $("img.avatar").removeClass("downsize-anim");
-                    $("img.avatar").addClass("enlarge-anim");
+                    $("img.avatar").attr('src', $("img.avatar").attr('src'));
 
                     showErrorToast(error?.responseJSON?.data);
                     $(self).val(null);
