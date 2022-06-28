@@ -6,9 +6,9 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-def get_file_path(instance, filename):
+def get_file_path(instance, filename, path=""):
     ext = filename.split('.')[-1]
-    return "%s.%s" % (uuid.uuid4(), ext)
+    return "%s%s.%s" % (path, uuid.uuid4(), ext)
 
 def remove_file(path):
     try:   

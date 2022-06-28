@@ -42,7 +42,7 @@ def compress_imagefile(sender, instance, created, *args, **kwargs):
                 if image_file:
                     img = Image.open(image_file.path)
                     img = img.resize(utils.limit_size(img.width, img.height), Image.ANTIALIAS)
-                    img.save(image_file.path, quality=70, optimize=True) 
+                    img.save(image_file.path, format="webp") 
     except Exception as e:
         logger.error(str(e))
 

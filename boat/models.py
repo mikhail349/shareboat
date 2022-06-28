@@ -257,7 +257,7 @@ class BoatPrice(models.Model):
 
 
 class BoatFile(models.Model):
-    file = models.ImageField(upload_to=utils.get_file_path)
+    file = models.ImageField(upload_to=lambda instance, filename: utils.get_file_path(instance, filename, 'boat/'))
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')
 
     def __str__(self):

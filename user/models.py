@@ -6,6 +6,8 @@ from django.db.models.signals import pre_save, post_save, post_delete
 from file import utils, signals
 from PIL import Image
 
+import uuid
+
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username and last_name fields."""
 
@@ -48,8 +50,8 @@ class User(AbstractUser):
     first_name = models.CharField(_('first name'), max_length=150)
     email = models.EmailField(_('email address'), unique=True)
     email_confirmed = models.BooleanField("Эл. почта подтверждена", default=False)
-    avatar = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
-    avatar_sm = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
+    avatar = models.ImageField(upload_to=lambda instance, filename: utils.get_file_path(instance, filename, 'avatar/'), null=True, blank=True)
+    avatar_sm = models.ImageField(upload_to=lambda instance, filename: utils.get_file_path(instance, filename, 'avatar/sm/'), null=True, blank=True)
     
     objects = UserManager()
 
@@ -68,7 +70,7 @@ class User(AbstractUser):
             if self.avatar_sm:
                 img = Image.open(self.avatar_sm.path)
                 img = img.resize(utils.limit_size(img.width, img.height, 64, 64), Image.ANTIALIAS)
-                img.save(self.avatar_sm.path) 
+                img.save(self.avatar_sm.path, format="webp") 
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)
