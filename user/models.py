@@ -47,7 +47,7 @@ class User(AbstractUser):
 
     first_name = models.CharField(_('first name'), max_length=150)
     email = models.EmailField(_('email address'), unique=True)
-    email_confirmed = models.BooleanField(default=False)
+    email_confirmed = models.BooleanField("Эл. почта подтверждена", default=False)
     avatar = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
     avatar_sm = models.ImageField(upload_to=utils.get_file_path, null=True, blank=True)
     
