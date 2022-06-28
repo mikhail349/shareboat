@@ -4,6 +4,11 @@ $(document).ready(() => {
         $('input[name=avatar]').trigger('click'); 
     })
 
+    $("img.avatar").on("load", (e) => {
+        $("img.avatar").removeClass("downsize-anim");
+        $("img.avatar").addClass("enlarge-anim");
+    })
+
     $('input[name=avatar]').on("change", function(e) {
         if (e.target.files && e.target.files[0]) {
             const avatar = e.target.files[0];
@@ -27,9 +32,6 @@ $(document).ready(() => {
                     showSuccessToast("Аватар изменён");
                     
                     $("img.avatar").attr('src', data.avatar);
-                    $("img.avatar").removeClass("downsize-anim");
-                    $("img.avatar").addClass("enlarge-anim");
-
                     $("#navbarDropdownUserProfile > img").attr('src', data.avatar_sm);
                 },
                 error: (error) => {
