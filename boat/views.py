@@ -11,12 +11,11 @@ from django.utils.dateparse import parse_date, parse_datetime
 
 from rest_framework.decorators import api_view
 from rest_framework import status
-from PIL import UnidentifiedImageError
 from django.core.exceptions import ValidationError
 from django.core import serializers
 from notification import utils as notify
 
-from .exceptions import BoatFileCountException, PriceDateRangeException
+from .exceptions import PriceDateRangeException
 from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking, my_boats as _my_boats
@@ -29,9 +28,6 @@ import datetime
 
 def response_not_found():
     return JsonResponse({'message': 'Лодка не найдена'}, status=404)
-
-def response_invalid_file_type():
-    return JsonResponse({'message': 'Можно приложить только фотографии'}, status=status.HTTP_400_BAD_REQUEST)
 
 def response_files_limit_count(msg):
     return JsonResponse({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
@@ -406,7 +402,7 @@ def create_or_update(request, pk=None):
     
     try:
         if len(files) > FILES_LIMIT_COUNT:
-            raise BoatFileCountException(FILES_LIMIT_COUNT)
+            raise ValidationError(f'Можно приложить не более {FILES_LIMIT_COUNT} фотографий')
 
         with transaction.atomic(): 
 
@@ -511,10 +507,6 @@ def create_or_update(request, pk=None):
                 'redirect': reverse('boat:my_boats')
             })
 
-    except BoatFileCountException as e:
-        return response_files_limit_count(str(e))
-    except UnidentifiedImageError:
-        return response_invalid_file_type()
     except Boat.DoesNotExist:
         return response_not_found()
     except ValidationError as e:

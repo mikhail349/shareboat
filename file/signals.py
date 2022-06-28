@@ -6,7 +6,7 @@ import logging
 from django.forms import ValidationError
 logger = logging.getLogger(__name__)
 
-from . import utils, exceptions
+from . import utils
 
 def verify_imagefile(sender, instance, *args, **kwargs):
     for field in sender._meta.fields:
@@ -31,7 +31,7 @@ def delete_old_file(sender, instance, *args, **kwargs):
                 cur_file = getattr(cur_instance, field.name) 
                 if cur_file:
                     if cur_file != getattr(instance, field.name):                      
-                        utils.remove_file(cur_file.path)
+                        transaction.on_commit(lambda: utils.remove_file(cur_file.path))  
 
                                   
 def compress_imagefile(sender, instance, created, *args, **kwargs):
@@ -48,11 +48,12 @@ def compress_imagefile(sender, instance, created, *args, **kwargs):
 
 
 def delete_file(sender, instance, *args, **kwargs):
-    for field in sender._meta.fields:
-        if isinstance(field, models.FileField):
-            image_file = getattr(instance, field.name)
-            if image_file:
-                utils.remove_file(image_file.path)
-                
+    def f():
+        for field in sender._meta.fields:
+            if isinstance(field, models.FileField):
+                image_file = getattr(instance, field.name)
+                if image_file:
+                    utils.remove_file(image_file.path)
+    transaction.on_commit(f)
 
     
