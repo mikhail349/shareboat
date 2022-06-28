@@ -10,14 +10,17 @@
     <script type="text/javascript" src="{% static 'user/js/update.min.js' %}"></script>
 
     <div class="container-lg">                 
-        <section class="jumbotron text-center">     
-            <img
-                {% if user.avatar %}data-do-save{% endif %}
-                width="150" height="150"
-                src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" 
-                class="rounded-circle avatar mb-3 of-cover" 
-                title="Сменить аватар"
-            >
+        <section class="jumbotron text-center">
+            <div class="position-relative">    
+                <img
+                    {% if user.avatar %}data-do-save{% endif %}
+                    width="150" height="150"
+                    src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" 
+                    class="rounded-circle avatar mb-3 of-cover" 
+                    title="Сменить аватар"
+                >
+                <img id="loadingShipWheel" class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" style="display: none;">
+            </div>
             <p class="lead text-muted">
                 <svg id="svgEmailConfirmed" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                     <title>Почта подтверждена</title>

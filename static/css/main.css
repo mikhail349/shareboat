@@ -33,6 +33,13 @@ body > .main-content-container {
     animation-name: rotation;
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 0;
+    bottom: 0;
 }
 
 @keyframes rotation {
@@ -75,6 +82,36 @@ input[readonly].false-readonly {
 .scale-anim {
     animation-name: scale;
     animation-duration: .5s;
+}
+
+.downsize-anim {
+    animation-name: downsize;
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes downsize {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
+}
+
+.enlarge-anim {
+    animation-name: enlarge;
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes enlarge {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes scale {

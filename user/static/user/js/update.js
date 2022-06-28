@@ -10,6 +10,10 @@ $(document).ready(() => {
 
             const formData = new FormData(); 
             formData.set("avatar", avatar, avatar.name);
+            
+            $("img.avatar").removeClass("enlarge-anim");
+            $("img.avatar").addClass("downsize-anim");
+            $("#loadingShipWheel").delay(200).show(0);
 
             $.ajax({ 
                 type: "POST",
@@ -18,11 +22,20 @@ $(document).ready(() => {
                 processData: false,
                 contentType: false,
                 success: (data) => {
+                    $("#loadingShipWheel").hide(0);
                     showSuccessToast("Аватар изменён");
+                    
                     $("img.avatar").attr('src', data.avatar);
+                    $("img.avatar").removeClass("downsize-anim");
+                    $("img.avatar").addClass("enlarge-anim");
+
                     $("#navbarDropdownUserProfile > img").attr('src', data.avatar_sm);
                 },
                 error: (error) => {
+                    $("#loadingShipWheel").hide(0);
+                    $("img.avatar").removeClass("downsize-anim");
+                    $("img.avatar").addClass("enlarge-anim");
+
                     showErrorToast(error?.responseJSON?.data);
                 }
             });

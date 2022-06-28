@@ -9,12 +9,12 @@ from django.conf import settings
 from emails.exceptions import EmailLagError
 import jwt
 from django.contrib.auth.models import Group
-from django.urls import reverse
 from notification import utils as notify
 
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
 from emails.models import UserEmail
+from file.exceptions import FileSizeException
 from .models import User, TelegramUser
 import random
 import requests
@@ -79,6 +79,9 @@ def update_avatar(request):
         user.save()
     except UnidentifiedImageError:
         return JsonResponse({'data': 'Недопустимый формат файла'}, status=400) 
+    except FileSizeException as e:
+        return JsonResponse({'data': str(e)}, status=400) 
+    
     return JsonResponse({
         'avatar': user.avatar.url,
         'avatar_sm': user.avatar_sm.url
