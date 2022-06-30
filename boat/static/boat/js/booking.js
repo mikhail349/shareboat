@@ -14,7 +14,7 @@ $(document).ready(() => {
         minDate: new Date(Math.max.apply(null,[firstPriceDate, new Date()])),
         maxDate: lastPriceDate,
         multipleDatesSeparator: ' - ',
-        position: 'top left',
+        position: 'bottom left',
         onHide: (isFinished) => {if (isFinished) calc_booking()},
         onRenderCell: ({date}) => {
             for (let acceptedBookingRange of acceptedBookingsRanges) {
@@ -51,9 +51,9 @@ $(document).ready(() => {
             window.selectedEndDate = null;
             window.totalSum = null;
 
-            $('#priceAlert').removeClass('alert-danger alert-success');
-            $('#priceAlert').addClass('alert-secondary');
-            $('#priceAlert').html('<strong>Для расчета цены выберите период</strong>');
+            //$('#priceAlert').removeClass('alert-danger alert-success');
+            //$('#priceAlert').addClass('alert-secondary');
+            $('#priceAlert').html('<span>Для расчета цены выберите период</span>');
         }
 
         window.selectedStartDate = dateRange.selectedDates[0];
@@ -70,18 +70,18 @@ $(document).ready(() => {
             error: onError
         }); 
 
-        $('#priceAlert').removeClass('alert-danger alert-success');
-        $('#priceAlert').addClass('alert-secondary');
-        $('#priceAlert').html('<strong>Идет расчет цены...</strong>');
+        //$('#priceAlert').removeClass('alert-danger alert-success');
+        //$('#priceAlert').addClass('alert-secondary');
+        $('#priceAlert').html('<span>Идет расчет цены...</span>');
        
         function onSuccess(data) {
             window.totalSum = data.sum;
             let sumStr = data.sum.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
 
-            $('#priceAlert').removeClass('alert-danger alert-secondary');
-            $('#priceAlert').addClass('alert-success');
-            $('#priceAlert').html(`<strong>${sumStr}</strong><span> за ${data.days} ${daysStr}</span>`)
+            //$('#priceAlert').removeClass('alert-danger alert-secondary');
+            //$('#priceAlert').addClass('alert-success');
+            $('#priceAlert').html(`<strong class="text-success">${sumStr}</strong><span> за ${data.days} ${daysStr}</span>`)
         }
     
         function onError(error) {
@@ -91,8 +91,8 @@ $(document).ready(() => {
 
             if (error.status == 0) return;
             
-            $('#priceAlert').removeClass('alert-success alert-secondary');
-            $('#priceAlert').addClass('alert-danger');
+            //$('#priceAlert').removeClass('alert-success alert-secondary');
+            //$('#priceAlert').addClass('alert-danger');
             $('#priceAlert').html(`<h5>${parseJSONError(error.responseJSON)}</h5>`);
         }   
     }

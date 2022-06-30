@@ -50,18 +50,18 @@
                 </div>
             
                 <div class="col-lg">
-                    {% include 'boat/view_base_specs.html' %} 
-                    <div>
+                    
+                    <div class="mb-3">
                         {% if prices_exist %}
-                
+
+                            <div id="priceAlert" class="alert text-center fs-5 fw-light">
+                                <span>Для расчета цены выберите период</span>
+                            </div>
+                    
                             <div class="form-floating mb-3">                 
                                 <input id="dateRange" type="text" placeholder="Укажите период" class="form-control false-readonly" required autocomplete="off" readonly />
                                 <label>Период бронирования</label>
                                 <div class="invalid-tooltip">Укажите период бронирования</div>
-                            </div>
-                    
-                            <div id="priceAlert" class="alert alert-secondary text-center">
-                                <strong>Для расчета цены выберите период</strong>
                             </div>
                     
                             {% if user.is_authenticated %}
@@ -72,10 +72,10 @@
                                 <a href="{% url 'user:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary btn-lg w-100">Войти для бронирования</a>
                             {% endif %}
                         {% else %}
-                            <div class="alert alert-danger text-center">Нет расценок</div>
+                            <div class="alert text-center fs-5">Нет расценок</div>
                         {% endif %}
                     </div>     
-                      
+                    {% include 'boat/view_base_specs.html' %}   
                 </div>           
             </div>
             
