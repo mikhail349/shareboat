@@ -247,6 +247,10 @@ LOGGING = {
         },
         'mail_admins': {
             'class': 'django.utils.log.AdminEmailHandler',
+        },
+        'mail_admins_error': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
         }
     },  
     'root': {
@@ -254,7 +258,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['file', 'console', 'mail_admins_error'],
             'level': 'INFO',
             'propagate': False,
         },
