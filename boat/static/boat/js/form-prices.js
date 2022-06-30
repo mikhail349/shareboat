@@ -39,7 +39,6 @@ function PricesList(props) {
     }
 
     function getPriceStateCss(price) {
-        //<div className="badge bg-light text-dark ms-3 align-self-center">123</div>
 
         if (price.end_date) {
             let endDate = new Date(new Date(price.end_date).toDateString());

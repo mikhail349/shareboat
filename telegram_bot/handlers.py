@@ -31,8 +31,7 @@ def build_auth_commands_list():
     "
 
 def start(update, context):
-    #update.message.reply_text("Вас приветствует <b>Sharebot</b>!", parse_mode=ParseMode.HTML)
-    msg = "Вас приветствует <b>Shareboat</b>!\n\n"
+    msg = "Вас приветствует <b>SHAREBOAT.RU</b>!\n\n"
     user = TelegramUser.get_user(update)
     if user:
         msg += "Вам доступны команды:\n"

@@ -27,7 +27,7 @@ class Message(models.Model):
 
 class SupportManager(models.Manager):
     def send_greetings(self, recipient):
-        text = "<div>Вас приветствует ShareBoat!</div><div>Здесь вы можете задать интересующий Вас вопрос.</div>"
+        text = "<div>Вас приветствует SHAREBOAT.RU!</div><div>Здесь вы можете задать интересующий Вас вопрос.</div>"
         return self.create(recipient=recipient, text=text)
 
 class MessageSupport(Message):

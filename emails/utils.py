@@ -10,7 +10,7 @@ def send_email(subject, content, recipients):
     html = render_to_string("emails/email.html", context={'content': content})
     plain_message = strip_tags(html)
     try:
-        res = send_mail("ShareBoat - %s" % subject, plain_message, None, recipients, html_message=html) 
+        res = send_mail("SHAREBOAT.RU - %s" % subject, plain_message, None, recipients, html_message=html) 
     except Exception as e:
         logger.error(str(e))
         raise e
