@@ -53,6 +53,8 @@ body > .main-content-container {
 
 .of-cover {
     object-fit: cover;
+    min-width: 32px;
+    min-height: 32px;
 }
 
 #overlayPanel {
