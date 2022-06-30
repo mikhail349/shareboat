@@ -1,7 +1,7 @@
 function PricesList(props) {
 
     const [prices, setPrices] = React.useState([]);
-    const priceTypes = window.priceTypes;
+    const now = new Date(new Date().toDateString());
 
     React.useEffect(() => {
         const newPrices = [];
@@ -38,6 +38,33 @@ function PricesList(props) {
         setPrices(newPrices); 
     }
 
+    function getPriceStateCss(price) {
+        //<div className="badge bg-light text-dark ms-3 align-self-center">123</div>
+
+        if (price.end_date) {
+            let endDate = new Date(new Date(price.end_date).toDateString());
+            if (endDate < now) {
+                return <div className="badge bg-danger ms-3 align-self-center fw-normal">Устаревшая</div>
+            }     
+        }
+
+        if (price.start_date) {
+            let startDate = new Date(new Date(price.start_date).toDateString());
+            if (startDate > now) {
+                return <div className="badge bg-light text-dark ms-3 align-self-center fw-normal">На будущее</div>
+            }     
+        }
+
+        if (price.start_date && price.end_date) {
+            let startDate = new Date(new Date(price.start_date).toDateString());
+            let endDate = new Date(new Date(price.end_date).toDateString());
+            if (startDate <= now <= endDate) {
+                return <div className="badge bg-success ms-3 align-self-center fw-normal">Актуальная</div>
+            }
+        }    
+
+    }
+
     return(
         <>       
             <div className="row g-3 mb-3">
@@ -46,9 +73,10 @@ function PricesList(props) {
                     <div key={index} className="col-lg-4">
                         <div className="card">
                             <div className="card-body">
-                                <div class="d-flex mb-2">
-                                    <h5 class="card-title">Цена #{index+1}</h5>
-                                    <button type="button" class="btn-close ms-auto" onClick={() => deletePrice(index)}></button>
+                                <div className="d-flex mb-2">
+                                    <h5 className="card-title mb-0">Цена #{index+1}</h5>
+                                    {getPriceStateCss(price)}
+                                    <button type="button" className="btn-close ms-auto" onClick={() => deletePrice(index)}></button>
                                 </div>
                                 <div className="form-floating mb-2">                 
                                     <input type="number" className="form-control" placeholder="Укажите цену" autocomplete="false"
