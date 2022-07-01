@@ -381,7 +381,7 @@ def delete(request, pk):
     return JsonResponse({'redirect': reverse('boat:my_boats')})
 
 @login_required
-@permission_required('boat.view_boatfile', raise_exception=True)
+@permission_required('boat.view_boat', raise_exception=True)
 def get_files(request, pk):
     files = BoatFile.objects.filter(boat__pk=pk, boat__owner=request.user)
     serializer = BoatFileSerializer(files, many=True, context={'request': request})
