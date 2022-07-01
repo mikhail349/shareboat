@@ -49,7 +49,7 @@ def auth(update, context):
 
     update.message.reply_text(
         """Пожалуйста, введите шестизначный код авторизации.\n""" +
-        """Чтобы его получить перейдите на <a href="https://sbtest.posse.ru/user/update/">страницу своего профиля</a>.\n\n""", 
+        """Чтобы его получить перейдите на <a href="https://preprod.shareboat.ru/user/update/">страницу своего профиля</a>.\n\n""", 
     parse_mode=ParseMode.HTML)
     return AUTH
 
