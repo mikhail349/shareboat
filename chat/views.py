@@ -86,7 +86,7 @@ def get_new_messages_boat(request, pk):
     if request.method == 'GET':
         try:
             boat = Boat.objects.get(pk=pk)
-            is_moderator = request.user.has_perm('boat.can_moderate_boats')
+            is_moderator = request.user.has_perm('boat.moderate_boats')
 
             messages = MessageBoat.objects.filter(boat=boat, read=False)
             if boat.owner == request.user:
@@ -129,7 +129,7 @@ def send_message_boat(request, pk):
         data = request.POST
         try:
             boat = Boat.objects.get(pk=pk)
-            is_moderator = request.user.has_perm('boat.can_moderate_boats')
+            is_moderator = request.user.has_perm('boat.moderate_boats')
 
             if boat.owner == request.user:
                 recipient = None
@@ -200,7 +200,7 @@ def booking(request, pk):
 @login_required
 def boat(request, pk):
     try:
-        is_moderator = request.user.has_perm('boat.can_moderate_boats')
+        is_moderator = request.user.has_perm('boat.moderate_boats')
 
         boat = Boat.objects.get(Q(pk=pk))
         if not is_moderator and boat.owner != request.user:

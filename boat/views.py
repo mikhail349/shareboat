@@ -116,12 +116,12 @@ def favs(request):
 
     return render(request, 'boat/favs.html', context=context) 
 
-@permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
+@permission_required('boat.view_boats_on_moderation', raise_exception=True)
 def boats_on_moderation(request):
     boats = Boat.objects.filter(status=Boat.Status.ON_MODERATION)
     return render(request, 'boat/boats_on_moderation.html', context={'boats': boats}) 
 
-@permission_required('boat.can_view_boats_on_moderation', raise_exception=True)
+@permission_required('boat.view_boats_on_moderation', raise_exception=True)
 def moderate(request, pk):
     if request.method == 'GET':
         try:
@@ -159,7 +159,7 @@ def set_status(request, pk):
     except Boat.DoesNotExist:
         return response_not_found()    
 
-@permission_required('boat.can_moderate_boats', raise_exception=True)
+@permission_required('boat.moderate_boats', raise_exception=True)
 def accept(request, pk):
     try:
         boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
@@ -179,7 +179,7 @@ def accept(request, pk):
     except Boat.DoesNotExist:
         return render(request, 'not_found.html')
 
-@permission_required('boat.can_moderate_boats', raise_exception=True)
+@permission_required('boat.moderate_boats', raise_exception=True)
 def reject(request, pk):
     if request.method == 'POST':
         try:

@@ -49,8 +49,8 @@ class Boat(models.Model):
 
     class Meta:
         permissions = [
-            ('can_view_boats_on_moderation', 'Can view boats on moderation'),
-            ('can_moderate_boats', 'Can moderate boats'),
+            ('view_boats_on_moderation', 'Can view boats on moderation'),
+            ('moderate_boats', 'Can moderate boats'),
         ]
 
     class Status(models.IntegerChoices):
