@@ -255,9 +255,11 @@ class BoatPrice(models.Model):
     class Meta:
         ordering = ['start_date', 'end_date']
 
+def get_upload_to(instance, filename):
+    return utils.get_file_path(instance, filename, 'boat/')
 
 class BoatFile(models.Model):
-    file = models.ImageField(upload_to=lambda instance, filename: utils.get_file_path(instance, filename, 'boat/'))
+    file = models.ImageField(upload_to=get_upload_to)
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')
 
     def __str__(self):

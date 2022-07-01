@@ -42,6 +42,11 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
        
+def get_upload_avatar_to(instance, filename):
+    return utils.get_file_path(instance, filename, 'avatar/')
+
+def get_upload_avatar_sm_to(instance, filename):
+    return utils.get_file_path(instance, filename, 'avatar/sm/')
 
 class User(AbstractUser):   
     username = None
@@ -50,8 +55,8 @@ class User(AbstractUser):
     first_name = models.CharField(_('first name'), max_length=150)
     email = models.EmailField(_('email address'), unique=True)
     email_confirmed = models.BooleanField("Эл. почта подтверждена", default=False)
-    avatar = models.ImageField(upload_to=lambda instance, filename: utils.get_file_path(instance, filename, 'avatar/'), null=True, blank=True)
-    avatar_sm = models.ImageField(upload_to=lambda instance, filename: utils.get_file_path(instance, filename, 'avatar/sm/'), null=True, blank=True)
+    avatar = models.ImageField(upload_to=get_upload_avatar_to, null=True, blank=True)
+    avatar_sm = models.ImageField(upload_to=get_upload_avatar_sm_to, null=True, blank=True)
     
     objects = UserManager()
 
