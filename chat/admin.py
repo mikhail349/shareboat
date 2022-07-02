@@ -16,4 +16,3 @@ class MessageBoatAdmin(MessageAdmin):
 admin.site.register(MessageBooking, MessageBookingAdmin)
 admin.site.register(MessageBoat, MessageBoatAdmin)
 admin.site.register(MessageSupport)
-admin.site.register(Message)
