@@ -119,11 +119,6 @@ a {
     height: 80vh;
 }
 
-.offcanvas-end {
-    border-left: none;
-    width: 450px;
-}
-
 .form-control[required] ~ label::after, .form-select[required] ~ label::after {
     content:" *";
     color:red;
