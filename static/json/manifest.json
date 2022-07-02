@@ -10,7 +10,7 @@
     "orientation": "any",
     "icons": [
         {
-            "src": "/static/img/boat-512.png",
+            "src": "/static/img/ship-wheel-r.png",
             "sizes": "512x512"
         }
     ]
