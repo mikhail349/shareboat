@@ -7,12 +7,12 @@ def create_groups(apps, schema_editor):
     Permission  = apps.get_model('auth', 'Permission')
     
     group, _ = Group.objects.get_or_create(name='boat_owner')
-    perms = Permission.objects.filter(name__in=['add_boat', 'change_boat', 'view_boat', 'delete_boat'])
+    perms = Permission.objects.filter(codename__in=['add_boat', 'change_boat', 'view_boat', 'delete_boat'])
     for p in perms:
         group.permissions.add(p)
 
     group, _ = Group.objects.get_or_create(name='boat_moderator')
-    perms = Permission.objects.filter(name__in=['view_boats_on_moderation', 'moderate_boats'])
+    perms = Permission.objects.filter(codename__in=['view_boats_on_moderation', 'moderate_boats'])
     for p in perms:
         group.permissions.add(p)
 
