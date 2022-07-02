@@ -1,30 +1,25 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from user.models import User
 from boat.models import Boat
+from user.tests import create_boat_owner
+
+def create_simple_boat( owner):
+    return Boat.objects.create(name='Лодка1', length=1, width=1, draft=1, capacity=1, type=Boat.Type.BOAT, owner=owner)      
 
 class BoatTest(TestCase):
-
-    # Вспомогательная функция для создания обычной лодки
-    def create_simple_boat(self, owner):
-        return Boat.objects.create(name='Лодка1', length=1, width=1, draft=1, capacity=1, type=Boat.Type.BOAT, owner=owner)        
 
     # Функция для разовых настроек перед тестом
     def setUp(self):
 
         # Создаем "какого-то пользователя"      
-        self.some_user = User.objects.create(email='some_user@gmail.com')
-        self.some_user.set_password('some_user_password')
-        self.some_user.save()
+        self.some_user = create_boat_owner('some_user@gmail.com', 'some_user_password')
         # Создаем лодку для "какого-то пользователя" 
-        self.some_user_boat = self.create_simple_boat(self.some_user)
+        self.some_user_boat = create_simple_boat(self.some_user)
 
         # Создаем меня   
-        me = User.objects.create(email='me@gmail.com')
-        me.set_password('my_password')
-        me.save()
+        me = create_boat_owner('me@gmail.com', 'my_password')
         # Создаем лодку для меня
-        self.my_boat = self.create_simple_boat(me)
+        self.my_boat = create_simple_boat(me)
 
         # Модуль имитации пользователя при выполнении запросов
         self.client = Client() 
@@ -44,9 +39,3 @@ class BoatTest(TestCase):
         response = self.client.post(reverse('boat:api_delete', kwargs={'pk': self.my_boat.pk}))
         # Код статуса должен быть равен 200 (успешно)
         self.assertEqual(response.status_code, 200)
-
-    # Функция теста получения только своих лодок
-    def test_view_only_my_boats(self):
-        response = self.client.get(reverse('boat:my_boats'))
-        boats = response.context['boats']
-        self.assertQuerysetEqual(boats.filter(owner=self.some_user), [])
