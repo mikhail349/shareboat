@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 
     'django_summernote',
+    'coverage',
 
     'user',
     'file',

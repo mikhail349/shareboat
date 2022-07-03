@@ -74,7 +74,7 @@ class Boat(models.Model):
     name    = models.CharField(max_length=255, null=True, blank=True)
     text    = models.TextField(null=True, blank=True)
     owner   = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boats")
-    model   = models.ForeignKey(Model, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)
+    model   = models.ForeignKey(Model, on_delete=models.PROTECT, related_name="boats")
     status  = models.IntegerField(choices=Status.choices, default=Status.SAVED)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
@@ -93,17 +93,11 @@ class Boat(models.Model):
     published = PublishedBoatManager.from_queryset(BoatQuerySet)()
 
     @property
-    def is_draft(self):
-        return self.status == self.Status.SAVED
-
-    @property
     def is_published(self):
         return self.status == self.Status.PUBLISHED
 
     def get_full_name(self):
-        if self.model is not None:
-            return f'{self.model.manufacturer.name} {self.model.name} "{self.name}"'
-        return f'"{self.name}"'
+        return f'{self.model.manufacturer.name} {self.model.name} "{self.name}"'
 
     def get_now_prices(self):
         now = timezone.now()

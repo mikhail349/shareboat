@@ -33,9 +33,6 @@ class BaseImage(models.Model):
     image = models.ImageField(upload_to=utils.get_file_path)
     base = models.ForeignKey(Base, on_delete=models.CASCADE, related_name='images')
 
-    def __str__(self):
-        return '%s - %s' % (self.image, self.base)
-
 pre_save.connect(signals.verify_imagefile, sender=BaseImage)
 pre_save.connect(signals.delete_old_file, sender=BaseImage)
 post_save.connect(signals.compress_imagefile, sender=BaseImage)

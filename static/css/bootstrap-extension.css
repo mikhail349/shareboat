@@ -152,7 +152,7 @@ a {
 }
 
 .toast-container, .alert-container {
-    z-index: 6;
+    z-index: 1046;
 }
 
 .carousel.full-screen {
