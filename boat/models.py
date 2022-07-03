@@ -115,18 +115,6 @@ class Boat(models.Model):
         if self.issue_year == "":
             self.issue_year = None 
 
-        '''
-        errors = []
-        if has_swear(self.name):
-            errors.append(ValidationError("Похоже, название лодки содержит нецензурное слово", code="swear"))
-
-        if has_swear(self.text):
-            errors.append(ValidationError("Похоже, описание лодки содержит нецензурное слово", code="swear"))
-
-        if errors:
-            raise ValidationError(errors)
-        '''
-
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Boat, self).save(*args, **kwargs)
@@ -200,7 +188,7 @@ class BoatPricePeriod(models.Model):
     end_date    = models.DateField()    
 
     def __str__(self):
-        return f'{self.start_date} - {self.end_date}'
+        return f'{self.start_date.strftime("%d.%m.%Y")} - {self.end_date.strftime("%d.%m.%Y")}'
 
 class BoatPrice(models.Model):
     class Type(models.IntegerChoices):
@@ -255,9 +243,6 @@ def get_upload_to(instance, filename):
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=get_upload_to)
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')
-
-    def __str__(self):
-        return '%s - %s' % (self.file, self.boat)
 
 class BoatFav(models.Model):
    boat = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='favs')
