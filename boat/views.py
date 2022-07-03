@@ -273,7 +273,6 @@ def boats(request):
 
 def switch_fav(request, pk):
     if not request.user.is_authenticated:
-        print(request.get_full_path())
         return JsonResponse({'data': 'redirect', 'url': reverse('user:login')})
 
     res = None

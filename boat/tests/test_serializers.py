@@ -1,4 +1,5 @@
 from io import BytesIO
+import os
 from PIL import Image
 from django.test import TestCase
 
@@ -25,5 +26,5 @@ class BoatFileSerializerTest(TestCase):
 
         boat_file = BoatFile.objects.create(file=file, boat=boat)
         serializer = BoatFileSerializer(boat_file)
-        print(serializer.data)
+        self.assertEqual(serializer.data.get('filename'), os.path.basename(boat_file.file.name))
     
