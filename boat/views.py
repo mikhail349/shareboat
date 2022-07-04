@@ -18,7 +18,7 @@ from notification import utils as notify
 from .exceptions import PriceDateRangeException
 from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer, ModelSerializer
-from .utils import calc_booking as _calc_booking, my_boats as _my_boats
+from .utils import calc_booking as _calc_booking
 from base.models import Base
 from booking.models import Booking
 from chat.models import MessageBoat
@@ -147,8 +147,8 @@ def set_status(request, pk):
 
     try:
         new_status = int(request.POST.get('status'))
+        
         boat = Boat.objects.get(pk=pk, owner=request.user)
-
         if not new_status in ALLOWED_STATUSES.get(boat.status):
             return JsonResponse({'message': 'Некорректный статус'}, status=status.HTTP_400_BAD_REQUEST)
 

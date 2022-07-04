@@ -2,11 +2,8 @@ from django import template
 from django.db.models import Q
 
 from datetime import datetime
-from decimal import Decimal
 import json
-from boat.utils import DecimalEncoder, calc_booking as _calc_booking 
 from boat.models import BoatPrice, Boat
-from boat.exceptions import PriceDateRangeException
 from django.utils.dateparse import parse_date
 
 register = template.Library()
@@ -33,7 +30,7 @@ def get_boat_coordinates(boat):
 
 @register.filter
 def to_json(value):
-    return json.dumps(value, cls=DecimalEncoder)
+    return json.dumps(value, default=str)
 
 @register.filter
 def get_status_color(value):
