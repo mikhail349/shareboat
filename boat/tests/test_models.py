@@ -129,22 +129,22 @@ class BoatPriceTest(TestCase):
 
     def test_clean(self):
         boat_price = BoatPrice(boat=self.boat, start_date=datetime.date(2022, 12, 31), end_date=datetime.date(2022, 1, 1), price=100)     
-        try:
+        
+        with self.assertRaises(ValidationError) as cm:
             boat_price.clean()
-            self.fail('Validation Error should be raised')
-        except ValidationError as e:
-            self.assertEqual(len(e.error_list), 1)
-            self.assertEqual(e.error_list[0].code, 'invalid_dates')
 
+        self.assertEqual(len(cm.exception.error_list), 1)
+        self.assertEqual(cm.exception.error_list[0].code, 'invalid_dates')
+        
         BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(2022, 1, 1), end_date=datetime.date(2022, 1, 31), price=100) 
         boat_price = BoatPrice(boat=self.boat, start_date=datetime.date(2022, 1, 10), end_date=datetime.date(2022, 1, 11), price=150)
-        try:
+        
+        with self.assertRaises(ValidationError) as cm:
             boat_price.clean()
-            self.fail('Validation Error should be raised')
-        except ValidationError as e:
-            self.assertEqual(len(e.error_list), 1)
-            self.assertEqual(e.error_list[0].code, 'invalid_range')
 
+        self.assertEqual(len(cm.exception.error_list), 1)
+        self.assertEqual(cm.exception.error_list[0].code, 'invalid_range')
+        
 class BoatPricePeriodTest(TestCase):
     
     def setUp(self):

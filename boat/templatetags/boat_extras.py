@@ -36,21 +36,6 @@ def to_json(value):
     return json.dumps(value, cls=DecimalEncoder)
 
 @register.filter
-def strptime(value, arg):
-    return datetime.strptime(value, arg)
-
-@register.filter
-def todecimal(value):
-    return Decimal(value)
-
-@register.filter
-def toaccusative(value):
-    d = {
-        'неделя': 'неделю'
-    }
-    return d.get(value.lower(), value)
-
-@register.filter
 def get_status_color(value):
     if value == Boat.Status.DECLINED:
         return 'bg-danger'
@@ -69,12 +54,3 @@ def get_min_actual_price(boat):
     if prices:
         return prices[0].price
     return None
-
-@register.simple_tag
-def calc_booking(boat, start_date, end_date):
-    start_date  = parse_date(start_date)
-    end_date    = parse_date(end_date)
-    try:
-        return _calc_booking(boat.pk, start_date, end_date)
-    except (Boat.DoesNotExist, PriceDateRangeException):
-        return None
