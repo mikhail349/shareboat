@@ -208,6 +208,7 @@ class BoatPrice(models.Model):
 
     def clean(self):
         errors = []
+
         if self.end_date < self.start_date:
             errors.append(ValidationError(_('Окончание действия цены не должно быть раньше начала действия'), code="invalid_dates"))  
 

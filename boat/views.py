@@ -29,12 +29,6 @@ import datetime
 def response_not_found():
     return JsonResponse({'message': 'Лодка не найдена'}, status=404)
 
-def response_files_limit_count(msg):
-    return JsonResponse({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
-
-def response_file_limit_size(msg):
-    return JsonResponse({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
-
 def get_form_context():
     return {
         'boat_types': Boat.get_types(), 
@@ -395,13 +389,17 @@ def create_or_update(request, pk=None):
     base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
     
     try:
-        model = Model.objects.get(pk=data.get('model'))
-    except Model.DoesNotExist:
-        model = None
-    
-    try:
+        errors = []
+        try:
+            model = Model.objects.get(pk=data.get('model'))
+        except Model.DoesNotExist:
+            errors.append(ValidationError('Модель не найдена', code="invalid_model"))
+
         if len(files) > FILES_LIMIT_COUNT:
-            raise ValidationError(f'Можно приложить не более {FILES_LIMIT_COUNT} фотографий')
+            errors.append(ValidationError(f'Можно приложить не более {FILES_LIMIT_COUNT} фотографий', code="files_count_limit"))
+
+        if errors:
+            raise ValidationError(errors)
 
         with transaction.atomic(): 
 
