@@ -10,7 +10,7 @@
             <h2>{{ category.name }}</h2>
             <div class="django-summernote-container">{{ category.description|safe }}</div>
 
-            <ul class="list-group mb-3">
+            <ul class="list-group list-group-flush mb-3">
                 {% for subcat in category.categories.published %}
                     <li class="list-group-item"><a href="{{ subcat.full_path }}">{{ subcat.name }}</a></li>
                 {% endfor %}
