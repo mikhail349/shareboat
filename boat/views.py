@@ -80,6 +80,7 @@ def get_models(request, pk):
     return JsonResponse({'data': ModelSerializer(models, many=True).data})
 
 @login_required
+@permission_required('boat.view_my_boats', raise_exception=True)
 def my_boats(request):
     page = request.GET.get('page', 1)
 
