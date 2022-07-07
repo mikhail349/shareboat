@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'portal'
 ]
 
-SUMMERNOTE_THEME = 'bs5'
+SUMMERNOTE_THEME = 'bs4'
 SUMMERNOTE_CONFIG = {
     'summernote': {
         'width': '100%'
