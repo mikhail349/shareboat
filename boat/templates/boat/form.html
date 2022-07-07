@@ -104,7 +104,7 @@
     <div class="col-lg-3">
         <div class="form-floating">                 
             <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="off"
-                step=".1" min="0.1" max="999.9"
+                step=".01" min="0.01" max="999.99"
                 required
                 value="{{ boat.length|unlocalize }}"
             />
@@ -115,7 +115,7 @@
     <div class="col-lg-3">
         <div class="form-floating">                 
             <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="off"
-                step=".1" min="0.1" max="99.9"
+                step=".01" min="0.01" max="99.99"
                 required    
                 value="{{ boat.width|unlocalize }}"     
             />
@@ -126,7 +126,7 @@
     <div class="col-lg-3">
         <div class="form-floating">                 
             <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="off"
-                step=".1" min="0.1" max="9.9"
+                step=".01" min="0.01" max="9.99"
                 required
                 value="{{ boat.draft|unlocalize }}"
             />

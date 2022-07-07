@@ -203,6 +203,25 @@ class BoatTest(TestCase):
         response = self.client.get(reverse('boat:moderate', kwargs={'pk': 986}))
         self.assertEqual(response.status_code, 404)
 
+    def test_delete(self):
+        user = create_user('user@mail.com', '12345')
+        boat = create_simple_boat(self.model, self.owner)
+        self.client.login(email='user@mail.com', password='12345')
+
+        response = self.client.post(reverse('boat:api_delete', kwargs={'pk': boat.pk}))
+        self.assertEqual(response.status_code, 403)
+
+        user.groups.add(Group.objects.get(name='boat_owner'))
+
+        response = self.client.post(reverse('boat:api_delete', kwargs={'pk': boat.pk}))
+        self.assertEqual(response.status_code, 404)
+
+        self.client.login(email='owner@mail.ru', password='12345')
+        response = self.client.post(reverse('boat:api_delete', kwargs={'pk': boat.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Boat.objects.get(pk=boat.pk).status, Boat.Status.DELETED)
+
+
     def test_refresh_boat_price_period(self):
         now = datetime.datetime.now()
         BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)

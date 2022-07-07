@@ -79,9 +79,9 @@ class Boat(models.Model):
     status  = models.IntegerField(choices=Status.choices, default=Status.SAVED)
 
     issue_year = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1900), MaxValueValidator(2999)])
-    length  = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
-    width   = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
-    draft   = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1'))])
+    length  = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(Decimal('0.1'))])
+    width   = models.DecimalField(max_digits=4, decimal_places=2, validators=[MinValueValidator(Decimal('0.1'))])
+    draft   = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(Decimal('0.1'))])
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
     type    = models.IntegerField(choices=Type.choices)
     prepayment_required = models.BooleanField(default=False)
