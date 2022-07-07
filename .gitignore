@@ -2,5 +2,6 @@ log/
 uploads/
 venv/
 nodejs/
+collected_static/
 *.pyc
 .env

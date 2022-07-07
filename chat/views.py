@@ -195,7 +195,7 @@ def booking(request, pk):
         }
         return render(request, 'chat/booking.html', context=context)
     except Booking.DoesNotExist:
-        return render(request, 'not_found.html') 
+        return render(request, 'not_found.html', status=404) 
 
 @login_required
 def boat(request, pk):
@@ -204,7 +204,7 @@ def boat(request, pk):
 
         boat = Boat.objects.get(Q(pk=pk))
         if not is_moderator and boat.owner != request.user:
-            return render(request, 'not_found.html') 
+            return render(request, 'not_found.html', status=404) 
 
         messages = MessageBoat.objects.filter(boat=boat)
         if is_moderator:
@@ -227,4 +227,4 @@ def boat(request, pk):
 
         return render(request, 'chat/boat.html', context=context)
     except Boat.DoesNotExist:
-        return render(request, 'not_found.html') 
+        return render(request, 'not_found.html', status=404) 

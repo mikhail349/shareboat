@@ -107,7 +107,7 @@ def view(request, pk):
         }
         return render(request, 'booking/view.html', context=context)
     except Boat.DoesNotExist:
-        return render(request, 'not_found.html')
+        return render(request, 'not_found.html', status=404)
 
 @login_required
 def set_status(request, pk):

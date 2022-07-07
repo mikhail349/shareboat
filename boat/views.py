@@ -80,7 +80,6 @@ def get_models(request, pk):
     return JsonResponse({'data': ModelSerializer(models, many=True).data})
 
 @login_required
-@permission_required('boat.view_boat', raise_exception=True)
 def my_boats(request):
     page = request.GET.get('page', 1)
 
@@ -96,7 +95,6 @@ def my_boats(request):
     return render(request, 'boat/my_boats.html', context=context) 
 
 @login_required
-@permission_required('boat.view_boat', raise_exception=True)
 def favs(request):
     page = request.GET.get('page', 1)
 
@@ -126,7 +124,7 @@ def moderate(request, pk):
             }
             return render(request, 'boat/moderate.html', context=context)
         except Boat.DoesNotExist:
-            return render(request, 'not_found.html')
+            return render(request, 'not_found.html', status=404)
 
 @login_required
 @permission_required('boat.change_boat', raise_exception=True)
@@ -171,7 +169,7 @@ def accept(request, pk):
         notify.send_boat_published_to_owner(boat)
         return redirect(reverse('boat:boats_on_moderation'))
     except Boat.DoesNotExist:
-        return render(request, 'not_found.html')
+        return render(request, 'not_found.html', status=404)
 
 @permission_required('boat.moderate_boats', raise_exception=True)
 def reject(request, pk):
@@ -200,7 +198,7 @@ def reject(request, pk):
 
             return redirect(reverse('boat:boats_on_moderation'))
         except Boat.DoesNotExist:
-            return render(request, 'not_found.html')
+            return render(request, 'not_found.html', status=404)
 
 def search_boats(request):
     q_date_from = request.GET.get('dateFrom')
@@ -299,7 +297,7 @@ def booking(request, pk):
             }
             return render(request, 'boat/booking.html', context=context)
         except Boat.DoesNotExist:
-            return render(request, 'not_found.html')
+            return render(request, 'not_found.html', status=404)
 
 def calc_booking(request, pk):
     start_date  = parse_date(request.GET.get('start_date'))
@@ -313,7 +311,6 @@ def calc_booking(request, pk):
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
-@permission_required('boat.view_boat', raise_exception=True)
 def view(request, pk):
     try:
         boat = Boat.active.get(pk=pk, owner=request.user)
@@ -323,7 +320,7 @@ def view(request, pk):
         }
         return render(request, 'boat/view.html', context=context)
     except Boat.DoesNotExist:
-        return render(request, 'not_found.html')
+        return render(request, 'not_found.html', status=404)
 
 @login_required
 @permission_required('boat.add_boat', raise_exception=True)
@@ -352,7 +349,7 @@ def update(request, pk):
             }
             return render(request, 'boat/update.html', context=context)
         except Boat.DoesNotExist:
-            return render(request, 'not_found.html')
+            return render(request, 'not_found.html', status=404)
     elif request.method == 'POST':
         return create_or_update(request, pk)
 
@@ -374,7 +371,6 @@ def delete(request, pk):
     return JsonResponse({'redirect': reverse('boat:my_boats')})
 
 @login_required
-@permission_required('boat.view_boat', raise_exception=True)
 def get_files(request, pk):
     files = BoatFile.objects.filter(boat__pk=pk, boat__owner=request.user)
     serializer = BoatFileSerializer(files, many=True, context={'request': request})
