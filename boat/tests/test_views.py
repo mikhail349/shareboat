@@ -5,6 +5,8 @@ from django.urls import reverse
 from boat.tests.test_models import create_model, create_simple_boat
 from boat.models import BoatFav, Manufacturer, Model, Boat, BoatPrice
 from boat.views import refresh_boat_price_period
+from booking.models import Booking
+
 from file.tests.test_models import get_imagefile
 from user.tests.test_models import create_boat_owner, create_user
 
@@ -122,6 +124,9 @@ class BoatTest(TestCase):
     def test_update_boat(self):
         self.client.login(email='owner@mail.ru', password='12345')
 
+        response = self.client.get(reverse('boat:update', kwargs={'pk': 997}))
+        self.assertEqual(response.status_code, 404)
+
         response = self.client.get(reverse('boat:update', kwargs={'pk': self.boat.pk}))
         self.assertEqual(response.status_code, 200)
 
@@ -204,8 +209,17 @@ class BoatTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_delete(self):
+        now = datetime.datetime.now()
         user = create_user('user@mail.com', '12345')
         boat = create_simple_boat(self.model, self.owner)
+        booking = Booking.objects.create(
+            boat=boat, 
+            renter=user, 
+            status=Booking.Status.ACCEPTED, 
+            start_date=datetime.date(now.year, 1, 1), 
+            end_date=datetime.date(now.year, 1, 10),
+            total_sum=100.50
+        )
         self.client.login(email='user@mail.com', password='12345')
 
         response = self.client.post(reverse('boat:api_delete', kwargs={'pk': boat.pk}))
@@ -217,6 +231,12 @@ class BoatTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
         self.client.login(email='owner@mail.ru', password='12345')
+        response = self.client.post(reverse('boat:api_delete', kwargs={'pk': boat.pk}))
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content)['code'], 'invalid_status')
+
+        booking.status = Booking.Status.DONE
+        booking.save()
         response = self.client.post(reverse('boat:api_delete', kwargs={'pk': boat.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Boat.objects.get(pk=boat.pk).status, Boat.Status.DELETED)

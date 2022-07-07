@@ -364,8 +364,8 @@ def delete(request, pk):
         return response_not_found()
 
     boat.bookings.filter(status=Booking.Status.PENDING).update(status=Booking.Status.DECLINED)
-    if boat.bookings.filter(status__in=[Booking.Status.ACCEPTED, Booking.Status.ACTIVE]).exists():
-        return JsonResponse({'message': "По этой лодке уже есть подтвержденные или активные бронирования"}, status=status.HTTP_400_BAD_REQUEST)    
+    if boat.bookings.filter(status__in=[Booking.Status.ACCEPTED, Booking.Status.PREPAYMENT_REQUIRED, Booking.Status.ACTIVE]).exists():
+        return JsonResponse({'message': "По этой лодке уже есть подтвержденные или активные бронирования", "code": "invalid_status"}, status=status.HTTP_400_BAD_REQUEST)    
 
     boat.status = Boat.Status.DELETED
     boat.save()
