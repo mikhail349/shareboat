@@ -18,3 +18,8 @@ def create_boat_owner(email, password):
 
     user.groups.add(boat_owner_group)  
     return user
+
+def create_moderator(email, password):
+    user = create_user(email, password)
+    user.groups.add(Group.objects.get(name='boat_moderator'))
+    return user

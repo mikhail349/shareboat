@@ -163,7 +163,7 @@ def accept(request, pk):
                 'reasons': MessageBoat.get_rejection_reasons(),
                 'errors': 'Лодка была изменена. Выполните проверку еще раз.'
             }
-            return render(request, 'boat/moderate.html', context=context) 
+            return render(request, 'boat/moderate.html', context=context, status=404) 
         
         boat.status = Boat.Status.PUBLISHED
         boat.save()
@@ -177,7 +177,7 @@ def reject(request, pk):
     if request.method == 'POST':
         try:
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
-            reason = int(request.POST.get('reason'))
+            #reason = int(request.POST.get('reason'))
             comment = request.POST.get('comment')
             modified = parse_datetime(request.POST.get('modified'))
                    
@@ -189,7 +189,7 @@ def reject(request, pk):
                     'reasons': reasons,
                     'errors': 'Лодка была изменена. Возможно, недочёты исправлены.'
                 }
-                return render(request, 'boat/moderate.html', context=context) 
+                return render(request, 'boat/moderate.html', context=context, status=404) 
             
             boat.status = Boat.Status.DECLINED
             boat.save()
@@ -266,7 +266,7 @@ def boats(request):
 
 def switch_fav(request, pk):
     if not request.user.is_authenticated:
-        return JsonResponse({'data': 'redirect', 'url': reverse('user:login')})
+        return JsonResponse({'data': 'redirect', 'url': reverse('user:login')}, status=302)
 
     res = None
     try:

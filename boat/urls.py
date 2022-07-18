@@ -10,11 +10,11 @@ apiurlpatterns = [
     path('update/<int:pk>/', views.update, name='api_update'),
     path('delete/<int:pk>/', views.delete, name='api_delete'),
 
-    path('get_files/<int:pk>/', views.get_files),
+    path('get_files/<int:pk>/', views.get_files, name='api_get_files'),
     path('calc_booking/<int:pk>/', views.calc_booking, name='api_calc_booking'),
     path('set_status/<int:pk>/', views.set_status, name='api_set_status'),
     path('get_models/<int:pk>/', views.get_models, name='api_get_models'),
-    path('switch_fav/<int:pk>/', views.switch_fav)
+    path('switch_fav/<int:pk>/', views.switch_fav, name='api_switch_fav')
 ]
 
 urlpatterns = [
@@ -31,6 +31,7 @@ urlpatterns = [
     path('moderate/<int:pk>/', views.moderate, name='moderate'),
     path('accept/<int:pk>/', views.accept, name='accept'),
     path('reject/<int:pk>/', views.reject, name='reject'),
+    path('search_boats/', views.search_boats, name='search_boats'),
 
     path('api/', include(apiurlpatterns))
 ]

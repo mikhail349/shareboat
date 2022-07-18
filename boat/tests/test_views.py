@@ -1,14 +1,16 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase, Client
 from django.urls import reverse
+from base.models import Base
 
 from boat.tests.test_models import create_model, create_simple_boat
-from boat.models import BoatFav, Manufacturer, Model, Boat, BoatPrice
+from boat.models import BoatFav, BoatFile, BoatPricePeriod, Manufacturer, Model, Boat, BoatPrice
 from boat.views import refresh_boat_price_period
 from booking.models import Booking
+from chat.models import MessageBoat
 
 from file.tests.test_models import get_imagefile
-from user.tests.test_models import create_boat_owner, create_user
+from user.tests.test_models import create_boat_owner, create_moderator, create_user
 
 from django.contrib.auth.models import Group, Permission
 
@@ -257,3 +259,193 @@ class BoatTest(TestCase):
             price_periods[1].start_date == datetime.date(now.year, 1, 25) and price_periods[1].end_date == datetime.date(now.year, 1, 30)
         )
         self.assertTrue(res)
+
+    def test_get_files(self):
+        def _get_response():
+            return self.client.get(reverse('boat:api_get_files', kwargs={'pk': self.boat.pk}))
+
+        BoatFile.objects.create(boat=self.boat, file=get_imagefile())
+        BoatFile.objects.create(boat=self.boat, file=get_imagefile())
+
+        # anon
+        self.client.logout()
+        response = _get_response()
+        self.assertEqual(response.status_code, 302)
+
+        # wrong user
+        self.client.login(email='someuser@mail.ru', password='12345')
+        response = _get_response()
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)['data']
+        self.assertListEqual(data, [])
+
+        # owner
+        self.client.login(email='owner@mail.ru', password='12345')
+        response = _get_response()
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)['data']
+        self.assertEqual(len(data), 2)
+
+    def test_accept(self):
+        def _get_response():
+            return self.client.post(reverse('boat:accept', kwargs={'pk': self.boat.pk}), {'modified': self.boat.modified})
+        
+        # no access
+        self.client.login(email='someuser@mail.ru', password='12345')
+        response = _get_response()
+        self.assertEqual(response.status_code, 403)
+
+        create_moderator('moderator@mail.ru', '12345')
+        self.client.login(email='moderator@mail.ru', password='12345')
+        
+        # wrong status
+        self.boat.status = Boat.Status.SAVED
+        self.boat.save()
+        response = _get_response()
+        self.assertEqual(response.status_code, 404)
+
+        # ok
+        self.boat.status = Boat.Status.ON_MODERATION
+        self.boat.save()
+        response = _get_response()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Boat.objects.get(pk=self.boat.pk).status, Boat.Status.PUBLISHED)
+
+        # wrong timestamp
+        old_boat_modified = self.boat.modified
+        self.boat.status = Boat.Status.ON_MODERATION
+        self.boat.save()
+        response = self.client.post(reverse('boat:accept', kwargs={'pk': self.boat.pk}), {'modified': old_boat_modified})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.context.get('errors'), 'Лодка была изменена. Выполните проверку еще раз.')
+
+    def test_reject(self):
+        def _get_response():
+            return self.client.post(reverse('boat:reject', kwargs={'pk': self.boat.pk}), {'modified': self.boat.modified, 'comment': 'Плохая лодка'})
+        
+        # no access
+        self.client.login(email='someuser@mail.ru', password='12345')
+        response = _get_response()
+        self.assertEqual(response.status_code, 403)
+
+        create_moderator('moderator@mail.ru', '12345')
+        self.client.login(email='moderator@mail.ru', password='12345')
+        
+        # wrong status
+        self.boat.status = Boat.Status.SAVED
+        self.boat.save()
+        response = _get_response()
+        self.assertEqual(response.status_code, 404)
+
+        # ok
+        self.boat.status = Boat.Status.ON_MODERATION
+        self.boat.save()
+        response = _get_response()
+        message_boat = MessageBoat.objects.get(boat=self.boat)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Boat.objects.get(pk=self.boat.pk).status, Boat.Status.DECLINED)
+        self.assertTrue(
+            message_boat.sender == None and
+            message_boat.recipient == self.boat.owner and
+            message_boat.text == '<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: Плохая лодка</div>' 
+        )
+
+        # wrong timestamp
+        old_boat_modified = self.boat.modified
+        self.boat.status = Boat.Status.ON_MODERATION
+        self.boat.save()
+        response = self.client.post(reverse('boat:reject', kwargs={'pk': self.boat.pk}), {'modified': old_boat_modified})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.context.get('errors'), 'Лодка была изменена. Возможно, недочёты исправлены.')
+
+    def test_search_boats(self):
+        def _get_response(params):
+            return self.client.get(reverse('boat:search_boats'), params)
+
+        def _create_published_boat():
+            base = Base.objects.create(name='Base1', lon=123.456789, lat=987.654321, address="Moscow, 15", state="Moscow")
+            return Boat.objects.create(
+                name='Boat1', 
+                length=1, width=1, draft=1, capacity=1, 
+                model=self.model, 
+                type=Boat.Type.BOAT, 
+                owner=self.owner, 
+                status = Boat.Status.PUBLISHED,
+                base=base
+            )
+        
+        now = datetime.datetime.now()
+        boat = _create_published_boat()
+        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
+        BoatPricePeriod.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10))
+
+        response = _get_response({
+            'dateFrom': '%s-01-03' % now.year,
+            'dateTo': '%s-01-05' % now.year,
+            'state': 'Moscow',
+            'boatType': [Boat.Type.BOAT]
+        })
+        self.assertEqual(response.status_code, 200)
+        boats = response.context.get('boats', [])
+        self.assertEqual(len(boats), 1)
+        self.assertEqual(boats[0].calculated_booking, {'sum': 300.0, 'days': 3})
+
+        # wrong state
+        response = _get_response({
+            'dateFrom': '%s-01-03' % now.year,
+            'dateTo': '%s-01-05' % now.year,
+            'state': 'SPB'
+        })
+        self.assertEqual(response.status_code, 200)
+        boats = response.context.get('boats', [])
+        self.assertEqual(len(boats), 0)
+
+    def test_boats(self):
+        def _get_response():
+            return self.client.get(reverse('boat:boats'))
+
+        # wrong status
+        boat = create_simple_boat(model=self.model, owner=self.owner)
+        response = _get_response()
+        self.assertEqual(response.status_code, 200)
+        boats = response.context.get('boats', [])
+        self.assertEqual(len(boats), 0)
+
+        # ok
+        boat.status = Boat.Status.PUBLISHED
+        boat.save()
+        response = _get_response()
+        self.assertEqual(response.status_code, 200)
+        boats = response.context.get('boats', [])
+        self.assertEqual(len(boats), 1)
+
+    def test_switch_fav(self):
+        def _get_response(pk):
+            return self.client.get(reverse('boat:api_switch_fav', kwargs={'pk': pk})) 
+
+        # anon
+        response = _get_response(self.boat.pk)
+        self.assertEqual(response.status_code, 302)
+
+        # login
+        self.client.login(email='someuser@mail.ru', password='12345')
+
+        # not found  
+        response = _get_response(758)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)['data']
+        self.assertIsNone(data)
+
+        # added
+        response = _get_response(self.boat.pk)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)['data']
+        self.assertEqual(data, 'added')
+        self.assertTrue(BoatFav.objects.filter(boat=self.boat, user=self.user).exists())  
+
+        # deleted
+        response = _get_response(self.boat.pk)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)['data']
+        self.assertEqual(data, 'deleted')
+        self.assertFalse(BoatFav.objects.filter(boat=self.boat, user=self.user).exists())  
