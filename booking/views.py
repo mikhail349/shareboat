@@ -39,10 +39,10 @@ def create(request):
         try:
             booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
             notify.send_initial_booking_to_owner(booking)
+            return JsonResponse({'redirect': reverse('booking:view', kwargs={'pk': booking.pk})})
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
             return JsonResponse({'message': str(e)}, status=400)
-
-        return JsonResponse({'redirect': reverse('booking:view', kwargs={'pk': booking.pk})})
+     
 
 @login_required
 def my_bookings(request):
@@ -106,7 +106,7 @@ def view(request, pk):
             'booking': booking
         }
         return render(request, 'booking/view.html', context=context)
-    except Boat.DoesNotExist:
+    except Booking.DoesNotExist:
         return render(request, 'not_found.html', status=404)
 
 @login_required

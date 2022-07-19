@@ -12,8 +12,8 @@ def create_model():
     manufacturer = Manufacturer.objects.create(name="Manufacturer1")
     return Model.objects.create(name="Model1", manufacturer=manufacturer)
 
-def create_simple_boat(model, owner):
-    return Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=model, type=Boat.Type.BOAT, owner=owner)  
+def create_simple_boat(model, owner, status=Boat.Status.SAVED):
+    return Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=model, type=Boat.Type.BOAT, owner=owner, status=status)  
 
 
 class BoatTest(TestCase):

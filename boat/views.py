@@ -306,8 +306,6 @@ def calc_booking(request, pk):
     try:
         res = _calc_booking(pk, start_date, end_date)
         return JsonResponse(res)
-    except Boat.DoesNotExist:
-        return response_not_found()
     except PriceDateRangeException as e:
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

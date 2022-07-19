@@ -448,4 +448,85 @@ class BoatTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)['data']
         self.assertEqual(data, 'deleted')
-        self.assertFalse(BoatFav.objects.filter(boat=self.boat, user=self.user).exists())  
+        self.assertFalse(BoatFav.objects.filter(boat=self.boat, user=self.user).exists())
+
+    def test_booking(self):
+        def _get_response(pk):
+            return self.client.get(reverse('boat:booking', kwargs={'pk': pk}))      
+
+        response = _get_response(989)
+        self.assertEqual(response.status_code, 404)
+        
+        now = datetime.datetime.now()
+        boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)
+        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
+        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 20), end_date=datetime.date(now.year, 1, 30), price=200)
+
+        Booking.objects.create(boat=boat, renter=self.user, status=Booking.Status.ACCEPTED, 
+            start_date=datetime.date(now.year, 1, 3),
+            end_date=datetime.date(now.year, 1, 4),
+            total_sum=200
+        )
+
+        response = _get_response(boat.pk)
+        self.assertEqual(response.status_code, 200)
+        
+        context = response.context
+        self.assertEqual(context['boat'], boat)
+        self.assertEqual(context['first_price_date'], datetime.date(now.year, 1, 1))
+        self.assertEqual(context['last_price_date'], datetime.date(now.year, 1, 30))
+        self.assertFalse(context['prices_exist'])
+        self.assertListEqual(context['price_ranges'], [
+            [datetime.date(now.year, 1, 1), datetime.date(now.year, 1, 10)],
+            [datetime.date(now.year, 1, 20), datetime.date(now.year, 1, 30)],
+        ])
+        self.assertListEqual(context['accepted_bookings_ranges'], [
+            [datetime.date(now.year, 1, 3), datetime.date(now.year, 1, 4)],
+        ])
+
+    def test_calc_booking(self):
+        now = datetime.datetime.now()
+        boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)
+        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
+
+        # wrong period
+        response = self.client.get(
+            reverse('boat:api_calc_booking', kwargs={'pk': boat.pk}), 
+            {
+                'start_date': datetime.date(now.year, 1, 1), 
+                'end_date': datetime.date(now.year, 1, 25)
+            }
+        )  
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.content)['message'], 'Выбранный период содержит недоступные даты')
+
+        # ok
+        response = self.client.get(
+            reverse('boat:api_calc_booking', kwargs={'pk': boat.pk}), 
+            {
+                'start_date': datetime.date(now.year, 1, 3), 
+                'end_date': datetime.date(now.year, 1, 5)
+            }
+        )  
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(json.loads(response.content), {'sum': 300.0, 'days': 3})
+
+    def test_view(self):
+        boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)
+
+        # anon
+        response = self.client.get(reverse('boat:view', kwargs={'pk': boat.pk}))  
+        self.assertEqual(response.status_code, 302)
+
+        # foreign boat
+        self.client.login(email='someuser@mail.ru', password='12345')
+        response = self.client.get(reverse('boat:view', kwargs={'pk': boat.pk}))  
+        self.assertEqual(response.status_code, 404)
+
+        # ok
+        self.client.login(email='owner@mail.ru', password='12345')
+        response = self.client.get(reverse('boat:view', kwargs={'pk': boat.pk}))  
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['boat'], boat)
+
+           
