@@ -52,12 +52,10 @@ def calc_booking_v2(boat, start_date, end_date):
             filtered = [item for item in tariffs if item.start_date <= date <= item.end_date and is_weekday_in_tariff(date.weekday(), item)]
             weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
 
-            date_enter = date
-
+            date_changed = False
             for tariff in weighted:
 
                 min_duration = tariff.duration * tariff.min
-                max_duration = tariff.duration * tariff.max if tariff.max else None
                 target_duration = (end_date - date).days
 
                 if tariff.pk in used_tariffs:
@@ -65,23 +63,15 @@ def calc_booking_v2(boat, start_date, end_date):
 
                 if target_duration < min_duration:
                     continue
+                
+                total_sum += tariff.price
+                date += timedelta(days=tariff.duration)
+                date_changed = True
+                break
 
-                if tariff.max and target_duration > max_duration:
-                    used_tariffs.append(tariff.pk)
-                    total_sum += (tariff.max * tariff.price)
-                    date += timedelta(days=max_duration)
-                    break
-
-                if min_duration <= target_duration and (tariff.max is None or target_duration <= max_duration):
-                    multiplicity = target_duration // tariff.duration
-                    total_sum += (Decimal(multiplicity) * tariff.price)
-                    date += timedelta(days=multiplicity * tariff.duration)
-                    break
-
+            if not date_changed:
                 raise TariffNotFound()
 
-            if date_enter == date:
-                raise TariffNotFound()
     except TariffNotFound:
         return {}
 

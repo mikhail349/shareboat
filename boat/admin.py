@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db import models
 from .models import Boat, BoatPrice, BoatPricePeriod, Manufacturer, Model, Tariff
 
 class BoatPriceInline(admin.TabularInline):
@@ -27,6 +26,7 @@ class TariffAdmin(admin.ModelAdmin):
         'duration', 'min', 'max', 'weight',
         'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'
     )
+    date_hierarchy = 'start_date'
     readonly_fields = ('weight', )
     search_fields = ('name', 'boat__name',)
 
