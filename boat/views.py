@@ -18,7 +18,7 @@ from notification import utils as notify
 from .exceptions import PriceDateRangeException
 from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
 from .serializers import BoatFileSerializer, ModelSerializer
-from .utils import calc_booking as _calc_booking
+from .utils import calc_booking as _calc_booking, calc_booking_v2 as _calc_booking_v2
 from base.models import Base
 from booking.models import Booking
 from chat.models import MessageBoat
@@ -308,6 +308,18 @@ def calc_booking(request, pk):
         return JsonResponse(res)
     except PriceDateRangeException as e:
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+def calc_booking_v2(request, pk):
+    start_date  = parse_date(request.GET.get('start_date'))
+    end_date    = parse_date(request.GET.get('end_date'))
+    try:
+        boat = Boat.published.get(pk=pk)
+        res = _calc_booking_v2(boat, start_date, end_date)
+        return JsonResponse(res)
+    except PriceDateRangeException as e:
+        return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Boat.DoesNotExist:
+        return response_not_found()
 
 @login_required
 def view(request, pk):

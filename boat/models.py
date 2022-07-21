@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import Q, Exists, OuterRef, Value
 from django.db.models.signals import pre_save, post_save, post_delete
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
@@ -242,9 +242,16 @@ class BoatPrice(models.Model):
 def get_upload_to(instance, filename):
     return utils.get_file_path(instance, filename, 'boat/')
 
+
 class BoatFile(models.Model):
     file = models.ImageField(upload_to=get_upload_to)
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')
+
+pre_save.connect(signals.verify_imagefile, sender=BoatFile)
+pre_save.connect(signals.delete_old_file, sender=BoatFile)
+post_save.connect(signals.compress_imagefile, sender=BoatFile)
+post_delete.connect(signals.delete_file, sender=BoatFile)
+
 
 class BoatFav(models.Model):
    boat = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='favs')
@@ -253,7 +260,58 @@ class BoatFav(models.Model):
    class Meta:
        unique_together = [['boat', 'user']]
 
-pre_save.connect(signals.verify_imagefile, sender=BoatFile)
-pre_save.connect(signals.delete_old_file, sender=BoatFile)
-post_save.connect(signals.compress_imagefile, sender=BoatFile)
-post_delete.connect(signals.delete_file, sender=BoatFile)
+
+class Tariff(models.Model):
+    boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="tariffs", verbose_name='Лодка')
+    start_date = models.DateField('Начало')
+    end_date = models.DateField('Окончание')    
+    
+    name = models.CharField('Название', max_length=255)
+    duration = models.IntegerField('Продолжительность', validators=[MinValueValidator(1)], help_text='Напр.: неделя - 7, выходные - 3, сутки - 1')
+    min = models.IntegerField('Минимум', validators=[MinValueValidator(1)], help_text='Минимальное кол-во аренд подряд')
+    max = models.IntegerField('Максимум', validators=[MinValueValidator(1)], null=True, blank=True, help_text='Максимальное кол-во аренд подряд. Пусто - нет ограничения')
+    weight = models.IntegerField('Вес тарифа', help_text='Рассчитывается автоматически')
+
+    mon = models.BooleanField('Пн.', default=False)
+    tue = models.BooleanField('Вт.', default=False)
+    wed = models.BooleanField('Ср.', default=False)
+    thu = models.BooleanField('Чт.', default=False)
+    fri = models.BooleanField('Пт.', default=False)
+    sat = models.BooleanField('Сб.', default=False)
+    sun = models.BooleanField('Вс.', default=False)
+
+    price = models.DecimalField('Цена', max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
+
+    def clean(self):
+        errors = {}
+        
+        if self.max:
+            max_errors = []
+            
+            if self.max < self.min:
+                errors['min'] = ['Не должен быть больше максимума',]
+                max_errors.append('Не должен быть меньше минимума')
+
+            if self.duration != 1 and self.duration % 7 != 0 and self.max > 1:
+                max_errors.append('Может быть больше 1, только если Продолжительность равна 1 или кратна 7')
+
+            if max_errors:
+                errors['max'] = max_errors
+
+        if True not in [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun]:
+            errors[NON_FIELD_ERRORS] = ['Необходимо указать хотя бы один день начала аренды',]
+
+        if errors: 
+            raise ValidationError(errors) 
+
+    def save(self, *args, **kwargs):
+        self.weight = self.duration * self.min
+        self.full_clean()
+        super(Tariff, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Тариф'
+        verbose_name_plural = 'Тарифы'
