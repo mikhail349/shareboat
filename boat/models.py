@@ -282,6 +282,16 @@ class Tariff(models.Model):
 
     price = models.DecimalField('Цена', max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
 
+    @property
+    def min_duration(self):
+        """ Минимальная продолжительность в сутках, на которую тариф можно применять """
+        return self.duration * self.min
+
+    @property 
+    def min_price(self):
+        """ Минимальная цена при применении тарифа """
+        return self.price * self.min
+
     def clean(self):
         errors = {}
         

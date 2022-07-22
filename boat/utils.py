@@ -23,6 +23,10 @@ def calc_booking(boat_pk, start_date, end_date):
 def calc_booking_v2(boat, start_date, end_date):
     class TariffNotFound(Exception):
         pass
+    class Node:
+        def __init__(self, tariff, prev=None):
+            self.tariff = tariff
+            self.prev = prev
     
     def is_weekday_in_tariff(weekday, tariff):
         if weekday == 0:
@@ -42,34 +46,41 @@ def calc_booking_v2(boat, start_date, end_date):
         return None
 
     tariffs = list(boat.tariffs.exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
-    used_tariffs = []
-
+    used_tariffs = {}
     total_sum = Decimal("0.0")
     date = start_date
-
+    node = None
+    i = 0
     try:
-        while date < end_date:
+        while date < end_date and i < 5:
+            i += 1
             filtered = [item for item in tariffs if item.start_date <= date <= item.end_date and is_weekday_in_tariff(date.weekday(), item)]
             weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
 
             date_changed = False
             for tariff in weighted:
-
-                min_duration = tariff.duration * tariff.min
                 target_duration = (end_date - date).days
 
-                if tariff.pk in used_tariffs:
+                if target_duration < tariff.min_duration:
                     continue
 
-                if target_duration < min_duration:
-                    continue
-                
-                total_sum += (tariff.price * tariff.min)
-                date += timedelta(days=min_duration)
+                #if used_tariffs.get(date, 0) == tariff.pk:
+                #    continue
+                #print(used_tariffs)
+
+                #node = Node(tariff, node)
+                #used_tariffs[date] = tariff.pk
+                total_sum += tariff.min_price
+                date += timedelta(days=tariff.min_duration)
                 date_changed = True
                 break
 
             if not date_changed:
+                #if node:                   
+                #    total_sum -= node.tariff.min_price
+                #    date -= timedelta(days=node.tariff.min_duration)
+                ##    node = node.prev
+                #else:
                 raise TariffNotFound()
 
     except TariffNotFound:
