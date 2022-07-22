@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal
 from boat.exceptions import PriceDateRangeException
 from shareboat.date_utils import daterange
 from .models import BoatPrice
 
+from django.db.models import Q
 
 def calc_booking(boat_pk, start_date, end_date):
     prices = BoatPrice.objects.filter(boat__pk=boat_pk)
@@ -40,7 +41,7 @@ def calc_booking_v2(boat, start_date, end_date):
             return tariff.sun
         return None
 
-    tariffs = list(boat.tariffs.all())
+    tariffs = list(boat.tariffs.exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
     used_tariffs = []
 
     total_sum = Decimal("0.0")
@@ -48,7 +49,6 @@ def calc_booking_v2(boat, start_date, end_date):
 
     try:
         while date < end_date:
-            print(date)
             filtered = [item for item in tariffs if item.start_date <= date <= item.end_date and is_weekday_in_tariff(date.weekday(), item)]
             weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
 
@@ -64,8 +64,8 @@ def calc_booking_v2(boat, start_date, end_date):
                 if target_duration < min_duration:
                     continue
                 
-                total_sum += tariff.price
-                date += timedelta(days=tariff.duration)
+                total_sum += (tariff.price * tariff.min)
+                date += timedelta(days=min_duration)
                 date_changed = True
                 break
 
