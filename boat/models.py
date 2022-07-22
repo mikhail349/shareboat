@@ -263,6 +263,7 @@ class BoatFav(models.Model):
 
 class Tariff(models.Model):
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="tariffs", verbose_name='Лодка')
+    active = models.BooleanField('Активен', default=False)
     start_date = models.DateField('Начало')
     end_date = models.DateField('Окончание')    
     

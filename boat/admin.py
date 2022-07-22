@@ -15,17 +15,18 @@ class ManufacturerAdmin(admin.ModelAdmin):
 
 class TariffAdmin(admin.ModelAdmin):
     fieldsets = (
-        (None, {'fields': ('boat', 'name', 'price')}),
+        (None, {'fields': ('boat', 'name', 'price', 'active')}),
         ('Сезон', {'fields': ('start_date', 'end_date')}),
         ('Сроки', {'fields': ('duration', 'min', 'max', 'weight')}),
         ('Дни начала аренды', {'fields': ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')}),
     )
     list_display = (
-        'name', 'boat', 'price',
+        'name', 'boat', 'price', 'active',
         'start_date', 'end_date',
         'duration', 'min', 'max', 'weight',
         'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'
     )
+    list_filter = ('active',)
     date_hierarchy = 'start_date'
     readonly_fields = ('weight', )
     search_fields = ('name', 'boat__name',)

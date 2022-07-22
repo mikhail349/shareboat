@@ -45,24 +45,41 @@ def calc_booking_v2(boat, start_date, end_date):
             return tariff.sun
         return None
 
-    tariffs = list(boat.tariffs.exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
+    tariffs = list(boat.tariffs.filter(active=True).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
     used_tariffs = {}
     total_sum = Decimal("0.0")
     date = start_date
     node = None
-    i = 0
+
+    check_min_duration = True
+    last_tariff = None
     try:
-        while date < end_date and i < 5:
-            i += 1
+        while date < end_date:
             filtered = [item for item in tariffs if item.start_date <= date <= item.end_date and is_weekday_in_tariff(date.weekday(), item)]
             weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
+
+            if not weighted and last_tariff:
+                weighted = [last_tariff]
 
             date_changed = False
             for tariff in weighted:
                 target_duration = (end_date - date).days
 
-                if target_duration < tariff.min_duration:
-                    continue
+                if last_tariff != tariff:
+                    check_min_duration = True
+                
+                if check_min_duration:
+                    if target_duration < tariff.min_duration:
+                        continue
+                
+                    min_duration = tariff.min_duration
+                    min_price = tariff.min_price
+                    check_min_duration = False
+                else:
+                    min_duration = tariff.duration
+                    min_price = tariff.price
+
+                #print(date, min_duration, min_price)
 
                 #if used_tariffs.get(date, 0) == tariff.pk:
                 #    continue
@@ -70,9 +87,10 @@ def calc_booking_v2(boat, start_date, end_date):
 
                 #node = Node(tariff, node)
                 #used_tariffs[date] = tariff.pk
-                total_sum += tariff.min_price
-                date += timedelta(days=tariff.min_duration)
+                total_sum += min_price
+                date += timedelta(days=min_duration)
                 date_changed = True
+                last_tariff = tariff
                 break
 
             if not date_changed:
