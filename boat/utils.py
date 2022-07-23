@@ -66,12 +66,11 @@ def calc_booking_v2(boat, start_date, end_date):
                 target_duration = (end_date - date).days
 
                 if last_tariff != tariff:
+                    if target_duration < tariff.min_duration:
+                        continue  
                     check_min_duration = True
                 
                 if check_min_duration:
-                    if target_duration < tariff.min_duration:
-                        continue
-                
                     min_duration = tariff.min_duration
                     min_price = tariff.min_price
                     check_min_duration = False
@@ -79,14 +78,14 @@ def calc_booking_v2(boat, start_date, end_date):
                     min_duration = tariff.duration
                     min_price = tariff.price
 
-                #print(date, min_duration, min_price)
+                if target_duration < min_duration:
+                    continue
 
-                #if used_tariffs.get(date, 0) == tariff.pk:
-                #    continue
-                #print(used_tariffs)
+                if used_tariffs.get(date, 0) == tariff.pk:
+                    continue
 
-                #node = Node(tariff, node)
-                #used_tariffs[date] = tariff.pk
+                node = Node(tariff, node)
+                used_tariffs[date] = tariff.pk
                 total_sum += min_price
                 date += timedelta(days=min_duration)
                 date_changed = True
@@ -94,12 +93,12 @@ def calc_booking_v2(boat, start_date, end_date):
                 break
 
             if not date_changed:
-                #if node:                   
-                #    total_sum -= node.tariff.min_price
-                #    date -= timedelta(days=node.tariff.min_duration)
-                ##    node = node.prev
-                #else:
-                raise TariffNotFound()
+                if node:                   
+                    total_sum -= node.tariff.min_price
+                    date -= timedelta(days=node.tariff.min_duration)
+                    node = node.prev
+                else:
+                    raise TariffNotFound()
 
     except TariffNotFound:
         return {}
