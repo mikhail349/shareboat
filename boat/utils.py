@@ -24,8 +24,9 @@ def calc_booking_v2(boat, start_date, end_date):
     class TariffNotFound(Exception):
         pass
     class Node:
-        def __init__(self, tariff, prev=None):
-            self.tariff = tariff
+        def __init__(self, duration, price, prev=None):
+            self.duration = duration
+            self.price = price
             self.prev = prev
     
     def is_weekday_in_tariff(weekday, tariff):
@@ -71,31 +72,31 @@ def calc_booking_v2(boat, start_date, end_date):
                     check_min_duration = True
                 
                 if check_min_duration:
-                    min_duration = tariff.min_duration
-                    min_price = tariff.min_price
+                    duration = tariff.min_duration
+                    price = tariff.min_price
                     check_min_duration = False
                 else:
-                    min_duration = tariff.duration
-                    min_price = tariff.price
+                    duration = tariff.duration
+                    price = tariff.price
 
-                if target_duration < min_duration:
+                if target_duration < duration:
                     continue
 
                 if used_tariffs.get(date, 0) == tariff.pk:
                     continue
 
-                node = Node(tariff, node)
+                node = Node(duration, price, node)
                 used_tariffs[date] = tariff.pk
-                total_sum += min_price
-                date += timedelta(days=min_duration)
+                total_sum += price
+                date += timedelta(days=duration)
                 date_changed = True
                 last_tariff = tariff
                 break
 
             if not date_changed:
                 if node:                   
-                    total_sum -= node.tariff.min_price
-                    date -= timedelta(days=node.tariff.min_duration)
+                    total_sum -= node.price
+                    date -= timedelta(days=node.duration)
                     node = node.prev
                 else:
                     raise TariffNotFound()
