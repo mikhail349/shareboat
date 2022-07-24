@@ -13,12 +13,13 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from django.core import serializers
+from boat.templatetags.boat_extras import get_min_actual_price
 from notification import utils as notify
 
 from .exceptions import PriceDateRangeException
-from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates
+from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates, Tariff
 from .serializers import BoatFileSerializer, ModelSerializer
-from .utils import calc_booking as _calc_booking, calc_booking_v2 as _calc_booking_v2
+from .utils import calc_booking as _calc_booking
 from base.models import Base
 from booking.models import Booking
 from chat.models import MessageBoat
@@ -221,7 +222,7 @@ def search_boats(request):
             if q_boat_types:
                 boats = boats.filter(type__in=q_boat_types)
 
-            boats = boats.filter(prices_period__start_date__lte=q_date_from, prices_period__end_date__gte=q_date_to)
+            boats = boats.filter(tariffs__start_date__lte=q_date_from, tariffs__end_date__gte=q_date_to).distinct()
             boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
             boats = boats.annotate_in_fav(user=request.user)
 
@@ -230,9 +231,13 @@ def search_boats(request):
 
             boats = list(boats) 
             for boat in boats:
-                boat.calculated_booking = _calc_booking(boat.pk, q_date_from, q_date_to)
+                boat.min_actual_price = get_min_actual_price(boat)
+            #for boat in boats:
+            #    boat.calculated_booking = _calc_booking(boat.pk, q_date_from.date(), q_date_to.date())
 
-            boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
+            #boats = [boat for boat in boats if boat.calculated_booking]
+            #boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
+            boats = sorted(boats, key=lambda boat: boat.min_actual_price.get('price'), reverse=q_sort.split('_')[1]=='desc')
         searched = True
 
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
@@ -284,8 +289,9 @@ def booking(request, pk):
     if request.method == 'GET':
         try:
             boat = Boat.published.get(pk=pk)
-            price_dates = boat.prices.aggregate(first=Min('start_date'), last=Max('end_date'))
-            prices = boat.prices.values('start_date', 'end_date')
+            tariffs = boat.tariffs.filter(active=True)
+            price_dates = tariffs.aggregate(first=Min('start_date'), last=Max('end_date'))
+            prices = tariffs.values('start_date', 'end_date')
             accepted_bookings = boat.bookings.filter(status__in=Booking.BLOCKED_STATUSES).values('start_date', 'end_date') 
 
             context = {
@@ -308,18 +314,6 @@ def calc_booking(request, pk):
         return JsonResponse(res)
     except PriceDateRangeException as e:
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-def calc_booking_v2(request, pk):
-    start_date  = parse_date(request.GET.get('start_date'))
-    end_date    = parse_date(request.GET.get('end_date'))
-    try:
-        boat = Boat.published.get(pk=pk)
-        res = _calc_booking_v2(boat, start_date, end_date)
-        return JsonResponse(res)
-    except PriceDateRangeException as e:
-        return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    except Boat.DoesNotExist:
-        return response_not_found()
 
 @login_required
 def view(request, pk):
@@ -515,3 +509,15 @@ def create_or_update(request, pk=None):
         return response_not_found()
     except ValidationError as e:
         return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@login_required
+@permission_required('boat.view_my_boats', raise_exception=True)
+def tariffs(request, boat_pk):
+    tariffs = Tariff.objects.filter(boat__pk=boat_pk, boat__owner=request.user).order_by('start_date', 'end_date')
+
+    context = {
+        'tariffs': tariffs
+    }
+
+    return render(request, 'boat/tariffs.html', context=context) 

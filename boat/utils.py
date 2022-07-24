@@ -2,11 +2,11 @@ from datetime import timedelta
 from decimal import Decimal
 from boat.exceptions import PriceDateRangeException
 from shareboat.date_utils import daterange
-from .models import BoatPrice
+from .models import Boat, BoatPrice, Tariff
 
 from django.db.models import Q
 
-def calc_booking(boat_pk, start_date, end_date):
+def _calc_booking(boat_pk, start_date, end_date):
     prices = BoatPrice.objects.filter(boat__pk=boat_pk)
 
     sum = Decimal()
@@ -20,7 +20,7 @@ def calc_booking(boat_pk, start_date, end_date):
     return {'sum': float(sum), 'days': days}
 
 
-def calc_booking_v2(boat, start_date, end_date):
+def calc_booking(boat_pk, start_date, end_date):
     class TariffNotFound(Exception):
         pass
     class Node:
@@ -28,6 +28,9 @@ def calc_booking_v2(boat, start_date, end_date):
             self.duration = duration
             self.price = price
             self.prev = prev
+
+    def _return_empty():
+        return {}
     
     def is_weekday_in_tariff(weekday, tariff):
         if weekday == 0:
@@ -45,6 +48,11 @@ def calc_booking_v2(boat, start_date, end_date):
         if weekday == 6:
             return tariff.sun
         return None
+    
+    try:
+        boat = Boat.objects.get(pk=boat_pk)
+    except Boat.DoesNotExist:
+        return _return_empty()    
 
     tariffs = list(boat.tariffs.filter(active=True).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
     used_tariffs = {}
@@ -102,6 +110,6 @@ def calc_booking_v2(boat, start_date, end_date):
                     raise TariffNotFound()
 
     except TariffNotFound:
-        return {}
+        return _return_empty()
 
     return {'sum': float(total_sum), 'days': (end_date - start_date).days}

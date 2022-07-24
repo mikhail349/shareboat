@@ -71,6 +71,11 @@ $(document).ready(() => {
         $('#priceAlert').html('<span>Идет расчет цены...</span>');
        
         function onSuccess(data) {
+            if (!data?.sum) {
+                $('#priceAlert').html('<span>Подходящий тариф не найден</span>');
+                window.totalSum = null;
+                return;
+            }
             window.totalSum = data.sum;
             let sumStr = data.sum.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
@@ -99,6 +104,11 @@ $(document).ready(() => {
         if (!window.selectedStartDate || !window.selectedEndDate) {
             showErrorToast('Выберите период');
             return;
+        }
+
+        if (!window.totalSum) {
+            showErrorToast('Выберите другой период');
+            return;            
         }
         
         showOverlayPanel("Бронирование...");

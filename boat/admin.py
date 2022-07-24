@@ -17,13 +17,13 @@ class TariffAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('boat', 'name', 'price', 'active')}),
         ('Сезон', {'fields': ('start_date', 'end_date')}),
-        ('Сроки', {'fields': ('duration', 'min', 'max', 'weight')}),
+        ('Сроки', {'fields': ('duration', 'min', 'weight')}),
         ('Дни начала аренды', {'fields': ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')}),
     )
     list_display = (
         'name', 'boat', 'price', 'active',
         'start_date', 'end_date',
-        'duration', 'min', 'max', 'weight',
+        'duration', 'min', 'weight',
         'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'
     )
     list_filter = ('active',)

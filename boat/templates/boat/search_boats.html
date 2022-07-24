@@ -96,18 +96,9 @@
                                         </div>
                                     {% endif %}
                                     <div class="col">
-                                        <div class="text-success fs-3 text-end mb-1">{{ boat.calculated_booking.sum }}&nbsp;₽</div>
+                                        <div class="text-success fs-3 text-end mb-1">от {{ boat.min_actual_price.price }}&nbsp;₽ / {{ boat.min_actual_price.duration }}</div>
                                     </div>
                                 </div>
-                                {% if user.is_authenticated %}
-                                    <form class='form-book-boat' action="{% url 'booking:api_create' %}" method='post'>
-                                        <input type="hidden" name="start_date" value="{{ request.GET.dateFrom }}" />
-                                        <input type="hidden" name="end_date" value="{{ request.GET.dateTo }}" />
-                                        <input type="hidden" name="boat_id" value="{{ boat.pk }}" />
-                                        <input type="hidden" name="total_sum" value="{{ boat.calculated_booking.sum|unlocalize }}" />
-                                        <button type="submit" class="btn btn-primary w-100">Забронировать</button>
-                                    </form>           
-                                {% endif %}
                             </div>
                         </div>
                     </div>

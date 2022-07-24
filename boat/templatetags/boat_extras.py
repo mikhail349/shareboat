@@ -3,7 +3,7 @@ from django.db.models import Q
 
 from datetime import datetime
 import json
-from boat.models import BoatPrice, Boat
+from boat.models import BoatPrice, Boat, Tariff
 from django.utils.dateparse import parse_date
 
 register = template.Library()
@@ -46,8 +46,34 @@ def get_list(dictionary, key):
 
 @register.simple_tag
 def get_min_actual_price(boat):
-    now = datetime.now()
-    prices = BoatPrice.objects.filter(boat=boat).filter(Q(start_date__lte=now, end_date__gte=now) | Q(start_date__gt=now)).order_by('start_date')
-    if prices:
-        return prices[0].price
+    tariffs = Tariff.objects.filter(boat=boat).active_gte_now().order_by('start_date', 'duration')
+    if tariffs:
+        price = tariffs[0].price
+        if tariffs[0].duration == 1:
+            duration = 'день'
+        elif tariffs[0].duration == 7:
+            duration = 'неделя'
+        else:
+            duration = f'{str(tariffs[0].duration)} дн.'
+
+        return {'price': price, 'duration': duration}
     return None
+
+@register.simple_tag
+def get_weekdays_display(tariff):
+    def _get_display(weekday):
+        if weekday == 0: return 'пн'
+        if weekday == 1: return 'вт'
+        if weekday == 2: return 'ср'
+        if weekday == 3: return 'чт'
+        if weekday == 4: return 'пт'
+        if weekday == 5: return 'сб'
+        if weekday == 6: return 'вс'
+
+    l = [tariff.mon, tariff.tue, tariff.wed, tariff.thu, tariff.fri, tariff.sat, tariff.sun]
+    
+    res = ''
+    for i in range(len(l)):
+        if l[i]:
+            res += ', ' + _get_display(i)
+    return res[2:]

@@ -78,6 +78,11 @@
                     {% include 'boat/view_base_specs.html' %}   
                 </div>           
             </div>
+
+            <section class="jumbotron text-center">
+                <h1 class="jumbotron-heading">Тарифы</h1>    
+            </section>
+            {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.active_gte_now|dictsort:'start_date'|dictsort:'end_date' %}  
             
         </form>
     </div>

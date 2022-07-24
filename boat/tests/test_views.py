@@ -4,7 +4,7 @@ from django.urls import reverse
 from base.models import Base
 
 from boat.tests.test_models import create_model, create_simple_boat
-from boat.models import BoatFav, BoatFile, BoatPricePeriod, Manufacturer, Model, Boat, BoatPrice
+from boat.models import BoatFav, BoatFile, BoatPricePeriod, Manufacturer, Model, Boat, BoatPrice, Tariff
 from boat.views import refresh_boat_price_period
 from booking.models import Booking
 from chat.models import MessageBoat
@@ -16,6 +16,7 @@ from django.contrib.auth.models import Group, Permission
 
 import json
 import datetime
+import time
 
 class BoatTest(TestCase):
 
@@ -399,6 +400,30 @@ class BoatTest(TestCase):
         self.assertEqual(response.status_code, 200)
         boats = response.context.get('boats', [])
         self.assertEqual(len(boats), 0)
+
+    def test_search_boats_time(self):
+        now = datetime.datetime.now()
+        for i in range(1000):
+            boat = Boat.objects.create(name=f'Boat{i}', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status=Boat.Status.PUBLISHED)
+            Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 12, 31),
+                name='Суточно', duration=1, min=1, price=500,
+                mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+            )
+            Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 12, 31),
+                name='Неделя', duration=7, min=1, price=8_000,
+                thu=True,
+            )
+            Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 12, 31),
+                name='Выходные', duration=3, min=1, price=2_000,
+                fri=True, 
+            )
+
+        start_time = time.time()
+        response = self.client.get(reverse('boat:search_boats'), {'dateFrom': '%s-01-03' % now.year, 'dateTo': '%s-01-17' % now.year})
+        exec_time = time.time() - start_time
+        print(exec_time)
+        self.assertLess(exec_time, 6.0)
+        self.assertEqual(response.status_code, 200)
 
     def test_boats(self):
         def _get_response():

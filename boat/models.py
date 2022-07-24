@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.db.models import Q, Exists, OuterRef, Value
 from django.db.models.signals import pre_save, post_save, post_delete
@@ -6,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
 from django.utils import timezone
-from shareboat.utils import has_swear
 
 from user.models import User
 from file import utils, signals
@@ -25,6 +25,11 @@ class BoatQuerySet(models.QuerySet):
         if user.is_authenticated:
             return self.annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=user)))
         return self.annotate(in_fav=Value(False))
+
+class TariffQuerySet(models.QuerySet):
+    def active_gte_now(self):
+        now = datetime.now()
+        return self.filter(Q(active=True), Q(start_date__lte=now, end_date__gte=now) | Q(start_date__gt=now))
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=255)
@@ -270,7 +275,6 @@ class Tariff(models.Model):
     name = models.CharField('Название', max_length=255)
     duration = models.IntegerField('Продолжительность', validators=[MinValueValidator(1)], help_text='Напр.: неделя - 7, выходные - 3, сутки - 1')
     min = models.IntegerField('Минимум', validators=[MinValueValidator(1)], help_text='Минимальное кол-во аренд подряд')
-    max = models.IntegerField('Максимум', validators=[MinValueValidator(1)], null=True, blank=True, help_text='Максимальное кол-во аренд подряд. Пусто - нет ограничения')
     weight = models.IntegerField('Вес тарифа', help_text='Рассчитывается автоматически')
 
     mon = models.BooleanField('Пн.', default=False)
@@ -282,6 +286,8 @@ class Tariff(models.Model):
     sun = models.BooleanField('Вс.', default=False)
 
     price = models.DecimalField('Цена', max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
+
+    objects = models.Manager.from_queryset(TariffQuerySet)()
 
     @property
     def min_duration(self):

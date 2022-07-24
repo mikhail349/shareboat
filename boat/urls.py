@@ -12,7 +12,6 @@ apiurlpatterns = [
 
     path('get_files/<int:pk>/', views.get_files, name='api_get_files'),
     path('calc_booking/<int:pk>/', views.calc_booking, name='api_calc_booking'),
-    path('calc_booking_v2/<int:pk>/', views.calc_booking_v2, name='api_calc_booking_v2'),
     path('set_status/<int:pk>/', views.set_status, name='api_set_status'),
     path('get_models/<int:pk>/', views.get_models, name='api_get_models'),
     path('switch_fav/<int:pk>/', views.switch_fav, name='api_switch_fav')
@@ -21,6 +20,7 @@ apiurlpatterns = [
 urlpatterns = [
     path('', views.boats, name="boats"),
     path('my_boats/', views.my_boats, name='my_boats'),
+    path('tariffs/<int:boat_pk>/', views.tariffs, name='tariffs'),
     path('boats_on_moderation/', views.boats_on_moderation, name='boats_on_moderation'),
     path('favs/', views.favs, name='favs'),
 

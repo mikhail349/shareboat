@@ -80,24 +80,3 @@
         <span class="text-muted align-middle">{{ boat.owner.first_name }}</span>
     </div>
 </div>
-{% if show_prices %}
-    <div class="w-100">
-        <h5>Цена аренды</h5>
-    </div> 
-    {% if not boat.prices.exists %}
-        <div class="w-100">
-            <div class="text-danger">не указана</div>
-        </div>
-    {% else %}
-        <table class="table">
-            <tbody>
-                {% for price in boat.prices.all %}
-                    <tr>
-                        <td>{{ price.price }}&nbsp;₽</td>
-                        <td class="text-muted">{{ price.start_date|date:'d b. Y' }} - {{ price.end_date|date:'d b. Y' }}</td>
-                    </tr>
-                {% endfor %}                                        
-            </tbody>
-        </table>
-    {% endif %}
-{% endif %}
