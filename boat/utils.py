@@ -54,13 +54,12 @@ def calc_booking(boat_pk, start_date, end_date):
     except Boat.DoesNotExist:
         return _return_empty()    
 
-    tariffs = list(boat.tariffs.filter(active=True).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
+    tariffs = list(boat.tariffs.filter(active=True, weight__lte=(end_date - start_date).days).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
     used_tariffs = {}
     total_sum = Decimal("0.0")
     date = start_date
     node = None
 
-    check_min_duration = True
     last_tariff = None
     try:
         while date < end_date:
@@ -73,19 +72,8 @@ def calc_booking(boat_pk, start_date, end_date):
             date_changed = False
             for tariff in weighted:
                 target_duration = (end_date - date).days
-
-                if last_tariff != tariff:
-                    if target_duration < tariff.min_duration:
-                        continue  
-                    check_min_duration = True
-                
-                if check_min_duration:
-                    duration = tariff.min_duration
-                    price = tariff.min_price
-                    check_min_duration = False
-                else:
-                    duration = tariff.duration
-                    price = tariff.price
+                duration = tariff.duration
+                price = tariff.price
 
                 if target_duration < duration:
                     continue

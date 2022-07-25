@@ -301,19 +301,6 @@ class Tariff(models.Model):
 
     def clean(self):
         errors = {}
-        
-        if self.max:
-            max_errors = []
-            
-            if self.max < self.min:
-                errors['min'] = ['Не должен быть больше максимума',]
-                max_errors.append('Не должен быть меньше минимума')
-
-            if self.duration != 1 and self.duration % 7 != 0 and self.max > 1:
-                max_errors.append('Может быть больше 1, только если Продолжительность равна 1 или кратна 7')
-
-            if max_errors:
-                errors['max'] = max_errors
 
         if True not in [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun]:
             errors[NON_FIELD_ERRORS] = ['Необходимо указать хотя бы один день начала аренды',]
