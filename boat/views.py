@@ -275,7 +275,6 @@ def calc_booking(request, pk):
     end_date    = parse_date(request.GET.get('end_date'))
     try:
         res = _calc_booking(pk, start_date, end_date)
-        print(res)
         if not res:
             return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse(res)
@@ -509,12 +508,9 @@ def update_tariff(request, pk):
         try:
             tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
             form = TariffForm(instance=tariff)
-            print(form)
             context = {
-                'tariff': tariff,
                 'form': form,
             }
-            print(form)
             return render(request, 'boat/update_tariff.html', context=context)
         except Tariff.DoesNotExist:
             return render(request, 'not_found.html', status=404)

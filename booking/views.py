@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.dateparse import parse_date
@@ -24,7 +25,7 @@ def create(request):
         
         start_date  = parse_date(data.get('start_date'))
         end_date    = parse_date(data.get('end_date'))
-        total_sum   = float(data.get('total_sum'))
+        total_sum   = Decimal(data.get('total_sum'))
         boat_pk     = data.get('boat_id')
 
         try:

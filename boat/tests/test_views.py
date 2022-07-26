@@ -409,7 +409,6 @@ class BoatTestCase(TestCase):
         start_time = time.time()
         response = self.client.get(reverse('boat:search_boats'), {'dateFrom': '%s-01-03' % now.year, 'dateTo': '%s-01-17' % now.year})
         exec_time = time.time() - start_time
-        print(exec_time)
         self.assertLess(exec_time, 2.0)
         self.assertEqual(response.status_code, 200)
 
@@ -531,7 +530,7 @@ class BoatTestCase(TestCase):
             }
         )  
         self.assertEqual(response.status_code, 200)
-        self.assertDictEqual(json.loads(response.content), {'sum': 1_000.0, 'days': 2})
+        self.assertDictEqual(json.loads(response.content), {'sum': "1000.00", 'days': 2})
 
     def test_view(self):
         boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)

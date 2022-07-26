@@ -76,8 +76,9 @@ $(document).ready(() => {
                 window.totalSum = null;
                 return;
             }
-            window.totalSum = data.sum;
-            let sumStr = data.sum.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
+            parsedFloat = parseFloat(data.sum);
+            window.totalSum = parsedFloat;
+            let sumStr = parsedFloat.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
 
             $('#priceAlert').html(`<strong class="text-success">${sumStr}</strong><span> за ${data.days} ${daysStr}</span>`)

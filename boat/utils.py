@@ -86,4 +86,4 @@ def calc_booking(boat_pk, start_date, end_date):
     except TariffNotFound:
         return _return_empty()
 
-    return {'sum': float(total_sum), 'days': (end_date - start_date).days}
+    return {'sum': total_sum, 'days': (end_date - start_date).days}
