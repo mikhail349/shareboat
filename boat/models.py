@@ -211,12 +211,12 @@ class BoatFav(models.Model):
 class Tariff(models.Model):
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="tariffs", verbose_name='Лодка')
     active = models.BooleanField('Активен', default=False)
-    start_date = models.DateField('Начало')
-    end_date = models.DateField('Окончание')    
+    start_date = models.DateField('Начало действия')
+    end_date = models.DateField('Окончание действия')    
     
-    name = models.CharField('Название', max_length=255)
-    duration = models.IntegerField('Продолжительность', validators=[MinValueValidator(1)], help_text='Напр.: неделя - 7, выходные - 3, сутки - 1')
-    min = models.IntegerField('Минимум', validators=[MinValueValidator(1)], help_text='Минимальный срок аренды')
+    name = models.CharField('Название тарифа', max_length=255)
+    duration = models.IntegerField('Продолжительность, дней', validators=[MinValueValidator(1)], help_text='Напр.: неделя - 7, выходные - 3, сутки - 1')
+    min = models.IntegerField('Минимальный срок аренды', validators=[MinValueValidator(1)], help_text='Минимальный срок аренды')
     weight = models.IntegerField('Вес тарифа', help_text='Рассчитывается автоматически')
 
     mon = models.BooleanField('Пн.', default=False)

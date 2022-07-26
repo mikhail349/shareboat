@@ -11,10 +11,8 @@
         </section>
         {% include 'boat/alert_boat_declined.html' %}
         {% include 'boat/view_base.html' %}        
-        
-        <section id="tariffs" class="jumbotron text-center">
-            <h1 class="jumbotron-heading">Тарифы</h1>    
-        </section>
+
+        <h4 class="mb-3">Тарифы</h4>
         {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}  
     </div>
     <div class="fixed-bottom bg-light py-3">

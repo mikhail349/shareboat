@@ -1,35 +1,33 @@
 {% load l10n %}
 
-{% if errors %}
-    <div class="alert alert-danger">
-        {{ errors }}
-    </div>
-{% endif %}
+{% include 'form_errors.html' %}
+
+<input type="hidden" name="boat" value="{{ form.boat.value }}" />
 
 <h4 class="mb-3">Основная информация</h4>
-<!--
+
 <div class="form-check mb-3">
-    <input class="form-check-input" type="checkbox" name="active" {% if tariff.active %} checked {% endif %}>
-    <label class="form-check-label">Активен</label>
+    <input class="form-check-input" type="checkbox" name="active" {% if form.active.value %} checked {% endif %}>
+    <label class="form-check-label">{{ form.active.label }}</label>
 </div>
--->
+
 <div class="form-floating mb-3">                 
-    <input type="text" id="name" name="name" class="form-control" placeholder="Введите название тарифа" autocomplete="off"           
+    <input type="text" name="name" class="form-control" placeholder="Укажите" autocomplete="off"           
         required maxlength="255"
         value="{{ form.name.value }}"
     />
-    <label for="name">Название тарифа</label>
-    <div class="invalid-tooltip">Введите название тарифа</div>
+    <label for="name">{{ form.name.label }}</label>
+    <div class="invalid-tooltip">Укажите</div>
 </div>
-<!--
+
 <div class="form-floating mb-3">                 
-    <input type="number" class="form-control" placeholder="Укажите цену" autocomplete="false"
+    <input type="number" name='price' class="form-control" placeholder="Укажите" autocomplete="false"
         required 
         step=".01" min=".01" max="999999.99"  
-        value="{{ tariff.price|unlocalize }}"
+        value="{{ form.price.value|unlocalize }}"
     />
-    <label>Цена</label>
-    <div class="invalid-tooltip">Укажите цену</div>
+    <label>{{ form.price.label }}</label>
+    <div class="invalid-tooltip">Укажите</div>
 </div>
 
 <h4 class="mb-3">Сезон</h4>
@@ -37,23 +35,21 @@
 <div class="row g-3 mb-3">
     <div class="col-lg-3">
         <div class="form-floating">                 
-            <input type="date" class="form-control" placeholder="Укажите начало действия"
-                required 
-                value="{{ tariff.start_date.isoformat }}"
+            <input type="date" name="start_date" class="form-control" placeholder="Укажите" required 
+                value="{{ form.start_date.value.isoformat|default:form.start_date.value }}"
             />
-            <label>Начало действия</label>
-            <div class="invalid-tooltip">Укажите начало действия</div>
+            <label>{{ form.start_date.label }}</label>
+            <div class="invalid-tooltip">Укажите</div>
         </div>
     </div>
 
     <div class="col-lg-3">
         <div class="form-floating">                 
-            <input type="date" class="form-control" placeholder="Укажите окончание действия"
-                required 
-                value="{{ tariff.end_date.isoformat }}"
+            <input type="date" name="end_date" class="form-control" placeholder="Укажите" required 
+                value="{{ form.end_date.value.isoformat|default:form.end_date.value }}"
             />
-            <label>Окончание действия</label>
-            <div class="invalid-tooltip">Укажите окончание действия</div>
+            <label>{{ form.end_date.label }}</label>
+            <div class="invalid-tooltip">Укажите</div>
         </div>
     </div>
 </div>
@@ -63,23 +59,21 @@
 <div class="row g-3 mb-3">
     <div class="col-lg-3">
         <div class="form-floating"> 
-            <input type="number" class="form-control" placeholder="Укажите продолжительность" autocomplete="false"
-                required min="1"
-                value="{{ tariff.duration }}"
+            <input type="number" name="duration" class="form-control" placeholder="Укажите" autocomplete="false" required min="1"
+                value="{{ form.duration.value }}"
             />
-            <label>Продолжительность, дней</label>
-            <div class="invalid-tooltip">Укажите продолжительность</div>
+            <label>{{ form.duration.label }}</label>
+            <div class="invalid-tooltip">Укажите значение не менее 1</div>
         </div>
     </div>
 
     <div class="col-lg-3">
         <div class="form-floating"> 
-            <input type="number" class="form-control" placeholder="Укажите минимум" autocomplete="false"
-                required min="1"
-                value="{{ tariff.min }}"
+            <input type="number" name="min" class="form-control" placeholder="Укажите" autocomplete="false" required min="1"
+                value="{{ form.min.value }}"
             />
-            <label>Миниальный срок аренды</label>
-            <div class="invalid-tooltip">Укажите минимум</div>
+            <label>{{ form.min.label }}</label>
+            <div class="invalid-tooltip">Укажите значение не менее 1</div>
         </div>
     </div>
 </div>
@@ -91,25 +85,25 @@
 <h4 class="mb-3">Дни начала применения тарифа</h4>
 
 <div class="btn-group mb-3" role="group">
-    <input type="checkbox" name="mon" id="checkMon" class="btn-check" autocomplete="off" {% if tariff.mon %} checked {% endif %}>
+    <input type="checkbox" name="mon" id="checkMon" class="btn-check" autocomplete="off" {% if form.mon.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkMon">пн</label>
 
-    <input type="checkbox" name="tue" id="checkTue" class="btn-check" autocomplete="off" {% if tariff.tue %} checked {% endif %}>
+    <input type="checkbox" name="tue" id="checkTue" class="btn-check" autocomplete="off" {% if form.tue.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkTue">вт</label>
 
-    <input type="checkbox" name="wed" id="checkWed" class="btn-check" autocomplete="off" {% if tariff.wed %} checked {% endif %}>
+    <input type="checkbox" name="wed" id="checkWed" class="btn-check" autocomplete="off" {% if form.wed.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkWed">ср</label>
 
-    <input type="checkbox" name="thu" id="checkThu" class="btn-check" autocomplete="off" {% if tariff.thu %} checked {% endif %}>
+    <input type="checkbox" name="thu" id="checkThu" class="btn-check" autocomplete="off" {% if form.thu.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkThu">чт</label>
 
-    <input type="checkbox" name="fri" id="checkFri" class="btn-check" autocomplete="off" {% if tariff.fri %} checked {% endif %}>
+    <input type="checkbox" name="fri" id="checkFri" class="btn-check" autocomplete="off" {% if form.fri.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkFri">пт</label>
 
-    <input type="checkbox" name="sat" id="checkSat" class="btn-check" autocomplete="off" {% if tariff.sat %} checked {% endif %}>
+    <input type="checkbox" name="sat" id="checkSat" class="btn-check" autocomplete="off" {% if form.sat.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkSat">сб</label>
 
-    <input type="checkbox" name="sun" id="checkSun" class="btn-check" autocomplete="off" {% if tariff.sun %} checked {% endif %}>
+    <input type="checkbox" name="sun" id="checkSun" class="btn-check" autocomplete="off" {% if form.sun.value %} checked {% endif %}>
     <label class="btn btn-outline-primary" for="checkSun">вс</label>
 </div>
 
@@ -126,4 +120,3 @@
         При расчете стоимости аренды программа будет отдавать предпочтение тарифам с наибольшим <i>весом</i>.  
     </p>
 </div>
--->
