@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Boat, BoatPrice, BoatPricePeriod, Manufacturer, Model, Tariff
+from .models import Boat, Manufacturer, Model, Tariff
 
-class BoatPriceInline(admin.TabularInline):
-    model = BoatPrice
+class TariffInline(admin.TabularInline):
+    model = Tariff
 
 class BoatAdmin(admin.ModelAdmin):
-    inlines = [BoatPriceInline]
+    inlines = [TariffInline]
 
 class ModelInline(admin.TabularInline):
     model = Model
@@ -31,7 +31,6 @@ class TariffAdmin(admin.ModelAdmin):
     readonly_fields = ('weight', )
     search_fields = ('name', 'boat__name',)
 
-admin.site.register(BoatPricePeriod)
 admin.site.register(Boat, BoatAdmin)
 admin.site.register(Manufacturer, ManufacturerAdmin)
 admin.site.register(Tariff, TariffAdmin)

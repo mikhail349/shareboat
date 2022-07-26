@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.db import transaction
-from django.db.models import Max, Min, Exists, OuterRef, Value
+from django.db.models import Max, Min, Exists, OuterRef, Value, Prefetch, F
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -13,11 +13,10 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from django.core import serializers
-from boat.templatetags.boat_extras import get_min_actual_price
 from notification import utils as notify
 
 from .exceptions import PriceDateRangeException
-from .models import Boat, BoatFav, BoatPricePeriod, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatPrice, BoatCoordinates, Tariff
+from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatCoordinates, Tariff
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking
 from base.models import Base
@@ -35,7 +34,6 @@ def get_form_context():
         'boat_types': Boat.get_types(), 
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
-        'price_types': BoatPrice.get_types(),
         'bases': Base.objects.all(),
         'manufacturers': Manufacturer.objects.all()
     }
@@ -46,34 +44,6 @@ def get_bool(value):
     return False
 
 FILES_LIMIT_COUNT = 10
-
-def refresh_boat_price_period(boat):
-    BoatPricePeriod.objects.filter(boat=boat).delete()
-    price_period = None
-    prices = BoatPrice.objects.filter(boat=boat)
-    for price in sorted(prices, key=lambda item: item.start_date):
-
-        if price_period is None:
-            price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price.start_date, end_date=price.end_date)
-            continue
-        
-        if price.start_date == price_period.end_date + datetime.timedelta(days=1):
-            price_period.end_date = price.end_date
-            price_period.save()
-            continue
-
-        price_period = BoatPricePeriod.objects.create(boat=boat, start_date=price.start_date, end_date=price.end_date)
-
-def handle_boat_prices(boat, prices):
-    BoatPrice.objects.filter(boat=boat).delete()
-    for price in prices:
-        BoatPrice.objects.create(
-            price        =price['price'], 
-            start_date  = price['start_date'], 
-            end_date    = price['end_date'], 
-            boat        = boat
-        )
-    refresh_boat_price_period(boat) 
 
 @login_required
 def get_models(request, pk):
@@ -225,19 +195,12 @@ def search_boats(request):
             boats = boats.filter(tariffs__start_date__lte=q_date_from, tariffs__end_date__gte=q_date_to).distinct()
             boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
             boats = boats.annotate_in_fav(user=request.user)
+            boats = boats.prefetch_actual_tariffs()
 
             if q_state:
                 boats = boats.filter(coordinates__state=q_state).union(boats.filter(base__state=q_state))
-
-            boats = list(boats) 
-            for boat in boats:
-                boat.min_actual_price = get_min_actual_price(boat)
-            #for boat in boats:
-            #    boat.calculated_booking = _calc_booking(boat.pk, q_date_from.date(), q_date_to.date())
-
-            #boats = [boat for boat in boats if boat.calculated_booking]
-            #boats = sorted(boats, key=lambda boat: boat.calculated_booking.get('sum'), reverse=q_sort.split('_')[1]=='desc')
-            boats = sorted(boats, key=lambda boat: boat.min_actual_price.get('price'), reverse=q_sort.split('_')[1]=='desc')
+  
+            boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price, reverse=q_sort.split('_')[1]=='desc')
         searched = True
 
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
@@ -259,7 +222,7 @@ def search_boats(request):
 
 def boats(request):
     q_page = request.GET.get('page', 1)
-    boats = Boat.published.all().annotate_in_fav(user=request.user)
+    boats = Boat.published.all().annotate_in_fav(user=request.user).prefetch_actual_tariffs()
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
     context = {
         'boats': p.object_list,
@@ -311,6 +274,9 @@ def calc_booking(request, pk):
     end_date    = parse_date(request.GET.get('end_date'))
     try:
         res = _calc_booking(pk, start_date, end_date)
+        print(res)
+        if not res:
+            return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse(res)
     except PriceDateRangeException as e:
         return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -349,7 +315,6 @@ def update(request, pk):
             boat = Boat.active.get(pk=pk, owner=request.user)
             context = {
                 'boat': boat, 
-                'prices': serializers.serialize('json', boat.prices.all()),
                 **get_form_context()
             }
             return render(request, 'boat/update.html', context=context)
@@ -384,7 +349,6 @@ def get_files(request, pk):
 def create_or_update(request, pk=None):
     data = request.POST
     files = request.FILES.getlist('file')
-    prices = json.loads(data.get('prices'))
     is_custom_location = get_bool(data.get('is_custom_location'))
     prepayment_required = get_bool(data.get('prepayment_required'))
     base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
@@ -494,8 +458,6 @@ def create_or_update(request, pk=None):
             else:
                 BoatCoordinates.objects.filter(boat=boat).delete()
 
-            handle_boat_prices(boat, prices)
-
             BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
             for file in files:
                 BoatFile.objects.get_or_create(boat=boat, file=file)
@@ -514,10 +476,10 @@ def create_or_update(request, pk=None):
 @login_required
 @permission_required('boat.view_my_boats', raise_exception=True)
 def tariffs(request, boat_pk):
-    tariffs = Tariff.objects.filter(boat__pk=boat_pk, boat__owner=request.user).order_by('start_date', 'end_date')
+    tariffs = Tariff.objects.filter(boat__pk=boat_pk, boat__owner=request.user)
 
     context = {
         'tariffs': tariffs
     }
 
-    return render(request, 'boat/tariffs.html', context=context) 
+    return render(request, 'boat/tariffs.html', context=context)

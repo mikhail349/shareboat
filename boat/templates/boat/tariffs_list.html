@@ -8,17 +8,18 @@
                 {% if show_active_column %}<th>Активен</th>{% endif %}
                 <th>Цена</th>
                 <th>Продолжительность</th>
-                <th>Минимум</th>
+                <th>Срок аренды</th>
                 <th>Дни начала аренды</th>
             </tr>
         </thead>
         <tbody>
 
             {% for tariff in tariffs %}
+                {% get_duration_display tariff as duration_display %}
 
                 {% ifchanged tariff.start_date tariff.end_date %}
                     <tr>
-                        <td colspan="6"><h6 class="bg-light  p-2">{{ tariff.start_date }} - {{ tariff.end_date }}</h6></td>
+                        <td colspan="{% if show_active_column %}6{% else %}5{% endif %}"><h6 class="bg-light  p-2">{{ tariff.start_date }} - {{ tariff.end_date }}</h6></td>
                     </tr>      
                 {% endifchanged  %}
                 <tr>
@@ -27,8 +28,8 @@
                         <td class="{% if tariff.active %}text-success{% else %}text-danger{% endif %}">{{ tariff.active|yesno:"Да,Нет" }}</td>
                     {% endif %}
                     <td>{{ tariff.price }}</td>
-                    <td>{{ tariff.duration }}</td>
-                    <td>{{ tariff.min }}</td>
+                    <td>{{ duration_display|capfirst }}</td>
+                    <td>{% get_min_display tariff %}</td>
                     <td>{% get_weekdays_display tariff %}</td>
                 </tr>      
             {% endfor %} 

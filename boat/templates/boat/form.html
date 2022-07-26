@@ -12,8 +12,6 @@
 <script type="text/javascript">
     var motorBoatTypes = {{ motor_boat_types|safe }},
         comfortBoatTypes = {{ comfort_boat_types|safe }},
-        priceTypes = {{ price_types|safe }},
-        prices = {{ prices|safe|default:"[]" }},
         boatCoordinates = {{ boat_coordinates|to_json|safe }},
         isCustomLocation = {{ boat.is_custom_location|yesno:"true,false" }};
 </script>
@@ -252,14 +250,7 @@
         <input class="form-check-input" id="prepaymentRequiredCheck" type="checkbox" name="prepayment_required" {% if boat.prepayment_required %} checked {% endif %}>
         <label class="form-check-label" for="prepaymentRequiredCheck">Требуется предоплата</label>
     </div>
-    <div id="react_app_prices" data-boat-id="{{ boat.id }}">
-        <div class="text-center">
-            <img class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" />
-        </div>
-    </div>
-    <script type="text/javascript" src="{% static 'boat/js/form-prices.min.js' %}"></script>
 </div>
-
 
 <div class="mb-3">
     <h4 class="">Фотографии</h4>

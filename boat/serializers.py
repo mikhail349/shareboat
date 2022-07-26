@@ -1,6 +1,6 @@
 import os
 from rest_framework import serializers
-from .models import Boat, BoatFile, BoatPrice, Model
+from .models import Boat, BoatFile, Model
 
 class ModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,8 +22,3 @@ class BoatFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = BoatFile
         fields = ('id', 'url', 'filename')
-
-class BoatPriceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BoatPrice
-        fields = ('id', 'price')

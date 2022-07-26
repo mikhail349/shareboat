@@ -1,10 +1,9 @@
 from django import template
-from django.db.models import Q
 
 from datetime import datetime
 import json
-from boat.models import BoatPrice, Boat, Tariff
-from django.utils.dateparse import parse_date
+from boat.models import Boat
+from shareboat.utils import get_str_case_by_count
 
 register = template.Library()
 
@@ -45,19 +44,22 @@ def get_list(dictionary, key):
     return dictionary.getlist(key)
 
 @register.simple_tag
-def get_min_actual_price(boat):
-    tariffs = Tariff.objects.filter(boat=boat).active_gte_now().order_by('start_date', 'duration')
-    if tariffs:
-        price = tariffs[0].price
-        if tariffs[0].duration == 1:
-            duration = 'день'
-        elif tariffs[0].duration == 7:
-            duration = 'неделя'
-        else:
-            duration = f'{str(tariffs[0].duration)} дн.'
+def get_duration_display(tariff):
+    if tariff.duration == 1:
+        return 'день'
+    elif tariff.duration % 7 == 0:
+        return '%s %s' % (tariff.duration // 7, get_str_case_by_count(tariff.duration // 7, 'неделя', 'недели', 'недель'))
+    return f"{str(tariff.duration)} {get_str_case_by_count(tariff.duration, 'день', 'дня', 'дней')}"
 
-        return {'price': price, 'duration': duration}
-    return None
+@register.simple_tag
+def get_min_display(tariff):
+    if tariff.duration % 7 == 0:
+        str = get_str_case_by_count(tariff.weight // 7, 'недели', 'недель', 'недель')
+        return f'от {tariff.weight // 7} {str}'
+    else:
+        str = get_str_case_by_count(tariff.weight, 'дня', 'дней', 'дней')
+        return f'от {tariff.weight} {str}'
+    
 
 @register.simple_tag
 def get_weekdays_display(tariff):

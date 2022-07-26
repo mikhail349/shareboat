@@ -33,7 +33,7 @@ def create(request):
             return JsonResponse({'message': 'Лодка не найдена'}, status=404)
 
         calculated_total_sum = calc_booking(boat_pk, start_date, end_date)
-        if calculated_total_sum['sum'] != total_sum:
+        if calculated_total_sum.get('sum') != total_sum:
             return JsonResponse({'message': 'Цена на лодку изменилась', 'code': 'outdated_price'}, status=400)
 
         try:

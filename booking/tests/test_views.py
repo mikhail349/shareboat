@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from boat.models import Boat, BoatPrice
+from boat.models import Boat, Tariff
 
 from boat.tests.test_models import create_boat_owner, create_model, create_simple_boat
 from user.tests.test_models import create_user
@@ -160,7 +160,10 @@ class BookingTestCase(TestCase):
         self.assertEqual(response.status_code, 404) 
 
         # wrong price
-        BoatPrice.objects.create(boat=self.boat, start_date=date(now.year, 1, 1), end_date=date(now.year, 12, 31), price=200)
+        Tariff.objects.create(boat=self.boat, active=True, start_date=date(now.year, 1, 1), end_date=date(now.year, 12, 31),
+            name='Суточно', duration=1, min=1,  
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True, price=500
+        )
         response = _get_response({
             'start_date': date(now.year, 2, 5),
             'end_date': date(now.year, 2, 6), 
@@ -176,9 +179,9 @@ class BookingTestCase(TestCase):
         self.booking.save()
         response = _get_response({
             'start_date': date(now.year, 1, 1),
-            'end_date': date(now.year, 1, 2), 
-            'total_sum': 400.0,
-            'boat_id': self.boat.pk 
+            'end_date': date(now.year, 1, 3), 
+            'total_sum': 1_000.0,
+            'boat_id': self.boat.pk
         })
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json.loads(response.content)['message'], 'Бронирование лодки на указанный период недоступно')
@@ -188,8 +191,8 @@ class BookingTestCase(TestCase):
         self.booking.save()
         response = _get_response({
             'start_date': date(now.year, 1, 1),
-            'end_date': date(now.year, 1, 2), 
-            'total_sum': 400.0,
+            'end_date': date(now.year, 1, 3), 
+            'total_sum': 1_000.0,
             'boat_id': self.boat.pk 
         })
         self.assertEqual(response.status_code, 400)
@@ -198,8 +201,8 @@ class BookingTestCase(TestCase):
         # ok
         response = _get_response({
             'start_date': date(now.year, 2, 1),
-            'end_date': date(now.year, 2, 2), 
-            'total_sum': 400.0,
+            'end_date': date(now.year, 2, 3), 
+            'total_sum': 1_000.0,
             'boat_id': self.boat.pk 
         })
         self.assertEqual(response.status_code, 200)

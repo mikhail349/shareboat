@@ -1,8 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import ValidationError
 
-from boat.models import Boat, BoatFav, BoatPrice, BoatCoordinates, BoatPricePeriod, Manufacturer, Model, Specification, get_upload_to
+from boat.models import Boat, BoatFav, BoatCoordinates, Manufacturer, Model, Specification, get_upload_to
 from user.tests.test_models import create_boat_owner
 
 import datetime
@@ -94,67 +93,6 @@ class BoatTest(TestCase):
 
     def test_repr(self):
         self.assertTrue(str(self.boat), 'Boat1 Лодка')
-
-class BoatPriceTest(TestCase):
-
-    def setUp(self):
-        model = create_model()
-        owner = create_boat_owner('admin@admin.ru', '12345')
-        self.boat = create_simple_boat(model, owner)
-
-    def test_now_prices(self):
-        now = datetime.datetime.now()
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year-1, 1, 1), end_date=datetime.date(now.year-1, 12, 31), price=100)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 12, 31), price=150)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year+1, 1, 1), end_date=datetime.date(now.year+1, 12, 31), price=200)
-
-        now_prices = self.boat.get_now_prices()
-        self.assertEqual(len(now_prices), 1)
-        self.assertEqual(now_prices[0].price, 150)
-
-    def test_future_prices(self):
-        now = datetime.datetime.now()
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year-1, 1, 1), end_date=datetime.date(now.year-1, 12, 31), price=100)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 12, 31), price=150)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year+1, 1, 1), end_date=datetime.date(now.year+1, 12, 31), price=200)
-        
-        future_prices = self.boat.get_future_prices()
-        self.assertEqual(len(future_prices), 1)
-        self.assertEqual(future_prices[0].price, 200)
-
-    def test_get_types(self):
-        types = BoatPrice.get_types()
-        self.assertEqual(len(types), len(BoatPrice.Type.choices))
-        self.assertListEqual(types, sorted(types, key=lambda item: item[1]))
-
-    def test_clean(self):
-        boat_price = BoatPrice(boat=self.boat, start_date=datetime.date(2022, 12, 31), end_date=datetime.date(2022, 1, 1), price=100)     
-        
-        with self.assertRaises(ValidationError) as cm:
-            boat_price.clean()
-
-        self.assertEqual(len(cm.exception.error_list), 1)
-        self.assertEqual(cm.exception.error_list[0].code, 'invalid_dates')
-        
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(2022, 1, 1), end_date=datetime.date(2022, 1, 31), price=100) 
-        boat_price = BoatPrice(boat=self.boat, start_date=datetime.date(2022, 1, 10), end_date=datetime.date(2022, 1, 11), price=150)
-        
-        with self.assertRaises(ValidationError) as cm:
-            boat_price.clean()
-
-        self.assertEqual(len(cm.exception.error_list), 1)
-        self.assertEqual(cm.exception.error_list[0].code, 'invalid_range')
-        
-class BoatPricePeriodTest(TestCase):
-    
-    def setUp(self):
-        model = create_model()
-        owner = create_boat_owner('admin@admin.ru', '12345')
-        self.boat = create_simple_boat(model, owner)
-
-    def test_repr(self):
-        bpp = BoatPricePeriod.objects.create(boat=self.boat, start_date=datetime.date(2022, 1, 1), end_date=datetime.date(2022, 12, 31))
-        self.assertEqual(str(bpp), '01.01.2022 - 31.12.2022')
 
 class BoatFileTest(TestCase):
     def test_get_upload_to(self):

@@ -1,10 +1,9 @@
-from decimal import Decimal
 from django.http import QueryDict
 from django.test import TestCase
 
 from boat.tests.test_models import create_model, create_simple_boat
 from user.tests.test_models import create_boat_owner
-from boat.models import Boat, BoatCoordinates, BoatPrice
+from boat.models import Boat, BoatCoordinates
 from boat.templatetags import boat_extras
 from base.models import Base
 
@@ -52,14 +51,3 @@ class BoatExtrasTest(TestCase):
     def test_get_list(self):
         d = QueryDict('param1=100&param1=200')
         self.assertListEqual(boat_extras.get_list(d, 'param1'), ['100', '200'])
-
-    def test_get_min_actual_price(self):
-        now = datetime.datetime.now()
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year-1, 1, 1), end_date=datetime.date(now.year-1, 12, 31), price=100)
-
-        self.assertIsNone(boat_extras.get_min_actual_price(self.boat))
-
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 12, 31), price=100)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year+1, 1, 1), end_date=datetime.date(now.year+1, 12, 31), price=90)
-
-        self.assertEqual(boat_extras.get_min_actual_price(self.boat), Decimal('100.00'))

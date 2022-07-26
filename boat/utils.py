@@ -1,32 +1,18 @@
 from datetime import timedelta
 from decimal import Decimal
-from boat.exceptions import PriceDateRangeException
-from shareboat.date_utils import daterange
-from .models import Boat, BoatPrice, Tariff
+from .models import Boat
 
 from django.db.models import Q
 
-def _calc_booking(boat_pk, start_date, end_date):
-    prices = BoatPrice.objects.filter(boat__pk=boat_pk)
-
-    sum = Decimal()
-    days = 0
-    for date in daterange(start_date, end_date):       
-        range_prices = prices.filter(start_date__lte=date, end_date__gte=date)
-        if not range_prices:
-            raise PriceDateRangeException()
-        sum += range_prices[0].price
-        days += 1
-    return {'sum': float(sum), 'days': days}
-
 
 def calc_booking(boat_pk, start_date, end_date):
+    
     class TariffNotFound(Exception):
         pass
+    
     class Node:
-        def __init__(self, duration, price, prev=None):
-            self.duration = duration
-            self.price = price
+        def __init__(self, tariff, prev=None):
+            self.tariff = tariff
             self.prev = prev
 
     def _return_empty():
@@ -54,45 +40,45 @@ def calc_booking(boat_pk, start_date, end_date):
     except Boat.DoesNotExist:
         return _return_empty()    
 
-    tariffs = list(boat.tariffs.filter(active=True, weight__lte=(end_date - start_date).days).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
+    total_duration = (end_date - start_date).days
+    tariffs = list(boat.tariffs.filter(active=True, weight__lte=total_duration).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
     used_tariffs = {}
     total_sum = Decimal("0.0")
     date = start_date
     node = None
-
     last_tariff = None
+    
     try:
         while date < end_date:
             filtered = [item for item in tariffs if item.start_date <= date <= item.end_date and is_weekday_in_tariff(date.weekday(), item)]
             weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
 
             if not weighted and last_tariff:
-                weighted = [last_tariff]
+                if last_tariff.start_date <= date <= last_tariff.end_date:
+                    weighted = [last_tariff]
 
             date_changed = False
             for tariff in weighted:
                 target_duration = (end_date - date).days
-                duration = tariff.duration
-                price = tariff.price
 
-                if target_duration < duration:
+                if target_duration < tariff.duration:
                     continue
 
                 if used_tariffs.get(date, 0) == tariff.pk:
                     continue
 
-                node = Node(duration, price, node)
+                node = Node(tariff, node)
                 used_tariffs[date] = tariff.pk
-                total_sum += price
-                date += timedelta(days=duration)
+                total_sum += tariff.price
+                date += timedelta(days=tariff.duration)
                 date_changed = True
                 last_tariff = tariff
                 break
 
             if not date_changed:
                 if node:                   
-                    total_sum -= node.price
-                    date -= timedelta(days=node.duration)
+                    total_sum -= node.tariff.price
+                    date -= timedelta(days=node.tariff.duration)
                     node = node.prev
                 else:
                     raise TariffNotFound()

@@ -1,24 +1,22 @@
-from django.core.exceptions import ValidationError
 from django.test import TestCase, Client
 from django.urls import reverse
 from base.models import Base
 
 from boat.tests.test_models import create_model, create_simple_boat
-from boat.models import BoatFav, BoatFile, BoatPricePeriod, Manufacturer, Model, Boat, BoatPrice, Tariff
-from boat.views import refresh_boat_price_period
+from boat.models import BoatFav, BoatFile, Manufacturer, Model, Boat, Tariff
 from booking.models import Booking
 from chat.models import MessageBoat
 
 from file.tests.test_models import get_imagefile
 from user.tests.test_models import create_boat_owner, create_moderator, create_user
 
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 
 import json
 import datetime
 import time
 
-class BoatTest(TestCase):
+class BoatTestCase(TestCase):
 
     def _get_post_data(self):
         return {
@@ -244,23 +242,6 @@ class BoatTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Boat.objects.get(pk=boat.pk).status, Boat.Status.DELETED)
 
-
-    def test_refresh_boat_price_period(self):
-        now = datetime.datetime.now()
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 11), end_date=datetime.date(now.year, 1, 20), price=200)
-        BoatPrice.objects.create(boat=self.boat, start_date=datetime.date(now.year, 1, 25), end_date=datetime.date(now.year, 1, 30), price=300)
-
-        refresh_boat_price_period(self.boat)
-        price_periods = self.boat.prices_period.all()
-
-        self.assertEqual(price_periods.count(), 2)
-        res = (
-            price_periods[0].start_date == datetime.date(now.year, 1, 1) and price_periods[0].end_date == datetime.date(now.year, 1, 20) and
-            price_periods[1].start_date == datetime.date(now.year, 1, 25) and price_periods[1].end_date == datetime.date(now.year, 1, 30)
-        )
-        self.assertTrue(res)
-
     def test_get_files(self):
         def _get_response():
             return self.client.get(reverse('boat:api_get_files', kwargs={'pk': self.boat.pk}))
@@ -376,25 +357,32 @@ class BoatTest(TestCase):
             )
         
         now = datetime.datetime.now()
+        target_year = now.year + 1
         boat = _create_published_boat()
-        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
-        BoatPricePeriod.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10))
+        Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(target_year, 1, 1), end_date=datetime.date(target_year, 1, 10),
+            name='Суточно', duration=1, min=1,  
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True, price=500
+        )
+        Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(target_year, 1, 1), end_date=datetime.date(target_year, 1, 10),
+            name='Неделя', duration=7, min=1,  
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True, price=8_000
+        )
 
         response = _get_response({
-            'dateFrom': '%s-01-03' % now.year,
-            'dateTo': '%s-01-05' % now.year,
+            'dateFrom': '%s-01-03' % target_year,
+            'dateTo': '%s-01-05' % target_year,
             'state': 'Moscow',
             'boatType': [Boat.Type.BOAT]
         })
         self.assertEqual(response.status_code, 200)
         boats = response.context.get('boats', [])
         self.assertEqual(len(boats), 1)
-        self.assertEqual(boats[0].calculated_booking, {'sum': 300.0, 'days': 3})
+        self.assertEqual(boats[0].actual_tariffs[0].price, 500)
 
         # wrong state
         response = _get_response({
-            'dateFrom': '%s-01-03' % now.year,
-            'dateTo': '%s-01-05' % now.year,
+            'dateFrom': '%s-01-03' % target_year,
+            'dateTo': '%s-01-05' % target_year,
             'state': 'SPB'
         })
         self.assertEqual(response.status_code, 200)
@@ -422,7 +410,7 @@ class BoatTest(TestCase):
         response = self.client.get(reverse('boat:search_boats'), {'dateFrom': '%s-01-03' % now.year, 'dateTo': '%s-01-17' % now.year})
         exec_time = time.time() - start_time
         print(exec_time)
-        self.assertLess(exec_time, 6.0)
+        self.assertLess(exec_time, 2.0)
         self.assertEqual(response.status_code, 200)
 
     def test_boats(self):
@@ -484,13 +472,20 @@ class BoatTest(TestCase):
         
         now = datetime.datetime.now()
         boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)
-        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
-        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 20), end_date=datetime.date(now.year, 1, 30), price=200)
+        
+        Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 30),
+            name='Суточно', duration=1, min=1, price=500,
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+        )
+        Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year+1, 1, 1), end_date=datetime.date(now.year+1, 1, 30),
+            name='Суточно', duration=1, min=1, price=2_000,
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+        )
 
         Booking.objects.create(boat=boat, renter=self.user, status=Booking.Status.ACCEPTED, 
             start_date=datetime.date(now.year, 1, 3),
-            end_date=datetime.date(now.year, 1, 4),
-            total_sum=200
+            end_date=datetime.date(now.year, 1, 6),
+            total_sum=1_500
         )
 
         response = _get_response(boat.pk)
@@ -499,20 +494,23 @@ class BoatTest(TestCase):
         context = response.context
         self.assertEqual(context['boat'], boat)
         self.assertEqual(context['first_price_date'], datetime.date(now.year, 1, 1))
-        self.assertEqual(context['last_price_date'], datetime.date(now.year, 1, 30))
-        self.assertFalse(context['prices_exist'])
+        self.assertEqual(context['last_price_date'], datetime.date(now.year+1, 1, 30))
+        self.assertTrue(context['prices_exist'])
         self.assertListEqual(context['price_ranges'], [
-            [datetime.date(now.year, 1, 1), datetime.date(now.year, 1, 10)],
-            [datetime.date(now.year, 1, 20), datetime.date(now.year, 1, 30)],
+            [datetime.date(now.year, 1, 1), datetime.date(now.year, 1, 30)],
+            [datetime.date(now.year+1, 1, 1), datetime.date(now.year+1, 1, 30)],
         ])
         self.assertListEqual(context['accepted_bookings_ranges'], [
-            [datetime.date(now.year, 1, 3), datetime.date(now.year, 1, 4)],
+            [datetime.date(now.year, 1, 3), datetime.date(now.year, 1, 6)],
         ])
 
     def test_calc_booking(self):
         now = datetime.datetime.now()
         boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)
-        BoatPrice.objects.create(boat=boat, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10), price=100)
+        Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10),
+            name='Суточно', duration=1, min=1, price=500,
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+        )
 
         # wrong period
         response = self.client.get(
@@ -521,9 +519,8 @@ class BoatTest(TestCase):
                 'start_date': datetime.date(now.year, 1, 1), 
                 'end_date': datetime.date(now.year, 1, 25)
             }
-        )  
+        )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(json.loads(response.content)['message'], 'Выбранный период содержит недоступные даты')
 
         # ok
         response = self.client.get(
@@ -534,7 +531,7 @@ class BoatTest(TestCase):
             }
         )  
         self.assertEqual(response.status_code, 200)
-        self.assertDictEqual(json.loads(response.content), {'sum': 300.0, 'days': 3})
+        self.assertDictEqual(json.loads(response.content), {'sum': 1_000.0, 'days': 2})
 
     def test_view(self):
         boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)

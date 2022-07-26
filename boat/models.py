@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import Q, Exists, OuterRef, Value
+from django.db.models import Q, Exists, OuterRef, Value, Prefetch
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.utils.translation import gettext_lazy as _
@@ -25,6 +25,12 @@ class BoatQuerySet(models.QuerySet):
         if user.is_authenticated:
             return self.annotate(in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'), user=user)))
         return self.annotate(in_fav=Value(False))
+
+    def prefetch_actual_tariffs(self):
+        actual_tariffs = Tariff.objects.active_gte_now().order_by('start_date', 'weight')
+        return self.prefetch_related(
+            Prefetch('tariffs', queryset=actual_tariffs, to_attr='actual_tariffs')
+        )
 
 class TariffQuerySet(models.QuerySet):
     def active_gte_now(self):
@@ -105,14 +111,6 @@ class Boat(models.Model):
     def get_full_name(self):
         return f'{self.model.manufacturer.name} {self.model.name} "{self.name}"'
 
-    def get_now_prices(self):
-        now = timezone.now()
-        return BoatPrice.objects.filter(boat=self, start_date__lte=now, end_date__gte=now)
-
-    def get_future_prices(self):
-        now = timezone.now()
-        return BoatPrice.objects.filter(boat=self, start_date__gt=now)
-
     def clean(self):
         if self.text:
             self.text = self.text.strip()
@@ -188,62 +186,6 @@ class Specification(models.Model):
         return sorted(сategories, key=lambda tup: tup[1])
 
 
-class BoatPricePeriod(models.Model):
-    boat        = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices_period")
-    start_date  = models.DateField()
-    end_date    = models.DateField()    
-
-    def __str__(self):
-        return f'{self.start_date.strftime("%d.%m.%Y")} - {self.end_date.strftime("%d.%m.%Y")}'
-
-class BoatPrice(models.Model):
-    class Type(models.IntegerChoices):
-        DAY     = 0, _("Сутки")
-        #WEEK    = 1, _("Неделя")
-
-    boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name="prices")
-    type = models.IntegerField(choices=Type.choices, default=Type.DAY)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    @classmethod
-    def get_types(cls):
-        types = sorted(cls.Type.choices, key=lambda tup: tup[1])   
-        return [list(e) for e in types]
-
-    def clean(self):
-        errors = []
-
-        if self.end_date < self.start_date:
-            errors.append(ValidationError(_('Окончание действия цены не должно быть раньше начала действия'), code="invalid_dates"))  
-
-        existing_boat_prices = BoatPrice.objects.filter(
-            boat=self.boat,
-            type=self.type
-        ).filter(
-            Q(start_date__range=(self.start_date,self.end_date))|Q(end_date__range=(self.start_date,self.end_date))|Q(start_date__lt=self.start_date,end_date__gt=self.end_date)
-        ).exclude(
-            pk=self.pk
-        )
-
-        if existing_boat_prices.exists():
-            errors.append(ValidationError(
-                _('Период действия цены для типа "%(value)s" пересекается с другим периодом этого же типа'), 
-                params={'value': self.get_type_display()},
-                code="invalid_range"
-            ))  
-
-        if errors:
-            raise ValidationError(errors)
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super(BoatPrice, self).save(*args, **kwargs)
-
-    class Meta:
-        ordering = ['start_date', 'end_date']
-
 def get_upload_to(instance, filename):
     return utils.get_file_path(instance, filename, 'boat/')
 
@@ -289,16 +231,6 @@ class Tariff(models.Model):
 
     objects = models.Manager.from_queryset(TariffQuerySet)()
 
-    @property
-    def min_duration(self):
-        """ Минимальная продолжительность в сутках, на которую тариф можно применять """
-        return self.duration * self.min
-
-    @property 
-    def min_price(self):
-        """ Минимальная цена при применении тарифа """
-        return self.price * self.min
-
     def clean(self):
         errors = {}
 
@@ -309,7 +241,7 @@ class Tariff(models.Model):
             raise ValidationError(errors) 
 
     def save(self, *args, **kwargs):
-        self.weight = self.duration * self.min
+        self.weight = self.duration * self.min        
         self.full_clean()
         super(Tariff, self).save(*args, **kwargs)
 
@@ -319,3 +251,4 @@ class Tariff(models.Model):
     class Meta:
         verbose_name = 'Тариф'
         verbose_name_plural = 'Тарифы'
+        ordering = ['start_date', 'end_date', '-weight']
