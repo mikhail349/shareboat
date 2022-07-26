@@ -472,14 +472,85 @@ def create_or_update(request, pk=None):
     except ValidationError as e:
         return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+from django.forms import ModelForm
+class TariffForm(ModelForm):
+    class Meta:
+        model = Tariff
+        fields = ('name',) #, 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')
+
+def create_or_update_tariff(request, pk=None):
+
+    #data = request.POST
+    
+    '''
+    mon = get_bool(data.get('mon'))
+    tue = get_bool(data.get('tue'))
+    wed = get_bool(data.get('wed'))
+    thu = get_bool(data.get('thu'))
+    fri = get_bool(data.get('fri'))
+    sat = get_bool(data.get('sat'))
+    sun = get_bool(data.get('sun'))
+    '''
+    if pk is not None:
+        try:
+            tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
+            form = TariffForm(request.POST, instance=tariff)
+            raise ValidationError('Test')
+            '''
+            tariff.name = data.get('name')
+            tariff.mon = mon
+            tariff.tue = tue
+            tariff.wed = wed
+            tariff.thu = thu
+            tariff.fri = fri
+            tariff.sat = sat
+            tariff.sun = sun
+            '''
+            tariff.save()
+        except Tariff.DoesNotExist:
+            return response_not_found()
+        except ValidationError as e:
+
+            context = {
+                'form': form,
+                'errors': e #list(e)
+            }
+            return render(request, 'boat/update_tariff.html', context=context)
+            #return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+    #boat = Boat.active.get(pk=)
+
+    return redirect(reverse('boat:view', kwargs={'pk': tariff.boat.pk}) + '#tariffs')
 
 @login_required
 @permission_required('boat.view_my_boats', raise_exception=True)
 def tariffs(request, boat_pk):
-    tariffs = Tariff.objects.filter(boat__pk=boat_pk, boat__owner=request.user)
+    try:
+        boat = Boat.active.get(pk=boat_pk, owner=request.user)
+    except Boat.DoesNotExist:
+        return render(request, 'not_found.html', status=404)
 
     context = {
-        'tariffs': tariffs
+        'boat': boat
     }
 
     return render(request, 'boat/tariffs.html', context=context)
+
+@login_required
+@permission_required('boat.change_tariff', raise_exception=True)
+def update_tariff(request, pk):
+    if request.method == 'GET':
+        try:
+            tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
+            form = TariffForm(instance=tariff)
+            print(form)
+            context = {
+                'tariff': tariff,
+                'form': form,
+            }
+            return render(request, 'boat/update_tariff.html', context=context)
+        except Tariff.DoesNotExist:
+            return render(request, 'not_found.html', status=404)
+    elif request.method == 'POST':
+        return create_or_update_tariff(request, pk)

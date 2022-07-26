@@ -1,0 +1,129 @@
+{% load l10n %}
+
+{% if errors %}
+    <div class="alert alert-danger">
+        {{ errors }}
+    </div>
+{% endif %}
+
+<h4 class="mb-3">Основная информация</h4>
+<!--
+<div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="active" {% if tariff.active %} checked {% endif %}>
+    <label class="form-check-label">Активен</label>
+</div>
+-->
+<div class="form-floating mb-3">                 
+    <input type="text" id="name" name="name" class="form-control" placeholder="Введите название тарифа" autocomplete="off"           
+        required maxlength="255"
+        value="{{ form.name.value }}"
+    />
+    <label for="name">Название тарифа</label>
+    <div class="invalid-tooltip">Введите название тарифа</div>
+</div>
+<!--
+<div class="form-floating mb-3">                 
+    <input type="number" class="form-control" placeholder="Укажите цену" autocomplete="false"
+        required 
+        step=".01" min=".01" max="999999.99"  
+        value="{{ tariff.price|unlocalize }}"
+    />
+    <label>Цена</label>
+    <div class="invalid-tooltip">Укажите цену</div>
+</div>
+
+<h4 class="mb-3">Сезон</h4>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-3">
+        <div class="form-floating">                 
+            <input type="date" class="form-control" placeholder="Укажите начало действия"
+                required 
+                value="{{ tariff.start_date.isoformat }}"
+            />
+            <label>Начало действия</label>
+            <div class="invalid-tooltip">Укажите начало действия</div>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="form-floating">                 
+            <input type="date" class="form-control" placeholder="Укажите окончание действия"
+                required 
+                value="{{ tariff.end_date.isoformat }}"
+            />
+            <label>Окончание действия</label>
+            <div class="invalid-tooltip">Укажите окончание действия</div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">Сроки</h4>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-3">
+        <div class="form-floating"> 
+            <input type="number" class="form-control" placeholder="Укажите продолжительность" autocomplete="false"
+                required min="1"
+                value="{{ tariff.duration }}"
+            />
+            <label>Продолжительность, дней</label>
+            <div class="invalid-tooltip">Укажите продолжительность</div>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="form-floating"> 
+            <input type="number" class="form-control" placeholder="Укажите минимум" autocomplete="false"
+                required min="1"
+                value="{{ tariff.min }}"
+            />
+            <label>Миниальный срок аренды</label>
+            <div class="invalid-tooltip">Укажите минимум</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    
+</div>
+
+<h4 class="mb-3">Дни начала применения тарифа</h4>
+
+<div class="btn-group mb-3" role="group">
+    <input type="checkbox" name="mon" id="checkMon" class="btn-check" autocomplete="off" {% if tariff.mon %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkMon">пн</label>
+
+    <input type="checkbox" name="tue" id="checkTue" class="btn-check" autocomplete="off" {% if tariff.tue %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkTue">вт</label>
+
+    <input type="checkbox" name="wed" id="checkWed" class="btn-check" autocomplete="off" {% if tariff.wed %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkWed">ср</label>
+
+    <input type="checkbox" name="thu" id="checkThu" class="btn-check" autocomplete="off" {% if tariff.thu %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkThu">чт</label>
+
+    <input type="checkbox" name="fri" id="checkFri" class="btn-check" autocomplete="off" {% if tariff.fri %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkFri">пт</label>
+
+    <input type="checkbox" name="sat" id="checkSat" class="btn-check" autocomplete="off" {% if tariff.sat %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkSat">сб</label>
+
+    <input type="checkbox" name="sun" id="checkSun" class="btn-check" autocomplete="off" {% if tariff.sun %} checked {% endif %}>
+    <label class="btn btn-outline-primary" for="checkSun">вс</label>
+</div>
+
+<div class="mb-3">
+    <p>
+        Минимальный срок аренды измеряется в той единице измерения, которая указана в поле <i>продолжительность, дней</i>.
+    </p>
+    <p>
+        Например, если <i>продолжительность</i> равна <strong>7</strong> дням (неделя), а <i>минимальный срок аренды</i> равен <strong>2</strong>,
+        это означает, что этот тариф применится при условии, когда общий срок аренды равен или превышает <strong>7&nbsp;х&nbsp;2&nbsp;дней&nbsp;(2&nbsp;недели)</strong>.
+    </p>
+    <p>
+        Перемножение <i>продолжительности</i> и <i>минимального срока аренды</i> образует <i>вес</i> тарифа.<br>
+        При расчете стоимости аренды программа будет отдавать предпочтение тарифам с наибольшим <i>весом</i>.  
+    </p>
+</div>
+-->

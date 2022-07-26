@@ -12,10 +12,10 @@
         {% include 'boat/alert_boat_declined.html' %}
         {% include 'boat/view_base.html' %}        
         
-        <section class="jumbotron text-center">
+        <section id="tariffs" class="jumbotron text-center">
             <h1 class="jumbotron-heading">Тарифы</h1>    
         </section>
-        {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all|dictsort:'start_date'|dictsort:'end_date' show_active_column=True %}  
+        {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}  
     </div>
     <div class="fixed-bottom bg-light py-3">
         <div class="container-lg">

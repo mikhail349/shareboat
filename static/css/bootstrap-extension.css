@@ -5,7 +5,8 @@
 
 .btn-primary, 
 .btn-primary.disabled,
-.btn-primary:disabled {
+.btn-primary:disabled,
+.btn-check:checked+.btn-outline-primary {
     color: var(--bs-gray-200);
     border-color: var(--bs-primary);
     background-color: var(--bs-primary);
@@ -43,6 +44,7 @@
 .btn-primary:active,
 .btn-primary:focus,
 .btn-primary:visited,
+.btn-outline-primary:focus,
 .btn-outline-primary.dropdown-toggle.show:focus {
     box-shadow: 0 0 0 0.12rem rgb(25 22 69 / 20%);
 }

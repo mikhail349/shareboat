@@ -38,7 +38,7 @@
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ boat.pk }}">
                                             <li><a class="dropdown-item" href="{% url 'boat:update' boat.id %}">Редактировать</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'boat:tariffs' boat.id %}">Тарифы</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'boat:view' boat.id %}#tariffs">Тарифы</a></li>
                                             <li>
                                                 <button class="dropdown-item text-danger" data-boat-id="{{ boat.pk }}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                                     Удалить

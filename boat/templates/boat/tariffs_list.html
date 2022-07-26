@@ -9,7 +9,7 @@
                 <th>Цена</th>
                 <th>Продолжительность</th>
                 <th>Срок аренды</th>
-                <th>Дни начала аренды</th>
+                <th>Дни начала тарифа</th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +23,16 @@
                     </tr>      
                 {% endifchanged  %}
                 <tr>
-                    <td>{{ tariff.name }}</td>
+                    {% if show_edit_href %}
+                        <td><a href="{% url 'boat:update_tariff' tariff.pk %}">{{ tariff.name }}</a></td>
+                    {% else %}
+                        <td>{{ tariff.name }}</td>
+                    {% endif %}
+                    
                     {% if show_active_column %}
                         <td class="{% if tariff.active %}text-success{% else %}text-danger{% endif %}">{{ tariff.active|yesno:"Да,Нет" }}</td>
                     {% endif %}
+                    
                     <td>{{ tariff.price }}</td>
                     <td>{{ duration_display|capfirst }}</td>
                     <td>{% get_min_display tariff %}</td>

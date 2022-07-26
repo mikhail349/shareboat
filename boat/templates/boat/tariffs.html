@@ -14,7 +14,7 @@
     </section>
 
     <div class="container">
-        {% include 'boat/tariffs_list.html' with show_active_column=True %}
+        {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}
     </div>
 
 {% endblock  %}

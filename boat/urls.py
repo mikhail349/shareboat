@@ -20,7 +20,6 @@ apiurlpatterns = [
 urlpatterns = [
     path('', views.boats, name="boats"),
     path('my_boats/', views.my_boats, name='my_boats'),
-    path('tariffs/<int:boat_pk>/', views.tariffs, name='tariffs'),
     path('boats_on_moderation/', views.boats_on_moderation, name='boats_on_moderation'),
     path('favs/', views.favs, name='favs'),
 
@@ -33,6 +32,9 @@ urlpatterns = [
     path('accept/<int:pk>/', views.accept, name='accept'),
     path('reject/<int:pk>/', views.reject, name='reject'),
     path('search_boats/', views.search_boats, name='search_boats'),
+
+    path('tariffs/<int:boat_pk>/', views.tariffs, name='tariffs'),
+    path('update_tariff/<int:pk>/', views.update_tariff, name='update_tariff'),
 
     path('api/', include(apiurlpatterns))
 ]

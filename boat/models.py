@@ -216,7 +216,7 @@ class Tariff(models.Model):
     
     name = models.CharField('Название', max_length=255)
     duration = models.IntegerField('Продолжительность', validators=[MinValueValidator(1)], help_text='Напр.: неделя - 7, выходные - 3, сутки - 1')
-    min = models.IntegerField('Минимум', validators=[MinValueValidator(1)], help_text='Минимальное кол-во аренд подряд')
+    min = models.IntegerField('Минимум', validators=[MinValueValidator(1)], help_text='Минимальный срок аренды')
     weight = models.IntegerField('Вес тарифа', help_text='Рассчитывается автоматически')
 
     mon = models.BooleanField('Пн.', default=False)
