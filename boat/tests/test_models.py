@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
-from boat.models import Boat, BoatFav, BoatCoordinates, Manufacturer, Model, Specification, get_upload_to
+from boat.models import Boat, BoatFav, BoatCoordinates, Manufacturer, Model, Specification, get_upload_to, Tariff
 from user.tests.test_models import create_boat_owner
 
 import datetime
@@ -14,8 +15,32 @@ def create_model():
 def create_simple_boat(model, owner, status=Boat.Status.SAVED):
     return Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=model, type=Boat.Type.BOAT, owner=owner, status=status)  
 
+class TariffTestCase(TestCase):
+    def setUp(self):
+        self.owner = create_boat_owner('admin@admin.ru', '12345')
+        self.model = create_model()
+        self.boat = create_simple_boat(self.model, self.owner)       
 
-class BoatTest(TestCase):
+    def test_str(self):
+        tariff = Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(2022, 1, 1), end_date=datetime.date(2022, 12, 31),
+            name='Суточно', duration=1, min=1, mon=True, price=500
+        )
+        self.assertEqual(str(tariff), 'Суточно')
+
+    def test_clean(self):
+        with self.assertRaises(ValidationError) as context:
+            Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(2023, 1, 1), end_date=datetime.date(2022, 12, 31),
+                name='Суточно', duration=1, min=1, price=500
+            )
+        
+        errors = dict(context.exception)
+        self.assertDictEqual(errors, {
+            'start_date': ['Должно быть раньше окончания действия'],
+            'end_date': ['Должно быть позже начала действия'],
+            NON_FIELD_ERRORS: ['Необходимо указать хотя бы один день начала аренды']
+        })
+
+class BoatTestCase(TestCase):
 
     def setUp(self):
         self.owner = create_boat_owner('admin@admin.ru', '12345')
@@ -59,6 +84,19 @@ class BoatTest(TestCase):
         self.boat.status = Boat.Status.PUBLISHED
         self.boat.save()
         self.assertTrue(self.boat.is_published)
+
+    def test_active(self):
+        self.boat.status = Boat.Status.DELETED
+        self.boat.save()
+
+        self.assertFalse(self.boat.is_active)
+        self.assertEqual(len(Boat.objects.active()), 0)
+
+        self.boat.status = Boat.Status.SAVED
+        self.boat.save()
+
+        self.assertTrue(self.boat.is_active)
+        self.assertEqual(len(Boat.objects.active()), 1)
 
     def test_full_name(self):
         self.assertEqual(self.boat.get_full_name(), 'Manufacturer1 Model1 "Boat1"')

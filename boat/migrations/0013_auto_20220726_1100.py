@@ -2,7 +2,8 @@
 
 from django.db import migrations
 
-def update_tariffs(apps, schema_editor):
+
+def update_tariffs(apps, schema_editor): # pragma: no cover
     Tariff = apps.get_model('boat', 'Tariff')
     for tariff in Tariff.objects.all():
         tariff.save()

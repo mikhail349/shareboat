@@ -23,6 +23,10 @@ class UtilsTestCase(TestCase):
             if not res:
                 return None
             return res.get('sum')
+
+        # boat not found
+        res = calc_booking(0, start_date=datetime.date(YEAR, 7, 1), end_date=datetime.date(YEAR, 7, 3))
+        self.assertDictEqual(res, {})
         
         # case 1
         Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(YEAR, 1, 1), end_date=datetime.date(YEAR, 12, 31),
@@ -99,3 +103,17 @@ class UtilsTestCase(TestCase):
         self.assertEqual(_sum(7,16), 9_000)
         self.assertEqual(_sum(7,17), 9_500)
         self.assertEqual(_sum(7,18), 10_500) 
+
+        # case 3
+        Tariff.objects.all().delete()
+        Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(YEAR, 1, 1), end_date=datetime.date(YEAR, 12, 31),
+            name='Суточно',
+            duration=1,
+            min=1,  
+
+            mon=True,
+            price=500
+        )
+        
+        self.assertEqual(_sum(4,6), 1_000)
+

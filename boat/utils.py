@@ -33,7 +33,6 @@ def calc_booking(boat_pk, start_date, end_date):
             return tariff.sat
         if weekday == 6:
             return tariff.sun
-        return None
     
     try:
         boat = Boat.objects.get(pk=boat_pk)

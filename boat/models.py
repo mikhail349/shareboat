@@ -240,9 +240,17 @@ class Tariff(models.Model):
 
     def clean(self):
         errors = {}
+        non_field_errors = []
 
         if True not in [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun]:
-            errors[NON_FIELD_ERRORS] = ['Необходимо указать хотя бы один день начала аренды',]
+            non_field_errors.append('Необходимо указать хотя бы один день начала аренды')
+
+        if self.start_date > self.end_date:
+            errors['start_date'] = ['Должно быть раньше окончания действия']
+            errors['end_date'] = ['Должно быть позже начала действия']
+
+        if non_field_errors:
+            errors[NON_FIELD_ERRORS] = non_field_errors
 
         if errors: 
             raise ValidationError(errors) 
