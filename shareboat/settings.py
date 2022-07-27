@@ -170,6 +170,7 @@ TIME_ZONE = os.environ['TIME_ZONE']
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+
 USE_THOUSAND_SEPARATOR = True
 PREPAYMENT_DAYS_LIMIT = os.environ.get('PREPAYMENT_DAYS_LIMIT', 5)
 ADMIN_URL = os.environ.get('ADMIN_URL', 'admin')

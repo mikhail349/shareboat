@@ -476,30 +476,28 @@ def create_or_update_tariff(request, pk=None):
     if pk is not None:
         try:
             tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
-            form = TariffForm(request.POST, instance=tariff)
-        
-            if form.is_valid():
-                form.save()
-                return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
-            return render(request, 'boat/update_tariff.html', context={'form': form})
-
         except Tariff.DoesNotExist:
             return response_not_found()
+
+    form = TariffForm(request.POST, instance=tariff or None, request=request)
+    if form.is_valid():
+        form.save()
+        return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
+    return render(request, 'boat/update_tariff.html', context={'form': form})
  
 
 @login_required
-@permission_required('boat.view_my_boats', raise_exception=True)
-def tariffs(request, boat_pk):
-    try:
-        boat = Boat.active.get(pk=boat_pk, owner=request.user)
-    except Boat.DoesNotExist:
-        return render(request, 'not_found.html', status=404)
-
-    context = {
-        'boat': boat
-    }
-
-    return render(request, 'boat/tariffs.html', context=context)
+@permission_required('boat.add_tariff', raise_exception=True)
+def create_tariff(request):
+    if request.method == 'GET':
+        form = TariffForm(initial={'boat': request.GET.get('boat_pk')})
+        return render(request, 'boat/create_tariff.html', context={'form': form})
+    elif request.method == 'POST':
+        form = TariffForm(request.POST, request=request)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
+        return render(request, 'boat/create_tariff.html', context={'form': form})
 
 @login_required
 @permission_required('boat.change_tariff', raise_exception=True)
@@ -508,11 +506,16 @@ def update_tariff(request, pk):
         try:
             tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
             form = TariffForm(instance=tariff)
-            context = {
-                'form': form,
-            }
-            return render(request, 'boat/update_tariff.html', context=context)
+            return render(request, 'boat/update_tariff.html', context={'form': form})
         except Tariff.DoesNotExist:
             return render(request, 'not_found.html', status=404)
     elif request.method == 'POST':
-        return create_or_update_tariff(request, pk)
+        try:
+            tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
+            form = TariffForm(request.POST, instance=tariff, request=request)
+            if form.is_valid():
+                form.save()
+                return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
+            return render(request, 'boat/update_tariff.html', context={'form': form})
+        except Tariff.DoesNotExist:
+            return response_not_found()

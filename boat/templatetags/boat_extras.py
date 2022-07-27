@@ -1,11 +1,17 @@
 from django import template
 
-from datetime import datetime
+from datetime import date as datetime_date, datetime
 import json
 from boat.models import Boat
 from shareboat.utils import get_str_case_by_count
 
 register = template.Library()
+
+@register.filter
+def tryiso(value):
+    if isinstance(value, (datetime_date, datetime)):
+        return value.isoformat()
+    return value
 
 @register.simple_tag
 def get_boat_coordinates(boat):

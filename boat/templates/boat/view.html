@@ -13,6 +13,7 @@
         {% include 'boat/view_base.html' %}        
 
         <h4 class="mb-3">Тарифы</h4>
+        <a class="btn btn-outline-primary mb-3" href="{% url 'boat:create_tariff' %}?boat_pk={{ boat.pk }}" >Добавить тариф</a>  
         {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}  
     </div>
     <div class="fixed-bottom bg-light py-3">

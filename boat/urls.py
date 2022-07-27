@@ -33,7 +33,7 @@ urlpatterns = [
     path('reject/<int:pk>/', views.reject, name='reject'),
     path('search_boats/', views.search_boats, name='search_boats'),
 
-    path('tariffs/<int:boat_pk>/', views.tariffs, name='tariffs'),
+    path('create_tariff/', views.create_tariff, name='create_tariff'),
     path('update_tariff/<int:pk>/', views.update_tariff, name='update_tariff'),
 
     path('api/', include(apiurlpatterns))
