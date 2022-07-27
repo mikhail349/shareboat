@@ -485,18 +485,23 @@ def create_or_update_tariff(request, pk=None):
         return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
     return render(request, 'boat/update_tariff.html', context={'form': form})
  
+def redirect_to_tariffs(boat_pk):
+    return redirect(reverse('boat:view', kwargs={'pk': boat_pk}) + '#tariffs')
 
 @login_required
 @permission_required('boat.add_tariff', raise_exception=True)
 def create_tariff(request):
     if request.method == 'GET':
-        form = TariffForm(initial={'boat': request.GET.get('boat_pk')})
+        initial = {
+            'boat': request.GET.get('boat_pk'),
+        }
+        form = TariffForm(initial=initial)
         return render(request, 'boat/create_tariff.html', context={'form': form})
     elif request.method == 'POST':
         form = TariffForm(request.POST, request=request)
         if form.is_valid():
             form.save()
-            return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
+            return redirect_to_tariffs(form.instance.boat.pk)
         return render(request, 'boat/create_tariff.html', context={'form': form})
 
 @login_required
@@ -515,7 +520,17 @@ def update_tariff(request, pk):
             form = TariffForm(request.POST, instance=tariff, request=request)
             if form.is_valid():
                 form.save()
-                return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
+                return redirect_to_tariffs(form.instance.boat.pk)
             return render(request, 'boat/update_tariff.html', context={'form': form})
         except Tariff.DoesNotExist:
             return response_not_found()
+
+@login_required
+@permission_required('boat.delete_tariff', raise_exception=True)
+def delete_tariff(request, pk):
+    try:
+        tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
+        tariff.delete()
+        return redirect_to_tariffs(tariff.boat.pk)
+    except Tariff.DoesNotExist:
+        return response_not_found()

@@ -3,21 +3,28 @@
 {% include 'form_errors.html' %}
 {% load boat_extras %}
 
-<!--
-<input type="hidden" name="boat" value="{% if 'boat_pk' in request.GET %}{{ request.GET.boat_pk }}{% else %}{{ form.boat.value }}{% endif %}" />
--->
-<input type="hidden" name="boat" value="{{ form.boat.value }}" />
 <h4 class="mb-3">Основная информация</h4>
 
 <div class="form-check mb-3">
-    <input class="form-check-input" type="checkbox" name="active" {% if form.active.value %} checked {% endif %}>
-    <label class="form-check-label">{{ form.active.label }}</label>
+    <input class="form-check-input" type="checkbox" name="active" id="switchActive" {% if form.active.value %} checked {% endif %}>
+    <label class="form-check-label" for="switchActive">{{ form.active.label }}</label>
+</div>
+
+<div class="form-floating mb-3" >
+    <select class="form-select" name="boat" required>
+        <option selected disabled value="">Выберите из списка</option>
+        {% for boat in user.boats.active.all %}
+            <option value="{{ boat.pk }}" {% if boat.pk|unlocalize == form.boat.value|unlocalize %}selected{% endif %}>{{ boat.name }}</option> 
+        {% endfor %}
+    </select>
+    <label>{{ form.boat.label }}</label>
+    <div class="invalid-tooltip">Выберите</div>
 </div>
 
 <div class="form-floating mb-3">                 
     <input type="text" name="name" class="form-control" placeholder="Укажите" autocomplete="off"           
         required maxlength="255"
-        value="{{ form.name.value }}"
+        value="{{ form.name.value|default:'' }}"
     />
     <label for="name">{{ form.name.label }}</label>
     <div class="invalid-tooltip">Укажите</div>

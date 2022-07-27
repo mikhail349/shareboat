@@ -22,11 +22,30 @@
                     <div class="col col-lg-auto">
                         <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
                     </div>
-                    <!--<div class="col col-lg-auto">
+                    <div class="col col-lg-auto">
                         <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
-                    </div>-->
+                    </div>
                 </div>
             </div>
         </div>
     </form>
+
+    <div id="confirmDeleteModal" class="modal" tabindex="-1" role="dialog" style="display: none">
+        <div class="modal-dialog modal-dialog-centered" >
+            <div class="modal-content rounded shadow">
+                <div class="modal-body p-4">
+                    <h5 class="text-center mb-0">Удалить тариф?</h5>
+                </div>
+                <form method="post" action="{% url 'boat:delete_tariff' pk=form.instance.pk %}">
+                    {% csrf_token %}
+                    <div class="modal-footer flex-nowrap p-0">          
+                        <button type="sumit" class="btn btn-l btn-link fs-6 text-decoration-none text-danger col-6 m-0 rounded-0 border-end">
+                            <strong>Да, удалить</strong>
+                        </button>
+                        <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Отмена</button>               
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock  %}

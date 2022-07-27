@@ -1,12 +1,12 @@
 from datetime import datetime
 from django.db import models
-from django.db.models import Q, Exists, OuterRef, Value, Prefetch
+from django.db.models import Q, Exists, OuterRef, Value, Prefetch, F, DecimalField
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
-from django.utils import timezone
+from django.db.models.functions import Cast
 
 from user.models import User
 from file import utils, signals
@@ -27,10 +27,13 @@ class BoatQuerySet(models.QuerySet):
         return self.annotate(in_fav=Value(False))
 
     def prefetch_actual_tariffs(self):
-        actual_tariffs = Tariff.objects.active_gte_now().order_by('start_date', 'weight')
+        actual_tariffs = Tariff.objects.active_gte_now().annotate(price_per_day=Cast(F('price') / F('duration'), DecimalField(max_digits=8, decimal_places=2))).order_by('start_date', 'price_per_day')
         return self.prefetch_related(
             Prefetch('tariffs', queryset=actual_tariffs, to_attr='actual_tariffs')
         )
+
+    def active(self):
+        return self.exclude(status=Boat.Status.DELETED)
 
 class TariffQuerySet(models.QuerySet):
     def active_gte_now(self):
@@ -100,9 +103,13 @@ class Boat(models.Model):
 
     base    = models.ForeignKey(Base, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)
 
-    objects = models.Manager()
+    objects = models.Manager.from_queryset(BoatQuerySet)()
     active = ActiveBoatManager()
     published = PublishedBoatManager.from_queryset(BoatQuerySet)()
+
+    @property
+    def is_active(self):
+        return self.status != self.Status.DELETED
 
     @property
     def is_published(self):

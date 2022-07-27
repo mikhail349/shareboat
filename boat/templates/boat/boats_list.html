@@ -28,8 +28,7 @@
                                 {% endif %}
                                 <div class="col">
                                     {% if boat.actual_tariffs %}
-                                        {% get_duration_display boat.actual_tariffs.0 as duration_display %}
-                                        <div class="text-success fs-3 text-end">от {{ boat.actual_tariffs.0.price }}&nbsp;₽ / {{ duration_display }}</div>
+                                        <div class="text-success fs-3 text-end">от {{ boat.actual_tariffs.0.price_per_day }}&nbsp;₽ / день</div>
                                     {% else %}
                                         <div class="text-danger fs-3 text-end">Нет расценок</div>
                                     {% endif %}

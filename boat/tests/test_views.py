@@ -377,7 +377,7 @@ class BoatTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         boats = response.context.get('boats', [])
         self.assertEqual(len(boats), 1)
-        self.assertEqual(boats[0].actual_tariffs[0].price, 500)
+        self.assertEqual(boats[0].actual_tariffs[0].price_per_day, 500)
 
         # wrong state
         response = _get_response({
