@@ -85,3 +85,13 @@ def get_weekdays_display(tariff):
         if l[i]:
             res += ', ' + _get_display(i)
     return res[2:]
+
+@register.simple_tag
+def get_berth_amount(boat):
+    if boat.is_comfort_boat():
+        berth_amount_str = str(boat.comfort_boat.berth_amount)
+        extra_berth_amount_str = ''
+        if boat.comfort_boat.extra_berth_amount > 0:
+            extra_berth_amount_str = '+' + str(boat.comfort_boat.extra_berth_amount)
+        return berth_amount_str+extra_berth_amount_str
+    return '-'

@@ -166,9 +166,10 @@ class MotorBoat(models.Model):
 
 class ComfortBoat(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="comfort_boat")
-    berth_amount    = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
-    cabin_amount    = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
-    bathroom_amount = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(9)])
+    berth_amount        = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
+    extra_berth_amount  = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], default=0)
+    cabin_amount        = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)])
+    bathroom_amount     = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(9)])
 
 class BoatCoordinates(models.Model):
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE, primary_key=True, related_name="coordinates")

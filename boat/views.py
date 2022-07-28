@@ -425,15 +425,17 @@ def create_or_update(request, pk=None):
             if boat.is_comfort_boat():
                 try:
                     comfort_boat = ComfortBoat.objects.get(boat=boat)
-                    comfort_boat.berth_amount     = data.get('berth_amount')
-                    comfort_boat.cabin_amount     = data.get('cabin_amount')
-                    comfort_boat.bathroom_amount  = data.get('bathroom_amount')
+                    comfort_boat.berth_amount       = data.get('berth_amount')
+                    comfort_boat.extra_berth_amount = data.get('extra_berth_amount')
+                    comfort_boat.cabin_amount       = data.get('cabin_amount')
+                    comfort_boat.bathroom_amount    = data.get('bathroom_amount')
                     comfort_boat.save()
                 except ComfortBoat.DoesNotExist:
                     comfort_boat_fields = {
-                        'berth_amount':     data.get('berth_amount'),
-                        'cabin_amount':     data.get('cabin_amount'),
-                        'bathroom_amount':  data.get('bathroom_amount')
+                        'berth_amount':         data.get('berth_amount'),
+                        'extra_berth_amount':   data.get('extra_berth_amount'),
+                        'cabin_amount':         data.get('cabin_amount'),
+                        'bathroom_amount':      data.get('bathroom_amount')
                     }
                     ComfortBoat.objects.create(**comfort_boat_fields, boat=boat)
             else:

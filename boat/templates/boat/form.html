@@ -174,7 +174,17 @@
                         value="{{ boat.comfort_boat.berth_amount }}"     
                     />
                     <label for="widthInput">Кол-во спальных мест</label>
-                    <div class="invalid-tooltip">Укажите кол-во спальных мест</div>
+                    <div class="invalid-tooltip">Укажите от 0 до 99</div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-floating">                 
+                    <input type="number" id="extraBerthAmountInput" name="extra_berth_amount" class="form-control" placeholder="Укажите кол-во доп. спальных мест" autocomplete="off"
+                        required min="0" max="99"
+                        value="{{ boat.comfort_boat.extra_berth_amount }}"     
+                    />
+                    <label for="widthInput">Кол-во доп. спальных мест</label>
+                    <div class="invalid-tooltip">Укажите от 0 до 99</div>
                 </div>
             </div>
             <div class="col-lg-3">
@@ -184,7 +194,7 @@
                         value="{{ boat.comfort_boat.cabin_amount }}"     
                     />
                     <label for="widthInput">Кол-во кают</label>
-                    <div class="invalid-tooltip">Укажите кол-во кают</div>
+                    <div class="invalid-tooltip">Укажите от 0 до 99</div>
                 </div>
             </div>
             <div class="col-lg-3">

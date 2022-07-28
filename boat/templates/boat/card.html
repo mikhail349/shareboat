@@ -1,4 +1,5 @@
 {% load l10n %}
+{% load boat_extras %}
 
 <h5 class="card-title">{{ boat.get_full_name }}</h5>     
 <h6 class="card-subtitle mb-1 text-muted">{{ boat.get_type_display }}</h6>
@@ -20,7 +21,7 @@
         <div class="col-3 ps-0 text-end text-black">{{ boat.draft }} м.</div>
 
         <div class="col-4 pe-0">Спальных мест</div>
-        <div class="col-2 ps-0 text-end text-black">{{ boat.comfort_boat.berth_amount|default:'-' }}</div>
+        <div class="col-2 ps-0 text-end text-black">{% get_berth_amount boat %}</div>
         <div class="col-3 pe-0">Кают</div>
         <div class="col-3 ps-0 text-end text-black">{{ boat.comfort_boat.cabin_amount|default:'-' }}</div>
 

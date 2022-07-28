@@ -32,6 +32,7 @@ class BoatTestCase(TestCase):
             'motor_amount': 1,
             'motor_power': 8,
             'berth_amount': 2,
+            'extra_berth_amount': 0,
             'cabin_amount': 1,
             'bathroom_amount': 3,
 
