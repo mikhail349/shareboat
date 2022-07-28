@@ -12,15 +12,13 @@
         {% include 'boat/alert_boat_declined.html' %}
         {% include 'boat/view_base.html' %}     
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col col-lg-auto">
                 <a class="btn btn-primary w-100" href="{% url 'boat:update' boat.pk %}" role="button">Редактировать лодку</a>   
             </div>
         </div>
 
-        <section id="tariffs" class="jumbotron text-center">
-            <h1 class="jumbotron-heading">Тарифы</h1>    
-        </section>
+        <h4 id="tariffs" class="mb-3">Тарифы</h4>
 
         {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}  
         <div class="row">
