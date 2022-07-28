@@ -13,7 +13,7 @@ class TariffForm(ModelForm):
         boat = self.cleaned_data.get('boat')
         if boat:
             if boat.owner != self.request.user or not boat.is_active:
-                raise ValidationError('Лодка не найдена')
+                raise ValidationError('Не найдена')
         return boat
 
     class Meta:

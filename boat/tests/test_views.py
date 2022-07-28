@@ -16,6 +16,145 @@ import json
 import datetime
 import time
 
+class TariffTestCase(TestCase):
+    def setUp(self):
+        self.user = create_user('user@mail.com', '12345')
+        self.owner = create_boat_owner('owner@mail.com', '12345')
+        self.model = create_model()
+        self.boat = create_simple_boat(self.model, self.owner)  
+        self.client = Client()   
+
+    def test_create(self):
+        # anon
+        response = self.client.get(reverse('boat:create_tariff'))
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + reverse('boat:create_tariff'))
+
+        # some user
+        self.client.login(email='user@mail.com', password='12345')
+        response = self.client.get(reverse('boat:create_tariff'))
+        self.assertEqual(response.status_code, 403)
+
+        # owner
+        self.client.login(email='owner@mail.com', password='12345')
+        response = self.client.get(reverse('boat:create_tariff'), {'boat_pk': self.boat.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].initial['boat'], str(self.boat.pk))
+
+        # ok 
+        data = {
+            'boat': self.boat.pk,
+            'start_date': '2022-01-01',
+            'end_date': '2022-01-31',
+            'name': 'My Tariff',
+            'duration': 1,
+            'min': 1,
+            'price': 10_000.32,
+            'mon': True
+        }
+        response = self.client.post(reverse('boat:create_tariff'), data)
+        self.assertRedirects(response, expected_url=reverse('boat:view', kwargs={'pk': self.boat.pk}) + '#tariffs')
+        
+        # wrong model validation
+        data['mon'] = False
+        response = self.client.post(reverse('boat:create_tariff'), data)
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(response.context['form'].errors)
+ 
+        # wrong boat status
+        data['mon'] = True
+        self.boat.status = Boat.Status.DELETED
+        self.boat.save()
+        response = self.client.post(reverse('boat:create_tariff'), data)
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(response.context['form'].errors)
+
+        # wrong boat owner
+        self.boat.status = Boat.Status.SAVED
+        self.boat.owner = self.user
+        self.boat.save()
+        response = self.client.post(reverse('boat:create_tariff'), data)
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(response.context['form'].errors)
+
+    def test_update(self):
+        tariff = Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(2022, 1, 1), end_date=datetime.date(2022, 12, 31),
+            name='My Second Tariff', duration=1, min=1, mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True, price=500
+        )
+        reversed = reverse('boat:update_tariff', kwargs={'pk': tariff.pk})
+
+        # anon
+        self.client.logout()
+        response = self.client.get(reversed)
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + reversed)
+
+        # some user
+        self.client.login(email='user@mail.com', password='12345')
+        response = self.client.get(reversed)
+        self.assertEqual(response.status_code, 403)
+
+        # owner 
+        
+        # get
+        self.client.login(email='owner@mail.com', password='12345')
+        response = self.client.get(reversed)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].instance.name, 'My Second Tariff')
+
+        # not found
+        response = self.client.get(reverse('boat:update_tariff', kwargs={'pk': 382}))
+        self.assertEqual(response.status_code, 404)
+
+        # post
+        data = {
+            'boat': self.boat.pk,
+            'start_date': '2022-01-01',
+            'end_date': '2022-01-31',
+            'name': 'My Second Tariff',
+            'duration': 1,
+            'min': 1,
+            'price': 10_000.32,
+            'mon': True
+        }
+        # not found
+        response = self.client.post(reverse('boat:update_tariff', kwargs={'pk': 382}), data)
+        self.assertEqual(response.status_code, 404)
+
+        # ok
+        response = self.client.post(reverse('boat:update_tariff', kwargs={'pk': tariff.pk}), data)
+        self.assertRedirects(response, expected_url=reverse('boat:view', kwargs={'pk': self.boat.pk}) + '#tariffs')
+
+        # wrong
+        data['mon'] = False
+        response = self.client.post(reverse('boat:update_tariff', kwargs={'pk': tariff.pk}), data)
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(response.context['form'].errors)
+
+    def test_delete(self):
+        tariff = Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(2022, 1, 1), end_date=datetime.date(2022, 12, 31),
+            name='My Tariff To Be Deleted', duration=1, min=1, mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True, price=500
+        )
+        reversed = reverse('boat:delete_tariff', kwargs={'pk': tariff.pk})
+
+        # anon
+        self.client.logout()
+        response = self.client.post(reversed)
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + reversed)
+
+        # some user
+        self.client.login(email='user@mail.com', password='12345')
+        response = self.client.post(reversed)
+        self.assertEqual(response.status_code, 403)
+
+        # owner
+        self.client.login(email='owner@mail.com', password='12345')
+        response = self.client.post(reversed)
+        self.assertRedirects(response, expected_url=reverse('boat:view', kwargs={'pk': self.boat.pk}) + '#tariffs')
+
+        # not found
+        response = self.client.post(reverse('boat:delete_tariff', kwargs={'pk': 2342}))
+        self.assertEqual(response.status_code, 404)
+
+
 class BoatTestCase(TestCase):
 
     def _get_post_data(self):
@@ -26,7 +165,6 @@ class BoatTestCase(TestCase):
             'draft': 1, 
             'capacity': 1, 
             'model': self.model.pk, 
-            'prices': '[{"start_date": "2022-01-01", "end_date": "2022-12-31", "price": "123.45"}]',
             'file': get_imagefile(),        
             'type': Boat.Type.SAILING_YACHT,
             'motor_amount': 1,
@@ -103,7 +241,6 @@ class BoatTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         data = {
-            'prices': '[]',
             'model': 982,
             'file': [get_imagefile() for _ in range(11)]
         }

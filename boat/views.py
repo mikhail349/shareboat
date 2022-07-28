@@ -16,7 +16,6 @@ from django.core import serializers
 from boat.forms import TariffForm
 from notification import utils as notify
 
-from .exceptions import PriceDateRangeException
 from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatCoordinates, Tariff
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking
@@ -273,13 +272,10 @@ def booking(request, pk):
 def calc_booking(request, pk):
     start_date  = parse_date(request.GET.get('start_date'))
     end_date    = parse_date(request.GET.get('end_date'))
-    try:
-        res = _calc_booking(pk, start_date, end_date)
-        if not res:
-            return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
-        return JsonResponse(res)
-    except PriceDateRangeException as e:
-        return JsonResponse({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    res = _calc_booking(pk, start_date, end_date)
+    if not res:
+        return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse(res)
 
 @login_required
 def view(request, pk):
@@ -473,19 +469,6 @@ def create_or_update(request, pk=None):
         return response_not_found()
     except ValidationError as e:
         return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-def create_or_update_tariff(request, pk=None):
-    if pk is not None:
-        try:
-            tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
-        except Tariff.DoesNotExist:
-            return response_not_found()
-
-    form = TariffForm(request.POST, instance=tariff or None, request=request)
-    if form.is_valid():
-        form.save()
-        return redirect(reverse('boat:view', kwargs={'pk': form.instance.boat.pk}) + '#tariffs')
-    return render(request, 'boat/update_tariff.html', context={'form': form})
  
 def redirect_to_tariffs(boat_pk):
     return redirect(reverse('boat:view', kwargs={'pk': boat_pk}) + '#tariffs')
@@ -504,7 +487,7 @@ def create_tariff(request):
         if form.is_valid():
             form.save()
             return redirect_to_tariffs(form.instance.boat.pk)
-        return render(request, 'boat/create_tariff.html', context={'form': form})
+        return render(request, 'boat/create_tariff.html', context={'form': form}, status=400)
 
 @login_required
 @permission_required('boat.change_tariff', raise_exception=True)
@@ -523,7 +506,7 @@ def update_tariff(request, pk):
             if form.is_valid():
                 form.save()
                 return redirect_to_tariffs(form.instance.boat.pk)
-            return render(request, 'boat/update_tariff.html', context={'form': form})
+            return render(request, 'boat/update_tariff.html', context={'form': form}, status=400)
         except Tariff.DoesNotExist:
             return response_not_found()
 
