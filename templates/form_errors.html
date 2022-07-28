@@ -1,21 +1,16 @@
 {% if form.errors %}
     <div class="alert alert-danger">
-        <ul class="errorlist">
-            {% if form.non_field_errors %}
+        <ul class="errorlist">            
+            {% for error in form.non_field_errors %}
                 <li>
-                    Общие ошибки на форме
-                    {{ form.non_field_errors }}
+                    {{ error }}
                 </li>
-            {% endif %}
+            {% endfor %}
+
             {% for field in form %}
                 {% if field.errors %}
                     <li>
-                        {{ field.label }}
-                        <ul class="errorlist">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+                        {{ field.label }} {{ field.errors|join:'; '|lower }}
                     </li>
                 {% endif %}
             {% endfor %}

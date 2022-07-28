@@ -27,7 +27,7 @@ class BoatQuerySet(models.QuerySet):
         return self.annotate(in_fav=Value(False))
 
     def prefetch_actual_tariffs(self):
-        actual_tariffs = Tariff.objects.active_gte_now().annotate(price_per_day=Cast(F('price') / F('duration'), DecimalField(max_digits=8, decimal_places=2))).order_by('start_date', 'price_per_day')
+        actual_tariffs = Tariff.objects.active_gte_now().annotate(price_per_day=Cast(F('price') / F('duration'), DecimalField(max_digits=6, decimal_places=0))).order_by('start_date', 'price_per_day')
         return self.prefetch_related(
             Prefetch('tariffs', queryset=actual_tariffs, to_attr='actual_tariffs')
         )
