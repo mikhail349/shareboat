@@ -10,7 +10,7 @@ def apply_migration(apps, schema_editor):
     perms = Permission.objects.filter(codename__in=['add_tariff', 'change_tariff', 'view_tariff', 'delete_tariff'])
     group.permissions.add(*perms)
 
-def revert_migration(apps, schema_editor):
+def revert_migration(apps, schema_editor): # pragma: no cover
     Group = apps.get_model('auth', 'Group')
     Permission  = apps.get_model('auth', 'Permission')
 

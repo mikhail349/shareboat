@@ -249,8 +249,9 @@ def register(request):
     elif request.method == "POST":
         data = request.POST
         
-        if not check_recaptcha(request):
-            return render_error('Проверка "Я не робот" не пройдена')  
+        if not settings.DEBUG:
+            if not check_recaptcha(request):
+                return render_error('Проверка "Я не робот" не пройдена')  
 
         email_lower = data['email'].lower()
 

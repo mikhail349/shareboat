@@ -8,3 +8,10 @@ def get_imagefile():
     image.save(image_file, 'PNG')
     image_file.seek(0)
     return File(image_file, name='test.png')
+
+def get_large_imagefile():
+    image_file = BytesIO()
+    image = Image.new('RGBA', size=(1920, 1080), color=(256,0,0))
+    image.save(image_file, 'PNG')
+    image_file.seek(0)
+    return File(image_file, name='test.png')

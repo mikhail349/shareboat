@@ -18,7 +18,7 @@ def apply_migration(apps, schema_editor):
     group.permissions.add(*perms)
 
 
-def revert_migration(apps, schema_editor):
+def revert_migration(apps, schema_editor): # pragma: no cover
     Group = apps.get_model('auth', 'Group')
     Group.objects.filter(name__in=['boat_owner','boat_moderator',]).delete()
 

@@ -76,7 +76,7 @@ class User(AbstractUser):
                 img = Image.open(self.avatar_sm.path)
                 img = img.resize(utils.limit_size(img.width, img.height, 64, 64), Image.ANTIALIAS)
                 img.save(self.avatar_sm.path, format="webp") 
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             import logging
             logger = logging.getLogger(__name__)
             logger.error(str(e))
