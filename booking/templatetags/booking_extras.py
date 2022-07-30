@@ -24,6 +24,6 @@ def spectolist(value):
             value['price'] = Decimal(value['price'])
             value['sum'] = Decimal(value['sum'])
 
-        return d.values()
+        return list(d.values())
     except (ValueError, TypeError):
         return []
