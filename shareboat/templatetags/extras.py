@@ -10,5 +10,4 @@ def hasattr(value, arg):
 
 @register.simple_tag
 def is_debug():
-    print('ok')
     return settings.DEBUG

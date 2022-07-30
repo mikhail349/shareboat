@@ -51,6 +51,6 @@
             <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
         {% endif %}
         
-        <button class="w-100 btn btn-lg btn-primary" type="submit" disabled>Зарегистрироваться</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" {% if not is_debug %}disabled{% endif %}>Зарегистрироваться</button>
     </form>
 {% endblock %}

@@ -36,7 +36,7 @@
             <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
         {% endif %}
         
-        <button class="w-100 btn btn-lg btn-primary mb-3" type="submit" disabled>Войти</button>
+        <button class="w-100 btn btn-lg btn-primary mb-3" type="submit" {% if not is_debug %}disabled{% endif %}>Войти</button>
         
         <div class="mb-2 text-center">
             <div class="mb-2"><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>

@@ -1,6 +1,9 @@
 from django import template
 from booking.models import Booking
 
+import json
+from decimal import Decimal
+
 register = template.Library()
 
 @register.filter
@@ -10,3 +13,17 @@ def get_status_color(value):
     if value == Booking.Status.ACCEPTED:
         return 'bg-light text-success'
     return 'bg-light text-secondary'
+
+
+@register.filter 
+def spectolist(value):
+    try:
+        d = json.loads(value)
+
+        for value in d.values():
+            value['price'] = Decimal(value['price'])
+            value['sum'] = Decimal(value['sum'])
+
+        return d.values()
+    except (ValueError, TypeError):
+        return []

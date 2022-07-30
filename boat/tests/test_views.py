@@ -357,7 +357,8 @@ class BoatTestCase(TestCase):
             status=Booking.Status.ACCEPTED, 
             start_date=datetime.date(now.year, 1, 1), 
             end_date=datetime.date(now.year, 1, 10),
-            total_sum=100.50
+            total_sum=100.50,
+            spec={"test":"123"}
         )
         self.client.login(email='user@mail.com', password='12345')
 
@@ -622,7 +623,8 @@ class BoatTestCase(TestCase):
         Booking.objects.create(boat=boat, renter=self.user, status=Booking.Status.ACCEPTED, 
             start_date=datetime.date(now.year, 1, 3),
             end_date=datetime.date(now.year, 1, 6),
-            total_sum=1_500
+            total_sum=1_500,
+            spec={"test":"123"}
         )
 
         response = _get_response(boat.pk)

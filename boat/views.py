@@ -275,6 +275,7 @@ def calc_booking(request, pk):
     res = _calc_booking(pk, start_date, end_date)
     if not res:
         return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
+    res.pop('spec')
     return JsonResponse(res)
 
 @login_required

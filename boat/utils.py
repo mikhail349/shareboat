@@ -33,6 +33,23 @@ def calc_booking(boat_pk, start_date, end_date):
             return tariff.sat
         if weekday == 6:
             return tariff.sun
+
+    def spec_inc(tariff):
+        item = spec.get(tariff.pk, {})
+        item['name'] = tariff.name
+        item['price'] = tariff.price
+        item['amount'] = item.get('amount', 0) + 1
+        item['sum'] = item.get('sum', Decimal("0.0")) + tariff.price
+        spec[tariff.pk] = item
+
+    def spec_dec(tariff):
+        item = spec.get(tariff.pk)
+        item['amount'] = item['amount'] - 1
+        item['sum'] = item['sum'] - tariff.price
+
+        if item['amount'] == 0:
+            return spec.pop(tariff.pk)
+        spec[tariff.pk] = item
     
     try:
         boat = Boat.objects.get(pk=boat_pk)
@@ -46,6 +63,7 @@ def calc_booking(boat_pk, start_date, end_date):
     date = start_date
     node = None
     last_tariff = None
+    spec = {}
     
     try:
         while date < end_date:
@@ -70,6 +88,8 @@ def calc_booking(boat_pk, start_date, end_date):
                 used_tariffs[date] = tariff.pk
                 total_sum += tariff.price
                 date += timedelta(days=tariff.duration)
+                spec_inc(tariff)
+
                 date_changed = True
                 last_tariff = tariff
                 break
@@ -79,10 +99,11 @@ def calc_booking(boat_pk, start_date, end_date):
                     total_sum -= node.tariff.price
                     date -= timedelta(days=node.tariff.duration)
                     node = node.prev
+                    spec_dec(tariff)
                 else:
                     raise TariffNotFound()
 
     except TariffNotFound:
         return _return_empty()
 
-    return {'sum': total_sum, 'days': (end_date - start_date).days}
+    return {'sum': total_sum, 'days': (end_date - start_date).days, 'spec': spec}

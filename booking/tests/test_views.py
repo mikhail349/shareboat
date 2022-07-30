@@ -19,7 +19,7 @@ class BookingTestCase(TestCase):
         self.user = create_user('user@mail.ru', '12345')
 
         self.boat = create_simple_boat(create_model(), self.owner, Boat.Status.PUBLISHED)
-        self.booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 1, 1), end_date=date(self.now.year, 1, 10), total_sum=1000)      
+        self.booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 1, 1), end_date=date(self.now.year, 1, 10), total_sum=1000, spec={"test":"123"})      
 
     def test_view(self):
         def _get_response():
@@ -208,7 +208,7 @@ class BookingTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_set_status(self):
-        booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 2, 1), end_date=date(self.now.year, 2, 10), total_sum=1000) 
+        booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 2, 1), end_date=date(self.now.year, 2, 10), total_sum=1000, spec={"test":"123"}) 
         url = reverse('booking:api_set_status', kwargs={'pk': booking.pk})
         
         # anon
@@ -235,7 +235,7 @@ class BookingTestCase(TestCase):
         self.assertEqual(json.loads(response.content)['redirect'], reverse('booking:my_bookings'))
 
     def test_set_request_status(self):
-        booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 3, 1), end_date=date(self.now.year, 3, 10), total_sum=1000) 
+        booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 3, 1), end_date=date(self.now.year, 3, 10), total_sum=1000, spec={"test":"123"}) 
         url = reverse('booking:api_set_request_status', kwargs={'pk': booking.pk})
 
         # anon

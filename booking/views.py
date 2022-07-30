@@ -18,6 +18,8 @@ from django.db.models import Q
 from telegram_bot.notifications import send_message
 from django.db import transaction
 
+import json
+
 @login_required
 def create(request):
     if request.method == 'POST':
@@ -38,7 +40,8 @@ def create(request):
             return JsonResponse({'message': 'Цена на лодку изменилась', 'code': 'outdated_price'}, status=400)
 
         try:
-            booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum)
+            spec_json = json.dumps(calculated_total_sum.get('spec'), default=str) 
+            booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum, spec=spec_json)
             notify.send_initial_booking_to_owner(booking)
             return JsonResponse({'redirect': reverse('booking:view', kwargs={'pk': booking.pk})})
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
