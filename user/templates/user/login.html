@@ -1,6 +1,7 @@
 {% extends 'user/main.html' %}
 
 {% load static %}
+{% load extras %}
 
 {% block title %}Авторизация{% endblock %}
 
@@ -30,7 +31,11 @@
 
         <input type="hidden" name="next" value={{ request.GET.next }} >
 
-        <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
+        {% is_debug as is_debug %}
+        {% if not is_debug %}
+            <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
+        {% endif %}
+        
         <button class="w-100 btn btn-lg btn-primary mb-3" type="submit" disabled>Войти</button>
         
         <div class="mb-2 text-center">

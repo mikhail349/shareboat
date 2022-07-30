@@ -137,13 +137,14 @@ def login(request):
     elif request.method == 'POST':
         data = request.POST
         
-        if not check_recaptcha(request):
-            context = {
-                'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY,
-                'errors': 'Проверка "Я не робот" не пройдена',
-                'email': data['email']
-            }
-            return render(request, 'user/login.html', context=context)
+        if not settings.DEBUG:
+            if not check_recaptcha(request):
+                context = {
+                    'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY,
+                    'errors': 'Проверка "Я не робот" не пройдена',
+                    'email': data['email']
+                }
+                return render(request, 'user/login.html', context=context)
 
         email_lower = data['email'].lower()
         user = authenticate(request, email=email_lower, password=data['password'])
@@ -220,8 +221,9 @@ def change_password(request, token):
     
 
 def send_restore_password_email(request):
-    if not check_recaptcha(request):
-        return render(request, 'user/restore_password.html', context={'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY, 'errors': 'Проверка "Я не робот" не пройдена'})     
+    if not settings.DEBUG:
+        if not check_recaptcha(request):
+            return render(request, 'user/restore_password.html', context={'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY, 'errors': 'Проверка "Я не робот" не пройдена'})     
 
     try:
         email = request.POST.get('email')
@@ -241,7 +243,12 @@ def send_restore_password_email(request):
 def register(request):
 
     def render_error(msg):
-        return render(request, 'user/register.html', context={'errors': msg, 'first_name': data.get('first_name'), 'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY})  
+        context={
+            'errors': msg, 
+            'first_name': data.get('first_name'), 
+            'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY
+        }
+        return render(request, 'user/register.html', context=context, status=400)  
 
     if request.method == 'GET':
         return render(request, 'user/register.html', context={'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY})
@@ -249,7 +256,7 @@ def register(request):
     elif request.method == "POST":
         data = request.POST
         
-        if not settings.DEBUG:
+        if not settings.DEBUG: # pragma: no cover
             if not check_recaptcha(request):
                 return render_error('Проверка "Я не робот" не пройдена')  
 
@@ -272,10 +279,11 @@ def register(request):
         try:
             UserEmail.send_verification_email(request, user)
             logger_admin_mails.info("Зарегистрировался новый пользователь %s" % data['email'])
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             logger.error(str(e))
         
         context = {
+            'user': user,
             'title': 'Регистрация пройдена', 
             'header': 'Поздравляем, %s!' % user.first_name,
             'content': 'Регистрация в сервисе ShareBoat успешно пройдена.\nЧтобы пользоваться сервисом, вам необходимо подтвердить свой почтовый адрес.\nПисьмо с активацией отправлено на почту %s' % user.email

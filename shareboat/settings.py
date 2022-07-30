@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import sys
-from turtle import width
 
 import dotenv
 
@@ -32,7 +31,8 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'runserver' in sys.argv
+DEBUG = ('runserver' in sys.argv) or ('test' in sys.argv)
+
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'user.User'
