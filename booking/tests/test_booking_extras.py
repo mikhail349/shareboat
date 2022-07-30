@@ -27,3 +27,6 @@ class TestCase(TestCase):
         l = spectolist(booking.spec)
         self.assertEqual(l[0]['price'], Decimal("130.50"))
         self.assertEqual(l[0]['sum'], Decimal("261.00"))
+
+        booking = Booking.objects.create(boat=boat, renter=owner, start_date=date(now.year, 2, 2), end_date=date(now.year, 2, 3), total_sum=200, spec="abcd")
+        self.assertListEqual(spectolist(booking.spec), [])

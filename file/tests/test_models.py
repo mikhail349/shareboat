@@ -2,16 +2,9 @@ from io import BytesIO
 from django.core.files.base import File
 from PIL import Image
 
-def get_imagefile():
+def get_imagefile(filename='test.png', size=(50,50)):
     image_file = BytesIO()
-    image = Image.new('RGBA', size=(50,50), color=(256,0,0))
+    image = Image.new('RGBA', size=size, color=(256,0,0))
     image.save(image_file, 'PNG')
     image_file.seek(0)
-    return File(image_file, name='test.png')
-
-def get_large_imagefile():
-    image_file = BytesIO()
-    image = Image.new('RGBA', size=(1920, 1080), color=(256,0,0))
-    image.save(image_file, 'PNG')
-    image_file.seek(0)
-    return File(image_file, name='test.png')
+    return File(image_file, name=filename)

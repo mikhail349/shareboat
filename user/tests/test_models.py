@@ -1,18 +1,18 @@
 from django.test import TestCase
 from user.models import User, TelegramUser
 from django.contrib.auth.models import Group, Permission
-from file.tests.test_models import get_large_imagefile
+from file.tests.test_models import get_imagefile
 
 import json
 from types import SimpleNamespace
 
-def create_user(email, password):
+def create_user(email, password): # pragma: no cover
     user = User.objects.create(email=email)
     user.set_password(password)
     user.save()
     return user
 
-def create_boat_owner(email, password):
+def create_boat_owner(email, password): # pragma: no cover
     user = create_user(email, password)
 
     boat_owner_group, _ = Group.objects.get_or_create(name='boat_owner')     
@@ -23,7 +23,7 @@ def create_boat_owner(email, password):
     user.groups.add(boat_owner_group)  
     return user
 
-def create_moderator(email, password):
+def create_moderator(email, password): # pragma: no cover
     user = create_user(email, password)
     user.groups.add(Group.objects.get(name='boat_moderator'))
     return user
@@ -33,7 +33,7 @@ class TelegramBotUpdateFake:
 
 class UserTestCase(TestCase):
     def test_create(self):
-        avatar = get_large_imagefile()
+        avatar = get_imagefile(size=(1920, 1080))
         user = User.objects.create(first_name='Иван', email='ivan@mail.ru', password="12345", avatar=avatar, avatar_sm=avatar)
         self.assertLessEqual(user.avatar_sm.width, 64)
         self.assertLessEqual(user.avatar_sm.height, 64)

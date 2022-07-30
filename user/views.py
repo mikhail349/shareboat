@@ -32,7 +32,7 @@ def get_bool(value):
         return True
     return False
 
-def check_recaptcha(request):
+def check_recaptcha(request): # pragma: no cover
     recaptcha = request.POST.get('g-recaptcha-response')
     if recaptcha:
         resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data={'secret': settings.RECAPTCHA_SERVERSIDE_KEY, 'response': recaptcha})
@@ -53,12 +53,12 @@ def verify(request, token):
             django_login(request, user)
             notify.send_greetings_to_user(user)
         return render(request, 'user/verified.html')
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError, jwt.exceptions.DecodeError):
         msg = 'Неверная ссылка'
     except jwt.ExpiredSignatureError:
         msg = 'Ссылка устарела'
 
-    return render(request, 'user/invalid_link.html', context={'msg': msg})
+    return render(request, 'user/invalid_link.html', context={'msg': msg}, status=400)
 
 def send_verification_email(request, email):
     try:
@@ -75,10 +75,7 @@ def update_avatar(request):
     user = request.user
     user.avatar = avatar
     user.avatar_sm = avatar
-    try:
-        user.save()
-    except ValidationError as e:
-        return JsonResponse({'data': list(e)}, status=400) 
+    user.save()
 
     return JsonResponse({
         'avatar': user.avatar.url,

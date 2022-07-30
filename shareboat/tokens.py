@@ -6,11 +6,11 @@ from .exceptions import InvalidToken
 VERIFICATION = 'verification'
 RESTORE_PASSWORD = 'restore_password'
 
-def generate_token(user, type):
+def generate_token(user, type, minutes=15, seconds=0):
     
     token_payload = {
         'user_id': user.id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=15),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=minutes, seconds=seconds),
         'iat': datetime.datetime.utcnow(),    
         'type': type
     }
