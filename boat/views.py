@@ -70,7 +70,7 @@ def my_boats(request):
 def favs(request):
     page = request.GET.get('page', 1)
 
-    boats = Boat.published.filter(favs__user=request.user).annotate(in_fav=Value(True)).order_by('id')
+    boats = Boat.published.filter(favs__user=request.user).prefetch_actual_tariffs().annotate(in_fav=Value(True)).order_by('id')
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(page)
 
     context = {
