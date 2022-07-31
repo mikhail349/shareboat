@@ -4,11 +4,10 @@ from . import views
 app_name = "user"
 
 urlapipatterns = [
-    path('update/', views.update, name='api_update'),
     path('update_avatar/', views.update_avatar, name='api_update_avatar'),
     path('send_verification_email/<email>/', views.send_verification_email, name="send_verification_email"),
     path('send_restore_password_email/', views.send_restore_password_email, name="send_restore_password_email"),
-    path('generate_telegram_code/', views.generate_telegram_code)
+    path('generate_telegram_code/', views.generate_telegram_code, name='generate_telegram_code')
 ]
 
 urlpatterns = [

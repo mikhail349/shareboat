@@ -105,7 +105,7 @@ def update(request):
             form.save()
             return render(request, 'user/update.html', context={'form': form, 'success': 'Профиль сохранен.'})      
             
-        return render(request, 'user/update.html', context={'form': form, 'tgcode_message': _get_tgcode_message()})
+        return render(request, 'user/update.html', context={'form': form, 'tgcode_message': _get_tgcode_message()}, status=400)
 
 def login(request):
     if request.method == 'GET':
@@ -114,7 +114,7 @@ def login(request):
     elif request.method == 'POST':
         data = request.POST
         
-        if not settings.DEBUG:
+        if not settings.DEBUG: # pragma: no cover
             if not check_recaptcha(request):
                 context = {
                     'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY,
@@ -132,21 +132,21 @@ def login(request):
             
             try:
                 UserEmail.send_verification_email(request, user)
-            except Exception as e:
+            except Exception as e: # pragma: no cover
                 logger.error(str(e))
 
             context = {
                 'title': 'Подтвердите почтовый адрес', 
                 'content': 'Чтобы пользоваться сервисом, вам необходимо подтвердить свой почтовый адрес.\nПисьмо с активацией отправлено на почту %s.' % user.email
             }
-            return render(request, 'user/email_sent.html', context=context)
+            return render(request, 'user/email_sent.html', context=context, status=400)
 
         context = {
             'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY,
             'errors': 'Неверный логин и/или пароль',
             'email': data['email']
         }
-        return render(request, 'user/login.html', context=context)
+        return render(request, 'user/login.html', context=context, status=400)
 
 @login_required
 def logout(request):
@@ -166,7 +166,7 @@ def generate_telegram_code(request):
 
     code = _gen_code()
     while TelegramUser.objects.filter(chat_id__isnull=True, verification_code=code).exists():
-        code = _gen_code()
+        code = _gen_code() # pragma: no cover
 
     TelegramUser.objects.filter(user=request.user).delete()
     TelegramUser.objects.create(user=request.user, verification_code=code)
@@ -189,7 +189,7 @@ def change_password(request, token):
             user.save()
             django_login(request, user)
             return redirect('/')
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, InvalidToken, jwt.InvalidSignatureError, jwt.exceptions.DecodeError):
         msg = 'Неверная ссылка'
     except jwt.ExpiredSignatureError:
         msg = 'Ссылка устарела'

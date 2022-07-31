@@ -106,9 +106,9 @@ a {
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
     .carousel-img,
-    .card-img-lg-big {
+    .card-img-md {
         height: 400px;
     }
 

@@ -7,7 +7,7 @@
 {% if boat.files.exists %}
     <script type="text/javascript" src="{% static 'boat/js/img_viewer.min.js' %}"></script>
     <div class="card box-shadow text-end mb-3">
-        <img class="d-block w-100 card-img card-img-lg-big" src="{{ boat.files.first.file.url }}" />
+        <img class="d-block w-100 card-img card-img-md" src="{{ boat.files.first.file.url }}" />
     </div>  
     {% if boat.files.count > 1%}
         <div class="row g-1 mb-3">

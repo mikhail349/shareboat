@@ -40,6 +40,16 @@
                     </ul>
                 {% else %}
                     <ul class="navbar-nav ms-auto">
+                        {% if perms.boat.view_boats_on_moderation %}
+                            <li class="nav-item py-1 col-12 col-lg-auto">
+                                <hr class="d-lg-none text-white-50">
+                            </li>  
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'boat:boats_on_moderation' %}">
+                                    Модерация
+                                </a>
+                            </li>
+                        {% endif %}
                         {% if perms.boat.view_my_boats %}  
                             <li class="nav-item py-1 col-12 col-lg-auto">
                                 <hr class="d-lg-none text-white-50">

@@ -1,11 +1,13 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.test.utils import override_settings
+from boat.models import Boat
+from boat.tests.test_models import create_model, create_simple_boat
 
 from shareboat import tokens
-from user.models import User
+from user.models import TelegramUser, User
 
-from user.tests.test_models import create_user
+from user.tests.test_models import create_boat_owner, create_user
 from user.views import get_bool, get_tgcode_message
 from file.tests.test_models import get_imagefile
 
@@ -109,3 +111,100 @@ class TestCase(TestCase):
             'avatar': user.avatar.url,
             'avatar_sm': user.avatar_sm.url
         })
+
+    def test_update(self):
+        url = reverse('user:update')
+
+        owner = create_boat_owner('user@mail.com', '12345')
+
+        # anon
+        response = self.client.get(url)
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + url)
+
+        # login
+        self.client.login(email='user@mail.com', password='12345')         
+        
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].initial['is_boat_owner'], True)
+        self.assertEqual(response.context['form'].instance.email, 'user@mail.com')
+        self.assertEqual(response.context['tgcode_message'], '')
+        
+        TelegramUser.objects.create(user=owner, verification_code='333')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['tgcode_message'], 'Ваш код для авторизации в Телеграм боте: <strong>333</strong>. Отправьте боту команду <span class="text-primary">/auth</span> и следуйте инструкциям.')
+
+
+        boat = create_simple_boat(create_model(), owner)
+        response = self.client.post(url, {'is_boat_owner': False, 'first_name': 'The Owner'})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(list(response.context['form'].errors.items())[0][1][0], '- Для того чтобы перестать быть арендодателем, необходимо удалить свой флот')
+
+        response = self.client.post(url, {'is_boat_owner': True, 'first_name': 'The Owner'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].instance.first_name, 'The Owner')
+
+        Boat.objects.all().delete()
+        response = self.client.post(url, {'is_boat_owner': False, 'first_name': 'The Owner'})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['form'].instance.groups.all().exists())
+
+    @override_settings(RECAPTCHA_CLIENTSIDE_KEY='rck123', DEBUG=True) # deactivate recaptcha
+    def test_login(self):
+        url = reverse('user:login')
+
+        user = create_user('user@mail.com', '12345')
+        
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['recaptcha_key'], 'rck123')
+
+        response = self.client.post(url, {'email': 'wrong@mail.com', 'password': '12345'})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.context['recaptcha_key'], 'rck123')
+        self.assertEqual(response.context['email'], 'wrong@mail.com')
+        self.assertEqual(response.context['errors'], 'Неверный логин и/или пароль')
+
+        response = self.client.post(url, {'email': 'user@mail.com', 'password': '12345'})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.context['title'], 'Подтвердите почтовый адрес')
+
+        user.email_confirmed = True
+        user.save()
+        response = self.client.post(url, {'email': 'user@mail.com', 'password': '12345'})
+        self.assertRedirects(response, expected_url='/')
+
+    def test_logout(self):
+        create_user('user@mail.com', '12345')
+        self.client.login(email='user@mail.com', password='12345')
+        response = self.client.post(reverse('user:logout'))
+        self.assertRedirects(response, expected_url='/')
+
+    @override_settings(RECAPTCHA_CLIENTSIDE_KEY='rck123')
+    def test_restore_password(self):
+        response = self.client.get(reverse('user:restore_password'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['recaptcha_key'], 'rck123')
+
+    def test_generate_telegram_code(self):
+        url = reverse('user:generate_telegram_code')
+
+        user = create_user('user@mail.com', '12345')
+
+        # anon
+        response = self.client.get(url)
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + url)
+
+        # login
+        self.client.login(email='user@mail.com', password='12345')      
+        
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        tg_code = TelegramUser.objects.get(user=user).verification_code
+        content = json.loads(response.content)
+        self.assertEqual(content['verification_code'], tg_code)
+        self.assertEqual(content['message'], 'Ваш код для авторизации в Телеграм боте: <strong>%s</strong>. Отправьте боту команду <span class="text-primary">/auth</span> и следуйте инструкциям.' % tg_code)
+
+        
