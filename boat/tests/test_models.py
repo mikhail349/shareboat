@@ -36,7 +36,6 @@ class TariffTestCase(TestCase):
         errors = dict(context.exception)
         self.assertDictEqual(errors, {
             'start_date': ['Должно быть раньше окончания действия'],
-            'end_date': ['Должно быть позже начала действия'],
             NON_FIELD_ERRORS: ['Необходимо указать хотя бы один день начала аренды']
         })
 

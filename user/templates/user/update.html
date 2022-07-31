@@ -19,7 +19,7 @@
                     class="rounded-circle avatar mb-3 of-cover" 
                     title="Сменить аватар"
                 >
-                <img id="loadingShipWheel" class="loading-ship-wheel" src="{% static 'img/ship-wheel-2.png' %}" style="display: none;">
+                <img id="loadingShipWheel" class="loading-ship-wheel position-absolute" src="{% static 'img/ship-wheel-2.png' %}" style="display: none;">
             </div>
             <p class="lead text-muted">
                 <svg id="svgEmailConfirmed" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
@@ -30,12 +30,9 @@
                 {{ user.email }}
             </p>
         </section> 
+        {% include 'form_errors.html' %}
         <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %} 
-
-            {% if errors %}
-                <div class="alert alert-danger">{{ errors }}</div>
-            {% endif %}
 
             {% if success %}
                 <div class="alert alert-success">{{ success }}</div>
@@ -47,16 +44,16 @@
             <h4 class="mb-3">Профиль</h4>
             <div class="form-floating mb-3">            
                 <input type="text" name="first_name" class="form-control" required
-                    placeholder="Введите ваше имя" 
+                    placeholder="Укажите" 
                     autocomplete="off"
-                    value="{{ user.first_name }}"
+                    value="{{ form.first_name.value }}"
                 />
-                <label for="first_name">Имя</label>
-                <div class="invalid-tooltip">Укажите Ваше имя</div>
+                <label for="first_name">{{ form.first_name.label }}</label>
+                <div class="invalid-tooltip">Укажите</div>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" id="isBoatOwnerCheck" type="checkbox" name="is_boat_owner" {% if is_boat_owner %} checked {% endif %}>
-                <label class="form-check-label" for="isBoatOwnerCheck">Являюсь арендодателем</label>
+                <input class="form-check-input" id="isBoatOwnerCheck" type="checkbox" name="is_boat_owner" {% if form.is_boat_owner.value %} checked {% endif %}>
+                <label class="form-check-label" for="isBoatOwnerCheck">{{ form.is_boat_owner.label }}</label>
             </div>
             <h4 class="mb-3">Telegram бот <a target="_blank" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
             {% if user|hasattr:'telegramuser' %}

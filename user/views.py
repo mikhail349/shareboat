@@ -15,6 +15,7 @@ from notification import utils as notify
 from shareboat import tokens
 from shareboat.exceptions import InvalidToken
 from emails.models import UserEmail
+from user.forms import UpdateForm
 from .models import User, TelegramUser
 import random
 import requests
@@ -84,48 +85,27 @@ def update_avatar(request):
 
 @login_required
 def update(request):
-
-    def _get_context():
-        tgcode_message = ''
+    def _get_tgcode_message():
         if hasattr(request.user, 'telegramuser') and not request.user.telegramuser.chat_id:
-            tgcode_message = get_tgcode_message(request.user.telegramuser.verification_code)
-
-        return {
-            'tgcode_message': tgcode_message,
-            'is_boat_owner': request.user.groups.filter(name=BOAT_OWNER_GROUP).exists()
-        }        
-
-    def _render(success=None, errors=None):
-        context = _get_context()
-        if errors:
-            context['errors'] = errors
-        if success:
-            context['success'] = success
-        return render(request, 'user/update.html', context=context)
+            return get_tgcode_message(request.user.telegramuser.verification_code)
+        return ''
 
     if request.method == 'GET':
-        return _render()
+        initial={
+            'is_boat_owner': request.user.groups.filter(name=BOAT_OWNER_GROUP).exists()
+        }
+        form = UpdateForm(instance=request.user, initial=initial)
+        return render(request, 'user/update.html', context={'form': form, 'tgcode_message': _get_tgcode_message()})
+    
     elif request.method == 'POST':
-        
-        with transaction.atomic():
-            data = request.POST
-            is_boat_owner = get_bool(data.get('is_boat_owner'))
+        user = request.user
+        form = UpdateForm(request.POST, instance=user)
 
-            user = request.user
-            user.first_name = data.get('first_name')
-
-            boat_owner_group, _ = Group.objects.get_or_create(name=BOAT_OWNER_GROUP)
-            if is_boat_owner:              
-                user.groups.add(boat_owner_group)
-            else:
-                if user.boats.filter(~Q(status=Boat.Status.DELETED)).exists():
-                    return _render(errors='Для того чтобы перестать быть арендодателем, необходимо удалить свой флот.')
-                user.groups.remove(boat_owner_group)
-
-            user.save()
-
-        return _render(success='Профиль сохранен.')
-
+        if form.is_valid():
+            form.save()
+            return render(request, 'user/update.html', context={'form': form, 'success': 'Профиль сохранен.'})      
+            
+        return render(request, 'user/update.html', context={'form': form, 'tgcode_message': _get_tgcode_message()})
 
 def login(request):
     if request.method == 'GET':

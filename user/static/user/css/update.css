@@ -1,3 +1,13 @@
 .avatar:hover {
     cursor: pointer;
 }
+
+#loadingShipWheel {
+    left: -webkit-calc(50% - 32px);
+    left: -moz-calc(50% - 32px);
+    left: calc(50% - 32px);
+
+    top: -webkit-calc(50% - 32px);
+    top: -moz-calc(50% - 32px);
+    top: calc(50% - 32px);
+}

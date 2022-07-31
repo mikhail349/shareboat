@@ -1,6 +1,10 @@
-from django.forms import ModelForm, PasswordInput 
+from django.forms import ModelForm, PasswordInput, BooleanField, CharField
 from django.utils.translation import ugettext_lazy as _
 from .models import User
+from boat.models import Boat
+from django.contrib.auth.models import Group
+
+from django.core.exceptions import ValidationError
 
 class LoginForm(ModelForm):
     class Meta:
@@ -13,5 +17,30 @@ class LoginForm(ModelForm):
         widgets = {
             'password': PasswordInput
         }
-    #email = forms.EmailField(lab)
-    #password = forms.CharField(widget=forms.PasswordInput)
+
+class UpdateForm(ModelForm):
+    is_boat_owner = BooleanField(label="Являюсь арендодателем", required=False)
+
+    def clean_is_boat_owner(self):
+        is_boat_owner = self.cleaned_data.get('is_boat_owner')
+        if not is_boat_owner:
+            if self.instance.boats.exclude(status=Boat.Status.DELETED).exists():
+                raise ValidationError('- Для того чтобы перестать быть арендодателем, необходимо удалить свой флот')
+        return is_boat_owner
+
+    def save(self, commit=True):
+        m = super(UpdateForm, self).save(commit=False)
+
+        boat_owner_group, _ = Group.objects.get_or_create(name='boat_owner')
+        if self.cleaned_data.get('is_boat_owner', False):              
+            self.instance.groups.add(boat_owner_group)
+        else:
+            self.instance.groups.remove(boat_owner_group)
+
+        if commit:
+            m.save()
+        return m
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'is_boat_owner')
