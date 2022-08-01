@@ -50,6 +50,7 @@ $(document).ready(() => {
             window.selectedStartDate = null;
             window.selectedEndDate = null;
             window.totalSum = null;
+            window.calculatedData = null;
 
             $('#priceAlert').html('<span>Выберите период</span>');
         }
@@ -57,6 +58,7 @@ $(document).ready(() => {
         window.selectedStartDate = dateRange.selectedDates[0];
         window.selectedEndDate = dateRange.selectedDates[1];
         window.totalSum = null;
+        window.calculatedData = null;
 
         if (!!xhr) xhr.abort();
         xhr = $.ajax({ 
@@ -74,12 +76,16 @@ $(document).ready(() => {
             if (!data?.sum) {
                 $('#priceAlert').html('<span>Подходящий тариф не найден</span>');
                 window.totalSum = null;
+                window.calculatedData = null;
                 return;
             }
             parsedFloat = parseFloat(data.sum);
             window.totalSum = parsedFloat;
             let sumStr = parsedFloat.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
+
+            window.calculatedData = data;
+            console.log(data);
 
             $('#priceAlert').html(`<strong class="text-success">${sumStr}</strong><span> за ${data.days} ${daysStr}</span>`)
         }
@@ -88,6 +94,7 @@ $(document).ready(() => {
             window.selectedStartDate = null;
             window.selectedEndDate = null;
             window.totalSum = null;
+            window.calculatedData = null;
 
             if (error.status == 0) return;
             
@@ -118,6 +125,7 @@ $(document).ready(() => {
         formData.append('start_date', toJSONLocal(window.selectedStartDate));
         formData.append('end_date', toJSONLocal(window.selectedEndDate));
         formData.append('total_sum', window.totalSum);
+        formData.append('calculated_data', JSON.stringify(window.calculatedData));
         formData.append('boat_id', window.boatId);
 
         $.ajax({ 
@@ -132,7 +140,7 @@ $(document).ready(() => {
        
         function onSuccess(data) {
             hideOverlayPanel();
-            window.location.href = data.redirect;
+            //window.location.href = data.redirect;
         }
     
         function onError(error) {

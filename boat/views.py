@@ -275,7 +275,6 @@ def calc_booking(request, pk):
     res = _calc_booking(pk, start_date, end_date)
     if not res:
         return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
-    res.pop('spec')
     return JsonResponse(res)
 
 @login_required
@@ -520,3 +519,9 @@ def delete_tariff(request, pk):
         return redirect_to_tariffs(tariff.boat.pk)
     except Tariff.DoesNotExist:
         return response_not_found()
+
+@login_required
+def confirm(request, pk):
+    if request.method == 'POST':
+        print(request.POST.get('calculated_data'))
+        return render(request, 'booking/confirm.html')

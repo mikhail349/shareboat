@@ -14,7 +14,8 @@
 
             selectedStartDate = null,
             selectedEndDate = null,
-            totalSum = null
+            totalSum = null,
+            calculatedData = null
 
         {% for price_range in price_ranges %}
             priceRanges.push({
@@ -37,7 +38,7 @@
     <script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
 
     <div class="container-lg">
-        <form method="post" action="{% url 'booking:api_create' %}" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
+        <form method="post" action="{% url 'boat:confirm' pk=boat.pk %}" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
             {% csrf_token %}
 
             <section class="jumbotron text-center">
