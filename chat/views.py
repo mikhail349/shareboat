@@ -3,41 +3,54 @@ from re import M
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.db.models import Q, Exists, OuterRef
+from django.db.models import Q, Exists, OuterRef, Max, Prefetch
 
-from .models import MessageBoat, MessageBooking, MessageSupport
+from .models import Message, MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
 
 from boat.models import Boat
 from booking.models import Booking
 
 import json
+import time
 
 @login_required
 def list(request):
     user = request.user
     messages = []
-    
-    bookings = Booking.objects.filter(Q(renter=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk'))))
+
+    # booking renter
+    msgs = MessageBooking.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-pk')
+    bookings = Booking.objects.filter(Q(renter=user)).prefetch_related(
+        Prefetch('messages', queryset=msgs, to_attr='last_messages')
+    )
     for booking in bookings:
-        last_message = booking.messages.filter(Q(sender=user)).union(booking.messages.filter(Q(recipient=user))).last()
-        if last_message:
+        if booking.last_messages:
+            last_message = booking.last_messages[0]
             last_message.badge = f'<div class="badge bg-light text-primary">Бронирование № {booking.pk}</div>'
-            messages.append(last_message)
+            messages.append(last_message)        
 
-    requests = Booking.objects.filter(Q(boat__owner=user), Exists(MessageBooking.objects.filter(booking=OuterRef('pk'))))
+    # booking boat owner
+    msgs = MessageBooking.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-pk')
+    requests = Booking.objects.filter(Q(boat__owner=user)).prefetch_related(
+        Prefetch('messages', queryset=msgs, to_attr='last_messages')
+    )
     for req in requests:
-        last_message = req.messages.filter(Q(sender=user)).union(req.messages.filter(Q(recipient=user))).last()
-        if last_message:
+        if req.last_messages:
+            last_message = req.last_messages[0]
             last_message.badge = f'<div class="badge bg-light text-primary">Заявка на бронирование № {req.pk}</div>'
-            messages.append(last_message)
+            messages.append(last_message)  
 
-    boats = Boat.objects.filter(Q(owner=user), Exists(MessageBoat.objects.filter(boat=OuterRef('pk'))))
+    # boat owner
+    msgs = MessageBoat.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-pk')
+    boats = Boat.objects.filter(Q(owner=user)).prefetch_related(
+        Prefetch('messages', queryset=msgs, to_attr='last_messages')
+    )
     for boat in boats:
-        last_message = boat.messages.filter(Q(sender=user)).union(boat.messages.filter(Q(recipient=user))).last()
-        if last_message:
+        if boat.last_messages:
+            last_message = boat.last_messages[0]
             last_message.badge = '<div class="badge bg-light text-primary">Лодка</div>' 
-            messages.append(last_message)
+            messages.append(last_message)  
 
     last_message_support = MessageSupport.objects.filter(sender=user).union(MessageSupport.objects.filter(recipient=user)).last()
     if last_message_support:

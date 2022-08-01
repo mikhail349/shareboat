@@ -207,4 +207,39 @@ class TestCase(TestCase):
         self.assertEqual(content['verification_code'], tg_code)
         self.assertEqual(content['message'], 'Ваш код для авторизации в Телеграм боте: <strong>%s</strong>. Отправьте боту команду <span class="text-primary">/auth</span> и следуйте инструкциям.' % tg_code)
 
+    def test_change_password(self):
+        user = create_user('user@mail.com', '12345')
+        token = tokens.generate_token(user, tokens.RESTORE_PASSWORD, minutes=0, seconds=1)
+    
+        sleep(2)
+        response = self.client.get(reverse('user:change_password', kwargs={'token': token}))
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.context['msg'], 'Ссылка устарела')
         
+        response = self.client.get(reverse('user:change_password', kwargs={'token': 'invalid_token'}))
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.context['msg'], 'Неверная ссылка')
+
+        token = tokens.generate_token(user, tokens.RESTORE_PASSWORD)
+        response = self.client.get(reverse('user:change_password', kwargs={'token': token}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['email'], 'user@mail.com')
+        self.assertEqual(response.context['token'], token)
+
+        response = self.client.post(reverse('user:change_password', kwargs={'token': token}), {'password1': 'new_password'})
+        self.assertRedirects(response, expected_url='/')
+        self.assertTrue(User.objects.get(pk=user.pk).email_confirmed)        
+
+    @override_settings(DEBUG=True) # deactivate recaptcha
+    def test_send_restore_password_email(self):
+        user = create_user('user@mail.com', '12345')
+        
+        # wrong email 
+        response = self.client.post(reverse('user:send_restore_password_email'), {'email': 'wrong@mail.com'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['title'], 'Восстановление пароля')
+
+        # ok
+        response = self.client.post(reverse('user:send_restore_password_email'), {'email': 'user@mail.com'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['title'], 'Восстановление пароля')

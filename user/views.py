@@ -194,11 +194,11 @@ def change_password(request, token):
     except jwt.ExpiredSignatureError:
         msg = 'Ссылка устарела'
 
-    return render(request, 'user/invalid_link.html', context={'msg': msg})
+    return render(request, 'user/invalid_link.html', context={'msg': msg}, status=400)
     
 
 def send_restore_password_email(request):
-    if not settings.DEBUG:
+    if not settings.DEBUG: # pragma: no cover
         if not check_recaptcha(request):
             return render(request, 'user/restore_password.html', context={'recaptcha_key': settings.RECAPTCHA_CLIENTSIDE_KEY, 'errors': 'Проверка "Я не робот" не пройдена'})     
 
