@@ -49,7 +49,6 @@ $(document).ready(() => {
         if (dateRange.selectedDates.length !== 2) {
             window.selectedStartDate = null;
             window.selectedEndDate = null;
-            window.totalSum = null;
             window.calculatedData = null;
 
             $('#priceAlert').html('<span>Выберите период</span>');
@@ -57,7 +56,6 @@ $(document).ready(() => {
 
         window.selectedStartDate = dateRange.selectedDates[0];
         window.selectedEndDate = dateRange.selectedDates[1];
-        window.totalSum = null;
         window.calculatedData = null;
 
         if (!!xhr) xhr.abort();
@@ -75,12 +73,10 @@ $(document).ready(() => {
         function onSuccess(data) {
             if (!data?.sum) {
                 $('#priceAlert').html('<span>Подходящий тариф не найден</span>');
-                window.totalSum = null;
                 window.calculatedData = null;
                 return;
             }
             parsedFloat = parseFloat(data.sum);
-            window.totalSum = parsedFloat;
             let sumStr = parsedFloat.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' });
             let daysStr = plural(data.days, 'день', 'дня', 'дней');
 
@@ -93,7 +89,6 @@ $(document).ready(() => {
         function onError(error) {
             window.selectedStartDate = null;
             window.selectedEndDate = null;
-            window.totalSum = null;
             window.calculatedData = null;
 
             if (error.status == 0) return;
@@ -105,26 +100,33 @@ $(document).ready(() => {
     var xhr = null;
 
     $("form").on('submit', function(e) {
-        e.preventDefault();
+        
 
-        if (!$(this).checkValidity(false)) return;
+        //if (!$(this).checkValidity(false)) return;
 
         if (!window.selectedStartDate || !window.selectedEndDate) {
             showErrorToast('Выберите период');
+            e.preventDefault();
             return;
         }
 
-        if (!window.totalSum) {
+        if (!window.calculatedData) {
             showErrorToast('Выберите другой период');
+            e.preventDefault();
             return;            
         }
+
+        $("form input[name='start_date']").val(toJSONLocal(window.selectedStartDate));
+        $("form input[name='end_date']").val(toJSONLocal(window.selectedEndDate));
+        $("form input[name='calculated_data']").val(JSON.stringify(window.calculatedData));
+
+        /*
         
         showOverlayPanel("Бронирование...");
         const url = $(this).attr("action");
         const formData = new FormData();
         formData.append('start_date', toJSONLocal(window.selectedStartDate));
         formData.append('end_date', toJSONLocal(window.selectedEndDate));
-        formData.append('total_sum', window.totalSum);
         formData.append('calculated_data', JSON.stringify(window.calculatedData));
         formData.append('boat_id', window.boatId);
 
@@ -140,7 +142,7 @@ $(document).ready(() => {
        
         function onSuccess(data) {
             hideOverlayPanel();
-            //window.location.href = data.redirect;
+            window.location.href = data.redirect;
         }
     
         function onError(error) {
@@ -150,5 +152,6 @@ $(document).ready(() => {
                 calc_booking();
             }
         }
+        */
     });
 })

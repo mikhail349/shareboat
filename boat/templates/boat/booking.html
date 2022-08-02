@@ -14,7 +14,6 @@
 
             selectedStartDate = null,
             selectedEndDate = null,
-            totalSum = null,
             calculatedData = null
 
         {% for price_range in price_ranges %}
@@ -40,6 +39,10 @@
     <div class="container-lg">
         <form method="post" action="{% url 'boat:confirm' pk=boat.pk %}" enctype="multipart/form-data" class="needs-validation form-input-min-width" novalidate>
             {% csrf_token %}
+
+            <input type="hidden" name="start_date" />
+            <input type="hidden" name="end_date" />
+            <input type="hidden" name="calculated_data" />
 
             <section class="jumbotron text-center">
                 <h1 class="jumbotron-heading">Бронирование лодки</h1>    
@@ -67,7 +70,7 @@
                     
                             {% if user.is_authenticated %}
                                 <div>
-                                    <button type="submit" class="btn btn-primary btn-lg w-100">Забронировать</button>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">Продолжить</button>
                                 </div>
                             {% else %}
                                 <a href="{% url 'user:login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary btn-lg w-100">Войти для бронирования</a>

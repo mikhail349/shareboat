@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db import transaction
 from django.db.models import Max, Min, Exists, OuterRef, Value, Prefetch, F
@@ -273,8 +274,6 @@ def calc_booking(request, pk):
     start_date  = parse_date(request.GET.get('start_date'))
     end_date    = parse_date(request.GET.get('end_date'))
     res = _calc_booking(pk, start_date, end_date)
-    if not res:
-        return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse(res)
 
 @login_required
@@ -522,6 +521,24 @@ def delete_tariff(request, pk):
 
 @login_required
 def confirm(request, pk):
-    if request.method == 'POST':
-        print(request.POST.get('calculated_data'))
-        return render(request, 'booking/confirm.html')
+    if request.method == 'POST': 
+        try: 
+            boat = Boat.published.get(pk=pk)
+            start_date = parse_date(request.POST.get('start_date'))
+            end_date = parse_date(request.POST.get('end_date'))
+            calculated_data = json.loads(request.POST.get('calculated_data'))
+        except (ValueError, json.decoder.JSONDecodeError, Boat.DoesNotExist):
+            return render(request, 'not_found.html', status=404)
+
+        context = {
+            'boat': boat,
+            'start_date': start_date,
+            'end_date': end_date,
+            'days': int(calculated_data.get('days')),
+            'total_sum': Decimal(calculated_data.get('sum')),
+            'spec': json.dumps(calculated_data.get('spec'))
+        }
+        
+        return render(request, 'booking/confirm.html', context=context)
+    else:
+        return render(request, 'not_found.html', status=404)

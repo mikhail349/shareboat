@@ -66,6 +66,9 @@ def get_min_display(tariff):
         str = get_str_case_by_count(tariff.weight, 'дня', 'дней', 'дней')
         return f'от {tariff.weight} {str}'
     
+@register.filter
+def daycountcase(value):
+    return '%s %s' % (value, get_str_case_by_count(value, 'день', 'дня', 'дней'))
 
 @register.simple_tag
 def get_weekdays_display(tariff):
