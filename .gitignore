@@ -5,3 +5,4 @@ nodejs/
 collected_static/
 *.pyc
 .env
+.coverage

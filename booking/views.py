@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required
@@ -11,8 +11,11 @@ from datetime import timedelta
 from boat.utils import calc_booking
 from chat.models import MessageBooking
 from notification import utils as notify 
+
 from .models import Booking, Prepayment
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
+from .templatetags.booking_extras import spectolist
+
 from boat.models import Boat
 from django.db.models import Q
 from telegram_bot.notifications import send_message
@@ -20,33 +23,67 @@ from django.db import transaction
 
 import json
 
+def get_confirm_create_context(data, boat_pk):
+    boat = Boat.published.get(pk=boat_pk)
+    start_date = parse_date(data.get('start_date'))
+    end_date = parse_date(data.get('end_date'))
+    calculated_data = json.loads(data.get('calculated_data'))
+    
+    context = {
+        'boat': boat,
+        'start_date': start_date,
+        'end_date': end_date,
+        'days': int(calculated_data.get('days')),
+        'total_sum': Decimal(calculated_data.get('sum')),
+        'spec': json.dumps(calculated_data.get('spec'), default=str),
+        'calculated_data': data.get('calculated_data')
+    }
+
+    return context
+
+@login_required
+def confirm(request, boat_pk):
+    if request.method == 'POST': 
+        try:
+            context = get_confirm_create_context(request.POST, boat_pk)
+        except (ValueError, TypeError, json.decoder.JSONDecodeError, Boat.DoesNotExist):
+            return render(request, 'not_found.html', status=404)
+
+        return render(request, 'booking/confirm.html', context=context)
+    else:
+        return render(request, 'not_found.html', status=404)
+
 @login_required
 def create(request):
     if request.method == 'POST':
-        data = request.POST
-        
-        start_date  = parse_date(data.get('start_date'))
-        end_date    = parse_date(data.get('end_date'))
-        total_sum   = Decimal(data.get('total_sum'))
-        boat_pk     = data.get('boat_id')
+        def _render_error(msg):
+            url = reverse('boat:booking', kwargs={'pk': context['boat'].pk}) + f'?dateFrom={context["start_date"].isoformat()}&dateTo={context["end_date"].isoformat()}'
+            context['errors'] = f'{msg}. <a href="{url}" class="link-secondary">Вернуться к бронированию.</a>'
+            return render(request, 'booking/confirm.html', context=context, status=400)
 
         try:
-            boat = Boat.published.get(pk=boat_pk)
-        except Boat.DoesNotExist:
-            return JsonResponse({'message': 'Лодка не найдена'}, status=404)
+            context = get_confirm_create_context(request.POST, request.POST.get('boat_pk'))
+        except (ValueError, TypeError, json.decoder.JSONDecodeError, Boat.DoesNotExist):
+            return render(request, 'not_found.html', status=404)
 
-        calculated_total_sum = calc_booking(boat_pk, start_date, end_date)
-        if calculated_total_sum.get('sum') != total_sum:
-            return JsonResponse({'message': 'Цена на лодку изменилась', 'code': 'outdated_price'}, status=400)
+        calculated_data = calc_booking(context['boat'].pk, context['start_date'], context['end_date'])
+        if calculated_data.get('sum') != context['total_sum']:
+            return _render_error('Тарифы на лодку изменились')
 
         try:
-            spec_json = json.dumps(calculated_total_sum.get('spec'), default=str) 
-            booking = Booking.objects.create(boat=boat, renter=request.user, start_date=start_date, end_date=end_date, total_sum=total_sum, spec=spec_json)
+            booking = Booking.objects.create(
+                boat=context['boat'], 
+                renter=request.user, 
+                start_date=context['start_date'], 
+                end_date=context['end_date'], 
+                total_sum=context['total_sum'], 
+                spec=context['spec']
+            )
             notify.send_initial_booking_to_owner(booking)
-            return JsonResponse({'redirect': reverse('booking:view', kwargs={'pk': booking.pk})})
+            return redirect(reverse('booking:view', kwargs={'pk': booking.pk}))
+
         except (BookingDateRangeException, BookingDuplicatePendingException) as e:
-            return JsonResponse({'message': str(e)}, status=400)
-     
+            return _render_error(str(e))
 
 @login_required
 def my_bookings(request):

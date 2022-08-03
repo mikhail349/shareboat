@@ -5,9 +5,11 @@ from boat.models import Boat, Tariff
 from boat.tests.test_models import create_boat_owner, create_model, create_simple_boat
 from user.tests.test_models import create_user
 from booking.models import Booking, Prepayment
+from booking.views import get_confirm_create_context
 
 from datetime import datetime, date
 import json
+from decimal import Decimal
 
 
 class BookingTestCase(TestCase):
@@ -20,6 +22,56 @@ class BookingTestCase(TestCase):
 
         self.boat = create_simple_boat(create_model(), self.owner, Boat.Status.PUBLISHED)
         self.booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 1, 1), end_date=date(self.now.year, 1, 10), total_sum=1000, spec={"test":"123"})      
+
+    def test_get_confirm_create_context(self):
+        res = get_confirm_create_context({
+            'boat': self.boat,
+            'start_date': '2022-01-01',
+            'end_date': '2022-01-03',
+            'calculated_data': '{"sum": "1000.00", "days": 2, "spec": {"1": {"name": "Сутки", "price": "500.00", "amount": "2", "sum": "1000.00"}}}'
+        }, boat_pk=self.boat.pk)
+
+        self.assertEqual(res['boat'], self.boat)
+        self.assertEqual(res['start_date'], date(2022, 1, 1))
+        self.assertEqual(res['end_date'], date(2022, 1, 3))
+        self.assertEqual(res['days'], 2)
+        self.assertEqual(res['total_sum'], Decimal("1000.00"))
+        self.assertEqual(res['spec'], '{"1": {"name": "\\u0421\\u0443\\u0442\\u043a\\u0438", "price": "500.00", "amount": "2", "sum": "1000.00"}}')
+        self.assertEqual(res['calculated_data'], '{"sum": "1000.00", "days": 2, "spec": {"1": {"name": "Сутки", "price": "500.00", "amount": "2", "sum": "1000.00"}}}')
+
+    def test_confirm(self):
+        url = reverse('booking:confirm', kwargs={'boat_pk': self.boat.pk})
+        post_data = {
+            'start_date': '2022-01-01',
+            'end_date': '2022-01-03',
+            'calculated_data': '{"sum": "1000.00", "days": 2, "spec": {"1": {"name": "Сутки", "price": "500.00", "amount": "2", "sum": "1000.00"}}}'
+        }
+
+        # anon
+        response = self.client.post(url, post_data) 
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + url)
+
+        # login
+        self.client.login(email='user@mail.ru', password='12345')
+
+        # no boat
+        response = self.client.post(reverse('booking:confirm', kwargs={'boat_pk': 579}), post_data) 
+        self.assertEqual(response.status_code, 404) 
+
+        # wrong method
+        response = self.client.get(url, post_data) 
+        self.assertEqual(response.status_code, 404)     
+
+        # ok
+        response = self.client.post(url, post_data) 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['boat'], self.boat)
+        self.assertEqual(response.context['total_sum'], Decimal("1000.00"))
+
+        # wrong params
+        post_data.pop('start_date')
+        response = self.client.post(url, post_data) 
+        self.assertEqual(response.status_code, 404)
 
     def test_view(self):
         def _get_response():
@@ -134,7 +186,7 @@ class BookingTestCase(TestCase):
 
     def test_create(self):
         def _get_response(data):
-            return self.client.post(reverse('booking:api_create'), data)    
+            return self.client.post(reverse('booking:create'), data)    
 
         now = datetime.now()
 
@@ -142,10 +194,10 @@ class BookingTestCase(TestCase):
         response = _get_response({
             'start_date': date(now.year, 1, 5),
             'end_date': date(now.year, 1, 6), 
-            'total_sum': 200.0,
-            'boat_id': self.boat.pk 
+            'calculated_data': '{"sum": "3500.00", "days": 7, "spec": {"1": {"name": "Суточно", "price": "500.00", "amount": "7", "sum": "3500.00"}}}',
+            'boat_pk': self.boat.pk,
         })
-        self.assertEqual(response.status_code, 302)       
+        self.assertRedirects(response, expected_url=reverse('user:login') + '?next=' + reverse('booking:create'))       
 
         # login as renter
         self.client.login(email='renter@mail.ru', password='12345')
@@ -155,7 +207,7 @@ class BookingTestCase(TestCase):
             'start_date': date(now.year, 2, 5),
             'end_date': date(now.year, 2, 6), 
             'total_sum': 200.0,
-            'boat_id': 999 
+            'boat_pk': 999
         })
         self.assertEqual(response.status_code, 404) 
 
@@ -166,13 +218,13 @@ class BookingTestCase(TestCase):
         )
         response = _get_response({
             'start_date': date(now.year, 2, 5),
-            'end_date': date(now.year, 2, 6), 
-            'total_sum': 200.0,
-            'boat_id': self.boat.pk 
+            'end_date': date(now.year, 2, 12), 
+            'calculated_data': '{"sum": "700.00", "days": 7, "spec": {"1": {"name": "Суточно", "price": "100.00", "amount": "7", "sum": "700.00"}}}',
+            'boat_pk': self.boat.pk
         })
         self.assertEqual(response.status_code, 400)
-        data = json.loads(response.content)
-        self.assertEqual(data['code'], 'outdated_price')
+        url = reverse('boat:booking', kwargs={'pk': self.boat.pk}) + f'?dateFrom={now.year}-02-05&dateTo={now.year}-02-12'
+        self.assertEqual(response.context['errors'], f'Тарифы на лодку изменились. <a href="{url}" class="link-secondary">Вернуться к бронированию.</a>')
 
         # wrong period
         self.booking.status = Booking.Status.ACCEPTED
@@ -180,32 +232,36 @@ class BookingTestCase(TestCase):
         response = _get_response({
             'start_date': date(now.year, 1, 1),
             'end_date': date(now.year, 1, 3), 
-            'total_sum': 1_000.0,
-            'boat_id': self.boat.pk
+            'calculated_data': '{"sum": "1000.00", "days": 7, "spec": {"1": {"name": "Суточно", "price": "500.00", "amount": "2", "sum": "1000.00"}}}',
+            'boat_pk': self.boat.pk
         })
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(json.loads(response.content)['message'], 'Бронирование лодки на указанный период недоступно')
-
+        url = reverse('boat:booking', kwargs={'pk': self.boat.pk}) + f'?dateFrom={now.year}-01-01&dateTo={now.year}-01-03'
+        self.assertEqual(response.context['errors'], f'Бронирование лодки на указанный период недоступно. <a href="{url}" class="link-secondary">Вернуться к бронированию.</a>')
+        
         # duplicated period
         self.booking.status = Booking.Status.PENDING
         self.booking.save()
         response = _get_response({
             'start_date': date(now.year, 1, 1),
             'end_date': date(now.year, 1, 3), 
-            'total_sum': 1_000.0,
-            'boat_id': self.boat.pk 
+            'calculated_data': '{"sum": "1000.00", "days": 7, "spec": {"1": {"name": "Суточно", "price": "500.00", "amount": "2", "sum": "1000.00"}}}',
+            'boat_pk': self.boat.pk 
         })
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(json.loads(response.content)['message'], 'Вы уже подали бронь на указанный период')
+        url = reverse('boat:booking', kwargs={'pk': self.boat.pk}) + f'?dateFrom={now.year}-01-01&dateTo={now.year}-01-03'
+        self.assertEqual(response.context['errors'], f'Вы уже подали бронь на указанный период. <a href="{url}" class="link-secondary">Вернуться к бронированию.</a>')
 
         # ok
         response = _get_response({
             'start_date': date(now.year, 2, 1),
             'end_date': date(now.year, 2, 3), 
-            'total_sum': 1_000.0,
-            'boat_id': self.boat.pk 
+            'calculated_data': '{"sum": "1000.00", "days": 7, "spec": {"1": {"name": "Суточно", "price": "500.00", "amount": "2", "sum": "1000.00"}}}',
+            'boat_pk': self.boat.pk 
         })
-        self.assertEqual(response.status_code, 200)
+        last_booking = Booking.objects.all().last()
+        self.assertRedirects(response, expected_url=reverse('booking:view', kwargs={'pk': last_booking.pk}))  
+
 
     def test_set_status(self):
         booking = Booking.objects.create(boat=self.boat, renter=self.renter, start_date=date(self.now.year, 2, 1), end_date=date(self.now.year, 2, 10), total_sum=1000, spec={"test":"123"}) 

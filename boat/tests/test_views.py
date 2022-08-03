@@ -646,7 +646,7 @@ class BoatTestCase(TestCase):
     def test_calc_booking(self):
         now = datetime.datetime.now()
         boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)
-        Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10),
+        tariff = Tariff.objects.create(boat=boat, active=True, start_date=datetime.date(now.year, 1, 1), end_date=datetime.date(now.year, 1, 10),
             name='Суточно', duration=1, min=1, price=500,
             mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
         )
@@ -659,7 +659,8 @@ class BoatTestCase(TestCase):
                 'end_date': datetime.date(now.year, 1, 25)
             }
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(json.loads(response.content), {})
 
         # ok
         response = self.client.get(
@@ -670,7 +671,18 @@ class BoatTestCase(TestCase):
             }
         )  
         self.assertEqual(response.status_code, 200)
-        self.assertDictEqual(json.loads(response.content), {'sum': "1000.00", 'days': 2})
+        self.assertDictEqual(json.loads(response.content), {
+            'sum': "1000.00", 
+            'days': 2,
+            'spec': {
+                str(tariff.pk): {          
+                    'name': 'Суточно',
+                    'price': '500.00',
+                    'amount': 2,
+                    'sum': '1000.00'
+                }
+            }
+        })
 
     def test_view(self):
         boat = Boat.objects.create(name='Boat1', length=1, width=1, draft=1, capacity=1, model=self.model, type=Boat.Type.BOAT, owner=self.owner, status = Boat.Status.PUBLISHED)

@@ -519,26 +519,4 @@ def delete_tariff(request, pk):
     except Tariff.DoesNotExist:
         return response_not_found()
 
-@login_required
-def confirm(request, pk):
-    if request.method == 'POST': 
-        try: 
-            boat = Boat.published.get(pk=pk)
-            start_date = parse_date(request.POST.get('start_date'))
-            end_date = parse_date(request.POST.get('end_date'))
-            calculated_data = json.loads(request.POST.get('calculated_data'))
-        except (ValueError, json.decoder.JSONDecodeError, Boat.DoesNotExist):
-            return render(request, 'not_found.html', status=404)
 
-        context = {
-            'boat': boat,
-            'start_date': start_date,
-            'end_date': end_date,
-            'days': int(calculated_data.get('days')),
-            'total_sum': Decimal(calculated_data.get('sum')),
-            'spec': json.dumps(calculated_data.get('spec'))
-        }
-        
-        return render(request, 'booking/confirm.html', context=context)
-    else:
-        return render(request, 'not_found.html', status=404)
