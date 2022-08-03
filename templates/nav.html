@@ -84,7 +84,7 @@
                     {% endif %}
                 </div>
             </a>
-            <a id="navbarDropdownUserProfile" class="nav-link align-middle py-0" href="{% url 'user:update' %}">
+            <a id="navbarDropdownUserProfile" class="nav-link align-middle px-2" href="{% url 'user:update' %}">
                 <img height="32" width="32" src="{% if user.avatar_sm %}{{ user.avatar_sm.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" class="of-cover rounded-circle">                                            
             </a>
         {% endif %}
