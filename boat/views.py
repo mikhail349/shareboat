@@ -44,7 +44,7 @@ def get_bool(value):
         return True
     return False
 
-FILES_LIMIT_COUNT = 10
+FILES_LIMIT_COUNT = 30
 
 @login_required
 def get_models(request, pk):

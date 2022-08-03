@@ -242,14 +242,14 @@ class BoatTestCase(TestCase):
 
         data = {
             'model': 982,
-            'file': [get_imagefile() for _ in range(11)]
+            'file': [get_imagefile() for _ in range(35)]
         }
         
         response = self.client.post(reverse('boat:create'), data)
         self.assertEqual(response.status_code, 400)
         msg = json.loads(response.content)['message']
         self.assertEqual(msg[0], 'Модель не найдена')
-        self.assertEqual(msg[1], 'Можно приложить не более 10 фотографий')
+        self.assertEqual(msg[1], 'Можно приложить не более 30 фотографий')
 
         response = self.client.post(reverse('boat:create'), self._get_post_data())
         self.assertEqual(response.status_code, 200)
