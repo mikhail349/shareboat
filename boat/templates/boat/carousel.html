@@ -1,6 +1,6 @@
 {% if boat.files.count > 1 %}
     
-    <div id="fileCarousel{{forloop.counter0}}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false" data-bs-touch="true">
+    <div id="fileCarousel{{forloop.counter0}}" class="carousel slide" data-bs-touch="true">
         <ol class="carousel-indicators">
             {% for file in boat.files.all %} 
                 <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
