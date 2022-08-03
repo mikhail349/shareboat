@@ -203,9 +203,7 @@ class BoatFile(models.Model):
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE, related_name='files')
 
 pre_save.connect(signals.verify_imagefile, sender=BoatFile)
-pre_save.connect(signals.delete_old_file, sender=BoatFile)
 post_save.connect(signals.compress_imagefile, sender=BoatFile)
-post_delete.connect(signals.delete_file, sender=BoatFile)
 
 
 class BoatFav(models.Model):

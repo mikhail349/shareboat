@@ -8,3 +8,8 @@ def get_imagefile(filename='test.png', size=(50,50)):
     image.save(image_file, 'PNG')
     image_file.seek(0)
     return File(image_file, name=filename)
+
+def get_file(filename='file.txt'):
+    file = BytesIO(b'Inital value for read buffer')
+    file.seek(0)
+    return File(file, name=filename)

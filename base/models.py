@@ -34,6 +34,4 @@ class BaseImage(models.Model):
     base = models.ForeignKey(Base, on_delete=models.CASCADE, related_name='images')
 
 pre_save.connect(signals.verify_imagefile, sender=BaseImage)
-pre_save.connect(signals.delete_old_file, sender=BaseImage)
 post_save.connect(signals.compress_imagefile, sender=BaseImage)
-post_delete.connect(signals.delete_file, sender=BaseImage)
