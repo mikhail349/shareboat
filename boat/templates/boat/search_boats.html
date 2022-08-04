@@ -6,107 +6,116 @@
 {% block title %}Поиск лодки{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'boat/css/search_boats.css' %}">
-<script type="text/javascript" src="{% static 'boat/js/search_boats.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'boat/css/search_boats.css' %}">
+    <script type="text/javascript" src="{% static 'boat/js/search_boats.min.js' %}"></script>
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
-<script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'boat/js/switch_fav.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
+    <script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'boat/js/switch_fav.min.js' %}"></script>
 
-<form id="formSearch" action='.' method="get" class="needs-validation" novalidate>
-    <div class="container-md">
-        <section class="jumbotron text-center ">      
-            <h1 class="jumbotron-heading">Поиск лодки</h1>
-        </section>
+    <form id="formSearch" action='.' method="get" class="needs-validation" novalidate>
+        <div class="container-md">
+            <section class="jumbotron text-center ">      
+                <h1 class="jumbotron-heading">Поиск лодки</h1>
+            </section>
 
-        <div class="search-boats-panel d-flex justify-content-center mb-3">
-            <div>
-        
-                <div class="form-floating mb-2">                 
-                    <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
-                    <label>Период бронирования</label>
-                    <div class="invalid-tooltip">Укажите период бронирования</div>
-                </div>
+            <div class="search-boats-panel d-flex justify-content-center mb-3">
+                <div>
+            
+                    <div class="form-floating mb-2">                 
+                        <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
+                        <label>Период бронирования</label>
+                        <div class="invalid-tooltip">Укажите период бронирования</div>
+                    </div>
 
-                <div class="form-floating mb-2" >
-                    <select class="form-select" id="stateSelect" name="state">
-                        <option selected value="">Любое</option>
-                        {% for state in states %}
-                            <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
-                        {% endfor %}
-                    </select>
-                    <label for="stateSelect">Местоположение</label>
-                </div>
-
-                <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
-                <input id="hiddenDateTo" name="dateTo" type="hidden" />
-                <input name="page" type="hidden" />
-                
-                <button class="btn btn-outline-primary btn-lg w-100 mb-2 position-relative" type="button" 
-                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
-                    {% if request.GET.boatType %}
-                        <span class="badge bg-danger">1</span>
-                    {% endif %}
-                </button>
-                <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">Поиск</button>
-                {% if searched %}
-                    <p class="lead text-muted text-center mb-0">Найдено: {{ p.paginator.count }}</p>
-                {% endif %}            
-            </div>
-        </div>
-
-        {% if searched %}
-            {% include 'paginator.html' with class="mb-3" %}
-            <div class='row align-items-center g-2 mb-3'>
-                {% if p.paginator.count  > 1 %}
-                    <div class="col-lg-auto">
-                        <select id="sortSelect" class="form-select w-100 border-primary" name="sort">
-                            {% for sort in sort_list %}
-                                <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
+                    <div class="form-floating mb-2" >
+                        <select class="form-select" id="stateSelect" name="state">
+                            <option selected value="">Любое</option>
+                            {% for state in states %}
+                                <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
                             {% endfor %}
                         </select>
+                        <label for="stateSelect">Местоположение</label>
                     </div>
-                {% endif %}
+
+                    <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
+                    <input id="hiddenDateTo" name="dateTo" type="hidden" />
+                    <input name="page" type="hidden" />
+                    
+                    <button class="btn btn-outline-primary btn-lg w-100 mb-2 position-relative d-lg-none" type="button" 
+                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
+                        {% if request.GET.boatType %}
+                            <span class="badge bg-danger">1</span>
+                        {% endif %}
+                    </button>
+                    <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">Поиск</button>
+                    {% if searched %}
+                        <p class="lead text-muted text-center mb-0">Найдено: {{ p.paginator.count }}</p>
+                    {% endif %}            
+                </div>
             </div>
-        {% endif %}
+
+            {% if searched %}
+                {% include 'paginator.html' with class="mb-3" %}
+                <div class='row align-items-center g-2 mb-3'>
+                    {% if p.paginator.count  > 1 %}
+                        <div class="col-lg-auto">
+                            <select id="sortSelect" class="form-select w-100 border-primary" name="sort">
+                                {% for sort in sort_list %}
+                                    <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
     
-        {% include 'boat/filter.html' %}
-    </div>
-</form>
-    <div class="container-md">
-        {% include 'leaflet.html' %}   
-        <div class="album">
-            <div class="row g-4">
-                {% for boat in boats %}
-                    <div class="col-lg-4 col-md-4">
-                        <div class="card box-shadow h-100">
-                            <a href="{% url 'boat:booking' boat.id %}?dateFrom={{ request.GET.dateFrom }}&dateTo={{ request.GET.dateTo }}">
-                                {% include 'boat/carousel.html' %}
-                            </a>    
-                            <div class="card-body d-flex flex-column">
-                                {% include 'boat/card.html' %}
-                                <div class="row align-items-center mt-2 mb-2">
-                                    {% if user.is_authenticated %}
-                                        <div class="col-auto">
-                                            <button type="submit" class="btn px-0 btn-link btn-fav-icon no-focus {% if boat.in_fav %}text-danger{% else %}text-primary{% endif %}" data-pk="{{ boat.pk }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
-                                                </svg>
-                                            </button>
+        <div class="d-flex justify-content-center container-lg">
+            {% if boats %}
+                <div class="flex-grow-1 me-3">
+                    <div class="">
+                        {% include 'leaflet.html' %}   
+                        <div class="album">
+                            <div class="row g-3">
+                                {% for boat in boats %}
+                                    <div class="col-lg-4 col-md-4">
+                                        <div class="card box-shadow h-100">
+                                            <a href="{% url 'boat:booking' boat.id %}?dateFrom={{ request.GET.dateFrom }}&dateTo={{ request.GET.dateTo }}">
+                                                {% include 'boat/carousel.html' %}
+                                            </a>    
+                                            <div class="card-body d-flex flex-column">
+                                                {% include 'boat/card.html' %}
+                                                <div class="row align-items-center mt-2 mb-2">
+                                                    {% if user.is_authenticated %}
+                                                        <div class="col-auto">
+                                                            <button type="button" class="btn px-0 btn-link btn-fav-icon no-focus {% if boat.in_fav %}text-danger{% else %}text-primary{% endif %}" data-pk="{{ boat.pk }}">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div class="col">
+                                                        <div class="text-success fs-3 text-end mb-1">от {{ boat.actual_tariffs.0.price_per_day }}&nbsp;₽ / день</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    {% endif %}
-                                    <div class="col">
-                                        <div class="text-success fs-3 text-end mb-1">от {{ boat.actual_tariffs.0.price_per_day }}&nbsp;₽ / день</div>
                                     </div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
-                {% endfor %}
+                    {% include 'paginator.html' with class="mt-3" %}
+                </div>
+            {% endif %}
+            <div style="min-width: 300px">
+                {% include 'boat/filter.html' %}
             </div>
         </div>
-    </div>
-    {% include 'paginator.html' with class="mt-3" %}
+    </form>
+
     {% include 'modal_map.html' %}
 
 {% endblock %}
