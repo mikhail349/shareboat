@@ -9,7 +9,7 @@
         <div class="carousel-inner">
             {% for file in boat.files.all %} 
                 <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}">
-                    <img class="d-block w-100 card-img-top" src="{{ file.file.url }}" />
+                    <img class="card-img-left" src="{{ file.file.url }}" />
                 </div>
             {% endfor %}
         </div>
@@ -29,10 +29,10 @@
 
 {% elif boat.files.exists %}
 
-    <img src="{{ boat.files.first.file.url }}" class="card-img-top" />
+    <img src="{{ boat.files.first.file.url }}" class="card-img-left" />
 
 {% else %}
 
-    <div class="card-img-top"></div>
+    <div class="card-img-left"></div>
 
 {% endif %}

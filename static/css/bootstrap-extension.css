@@ -72,6 +72,18 @@ a {
     animation: fadein .5s;
     animation-fill-mode: forwards;
     -webkit-animation-fill-mode: forwards;
+    
+}
+
+.card-img-left,
+.card-img  {
+    object-fit: cover;
+    opacity: 0;
+    animation: fadein .5s;
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+    height: 269px;
+    width: -webkit-fill-available;
 }
 
 .card-img-small {
