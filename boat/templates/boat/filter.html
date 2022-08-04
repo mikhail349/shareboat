@@ -5,11 +5,18 @@
 <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="offcanvasBoatFilter">
     <div >
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasBoatFilterLabel">Фильтр</h5>
+            <h5 class="offcanvas-title" id="offcanvasBoatFilterLabel">Фильтр, сортировка</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-label="Close"></button>
         </div>
 
         <div class="offcanvas-body d-block">
+            <h6 class="mb-3">Сортировка</h6>
+            <select id="sortSelect" class="form-select mb-3" name="sort">
+                {% for sort in sort_list %}
+                    <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
+                {% endfor %}
+            </select>
+
             <h6 class="mb-3">Типы лодок</h6>
             <div class="list-group mb-3">
                 {% for boat_type in boat_types %}

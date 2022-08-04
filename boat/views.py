@@ -201,7 +201,7 @@ def search_boats(request):
             if q_state:
                 boats = boats.filter(coordinates__state=q_state).union(boats.filter(base__state=q_state))
   
-            boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price, reverse=q_sort.split('_')[1]=='desc')
+            boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price_per_day, reverse=q_sort.split('_')[1]=='desc')
         searched = True
 
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
