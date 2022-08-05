@@ -102,14 +102,14 @@ function FilesList(props) {
                 }                
             </div>
             <div class="row row-cols-lg-auto align-items-center">
-                <div class="col mb-3">
+                <div class="col">
                     <button type="button" className="btn btn-outline-primary w-100" onClick={() => fileInputRef.current.click()}>
                         Добавить фото
                     </button>  
                 </div> 
                 {
                     !window.isMobile() && (
-                        <div class="col mb-3">
+                        <div class="col">
                         {
                             isFileUploadHover() ? (
                                 <span className="text-success">

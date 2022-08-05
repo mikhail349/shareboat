@@ -13,10 +13,10 @@
 
     <form method="post" action="{% url 'boat:create_tariff' %}" class="needs-validation" novalidate>
         {% csrf_token %}
-        <div class="container-lg" style='margin-bottom: 70px'>
+        <div class="container-lg">
             {% include 'boat/tariff_form.html' %}             
         </div>
-        <div class="fixed-bottom bg-light py-3">
+        <div class="sticky-bottom bg-light py-3">
             <div class="container-lg">
                 <div class="row g-2">      
                     <div class="col col-lg-auto">
