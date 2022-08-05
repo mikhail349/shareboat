@@ -23,6 +23,10 @@ $(document).ready(() => {
             $("#hiddenDateFrom").val(toJSONLocal(dpRange.selectedDates[0]));
             $("#hiddenDateTo").val(toJSONLocal(dpRange.selectedDates[1]));
         }
+
+        const $btnSubmit = $('#formSearch button[type=submit]');
+        $btnSubmit.attr('disabled', true);
+        $btnSubmit.text('Идет поиск...');
     });
 
 })
