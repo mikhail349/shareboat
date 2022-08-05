@@ -2,45 +2,46 @@
 
 <div class="album">
     <div class="container">
-        <div class="row g-4">
+        <div class="row row-cols-1 row-cols-xl-2 g-3">
             {% for req in requests %}
-                <div class="col-lg-4 col-md-4">
-                    <div class="card box-shadow h-100">
-                        <a href="{% url 'booking:view' req.id %}" >
-                            {% include 'boat/carousel.html' with boat=req.boat %}
-                        </a>    
-                        
-                        <div class="card-body d-flex flex-column">
-                            {% include 'booking/card.html' with boat=req.boat %}
-                            <div class="alert {{ req.status|get_status_color }}" role="alert">
-                                {% include 'booking/booking_data.html' with booking=req %}
+                <div class="col">
+                    <div class="card box-shadow">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <a href="{% url 'booking:view' req.id %}" >
+                                    {% include 'boat/carousel.html' with boat=req.boat %}
+                                </a>    
                             </div>
-                            <div class="dropdown mt-auto">
-                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuStatus{{ req.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Действия
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ req.pk }}">
-                                    {% if req.status == Status.PENDING %}
-                                        <li>
-                                            <a class="dropdown-item accept-request" href="#" data-booking-id="{{ req.pk }}" data-status="{{ Status.ACCEPTED }}">
-                                                Подтвердить бронь
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="#" data-booking-id="{{ req.pk }}" data-bs-toggle="modal" data-bs-target="#declineRequestModal">
-                                                Отменить бронь
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                    {% endif %}      
-                                    <li><a class="dropdown-item" href="{% url 'chat:booking' req.pk %}?back={{ request.get_full_path }}">Чат</a></li>                           
-                                </ul>
+                            <div class="col-md-8">
+                                <div class="card-body d-flex flex-column">
+                                    {% include 'booking/card.html' with boat=req.boat %}
+                                    <div class="alert {{ req.status|get_status_color }} p-2 mb-2" role="alert">
+                                        {% include 'booking/booking_data.html' with booking=req %}
+                                    </div>
+                                    <div class="dropdown mt-auto">
+                                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuStatus{{ req.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Действия
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ req.pk }}">
+                                            {% if req.status == Status.PENDING %}
+                                                <li>
+                                                    <a class="dropdown-item accept-request" href="#" data-booking-id="{{ req.pk }}" data-status="{{ Status.ACCEPTED }}">
+                                                        Подтвердить бронь
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" data-booking-id="{{ req.pk }}" data-bs-toggle="modal" data-bs-target="#declineRequestModal">
+                                                        Отменить бронь
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                            {% endif %}      
+                                            <li><a class="dropdown-item" href="{% url 'chat:booking' req.pk %}?back={{ request.get_full_path }}">Чат</a></li>                           
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    
-                        <h5>
-                            <span style="left: 5px; top: 5px;" class="position-absolute badge {{ req.status|get_status_color }}">{{ req.get_status_display }}</span>
-                        </h5>
                     </div>
                 </div>
             {% endfor %}
