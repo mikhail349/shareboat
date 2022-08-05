@@ -1,9 +1,64 @@
 {% extends 'main.html' %}
+{% load static %}
 
 {% block content %}
-    <div class="container-md">
-        <div class="card bg-primary text-white mt-3">
-            Test
+    <script type="text/javascript" src="{% static 'js/index.min.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
+    <script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
+
+    <div class="container-md" style="max-width: 900px;">
+        <h1 class="display-6 text-center my-5"><strong>SHAREBOAT.RU</strong></h1>
+        <h1 class="display-6 text-center mb-3">Найди лодку для незабываемого путешествия!</h1>
+        <div class="d-flex justify-content-center mb-5">
+            <div class="card bg-primary" style="width: 900px;">
+                <form id="formSearch" action="{% url 'boat:search_boats' %}" method="get" c>
+                    <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
+                    <input id="hiddenDateTo" name="dateTo" type="hidden" />
+                    <div class="row row-cols-1 row-cols-lg-3 g-3 p-3">
+                        <div class="col">
+                            <div class="form-floating">                 
+                                <input id="dpRange" type="text" name="test" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
+                                <label>Период бронирования</label>
+                                <div class="invalid-tooltip">Укажите период бронирования</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <select class="form-select" id="stateSelect" name="state">
+                                    <option selected value="">Любое</option>
+                                    {% for state in states %}
+                                        <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="stateSelect">Местоположение</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-warning w-100 h-100 form-control" type="submit">Найти</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
+
+        <h1 class="display-6 text-center my-5">Как работает <strong>SHAREBOAT.RU</strong></h1>
+        {% for step in steps %}
+            <h5 class="text-center">{{ step }}</h5>
+            {% if not forloop.last %}
+                <div class="text-center my-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffc107" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                    </svg>
+                </div>    
+            {% endif %} 
+        {% endfor %}
+
+        <h1 class="display-6 text-center my-5 mb-3">Есть вопросы?</h1>
+        <h5 class="text-center mb-5">Свяжитесь с нами любым удобным способом, мы с радостью Вас проконсультируем</h5>
     </div>
+
+    <footer class="bg-light text-muted py-3" style="height: 100px">
+        <div class="container-md text-center">SHAREBOAT.RU 2022</div>
+    </footer>
 {% endblock %}

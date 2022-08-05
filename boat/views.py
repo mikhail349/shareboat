@@ -202,28 +202,6 @@ def search_boats(request):
         boats = boats.filter(coordinates__state=q_state).union(boats.filter(base__state=q_state)) 
 
     boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price_per_day, reverse=q_sort.split('_')[1]=='desc')
-
-    """
-    if q_date_from and q_date_to:
-        q_date_from = datetime.datetime.strptime(q_date_from, '%Y-%m-%d')
-        q_date_to = datetime.datetime.strptime(q_date_to, '%Y-%m-%d')
-
-        if q_date_from <= q_date_to:
-            boats = Boat.published.all()
-            if q_boat_types:
-                boats = boats.filter(type__in=q_boat_types)
-
-            boats = boats.filter(tariffs__start_date__lte=q_date_from, tariffs__end_date__gte=q_date_to).distinct()
-            boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
-            boats = boats.annotate_in_fav(user=request.user)
-            boats = boats.prefetch_actual_tariffs()
-
-            if q_state:
-                boats = boats.filter(coordinates__state=q_state).union(boats.filter(base__state=q_state))
-  
-            boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price_per_day, reverse=q_sort.split('_')[1]=='desc')
-        searched = True
-    """
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
 
     boats_states = set(Boat.published.filter(coordinates__pk__isnull=False).values_list('coordinates__state', flat=True))
@@ -234,7 +212,6 @@ def search_boats(request):
         'sort_list': [('sum_asc', 'Сначала дешевые'), ('sum_desc', 'Сначала дорогие')],
         'boat_types': Boat.get_types(),
         'boats': p.object_list,
-        #'searched': searched,
         'p': p,
         'states': states
     }
