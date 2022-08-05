@@ -27,10 +27,9 @@ from chat import urls as chat_urls
 from portal import urls as portal_urls
 
 from . import views
-from boat import views as boat_views
 
 urlpatterns = [
-    path('', boat_views.search_boats),
+    path('', views.index),
     path(f'{settings.ADMIN_URL}/', admin.site.urls),
 
     path('user/', include(user_urls)),

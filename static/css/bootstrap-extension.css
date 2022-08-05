@@ -1,52 +1,36 @@
 :root {
     --bs-primary: #191645;
     --bs-primary-rgb: 	25, 22, 69;
+    --bs-primary-disabled: #3b3586;
+    --bs-danger-disabled: #E97D88;
 }
 
-.btn-primary, 
-.btn-primary.disabled,
-.btn-primary:disabled,
-.btn-check:checked+.btn-outline-primary {
-    color: var(--bs-gray-200);
-    border-color: var(--bs-primary);
-    background-color: var(--bs-primary);
-}
-
-.btn-primary:hover {
-    color: white;
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);   
+.btn-primary {
+    --bs-btn-color: var(--bs-gray-200);
+    --bs-btn-bg: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: var(--bs-primary);
+    --bs-btn-focus-shadow-rgb: 25, 22, 69;
+    --bs-btn-active-bg: var(--bs-primary);
+    --bs-btn-disabled-bg: var(--bs-primary-disabled);
+    --bs-btn-disabled-border-color: var(--bs-primary-disabled);
 }
 
 .btn-outline-primary {
-    color: var(--bs-primary);
-    border-color: var(--bs-primary);
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: var(--bs-primary);
+    --bs-btn-focus-shadow-rgb: 25, 22, 69;
+    --bs-btn-active-bg: var(--bs-primary);
+    --bs-btn-active-border-color: var(--bs-primary);
+    --bs-btn-disabled-color: var(--bs-primary-disabled);
+    --bs-btn-disabled-border-color: var(--bs-primary-disabled);
 }
 
-.btn-outline-primary.disabled, 
-.btn-outline-primary:disabled {
-    color: var(--bs-primary);
-    background-color: transparent;
-}
-
-.btn-primary:hover, 
-.btn-outline-primary:hover, 
-.btn-outline-primary.dropdown-toggle.show {
-    color: white;
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-} 
-
-.border-primary {
-    border-color: var(--bs-primary) !important;
-}
-
-.btn-primary:active,
-.btn-primary:focus,
-.btn-primary:visited,
-.btn-outline-primary:focus,
-.btn-outline-primary.dropdown-toggle.show:focus {
-    box-shadow: 0 0 0 0.12rem rgb(25 22 69 / 20%);
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--bs-primary);
 }
 
 .form-control:focus, .form-select:focus, .form-check-input:focus {

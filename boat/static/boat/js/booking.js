@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
     const searchParams = new URLSearchParams(window.location.search);
-    const inputDatesExist = searchParams.has('dateFrom') && searchParams.has('dateTo');
+    const inputDatesExist = searchParams.has('dateFrom') && searchParams.has('dateTo') && searchParams.get('dateFrom') !== '' && searchParams.get('dateTo') !== '';
 
     const dateRange = new AirDatepicker('#dateRange', {
         selectedDates: [

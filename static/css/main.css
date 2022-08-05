@@ -69,6 +69,10 @@ input[readonly].false-readonly {
     background-color: white !important;
 }
 
+.air-datepicker-global-container {
+    z-index: 99999 !important;
+}
+
 .scale-anim {
     animation-name: scale;
     animation-duration: .5s;

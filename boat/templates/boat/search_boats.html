@@ -13,110 +13,75 @@
     <script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'boat/js/switch_fav.min.js' %}"></script>
 
-    <form id="formSearch" action='.' method="get" class="needs-validation" novalidate>
-        <div class="container-md">
-            <section class="jumbotron text-center ">      
-                <h1 class="jumbotron-heading">Поиск лодки</h1>
-            </section>
+    <div class="container-md">
+        <section class="jumbotron text-center ">      
+            <h1 class="jumbotron-heading">Поиск лодки</h1>
+        </section>
 
-            <div class="search-boats-panel d-flex justify-content-center mb-3">
-                <div>
-            
-                    <div class="form-floating mb-2">                 
-                        <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
-                        <label>Период бронирования</label>
-                        <div class="invalid-tooltip">Укажите период бронирования</div>
-                    </div>
-
-                    <div class="form-floating mb-2" >
-                        <select class="form-select" id="stateSelect" name="state">
-                            <option selected value="">Любое</option>
-                            {% for state in states %}
-                                <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="stateSelect">Местоположение</label>
-                    </div>
-
-                    <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
-                    <input id="hiddenDateTo" name="dateTo" type="hidden" />
-                    <input name="page" type="hidden" />
-                    
-                    {% if searched %}
-                        <button class="btn btn-outline-primary btn-lg w-100 mb-2 position-relative d-lg-none" type="button" 
-                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр, сортировка
-                            {% if request.GET.boatType %}
-                                <span class="badge bg-danger">1</span>
-                            {% endif %}
-                        </button>
-                    {% endif %}
-                    <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">Поиск</button>
-                    {% if searched %}
-                        <p class="lead text-muted text-center mb-0">Найдено: {{ p.paginator.count }}</p>
-                    {% endif %}            
-                </div>
-            </div>
-
-            {% if searched %}
-                {% include 'paginator.html' with class="mb-3" %}
+        <button class="btn btn-outline-primary btn-lg w-100 mb-3 position-relative d-lg-none" type="button" 
+            data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
+            {% get_filter_count request as filter_count %}
+            {% if filter_count > 0 %}
+                <span class="badge bg-danger">{{ filter_count }}</span>
             {% endif %}
-        </div>
+        </button>
         
-        <div class="container-md">
-            <div class="row justify-content-center">
-                {% if boats %}
-                    <div class="col">
-                        {% include 'leaflet.html' %}
-                        <div class="album">
-                            <div class="row row-cols-1 justify-content-end g-3">
-                                {% for boat in boats %}
-                                    <div class="col">
-                                        <div class="card box-shadow h-100">
-                                            <div class="row g-0">
-                                                <div class="col-md-4">
-                                                    <a href="{% url 'boat:booking' boat.id %}?dateFrom={{ request.GET.dateFrom }}&dateTo={{ request.GET.dateTo }}">
-                                                        {% include 'boat/carousel.html' %}
-                                                    </a>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <div class="card-body d-flex flex-column">
-                                                        {% include 'boat/card.html' %}
-                                                        <div class="row align-items-center mt-2 mb-2">
-                                                            {% if user.is_authenticated %}
-                                                                <div class="col-auto">
-                                                                    <button type="button" class="btn px-0 btn-link btn-fav-icon no-focus {% if boat.in_fav %}text-danger{% else %}text-primary{% endif %}" data-pk="{{ boat.pk }}">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-                                                            {% endif %}
-                                                            <div class="col">
-                                                                <div class="text-success fs-3 text-end mb-1">от {{ boat.actual_tariffs.0.price_per_day }}&nbsp;₽ / день</div>
+        {% include 'paginator.html' with class="mb-3" %}
+        <div class="row">
+            {% if boats %}   
+                <div class="col">
+                    {% include 'leaflet.html' %}
+                    <div class="album">
+                        <div class="row row-cols-1 justify-content-end g-3">
+                            {% for boat in boats %}
+                                <div class="col">
+                                    <div class="card box-shadow h-100">
+                                        <div class="row g-0">
+                                            <div class="col-md-4">
+                                                <a href="{% url 'boat:booking' boat.id %}?dateFrom={{ request.GET.dateFrom }}&dateTo={{ request.GET.dateTo }}">
+                                                    {% include 'boat/carousel.html' %}
+                                                </a>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body d-flex flex-column">
+                                                    {% include 'boat/card.html' %}
+                                                    <div class="row align-items-center mt-2 mb-2">
+                                                        {% if user.is_authenticated %}
+                                                            <div class="col-auto">
+                                                                <button type="button" class="btn px-0 btn-link btn-fav-icon no-focus {% if boat.in_fav %}text-danger{% else %}text-primary{% endif %}" data-pk="{{ boat.pk }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                                                    </svg>
+                                                                </button>
                                                             </div>
+                                                        {% endif %}
+                                                        <div class="col">
+                                                            <div class="text-success fs-3 text-end mb-1">от {{ boat.actual_tariffs.0.price_per_day }}&nbsp;₽ / день</div>
                                                         </div>
-                                                    </div>    
-                                                </div>
+                                                    </div>
+                                                </div>    
                                             </div>
                                         </div>
                                     </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% include 'paginator.html' with class="mt-3" %}
-                    </div>
-                {% endif %}
-                {% if searched %}
-                    <div class="col-auto" style="min-width: 354px; max-width: 354px">
-                        <div class="sticky-top" style="top: calc(63px + .5rem );">
-                            {% include 'boat/filter.html' %}
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
-                {% endif %}
+                </div> 
+            {% else %}
+                <div class="col text-center">
+                    <h4 class="mt-3">Нет подходящих лодок</h4>
+                    <p>Попробуйте смягчить условия поиска или изменить период</p>
+                    <button id="btnNotFoundClearFilter" class="btn btn-outline-danger mb-3" type="button">Сброcить фильтр</button>
+                </div>
+            {% endif %}
+            <div class="col-auto" style="min-width: 354px; max-width: 354px">
+                {% include 'boat/filter.html' %}
             </div>
+            
         </div>
-    </form>
+        {% include 'paginator.html' with class="mt-3" %}
+    </div>
 
     {% include 'modal_map.html' %}
-
 {% endblock %}

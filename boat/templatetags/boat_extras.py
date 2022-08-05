@@ -14,6 +14,11 @@ def tryiso(value):
     return value
 
 @register.simple_tag
+def get_filter_count(request):
+    counters = ('dateFrom', 'state', 'boatType')
+    return len([True for k,v in request.GET.items() if k in counters and v])
+
+@register.simple_tag
 def get_boat_coordinates(boat):
     if not isinstance(boat, Boat):
         return {}
