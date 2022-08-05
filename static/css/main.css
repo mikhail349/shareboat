@@ -14,15 +14,21 @@
     max-height: 65vh;
 }
 
-body {
+html, body {
     height: 100%;
     color: var(--bs-primary);
 }
 
-body > .main-content-container {
-    /*padding-top: var(--header-padding-top);*/
-    margin-bottom: 1rem;
-}  
+.main-content-container {
+    min-height: calc(100% - 63px);
+}
+
+footer {
+    clear: both;
+    position: relative;
+    height: 100px;
+
+}
 
 .loading-ship-wheel {  
     animation-name: rotation;

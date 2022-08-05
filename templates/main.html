@@ -50,6 +50,10 @@
             {% block content %}{% endblock %}
         </div>
 
+        {% block footer %}
+            {% include 'footer.html' %}
+        {% endblock %}
+
         <div id="overlayPanel">
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <img height="64" width="64" class="loading-ship-wheel" src="{% static 'img/ship-wheel.png' %}" />

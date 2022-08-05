@@ -7,20 +7,51 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'boat/js/moderate.min.js' %}"></script>
 
-    <div class="container-lg" style='margin-bottom: 70px'>
-        <section class="jumbotron text-center">
-            <h1 class="jumbotron-heading">Модерация лодки</h1>    
-        </section>
+    <div>
+        <div class="container-lg">
+            <section class="jumbotron text-center">
+                <h1 class="jumbotron-heading">Модерация лодки</h1>    
+            </section>       
 
-        {% if errors %}
-            <div class="alert alert-danger">{{ errors }}</div>
-        {% endif %}
+            {% if errors %}
+                <div class="alert alert-danger">{{ errors }}</div>
+            {% endif %}
 
-        {% include 'boat/view_base.html' %}
-        <section class="jumbotron text-center">
-            <h1 class="jumbotron-heading">Тарифы</h1>    
-        </section>
-        {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all|dictsort:'start_date'|dictsort:'end_date' show_active_column=True %}  
+            {% include 'boat/view_base.html' %}
+            <section class="jumbotron text-center">
+                <h1 class="jumbotron-heading">Тарифы</h1>    
+            </section>
+            {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all|dictsort:'start_date'|dictsort:'end_date' show_active_column=True %}  
+        </div>
+
+        <div class="sticky-bottom bg-light py-3">
+            <div class="container-lg">
+                <div class="row g-2">            
+                    <div class="col col-lg-auto">
+                        <form action="{% url 'boat:accept' boat.pk %}" method="post">
+                            {% csrf_token %} 
+                            <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
+                            <button type="submit" class="btn btn-primary w-100">Акцептовать</button>
+                        </form>                         
+                    </div>
+                    <div class="col col-lg-auto">
+                        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
+                    </div>
+                    <div class="col-auto">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                    </svg>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
+                            </ul>
+                        <div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="declineModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">
@@ -55,35 +86,6 @@
                         <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" data-bs-dismiss="modal">Отмена</button>               
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="fixed-bottom bg-light py-3">
-        <div class="container-lg">
-            <div class="row g-2">            
-                <div class="col col-lg-auto">
-                    <form action="{% url 'boat:accept' boat.pk %}" method="post">
-                        {% csrf_token %} 
-                        <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
-                        <button type="submit" class="btn btn-primary w-100">Акцептовать</button>
-                    </form>                         
-                </div>
-                <div class="col col-lg-auto">
-                    <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
-                </div>
-                <div class="col-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                              </svg>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
-                        </ul>
-                    <div>
-                </div>
             </div>
         </div>
     </div>

@@ -10,5 +10,8 @@
 {% block content %}
     <script type="text/javascript" src="{% static 'chat/js/message.min.js' %}"></script>
     {% include 'chat/chat.html' %}
-    {% include 'chat/footer.html' %}
 {% endblock  %}
+
+{% block footer %}
+    {% include 'chat/footer.html' %}
+{% endblock %}
