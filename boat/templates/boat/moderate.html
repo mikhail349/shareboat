@@ -30,23 +30,28 @@
                     <form action="{% url 'boat:accept' boat.pk %}" method="post">
                         {% csrf_token %} 
                         <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
-                        <button type="submit" class="btn btn-primary w-100">Акцептовать</button>
+                        <button type="submit" class="btn btn-primary w-100">Принять</button>
                     </form>                         
                 </div>
-                <div class="col col-lg-auto">
+                <div class="col col-lg-auto d-none d-lg-block">
                     <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
                 </div>
-                <div class="col-auto">
+                <div class="col-auto d-none d-lg-block">
+                    <div class="vr d-none d-lg-block h-100 mx-lg-2"></div>
+                </div>
+                <div class="col-auto d-none d-lg-block">
+                    <a class="btn btn-outline-primary" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a>
+                </div>
+                <div class="col d-lg-none">
                     <div class="dropdown">
-                        <button class="btn btn-outline-primary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                                </svg>
+                        <button class="btn btn-outline-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Действия
                         </button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
+                            <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button></li>  
                         </ul>
-                    <div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,8 +63,8 @@
                 <form action="{% url 'boat:reject' boat.pk %}" method="post" class="needs-validation" novalidate>
                     {% csrf_token %} 
                     <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
-                    <div class="modal-body p-4 text-center">
-                        
+                    <div class="modal-body p-4">
+                        <h5 class="text-center mb-4">Отказ в публикации</h5>
                         <div class="form-floating mb-3">
                             <select class="form-select" id="reasonSelect" name="reason" required>
                                 <option disabled value="">Выберите из списка</option>
