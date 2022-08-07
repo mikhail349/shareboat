@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.db import transaction
-from django.db.models import Max, Min, Exists, OuterRef, Value, Prefetch, F
+from django.db.models import Max, Min, Value
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -13,7 +13,6 @@ from django.utils.dateparse import parse_date, parse_datetime
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.exceptions import ValidationError
-from django.core import serializers
 from boat.forms import TariffForm
 from notification import utils as notify
 
@@ -515,5 +514,3 @@ def delete_tariff(request, pk):
         return redirect_to_tariffs(tariff.boat.pk)
     except Tariff.DoesNotExist:
         return response_not_found()
-
-
