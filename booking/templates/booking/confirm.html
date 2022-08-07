@@ -6,7 +6,7 @@
 {% block title %}Подтверждение бронирования{% endblock %}
 
 {% block content %}
-    <div class="container-lg" style='margin-bottom: calc(70px + 1rem)'>
+    <div class="container-lg">
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Подтверждение бронирования</h1>    
         </section>
@@ -35,19 +35,17 @@
         {% include 'boat/view_base.html' %}   
 
     </div>
-    <div class="fixed-bottom bg-light py-3">
-        <div class="container-lg">
-            <div class="row g-2">
-                <div class="col col-lg-auto">
-                    <form method="post" action="{% url 'booking:create' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="boat_pk" value="{{ boat.pk }}" />
-                        <input type="hidden" name="start_date" value="{{ start_date.isoformat }}" />
-                        <input type="hidden" name="end_date" value="{{ end_date.isoformat }}"  />
-                        <input type="hidden" name="calculated_data" value="{{ calculated_data }}" />
-                        <button type="submit" class="btn btn-primary w-100">Забронировать</button>
-                    </form>
-                </div>
+    <div class="sticky-bottom bg-white border-top container-lg py-3">
+        <div class="row g-2">
+            <div class="col col-lg-auto">
+                <form method="post" action="{% url 'booking:create' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="boat_pk" value="{{ boat.pk }}" />
+                    <input type="hidden" name="start_date" value="{{ start_date.isoformat }}" />
+                    <input type="hidden" name="end_date" value="{{ end_date.isoformat }}"  />
+                    <input type="hidden" name="calculated_data" value="{{ calculated_data }}" />
+                    <button type="submit" class="btn btn-primary w-100">Забронировать</button>
+                </form>
             </div>
         </div>
     </div>

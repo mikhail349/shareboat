@@ -27,12 +27,10 @@
             </div>
         </div>
     </div>
-    <div class="sticky-bottom bg-light py-3">
-        <div class="container-lg">
-            <div class="row">
-                <div class="col col-lg-auto">
-                    <a class="btn btn-outline-primary w-100" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат с поддержкой</a>
-                </div>
+    <div class="sticky-bottom bg-white border-top container-lg py-3">
+        <div class="row">
+            <div class="col col-lg-auto">
+                <a class="btn btn-outline-primary w-100" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат с поддержкой</a>
             </div>
         </div>
     </div>

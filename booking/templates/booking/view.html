@@ -6,7 +6,7 @@
 {% block title %}Просмотр бронирования{% endblock %}
 
 {% block content %}
-    <div class="container-lg" style='margin-bottom: calc(70px + 1rem)'>
+    <div class="container-lg">
         <section class="jumbotron text-center">
             <h1 class="jumbotron-heading">Просмотр бронирования</h1>    
         </section>
@@ -19,12 +19,10 @@
         {% include 'booking/spec.html' with spec=booking.spec total_sum=booking.total_sum %}
         
     </div>
-    <div class="fixed-bottom bg-light py-3">
-        <div class="container-lg">
-            <div class="row g-2">
-                <div class="col col-lg-auto">
-                    <a class="btn btn-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
-                </div>
+    <div class="sticky-bottom bg-white border-top container-lg py-3">
+        <div class="row g-2">
+            <div class="col col-lg-auto">
+                <a class="btn btn-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
             </div>
         </div>
     </div>
