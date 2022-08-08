@@ -1,18 +1,28 @@
-import imp
-from re import M
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
-from django.db.models import Q, Exists, OuterRef, Max, Prefetch
+from django.db.models import Q, Prefetch
 
-from .models import Message, MessageBoat, MessageBooking, MessageSupport
+from .models import MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
+from user.models import User
 
 from boat.models import Boat
 from booking.models import Booking
 
 import json
-import time
+
+@permission_required('user.support_chat', raise_exception=True)
+def support(request):
+    messages = []
+
+    for user in User.objects.filter(is_active=True).prefetch_related('messages_as_sender__messagesupport'):
+        last_message = user.messages_as_sender.filter(messagesupport__isnull=False).union(user.messages_as_recipient.filter(messagesupport__isnull=False)).last()
+        if last_message:
+            last_message.get_title = user.email
+            messages.append(last_message) 
+
+    return render(request, 'chat/support.html', context={'messages': messages}) 
 
 @login_required
 def list(request):

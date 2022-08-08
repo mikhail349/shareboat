@@ -1,0 +1,49 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Поддержка{% endblock  %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading mb-0">Поддержка</h1>
+        </div>
+    </section>
+
+    <div class="container md-container">
+        <div class="list-group">
+            {% for message in messages %}
+                <a class="list-group-item py-3" href="#">
+                    <div class="d-flex gap-3">
+                        {% if message.sender.avatar_sm %}
+                            <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle of-cover">
+                        {% elif not message.sender %}
+                            <img height="32" width="32" src="{% static 'img/boat.png' %}" class="rounded-circle of-cover">
+                        {% else %}
+                            <div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>
+                        {% endif %}
+                        <div class="w-100">
+                            <div>
+                                <div class="col float-end text-muted position-relative">
+                                    {{ message.sent_at|date:'d b. Y, H:i' }}
+                                    {% if not message.read and not message.recipient %}
+                                        <span class="position-absolute translate-middle-y top-50 start-m14 p-1 bg-danger border border-light rounded-circle" title="Новое сообщение"></span>
+                                    {% endif %}      
+                                </div>
+                                <div class="fw-bold">{{ message.get_title }}</div>
+                            </div>
+                            <div>
+                                <div class="mb-0 text-muted" style="max-height: 150px;">
+                                    {% if not message.sender %}Вы: {% else %}{{ message.recipient.first_name }}{% endif %}
+                                    {{ message.text|striptags }}
+                                </div>                   
+                            </div>                
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    
+{% endblock  %}

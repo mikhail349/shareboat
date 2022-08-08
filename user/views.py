@@ -1,10 +1,7 @@
-from PIL import UnidentifiedImageError
-from django.forms import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
-from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from emails.exceptions import EmailLagError
@@ -19,14 +16,18 @@ from user.forms import UpdateForm
 from .models import User, TelegramUser
 import random
 import requests
+
 from boat.models import Boat
-from django.db.models import Q
 
 import logging
 logger_admin_mails = logging.getLogger('mail_admins')
 logger = logging.getLogger(__name__)
 
 BOAT_OWNER_GROUP = 'boat_owner'
+
+@permission_required('user.view_support', raise_exception=True)
+def support(request):
+    return render(request, 'user/support.html')
 
 def get_bool(value):
     if value in (True, 'True', 'true', '1', 'on'):

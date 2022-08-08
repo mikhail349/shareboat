@@ -21,6 +21,7 @@ urlpatterns = [
     path('boat/<int:pk>/', views.boat, name='boat'),
     path('message/', views.message, name='message'),
     path('list/', views.list, name='list'),
+    path('support/', views.support, name='support'),
 
     path('api/', include(apiurlpatterns))
 ]

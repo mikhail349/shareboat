@@ -19,5 +19,6 @@ urlpatterns = [
 
     path('verify/<token>/', views.verify, name='verify'),
     path('change_password/<token>/', views.change_password, name='change_password'),
+    path('support/', views.support, name='support'),
     path('api/', include(urlapipatterns))
 ]

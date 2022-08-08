@@ -81,6 +81,12 @@ class User(AbstractUser):
             logger = logging.getLogger(__name__)
             logger.error(str(e))
 
+    class Meta(AbstractUser.Meta):
+        permissions = [
+            ('view_support', 'Can view support'),
+            ('support_chat', 'Can support chat'),
+        ]
+
 
 class TelegramUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
