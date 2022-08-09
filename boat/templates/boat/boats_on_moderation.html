@@ -19,7 +19,7 @@
                 <div class="row g-4">
                     {% for boat in boats %}
                         <div class="col-lg-4 col-md-4">
-                            <div class="card box-shadow h-100">
+                            <div class="card box-shadow h-100 rounded-3">
                                 <a href="{% url 'boat:moderate' boat.id %}" >
                                     {% include 'boat/carousel.html' %}
                                 </a>    

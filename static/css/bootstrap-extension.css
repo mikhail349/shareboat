@@ -68,6 +68,7 @@ a {
     -webkit-animation-fill-mode: forwards;
     height: 269px;
     width: -webkit-fill-available;
+    border-radius: var(--bs-border-radius-lg) !important;
 }
 
 .card-img-small {

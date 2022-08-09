@@ -35,7 +35,7 @@
                         <div class="row row-cols-1 justify-content-end g-3">
                             {% for boat in boats %}
                                 <div class="col">
-                                    <div class="card box-shadow h-100">
+                                    <div class="card box-shadow h-100 rounded-3">
                                         <div class="row g-0">
                                             <div class="col-md-4">
                                                 <a href="{% url 'boat:booking' boat.id %}?dateFrom={{ request.GET.dateFrom }}&dateTo={{ request.GET.dateTo }}">

@@ -14,7 +14,7 @@
     <div class="container md-container">
         <div class="list-group">
             {% for message in messages %}
-                <a class="list-group-item py-3" href="#">
+                <div class="list-group-item py-3">
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar_sm %}
                             <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle of-cover">
@@ -29,7 +29,7 @@
                                     {{ message.sent_at|date:'d b. Y, H:i' }}
                                     {% if not message.read and not message.recipient %}
                                         <span class="position-absolute translate-middle-y top-50 start-m14 p-1 bg-danger border border-light rounded-circle" title="Новое сообщение"></span>
-                                    {% endif %}      
+                                    {% endif %}
                                 </div>
                                 <div class="fw-bold">{{ message.get_title }}</div>
                             </div>
@@ -41,7 +41,7 @@
                             </div>                
                         </div>
                     </div>
-                </a>
+                </div>
             {% endfor %}
         </div>
     </div>

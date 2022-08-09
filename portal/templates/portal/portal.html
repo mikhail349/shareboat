@@ -22,7 +22,7 @@
                 {% for article in articles %}
                     <div class="col-md-4">       
                         <a href="{{ article.full_path }}" class="text-decoration-none">       
-                            <div class="card box-shadow h-100">
+                            <div class="card box-shadow h-100 rounded-3">
                             
                                 {% if article.preview_img %}
                                     <img src="{{ article.preview_img.url }}" class="card-img-top">
