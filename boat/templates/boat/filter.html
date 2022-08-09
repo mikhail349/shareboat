@@ -14,7 +14,14 @@
             <input id="hiddenDateTo" name="dateTo" type="hidden" />
             <input name="page" type="hidden" />
         
-            <h6 class="mb-2">Поиск</h6>
+            <h6 class="mb-2">Сортировка</h6>
+            <select id="sortSelect" class="form-select mb-3" name="sort">
+                {% for sort in sort_list %}
+                    <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
+                {% endfor %}
+            </select>
+
+            <h6 class="mb-2">Дата и место</h6>
             <div class="form-floating mb-2">                 
                 <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
                 <label>Период бронирования</label>
@@ -31,12 +38,23 @@
                 <label for="stateSelect">Местоположение</label>
             </div>
 
-            <h6 class="mb-2">Сортировка</h6>
-            <select id="sortSelect" class="form-select mb-3" name="sort">
-                {% for sort in sort_list %}
-                    <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
-                {% endfor %}
-            </select>
+            <h6 class="mb-2">Цена за день</h6>
+            <div class="row g-2 mb-3 position-relative">            
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="number" name="priceFrom" class="form-control" placeholder="От" step=".01" min="0" max="1000000" value="{{ request.GET.priceFrom }}" />
+                        <label for="priceFrom">От</label>
+                        <div class="invalid-tooltip">от 0&nbsp;₽ до 1&nbsp;млн.</div>
+                    </div>  
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="number" name="priceTo" class="form-control" placeholder="До" step=".01" min="0" max="1000000" value="{{ request.GET.priceTo }}" />  
+                        <label for="priceTo">До</label>
+                        <div class="invalid-tooltip">от 0&nbsp;₽ до 1&nbsp;млн.</div>  
+                    </div>  
+                </div>
+            </div>
 
             <h6 class="mb-2">Типы лодок</h6>
             <div class="list-group mb-3">

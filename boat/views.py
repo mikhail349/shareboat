@@ -180,6 +180,8 @@ def search_boats(request):
     q_sort = request.GET.get('sort', 'sum_asc')
     q_page = request.GET.get('page', 1)
     q_state = request.GET.get('state')
+    q_price_from = Decimal(request.GET.get('priceFrom')) if request.GET.get('priceFrom') else None
+    q_price_to = Decimal(request.GET.get('priceTo')) if request.GET.get('priceTo') else None
 
     boats = Boat.published.all()
     if q_date_from and q_date_to:
@@ -199,6 +201,12 @@ def search_boats(request):
 
     if q_state:
         boats = boats.filter(coordinates__state=q_state).union(boats.filter(base__state=q_state)) 
+
+    if q_price_from:
+        boats = [boat for boat in boats if boat.actual_tariffs[0].price_per_day >= q_price_from]
+
+    if q_price_to:
+        boats = [boat for boat in boats if boat.actual_tariffs[0].price_per_day <= q_price_to]
 
     boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price_per_day, reverse=q_sort.split('_')[1]=='desc')
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)

@@ -35,6 +35,8 @@ $(document).ready(() => {
             return;
         }
 
+        if (!$(this).checkValidity()) return;
+
         if (dpRange.selectedDates.length == 2) {
             $("#hiddenDateFrom").val(toJSONLocal(dpRange.selectedDates[0]));
             $("#hiddenDateTo").val(toJSONLocal(dpRange.selectedDates[1]));
@@ -43,7 +45,6 @@ $(document).ready(() => {
         const $btnSubmit = $('#formFilter button[type=submit]');
         $btnSubmit.attr('disabled', true);
         $btnSubmit.text('Идет поиск...');
-
     });
 
     $("#btnOffcanvasBoatFilterClear").on('click', function(e) {
