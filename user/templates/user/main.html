@@ -5,11 +5,15 @@
 <html lang="ru">
     <head>
         <title>{% block title %}{% endblock %}</title>
-        {% include 'bootstrap.html' %}
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/bs-form-validation.min.js' %}"></script>
+        
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-5.2.0.min.css' %}" />
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extension.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/main.css' %}">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
         <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.png' %}"/>
         <script type="text/javascript">
             function recaptchaCallback() {
@@ -20,5 +24,6 @@
     <body class="bg-white">
         {% block content %}{% endblock %}
         {% include 'toast.html' %}
+        <script type="text/javascript" src="{% static 'js/bootstrap-5.2.0.bundle.min.js' %}"></script>
     </body>
 </html>
