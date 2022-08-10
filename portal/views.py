@@ -4,7 +4,6 @@ from django.conf import settings
 
 from .models import Article, Category
 
-
 def portal(request):
     try:
         q_page = request.GET.get('page', 1)
