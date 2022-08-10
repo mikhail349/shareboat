@@ -67,10 +67,6 @@ ul.errorlist {
     margin-bottom: 0;
 }
 
-.carousel.slide {
-    transition: all 2.s ease-in-out;
-}
-
 input[readonly].false-readonly {
     background-color: white !important;
 }
@@ -129,4 +125,29 @@ input[readonly].false-readonly {
 .django-summernote-container img {
     max-width: 100% !important;
     object-fit: cover;
+}
+
+.slide-down {
+    animation-name: slide-down;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slide-down {
+    100% {
+        bottom: -100%;
+        display: none;
+    }
+}
+
+.slide-up {
+    animation-name: slide-up;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slide-up {
+    100% {
+        bottom: 0%;
+    }
 }

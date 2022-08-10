@@ -45,7 +45,7 @@
         {% block nav %}
             {% include 'nav.html' %}
         {% endblock %}
-
+        
         <div class="main-content-container">
             {% block content %}{% endblock %}
         </div>
@@ -62,5 +62,19 @@
         </div>
 
         {% include 'toast.html' %}
+
+        {% if not request.COOKIES.all_cookies_accepted %}
+            <div id="acceptAllCookies">
+                <div class="bg-secondary text-white fixed-bottom py-3">
+                    <div class="container">
+                        Чтобы улучшить наш веб-сайт и сделать его удобнее для вас, мы используем файлы cookie. 
+                        Продолжая его просматривать, вы принимаете нашу политику использования файлов cookie.
+                        <div class="my-2">
+                            <button id="btnAcceptAllCookies" href="#" class="btn btn-outline-light">Понятно</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </body>
 </html>

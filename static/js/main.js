@@ -13,6 +13,16 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
 function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
@@ -41,6 +51,11 @@ $(document).ready(() => {
             console.log('ServiceWorker registration failed: ', err);
           });
     }
+
+    $("#btnAcceptAllCookies").on('click', function(e) {
+        $("#acceptAllCookies div").addClass('slide-down');
+        setCookie('all_cookies_accepted', true, 365*10);
+    })
 });
 
 $(document).ready(() => {
