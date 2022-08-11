@@ -50,6 +50,12 @@ def calc_booking(boat_pk, start_date, end_date):
         if item['amount'] == 0:
             return spec.pop(tariff.pk)
         spec[tariff.pk] = item
+
+    def is_last_tariff_ok():
+        if last_tariff:
+            if last_tariff.start_date <= date <= last_tariff.end_date:
+                return True
+        return False   
     
     try:
         boat = Boat.objects.get(pk=boat_pk)
@@ -67,15 +73,18 @@ def calc_booking(boat_pk, start_date, end_date):
     
     try:
         while date < end_date:
-            filtered = [item for item in tariffs if item.start_date <= date <= item.end_date and is_weekday_in_tariff(date.weekday(), item)]
+            filtered = [tariff for tariff in tariffs if tariff.start_date <= date <= tariff.end_date]
             weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
 
-            if not weighted and last_tariff:
-                if last_tariff.start_date <= date <= last_tariff.end_date:
-                    weighted = [last_tariff]
-
             date_changed = False
-            for tariff in weighted:
+            for i, tariff in enumerate(weighted):
+                if not is_weekday_in_tariff(date.weekday(), tariff):
+                    if i == len(weighted) - 1 and is_last_tariff_ok():
+                        tariff = last_tariff
+                    else:
+                        continue
+
+
                 target_duration = (end_date - date).days
 
                 if target_duration < tariff.duration:

@@ -117,3 +117,37 @@ class UtilsTestCase(TestCase):
         
         self.assertEqual(_sum(4,6), 1_000)
 
+        # case 4
+        Tariff.objects.all().delete()
+        Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(YEAR, 1, 1), end_date=datetime.date(YEAR, 12, 31),
+            name='Неделя',
+            duration=7,
+            min=1,   
+            
+            tue=True,
+            wed=True,
+            thu=True,
+            price=150
+        )
+        Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(YEAR, 1, 1), end_date=datetime.date(YEAR, 12, 31),
+            name='Выходные',
+            duration=3,
+            min=1,  
+
+            fri=True,
+            price=100
+        )
+        Tariff.objects.create(boat=self.boat, active=True, start_date=datetime.date(YEAR, 1, 1), end_date=datetime.date(YEAR, 12, 31),
+            name='Суточно',
+            duration=1,
+            min=2,  
+
+            mon=True,
+            tue=True,
+            wed=True,
+            thu=True,
+            price=5_000
+        )
+
+        self.assertEqual(_sum(21,24), 15_000)
+
