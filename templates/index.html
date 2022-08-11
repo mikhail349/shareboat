@@ -1,5 +1,6 @@
 {% extends 'main.html' %}
 {% load static %}
+{% load extras %}
 
 {% block content %}
     <script type="text/javascript" src="{% static 'js/index.min.js' %}"></script>
@@ -8,67 +9,75 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
     
-    <section id="search" class="d-flex pt-5">
-        <div class="container-md w-100 pt-5">
-            <h1 class="display-6 text-center mb-5"><strong class="ls-1">SHAREBOAT.RU</strong></h1>
-            <h1 class="display-6 text-center mb-5">Найди лодку для незабываемого путешествия!</h1>
-            <div class="d-flex justify-content-center">
-                <div style="width: 900px;">
-                    <form id="formSearch" action="{% url 'boat:search_boats' %}" method="get" c>
-                        <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
-                        <input id="hiddenDateTo" name="dateTo" type="hidden" />
-                        <div class="row row-cols-1 row-cols-lg-3 g-3 p-0">
-                            <div class="col">
-                                <div class="form-floating">                 
-                                    <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
-                                    <label>Период бронирования</label>
-                                    <div class="invalid-tooltip">Укажите период бронирования</div>
+    <div>
+        <section id="search" class="d-flex pt-5">
+            <div class="container-md w-100 pt-5">
+                <h1 class="display-6 text-center mb-5"><strong class="ls-1">SHAREBOAT.RU</strong></h1>
+                <h1 class="display-6 text-center mb-5">Найди лодку для незабываемого путешествия!</h1>
+                <div class="d-flex justify-content-center">
+                    <div style="width: 900px;">
+                        <form id="formSearch" action="{% url 'boat:search_boats' %}" method="get" c>
+                            <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
+                            <input id="hiddenDateTo" name="dateTo" type="hidden" />
+                            <div class="row row-cols-1 row-cols-lg-3 g-3 p-0">
+                                <div class="col">
+                                    <div class="form-floating">                 
+                                        <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
+                                        <label>Период бронирования</label>
+                                        <div class="invalid-tooltip">Укажите период бронирования</div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="stateSelect" name="state">
+                                            <option selected value="">Любое</option>
+                                            {% for state in states %}
+                                                <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="stateSelect">Местоположение</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-lg btn-warning w-100 h-100 form-control" type="submit">Найти</button>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="form-floating">
-                                    <select class="form-select" id="stateSelect" name="state">
-                                        <option selected value="">Любое</option>
-                                        {% for state in states %}
-                                            <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label for="stateSelect">Местоположение</label>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <button class="btn btn-lg btn-warning w-100 h-100 form-control" type="submit">Найти</button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% include 'chevron_down.html' with href='#howitworks' title='Как работает SHAREBOAT.RU' %}
-    </section>
+            {% include 'chevron_down.html' with href='#howitworks' title='Как работает SHAREBOAT.RU' %}
+        </section>
+    </div>
 
     <div class="bg-light">
-        <section id="howitworks" class="container-md d-flex align-items-center">
-            <div class="w-100  mb-5">
+        <section id="howitworks" class="container-md d-flex align-items-center pb-5">
+            <div class="w-100 mb-5">
                 <h1 class="display-6 text-center my-5">Как работает <strong>SHAREBOAT.RU</strong></h1>
                 {% for step in steps %}
-                    <h5 class="text-center">{{ step }}</h5>
-                    {% if not forloop.last %}
-                        <div class="text-center my-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffc107" class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-                            </svg>
-                        </div>    
-                    {% endif %} 
+                    <div class="step fadein" style="animation-delay: {{ forloop.counter0|div:2 }}s ;">
+                        <h5 class="text-center scale px-3" style="animation-delay: {{ forloop.counter0|div:2 }}s ;">{{ step }}</h5>
+                        {% if not forloop.last %}
+                            <div class="text-center my-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffc107" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                                </svg>
+                            </div>    
+                        {% endif %} 
+                    </div>
                 {% endfor %}
             </div>
         </section>
     </div>
 
-    <section id="feedback" class="container-md d-flex align-items-center">
+    <section id="feedback" class="container-md d-flex align-items-center position-relative">
         <div class="w-100">
             <h1 class="display-6 text-center my-5 mb-3">Есть вопросы?</h1>
             <h5 class="text-center mb-5">Свяжитесь с нами любым удобным способом, мы с радостью Вас проконсультируем</h5>
+        </div>
+        
+        <div class="easter position-absolute start-50 translate-middle top-0">
+            <img height="64" width="64" src="{% static 'img/ship-wheel.png' %}" />
         </div>
     </section>
 {% endblock %}

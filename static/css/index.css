@@ -1,9 +1,42 @@
 #search {
     background-image: url('/static/img/index1.webp'); 
     background-position: 50% 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+
     height: calc(100vh - var(--header-padding-top));
 }
 
 #feedback {
     min-height: 50vh;
+}
+
+.chevron-down a:hover {
+    color: var(--bs-warning)
+}
+
+.step {
+    opacity: 0;
+}
+
+.start-anim .fadein {
+    animation-name: fadein;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+.start-anim .scale {
+    animation-name: scale;
+    animation-duration: .5s;
+}
+
+@keyframes fadein {
+    100% {
+        opacity: 1;
+    }
+}
+
+.easter-anim {  
+    animation-name: rotation;
+    animation-duration: 1.5s;
 }
