@@ -29,6 +29,7 @@ $(document).ready(() => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 document.getElementById('howitworks').classList.add('start-anim');
+                $("#feedback .easter img").addClass('easter-anim')
             }
         });
     });
