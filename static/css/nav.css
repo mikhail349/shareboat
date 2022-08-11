@@ -7,12 +7,8 @@ header .navbar-brand img {
     filter: brightness(0) invert(1);
 }
 
-.top-0-header {
-    top: var(--header-padding-top) !important;
-}
-
 header .navbar {
-    min-height: 62px;
+    min-height: var(--header-padding-top);
 }
 
 header .nav-link, header .navbar-brand {

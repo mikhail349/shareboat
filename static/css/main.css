@@ -1,7 +1,7 @@
 
 :root {
     --jumbotron-padding-y: 2rem;
-    --header-padding-top: 63px;
+    --header-padding-top: 62px;
 }
 
 .box-shadow { 
@@ -25,7 +25,7 @@ html, body {
 }
 
 .main-content-container {
-    min-height: calc(100% - 63px);
+    min-height: calc(100% - var(--header-padding-top));
 }
 
 footer {
