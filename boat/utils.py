@@ -98,8 +98,8 @@ def calc_booking(boat_pk, start_date, end_date):
                 if node:                   
                     total_sum -= node.tariff.price
                     date -= timedelta(days=node.tariff.duration)
-                    node = node.prev
-                    spec_dec(tariff)
+                    spec_dec(node.tariff)
+                    node = node.prev        
                 else:
                     raise TariffNotFound()
 
