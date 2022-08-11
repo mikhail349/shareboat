@@ -1,5 +1,5 @@
 body {
-    background-image: url('/static/img/index2.webp'); 
+    background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.60), rgba(0,0,0,0.70)), url('/static/img/index2.webp');
     background-position: 50% 0;
     background-repeat: no-repeat;
     background-size: cover;
