@@ -1,0 +1,19 @@
+.vscrollsnap {
+    scroll-snap-type: y proximity;
+    overflow: scroll;
+    max-height: 100vh
+}
+
+.vscrollsnap section {
+    height: 100vh;
+    scroll-snap-align: start;
+}
+
+section {
+    height: 100vh;
+}
+
+#search {
+    background-image: url('/static/img/index1.webp'); 
+    background-position: 50% 0;
+}

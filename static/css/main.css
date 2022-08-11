@@ -1,7 +1,7 @@
 
 :root {
     --jumbotron-padding-y: 2rem;
-    --header-padding-top: 62px;
+    --header-padding-top: 63px;
 }
 
 .box-shadow { 
@@ -12,6 +12,14 @@
     border-radius: 0.25rem;
     height: 500px;
     max-height: 50vh;
+}
+
+.mt-header {
+    margin-top: var(--header-padding-top);
+}
+
+.h-100-h {
+    height: calc(100vh - var(--header-padding-top));
 }
 
 html, body {
