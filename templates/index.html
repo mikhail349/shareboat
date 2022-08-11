@@ -2,53 +2,59 @@
 {% load static %}
 {% load extras %}
 
+
+
+{% block nav %}
+    {% include 'nav.html' with transparent=True %}
+{% endblock %}
+
 {% block content %}
     <script type="text/javascript" src="{% static 'js/index.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/air-datepicker.min.js' %}"></script>
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/air-datepicker.css' %}">
+
+    <!--<img class="" src="{% static 'img/index2.webp' %}" />-->
     
-    <div>
-        <section id="search" class="d-flex pt-5">
-            <div class="container-md w-100 pt-5">
-                <h1 class="display-6 text-center mb-5"><strong class="ls-1">SHAREBOAT.RU</strong></h1>
-                <h1 class="display-6 text-center mb-5">Найди лодку для незабываемого путешествия!</h1>
-                <div class="d-flex justify-content-center">
-                    <div style="width: 900px;">
-                        <form id="formSearch" action="{% url 'boat:search_boats' %}" method="get" c>
-                            <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
-                            <input id="hiddenDateTo" name="dateTo" type="hidden" />
-                            <div class="row row-cols-1 row-cols-lg-3 g-3 p-0">
-                                <div class="col">
-                                    <div class="form-floating">                 
-                                        <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
-                                        <label>Период бронирования</label>
-                                        <div class="invalid-tooltip">Укажите период бронирования</div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="stateSelect" name="state">
-                                            <option selected value="">Любое</option>
-                                            {% for state in states %}
-                                                <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <label for="stateSelect">Местоположение</label>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <button class="btn btn-lg btn-warning w-100 h-100 form-control" type="submit">Найти</button>
+    <section id="search" class="d-flex pt-5">
+        <div class="container-md w-100 pt-5">
+            <h1 class="display-6 text-center text-white stroke mb-5"><strong class="ls-1">SHAREBOAT.RU</strong></h1>
+            <h1 class="display-6 text-center text-white stroke mb-5">Найди лодку для незабываемого путешествия!</h1>
+            <div class="d-flex justify-content-center">
+                <div style="width: 900px;">
+                    <form id="formSearch" action="{% url 'boat:search_boats' %}" method="get" c>
+                        <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
+                        <input id="hiddenDateTo" name="dateTo" type="hidden" />
+                        <div class="row row-cols-1 row-cols-lg-3 g-3 p-0">
+                            <div class="col">
+                                <div class="form-floating">                 
+                                    <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
+                                    <label>Период бронирования</label>
+                                    <div class="invalid-tooltip">Укажите период бронирования</div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                            <div class="col">
+                                <div class="form-floating">
+                                    <select class="form-select" id="stateSelect" name="state">
+                                        <option selected value="">Любое</option>
+                                        {% for state in states %}
+                                            <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="stateSelect">Местоположение</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-lg btn-warning w-100 h-100 form-control" type="submit">Найти</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-            {% include 'chevron_down.html' with href='#howitworks' title='Как работает SHAREBOAT.RU' %}
-        </section>
-    </div>
+        </div>
+        {% include 'chevron_down.html' with href='#howitworks' title='Как работает SHAREBOAT.RU' %}
+    </section>
 
     <div class="bg-light">
         <section id="howitworks" class="container-md d-flex align-items-center overflow-hidden pb-5">

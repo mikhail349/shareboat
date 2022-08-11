@@ -1,9 +1,11 @@
-#search {
-    background-image: url('/static/img/index1.webp'); 
+body {
+    background-image: url('/static/img/index2.webp'); 
     background-position: 50% 0;
     background-repeat: no-repeat;
     background-size: cover;
+}
 
+#search {
     height: calc(100vh - var(--header-padding-top));
 }
 
