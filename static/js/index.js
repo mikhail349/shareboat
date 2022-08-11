@@ -24,12 +24,12 @@ $(document).ready(() => {
             $("#hiddenDateTo").val(toJSONLocal(dpRange.selectedDates[1]));
         }
     });
-
-    function setAppHeight() {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-
-    window.addEventListener('resize', setAppHeight);
-    setAppHeight();
 })
+
+function setAppHeight() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', setAppHeight);
+setAppHeight();

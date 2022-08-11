@@ -20,5 +20,4 @@ section {
 #search {
     background-image: url('/static/img/index1.webp'); 
     background-position: 50% 0;
-    height: calc(var(--vh) * 100 - var(--header-padding-top));
 }
