@@ -1,25 +1,9 @@
-:root {
-    --vh: 1vh;
-}
-
-.vscrollsnap {
-    scroll-snap-type: y proximity;
-    overflow: scroll;
-    max-height: 100vh
-}
-
-.vscrollsnap section {
-    height: 100vh;
-    scroll-snap-align: start;
-}
-
-section {
-    height: calc(var(--vh) * 100);
-    transition: all .2s ease-in-out;
-}
-
 #search {
     background-image: url('/static/img/index1.webp'); 
     background-position: 50% 0;
-    height: calc(var(--vh) * 100 - var(--header-padding-top));
+    height: calc(100vh - var(--header-padding-top));
+}
+
+#feedback {
+    min-height: 50vh;
 }
