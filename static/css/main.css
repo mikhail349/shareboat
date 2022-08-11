@@ -14,14 +14,6 @@
     max-height: 50vh;
 }
 
-.mt-header {
-    margin-top: var(--header-padding-top);
-}
-
-.h-100-h {
-    height: calc(100vh - var(--header-padding-top));
-}
-
 .ls-1 {
     letter-spacing: 1vw;
     margin-right: 1vw;

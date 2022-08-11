@@ -1,3 +1,7 @@
+:root {
+    --vh: 1vh;
+}
+
 .vscrollsnap {
     scroll-snap-type: y proximity;
     overflow: scroll;
@@ -10,10 +14,11 @@
 }
 
 section {
-    height: 100vh;
+    height: calc(var(--vh) * 100);
 }
 
 #search {
     background-image: url('/static/img/index1.webp'); 
     background-position: 50% 0;
+    height: calc(var(--vh) * 100 - var(--header-padding-top));
 }
