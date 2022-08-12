@@ -24,19 +24,4 @@ $(document).ready(() => {
             $("#hiddenDateTo").val(toJSONLocal(dpRange.selectedDates[1]));
         }
     });
-
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                document.getElementById('howitworks').classList.add('start-anim');
-                $("#feedback .easter img").addClass('easter-anim')
-            }
-        });
-    });
-
-    observer.observe(document.querySelector('#howitworks .step'));
-
-    $("#feedback .easter img").on('click', function(e) {
-        $(this).addClass('easter-anim');
-    })
 })
