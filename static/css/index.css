@@ -21,19 +21,21 @@ body {
 }
 
 #clients {
-    background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.70), rgba(0,0,0,0.50)), url('/static/img/index4.webp');
+    background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.90), rgba(0,0,0,0.80)), url('/static/img/index4.webp');
 }
 
 #feedback, #about, #youcando {
     min-height: 50vh;
 }
 
-ul li {
+#clients ul li,
+#youcando ul li {
     list-style-position: outside;
     list-style-type: square;
 }
 
-ul li::marker {
+#clients ul li::marker,
+#youcando ul li::marker {
     color: var(--bs-warning);
 }
 
