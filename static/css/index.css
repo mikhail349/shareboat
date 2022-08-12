@@ -24,7 +24,7 @@ body {
     background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.90), rgba(0,0,0,0.80)), url('/static/img/index4.webp');
 }
 
-#feedback, #about, #youcando {
+section {
     min-height: 50vh;
 }
 
@@ -37,8 +37,4 @@ body {
 #clients ul li::marker,
 #youcando ul li::marker {
     color: var(--bs-warning);
-}
-
-.chevron-down a:hover {
-    color: var(--bs-warning)
 }
