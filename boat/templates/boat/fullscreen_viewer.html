@@ -2,10 +2,10 @@
     <div id="{{ fullscreen_viewer_id }}" class="modal fade">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                             
-                <div class="position-fixed end-0 mt-5 text-center" style="z-index: 2; width: 15%;">
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" title="Закрыть"></button>
-                </div>
+                            
+                <button type="button" class="btn-close btn-close-white position-fixed end-0 text-center btn-close btn-close-white py-5" style="z-index: 2; width: 15%;"
+                    data-bs-dismiss="modal" aria-label="Close" title="Закрыть">
+                </button>
                 
                 <div class="modal-body bg-black d-flex align-items-center p-0">
                     {% if photos.count > 1 %}
