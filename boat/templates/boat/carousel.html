@@ -5,7 +5,7 @@
             {% for file in boat.files.all %} 
                 <li data-bs-target="#fileCarousel{{forloop.parentloop.counter0}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
             {% endfor %}
-        </ol> 
+        </ol>
         <div class="carousel-inner">
             {% for file in boat.files.all %} 
                 <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}" data-bs-interval="60000">
@@ -13,26 +13,37 @@
                 </div>
             {% endfor %}
         </div>
-        <button type="button" class="carousel-control-prev" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="prev">
+        <a type="button" class="carousel-control-prev" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </a>
-        <button type="button" class="carousel-control-next" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="next">
+        <a type="button" class="carousel-control-next" data-bs-target="#fileCarousel{{forloop.counter0}}" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </a>
-        <!--<button type="button" class="carousel-control-full-screen" data-bs-target="#fileCarousel{{forloop.counter0}}">
+        <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
             <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Full screen</span>
-        </a>-->
+        </a>
     </div>
 
 {% elif boat.files.exists %}
 
+<div class="position-relative">
     <img src="{{ boat.files.first.file.url }}" class="card-img-left" />
+    <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
+        <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Full screen</span>
+    </a>
+</div>
 
 {% else %}
 
     <div class="card-img-left"></div>
 
 {% endif %}
+
+{% with boat.pk|stringformat:'s' as boat_pk_str %}
+    {% include 'boat/fullscreen_viewer.html' with fullscreen_viewer_id='fullscreenViewer'|add:boat_pk_str photos=boat.files.all %}
+{% endwith %}
+

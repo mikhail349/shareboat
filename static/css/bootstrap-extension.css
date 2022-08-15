@@ -60,7 +60,7 @@ a {
 }
 
 .card-img-left,
-.card-img  {
+.card-img {
     object-fit: cover;
     opacity: 0;
     animation: fadein .5s;
@@ -71,6 +71,12 @@ a {
     border-radius: var(--bs-border-radius-lg) !important;
 }
 
+.fullscreen-img {
+    object-fit: contain;
+    max-height: 100vh;
+    width: 100vw;
+}
+
 .card-img-small {
     height: 50px;
     width: 50px;
@@ -78,8 +84,8 @@ a {
 
 .card-img-small:hover, 
 .card-img-small.active {
-    cursor: pointer;
-    box-shadow: 0 0 0 1px rgb(25 22 69 / 50%);
+    cursor: pointer;    
+    border: rgb(25 22 69 / 50%) 2px solid;
 }
 
 .card-title {
@@ -160,7 +166,7 @@ a {
     right: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
     width: 15%;
     padding: 0;
     color: #fff;
@@ -169,7 +175,9 @@ a {
     border: 0;
     opacity: .5;
     transition: opacity .15s ease;
+    margin-right: 1rem;
     margin-bottom: 1rem;
+    z-index: 2;
 }
 
 .carousel-control-full-screen:hover, .carousel-control-full-screen:focus {

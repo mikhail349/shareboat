@@ -8,8 +8,12 @@
     <script type="text/javascript" src="{% static 'boat/js/img_viewer.min.js' %}"></script>
     <div class="card box-shadow text-end mb-3">
         <img class="d-block w-100 card-img card-img-md" src="{{ boat.files.first.file.url }}" />
+        <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
+            <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Full screen</span>
+        </a>
     </div>  
-    {% if boat.files.count > 1%}
+    {% if boat.files.count > 1 %}
         <div class="row g-1 mb-3">
             {% for file in boat.files.all %}
                 <div class="col-auto">
@@ -26,3 +30,7 @@
 
 {% include 'boat/location.html' %}
 {% include 'modal_map.html' %}
+
+{% with boat.pk|stringformat:'s' as boat_pk_str %}
+    {% include 'boat/fullscreen_viewer.html' with fullscreen_viewer_id='fullscreenViewer'|add:boat_pk_str photos=boat.files.all %}
+{% endwith %}

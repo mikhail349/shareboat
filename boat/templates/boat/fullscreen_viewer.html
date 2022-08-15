@@ -1,0 +1,41 @@
+{% with fullscreen_viewer_id|default:'fullscreenViewer' as fullscreen_viewer_id %}
+    <div id="{{ fullscreen_viewer_id }}" class="modal fade">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                             
+                <div class="position-fixed end-0 mt-5 text-center" style="z-index: 2; width: 15%;">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" title="Закрыть"></button>
+                </div>
+                
+                <div class="modal-body bg-black d-flex align-items-center p-0">
+                    {% if photos.count > 1 %}
+
+                        <div id="photoCarousel{{ fullscreen_viewer_id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for photo in photos %} 
+                                    <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}" data-bs-interval="60000">
+                                        <img class="fullscreen-img" src="{{ photo.file.url }}" />
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <button type="button" class="carousel-control-prev" data-bs-target="#photoCarousel{{ fullscreen_viewer_id }}" data-bs-slide="prev" title="Предыдущее">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </a>
+                            
+                            <button type="button" class="carousel-control-next" data-bs-target="#photoCarousel{{ fullscreen_viewer_id }}" data-bs-slide="next" title="Следующее">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </a>
+                            
+                        </div>
+
+                    {% elif photos.count == 1 %}
+                        <img class="fullscreen-img" src="{{ photos.first.file.url }}" />
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endwith %}
