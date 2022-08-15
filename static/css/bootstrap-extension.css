@@ -180,10 +180,15 @@ a {
     z-index: 2;
 }
 
+.btn-close:focus,
+.btn-close:hover {
+    box-shadow: none;
+}
+
 .carousel-control-full-screen:hover, .carousel-control-full-screen:focus {
     color:#fff;
-    text-decoration:none;
-    outline:0;
+    text-decoration: none;
+    outline: 0;
     opacity: .9;
 }
 
