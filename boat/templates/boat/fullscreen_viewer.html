@@ -11,6 +11,12 @@
                     {% if photos.count > 1 %}
 
                         <div id="photoCarousel{{ fullscreen_viewer_id }}" class="carousel slide" data-bs-ride="carousel">
+                            <ol class="carousel-indicators">
+                                {% for photo in photos %} 
+                                    <li data-bs-target="#photoCarousel{{ fullscreen_viewer_id }}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter0 == 0  %} class="active"> {% endif %}</li>
+                                {% endfor %}
+                            </ol>
+
                             <div class="carousel-inner">
                                 {% for photo in photos %} 
                                     <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}" data-bs-interval="60000">
