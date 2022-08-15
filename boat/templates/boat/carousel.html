@@ -29,13 +29,13 @@
 
 {% elif boat.files.exists %}
 
-<div class="position-relative">
-    <img src="{{ boat.files.first.file.url }}" class="card-img-left" />
-    <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
-        <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Full screen</span>
-    </a>
-</div>
+    <div class="position-relative">
+        <img src="{{ boat.files.first.file.url }}" class="card-img-left" />
+        <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
+            <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Full screen</span>
+        </a>
+    </div>
 
 {% else %}
 
