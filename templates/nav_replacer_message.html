@@ -1,4 +1,4 @@
 {% extends 'nav_replacer.html' %}
 {% block nav_replacer_title %}
-    <div class="navbar-brand ps-2 p-2 me-0 text-truncate"><span class="text-warning">Поддержка</span></div>
+    <div class="navbar-brand ps-2 p-2 me-0 text-truncate"><span class="text-warning">{{ title|default:'Поддержка' }}</span></div>
 {% endblock %}

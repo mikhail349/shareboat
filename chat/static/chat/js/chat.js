@@ -117,7 +117,7 @@ class MessageHandler {
     }
     
     getMessageHtml(message) {
-        const bg = message.sender ? (message.is_out ? 'bg-primary text-white' : 'bg-light') : 'bg-light';
+        const bg = message.is_out ? 'bg-primary text-white' : 'bg-light';
         var align = 'align-self-start';
         if (this.isMobile) {
             align = message.is_out ? 'align-self-end' : 'align-self-start';

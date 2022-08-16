@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.db.models import Q, Prefetch
+from django.urls import reverse
 
 from .models import MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
@@ -19,10 +20,54 @@ def support(request):
     for user in User.objects.filter(is_active=True).prefetch_related('messages_as_sender__messagesupport'):
         last_message = user.messages_as_sender.filter(messagesupport__isnull=False).union(user.messages_as_recipient.filter(messagesupport__isnull=False)).last()
         if last_message:
+            last_message.get_href = reverse('chat:support_chat', kwargs={'user_pk': user.pk})
             last_message.get_title = user.email
             messages.append(last_message) 
 
     return render(request, 'chat/support.html', context={'messages': messages}) 
+
+@permission_required('user.support_chat', raise_exception=True)
+def support_chat(request, user_pk):
+    try:
+        user = User.objects.get(pk=user_pk)
+    except User.DoesNotExist:
+        user = None
+    
+    messages = MessageSupport.objects.filter(Q(sender__pk=user.pk) | Q(recipient__pk=user.pk)).order_by('sent_at')
+    messages_serializer_data = MessageSerializerList(messages, many=True, context={'request': request, 'is_support': True}).data
+    messages.filter(recipient__isnull=True, read=False).update(read=True)
+    
+    context = {
+        'messages': json.dumps(messages_serializer_data),
+        'user': user,
+    }
+
+    return render(request, 'chat/support_chat.html', context=context)
+
+@permission_required('user.support_chat', raise_exception=True)
+def get_new_support_messages(request, user_pk):
+    if request.method == 'GET':
+        messages = MessageSupport.objects.filter(sender__pk=user_pk, recipient__isnull=True, read=False).order_by('sent_at')
+        data = MessageSerializerList(messages, many=True, context={'request': request, 'is_support': True}).data
+        messages.update(read=True)
+        return JsonResponse({'data': data})
+
+@permission_required('user.support_chat', raise_exception=True)
+def send_support_message(request, user_pk):
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            user = User.objects.get(pk=user_pk)
+            new_message = MessageSupport.objects.create(text=data.get('text'), sender=None, recipient=user)
+
+            messages = MessageSupport.objects.filter(Q(read=False)).filter(Q(sender=user, recipient__isnull=True) | Q(pk=new_message.pk)).order_by('sent_at')
+            
+            data = MessageSerializerList(messages, many=True, context={'request': request, 'is_support': True}).data
+            messages.filter(recipient__isnull=True, read=False).update(read=True)
+
+            return JsonResponse({'data': data})
+        except User.DoesNotExist:
+            return JsonResponse({'data': []})
 
 @login_required
 def list(request):
@@ -98,7 +143,6 @@ def get_new_messages(request):
         data = MessageSerializerList(messages, many=True, context={'request': request}).data
         messages.update(read=True)
         return JsonResponse({'data': data})
-            
 
 @login_required
 def get_new_messages_boat(request, pk):

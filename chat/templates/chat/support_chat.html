@@ -1,0 +1,22 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Чат{% endblock %}
+
+{% block nav %}
+    {% include 'nav_replacer_message.html' with back_link=request.GET.back|default:'/' title=user.email  %}
+{% endblock %}
+
+{% block content %}
+    <script type="text/javascript">
+        var userPk = {{ user.pk }};
+    </script>
+
+    <script type="text/javascript" src="{% static 'chat/js/support_chat.min.js' %}"></script>
+
+    {% include 'chat/chat.html' %}
+{% endblock  %}
+
+{% block footer %}
+    {% include 'chat/footer.html' %}
+{% endblock %}

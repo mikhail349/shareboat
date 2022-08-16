@@ -14,6 +14,8 @@ class MessageSerializerList(serializers.ModelSerializer):
     is_out = serializers.SerializerMethodField()
 
     def get_is_out(self, obj):
+        if self.context.get('is_support'):
+            return obj.sender is None
         return obj.sender == self.context['request'].user
 
     class Meta:

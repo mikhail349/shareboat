@@ -4,7 +4,7 @@
 {% block title %}Поддержка{% endblock  %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+
     <section class="jumbotron text-center">
         <div class="container">
             <h1 class="jumbotron-heading mb-0">Поддержка</h1>
@@ -14,7 +14,7 @@
     <div class="container md-container">
         <div class="list-group">
             {% for message in messages %}
-                <div class="list-group-item py-3">
+                <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar_sm %}
                             <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle of-cover">
@@ -41,7 +41,7 @@
                             </div>                
                         </div>
                     </div>
-                </div>
+                </a>
             {% endfor %}
         </div>
     </div>
