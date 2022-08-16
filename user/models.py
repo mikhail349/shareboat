@@ -57,6 +57,7 @@ class User(AbstractUser):
     email_confirmed = models.BooleanField("Эл. почта подтверждена", default=False)
     avatar = models.ImageField(upload_to=get_upload_avatar_to, null=True, blank=True)
     avatar_sm = models.ImageField(upload_to=get_upload_avatar_sm_to, null=True, blank=True)
+    email_notification = models.BooleanField('По электронной почте', default=False)
     
     objects = UserManager()
 

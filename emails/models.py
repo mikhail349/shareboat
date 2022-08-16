@@ -74,27 +74,34 @@ class UserEmail(models.Model):
 
     @classmethod 
     def send_booking_status(cls, booking, user):
-        text = f'Статус бронирования изменился на "{booking.get_status_display()}"'
-        html = render_to_string("emails/email.html", context={'content': text})
-        send_email("Изменился статус бронирования", html, [user.email])
+        if user.email_notification:
+            text = f'Статус бронирования изменился на "{booking.get_status_display()}"'
+            html = render_to_string("emails/email.html", context={'content': text})
+            send_email("Изменился статус бронирования", html, [user.email])
 
     @classmethod 
     def send_initial_booking_to_owner(cls, booking):
-        text = f'Новый запрос на бронирование'
-        html = render_to_string("emails/email.html", context={'content': text})
-        send_email("Новый запрос на бронирование", html, [booking.boat.owner.email])
+        user = booking.boat.owner
+        if user.email_notification:
+            text = f'Новый запрос на бронирование'
+            html = render_to_string("emails/email.html", context={'content': text})
+            send_email("Новый запрос на бронирование", html, [user.email])
 
     @classmethod 
     def send_boat_published_to_owner(cls, boat):
-        text = "<div>Лодка опубликована!</div>"
-        html = render_to_string("emails/email.html", context={'content': text})
-        send_email("Лодка опубликована", html, [boat.owner.email])
+        user = boat.owner
+        if user.email_notification:
+            text = "<div>Лодка опубликована!</div>"
+            html = render_to_string("emails/email.html", context={'content': text})
+            send_email("Лодка опубликована", html, [user.email])
 
     @classmethod 
     def send_boat_declined_to_owner(cls, boat, comment):
-        text = f"<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: {comment}</div>"
-        html = render_to_string("emails/email.html", context={'content': text})
-        send_email("Лодка не прошла модерацию", html, [boat.owner.email])
+        user = boat.owner
+        if user.email_notification:
+            text = f"<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: {comment}</div>"
+            html = render_to_string("emails/email.html", context={'content': text})
+            send_email("Лодка не прошла модерацию", html, [user.email])
 
     class Meta:
         unique_together = [['user', 'type']] 
