@@ -60,7 +60,7 @@
             <div class="form-check mb-3">
                 <input class="form-check-input" id="emailNotificationCheck" type="checkbox" name="email_notification" {% if form.email_notification.value %} checked {% endif %}>
                 <label class="form-check-label" for="emailNotificationCheck">{{ form.email_notification.label }}</label>
-                <div class="form-text">О смене статуса лодки, бронирования.</div>
+                <div class="form-text">{{ form.email_notification.help_text }}</div>
             </div>
 
             <h4 class="mb-3">Telegram бот <a target="_blank" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
