@@ -1,10 +1,10 @@
 {% with fullscreen_viewer_id|default:'fullscreenViewer' as fullscreen_viewer_id %}
     <div id="{{ fullscreen_viewer_id }}" class="modal fade">
         <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                            
-                <button type="button" class="btn-close btn-close-white position-fixed end-0 text-center btn-close btn-close-white py-5" style="z-index: 2; width: 15%;"
-                    data-bs-dismiss="modal" aria-label="Close" title="Закрыть">
+            <div class="modal-content">  
+
+                <button type="button" data-bs-dismiss="modal" class="carousel-control-full-screen-close">
+                    <span class="carousel-control-full-screen-close-icon" aria-hidden="true"></span>
                 </button>
                 
                 <div class="modal-body bg-black d-flex align-items-center p-0">

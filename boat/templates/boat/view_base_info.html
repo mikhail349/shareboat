@@ -6,7 +6,7 @@
 
 {% if boat.files.exists %}
     <script type="text/javascript" src="{% static 'boat/js/img_viewer.min.js' %}"></script>
-    <div class="card box-shadow text-end mb-3">
+    <div class="card border-0 box-shadow text-end mb-3">
         <img class="d-block w-100 card-img card-img-md" src="{{ boat.files.first.file.url }}" />
         <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
             <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
