@@ -16,5 +16,6 @@ urlpatterns = [
     path('create/', views.create, name='create'),
     path('requests', views.requests, name='requests'),
     path('view/<int:pk>/', views.view, name='view'),
+    path('all/', views.all, name='all'),
     path('api/', include(apiurlpatterns))
 ]

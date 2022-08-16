@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from django.utils.dateparse import parse_date
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
@@ -97,6 +97,12 @@ def requests(request):
     requests = Booking.objects.filter(boat__owner=request.user).filter_by_status(status).order_by('-pk')
     return render(request, 'booking/requests.html', context={'requests': requests, 'Status': Booking.Status})
 
+@permission_required('user.view_all_bookings', raise_exception=True)
+def all(request):
+    status = request.GET.get('status')
+    bookings = Booking.objects.filter_by_status(status).order_by('-pk')
+    return render(request, 'booking/all.html', context={'bookings': bookings, 'Status': Booking.Status})
+
 @login_required
 @transaction.atomic
 def set_request_status(request, pk):
@@ -136,7 +142,10 @@ def set_request_status(request, pk):
 @login_required
 def view(request, pk):
     try:
-        booking = Booking.objects.get(Q(pk=pk), Q(renter=request.user) | Q(boat__owner=request.user))
+        if request.user.has_perm('user.view_all_bookings'):
+            booking = Booking.objects.get(pk=pk)
+        else:
+            booking = Booking.objects.get(Q(pk=pk), Q(renter=request.user) | Q(boat__owner=request.user))
 
         context = {
             'booking': booking

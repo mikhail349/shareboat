@@ -86,6 +86,7 @@ class User(AbstractUser):
         permissions = [
             ('view_support', 'Can view support'),
             ('support_chat', 'Can support chat'),
+            ('view_all_bookings', 'Can view all bookings')
         ]
 
 
