@@ -138,7 +138,7 @@ def accept(request, pk):
         
         boat.status = Boat.Status.PUBLISHED
         boat.save()
-        notify.send_boat_published_to_owner(boat)
+        notify.send_boat_published_to_owner(boat, request)
         return redirect(reverse('boat:boats_on_moderation'))
     except Boat.DoesNotExist:
         return render(request, 'not_found.html', status=404)
@@ -166,7 +166,7 @@ def reject(request, pk):
             boat.save()
 
             #reason_display = [item[1] for item in reasons if item[0] == reason][0]
-            notify.send_boat_declined_to_owner(boat, comment)
+            notify.send_boat_declined_to_owner(boat, comment, request)
 
             return redirect(reverse('boat:boats_on_moderation'))
         except Boat.DoesNotExist:

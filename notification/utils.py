@@ -13,10 +13,10 @@ def send_booking_status(booking, recipient):
     MessageBooking.objects.send_status(booking, recipient)
     UserEmail.send_booking_status(booking, recipient)
 
-def send_boat_published_to_owner(boat):
+def send_boat_published_to_owner(boat, request=None):
     MessageBoat.objects.send_published_to_owner(boat)
-    UserEmail.send_boat_published_to_owner(boat)
+    UserEmail.send_boat_published_to_owner(boat, request)
 
-def send_boat_declined_to_owner(boat, comment):
+def send_boat_declined_to_owner(boat, comment, request):
     MessageBoat.objects.send_declined_to_owner(boat, comment)
-    UserEmail.send_boat_declined_to_owner(boat, comment)
+    UserEmail.send_boat_declined_to_owner(boat, comment, request)

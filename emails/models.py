@@ -6,6 +6,7 @@ from shareboat import tokens
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 
+from django.urls import reverse
 from .utils import send_email
 import datetime
 from django.utils import timezone
@@ -75,33 +76,41 @@ class UserEmail(models.Model):
     @classmethod 
     def send_booking_status(cls, booking, user):
         if user.email_notification:
-            text = f'Статус бронирования изменился на "{booking.get_status_display()}"'
-            html = render_to_string("emails/email.html", context={'content': text})
-            send_email("Изменился статус бронирования", html, [user.email])
+            content = f'Статус бронирования изменился на "{booking.get_status_display()}"'
+            send_email("Изменился статус бронирования", content, [user.email])
 
     @classmethod 
     def send_initial_booking_to_owner(cls, booking):
         user = booking.boat.owner
         if user.email_notification:
-            text = f'Новый запрос на бронирование'
-            html = render_to_string("emails/email.html", context={'content': text})
-            send_email("Новый запрос на бронирование", html, [user.email])
+            content = f'Новый запрос на бронирование'
+            send_email("Новый запрос на бронирование", content, [user.email])
 
     @classmethod 
-    def send_boat_published_to_owner(cls, boat):
+    def send_boat_published_to_owner(cls, boat, request):
         user = boat.owner
         if user.email_notification:
-            text = "<div>Лодка опубликована!</div>"
-            html = render_to_string("emails/email.html", context={'content': text})
-            send_email("Лодка опубликована", html, [user.email])
+            domain = ("https" if request.is_secure() else "http") + "://" + get_current_site(request).domain
+            content = f"""
+                <h2>Лодка опубликована!</h2>
+                <p><b>{boat.get_full_name()}</b> теперь доступна для аренды всем желающим!</p>
+                <a href="{domain + reverse('boat:view', kwargs={'pk': boat.pk})}" class="btn btn-primary">Перейти к лодке</a>
+                <p><a href="{domain + reverse('user:update')}" class="text-muted">Настроить уведомления</a></p>
+            """
+            send_email("Лодка опубликована", content, [user.email])
 
     @classmethod 
-    def send_boat_declined_to_owner(cls, boat, comment):
+    def send_boat_declined_to_owner(cls, boat, comment, request):
         user = boat.owner
         if user.email_notification:
-            text = f"<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: {comment}</div>"
-            html = render_to_string("emails/email.html", context={'content': text})
-            send_email("Лодка не прошла модерацию", html, [user.email])
+            domain = ("https" if request.is_secure() else "http") + "://" + get_current_site(request).domain
+            content = f"""
+                <h2>Лодка не прошла модерацию</h2>
+                <p><b>{boat.get_full_name()}</b> не соответствует правилам сервиса: {comment}</p>
+                <a href="{domain + reverse('boat:view', kwargs={'pk': boat.pk})}" class="btn btn-primary">Перейти к лодке</a>
+                <p><a href="{domain + reverse('user:update')}" class="text-muted">Настроить уведомления</a></p>
+            """
+            send_email("Лодка не прошла модерацию", content, [user.email])
 
     class Meta:
         unique_together = [['user', 'type']] 
