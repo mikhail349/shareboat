@@ -39,6 +39,10 @@ footer {
 
 }
 
+.note-btn.dropdown-toggle:after {
+    content: none;
+}
+
 .loading-ship-wheel {  
     animation-name: rotation;
     animation-duration: 1.5s;

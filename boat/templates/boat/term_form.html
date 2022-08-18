@@ -1,10 +1,14 @@
 {% load l10n %}
+{% load static %}
 
 {% include 'form_errors.html' %}
 
-<input type="hidden" name="is_popup" value="{{ request.GET.is_popup }}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/summernote-lite.min.css' %}">
+<script type="text/javascript" src="{% static 'js/summernote-lite.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/summernote-ru-RU.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'boat/js/term_form.min.js' %}"></script>
 
-<h4 class="mb-3">Основная информация</h4>
+<input type="hidden" name="is_popup" value="{{ request.GET.is_popup }}" />
 
 <div class="form-floating mb-3">                 
     <input type="text" name="name" class="form-control" placeholder="Укажите" autocomplete="off"           
@@ -15,8 +19,8 @@
     <div class="invalid-tooltip">Укажите</div>
 </div>
 
-<div class="form-floating mb-3">                 
-    <textarea name="content" class="form-control" placeholder="Укажите" autocomplete="off" required style="height: 360px">{{ form.content.value|default:"" }}</textarea>
-    <label for="content">{{ form.content.label }}</label>
+<h4 class="mb-3">{{ form.content.label }}</h4>
+<div class=" mb-3">                 
+    <textarea name="content" class="form-control" required>{{ form.content.value|default:"" }}</textarea>
     <div class="invalid-tooltip">Укажите</div>
 </div>

@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django_summernote.admin import SummernoteModelAdmin
+
 from .models import Boat, Manufacturer, Model, Tariff, Term
 
 class TariffInline(admin.TabularInline):
@@ -31,7 +33,11 @@ class TariffAdmin(admin.ModelAdmin):
     readonly_fields = ('weight', )
     search_fields = ('name', 'boat__name',)
 
+class TermAdmin(SummernoteModelAdmin):
+    summernote_fields = ('content',)
+    list_display = ('name', 'user')
+
 admin.site.register(Boat, BoatAdmin)
 admin.site.register(Manufacturer, ManufacturerAdmin)
 admin.site.register(Tariff, TariffAdmin)
-admin.site.register(Term)
+admin.site.register(Term, TermAdmin)

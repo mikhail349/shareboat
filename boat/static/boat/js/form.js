@@ -162,8 +162,8 @@ $(document).ready(() => {
 
     $("#btnAddTerm").on('click', function() {
         const url = $(this).attr('data-action');
-        const params = 'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no';
-        window.open(url, 'addTerm', params);
+        //const params = 'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no';
+        window.open(url, 'addTerm');
     })
 
     if (window.isCustomLocation) {
