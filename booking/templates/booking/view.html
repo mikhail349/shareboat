@@ -16,6 +16,12 @@
         </div>
 
         {% include 'boat/view_base.html' with boat=booking.boat %}
+
+        {% if booking.term_content %}
+            <h4>Условия аренды</h4>
+            {{ booking.term_content|safe }}
+        {% endif %}
+
         {% include 'booking/spec.html' with spec=booking.spec total_sum=booking.total_sum %}
         
     </div>

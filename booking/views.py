@@ -36,7 +36,8 @@ def get_confirm_create_context(data, boat_pk):
         'days': int(calculated_data.get('days')),
         'total_sum': Decimal(calculated_data.get('sum')),
         'spec': json.dumps(calculated_data.get('spec'), default=str),
-        'calculated_data': data.get('calculated_data')
+        'calculated_data': data.get('calculated_data'),
+        'term_content': data.get('term_content', '')
     }
 
     return context
@@ -70,6 +71,11 @@ def create(request):
         if calculated_data.get('sum') != context['total_sum']:
             return _render_error('Тарифы на лодку изменились')
 
+        boat_term_content = context['boat'].term.content if context['boat'].term else ''
+        booking_term_content = context['term_content']
+        if booking_term_content != boat_term_content:
+            return _render_error('Условия аренды изменились')
+
         try:
             booking = Booking.objects.create(
                 boat=context['boat'], 
@@ -77,7 +83,8 @@ def create(request):
                 start_date=context['start_date'], 
                 end_date=context['end_date'], 
                 total_sum=context['total_sum'], 
-                spec=context['spec']
+                spec=context['spec'],
+                term_content=context['term_content']
             )
             notify.send_initial_booking_to_owner(booking)
             return redirect(reverse('booking:view', kwargs={'pk': booking.pk}))

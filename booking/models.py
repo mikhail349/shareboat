@@ -51,6 +51,7 @@ class Booking(models.Model):
     end_date    = models.DateField()
     total_sum   = models.DecimalField(max_digits=8, decimal_places=2)
     spec        = models.JSONField(null=True, blank=True)
+    term_content= models.TextField(null=True, blank=True)
 
     objects = models.Manager.from_queryset(BookingQuerySet)()
 
