@@ -29,12 +29,21 @@
                                                         Подтвердить бронь
                                                     </a>
                                                 </li>
+                                            {% endif %}
+                                            {% if req.status == Status.PREPAYMENT_REQUIRED %}
                                                 <li>
-                                                    <a class="dropdown-item" href="#" data-booking-id="{{ req.pk }}" data-bs-toggle="modal" data-bs-target="#declineRequestModal">
+                                                    <a class="dropdown-item accept-request" href="#" data-booking-id="{{ req.pk }}" data-status="{{ Status.ACCEPTED }}">
+                                                        Оплата получена
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if req.status in req.STATUSES_CAN_BE_DECLINED %}
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="#" data-booking-id="{{ req.pk }}" data-bs-toggle="modal" data-bs-target="#declineRequestModal">
                                                         Отменить бронь
                                                     </a>
                                                 </li>
-                                                <li><hr class="dropdown-divider"></li>
+                                                <li><hr class="dropdown-divider"></li>      
                                             {% endif %}      
                                             <li><a class="dropdown-item" href="{% url 'chat:booking' req.pk %}?back={{ request.get_full_path }}">Чат</a></li>                           
                                         </ul>

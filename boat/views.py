@@ -225,17 +225,6 @@ def search_boats(request):
 
     return render(request, 'boat/search_boats.html', context)
 
-def boats(request):
-    q_page = request.GET.get('page', 1)
-    boats = Boat.published.all().annotate_in_fav(user=request.user).prefetch_actual_tariffs()
-    p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
-    context = {
-        'boats': p.object_list,
-        'p': p
-    }
-
-    return render(request, 'boat/boats.html', context=context)
-
 
 def switch_fav(request, pk):
     if not request.user.is_authenticated:

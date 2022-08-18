@@ -557,25 +557,6 @@ class BoatTestCase(TestCase):
         self.assertLess(exec_time, 2.0)
         self.assertEqual(response.status_code, 200)
 
-    def test_boats(self):
-        def _get_response():
-            return self.client.get(reverse('boat:boats'))
-
-        # wrong status
-        boat = create_simple_boat(model=self.model, owner=self.owner)
-        response = _get_response()
-        self.assertEqual(response.status_code, 200)
-        boats = response.context.get('boats', [])
-        self.assertEqual(len(boats), 0)
-
-        # ok
-        boat.status = Boat.Status.PUBLISHED
-        boat.save()
-        response = _get_response()
-        self.assertEqual(response.status_code, 200)
-        boats = response.context.get('boats', [])
-        self.assertEqual(len(boats), 1)
-
     def test_switch_fav(self):
         def _get_response(pk):
             return self.client.get(reverse('boat:api_switch_fav', kwargs={'pk': pk})) 

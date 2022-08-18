@@ -41,6 +41,8 @@ class Booking(models.Model):
     ACTIVE_STATUSES = [Status.ACCEPTED, Status.PREPAYMENT_REQUIRED, Status.ACTIVE]
     DONE_STATUSES = [Status.DONE, Status.DECLINED]
 
+    STATUSES_CAN_BE_DECLINED = [Status.PENDING, Status.PREPAYMENT_REQUIRED]
+
     boat        = models.ForeignKey(Boat, on_delete=models.PROTECT, related_name='bookings')
     renter      = models.ForeignKey(User, on_delete=models.PROTECT, related_name='bookings')
     status      = models.IntegerField(choices=Status.choices, default=Status.PENDING)

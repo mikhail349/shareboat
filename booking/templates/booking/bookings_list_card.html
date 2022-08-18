@@ -25,7 +25,11 @@
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuStatus{{ booking.pk }}">
                                         {% if booking.status == Status.PENDING %}
-                                            <li><a class="dropdown-item" href="#" data-booking-id="{{ booking.pk }}" data-status="{{ Status.DECLINED }}">Отменить бронь</a></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" href="#" data-booking-id="{{ booking.pk }}" data-status="{{ Status.DECLINED }}">
+                                                    Отменить бронь
+                                                </a>
+                                            </li>
                                         {% endif %}      
                                         <li><a class="dropdown-item" href="{% url 'chat:booking' booking.pk %}?back={{ request.get_full_path }}">Чат</a></li>                           
                                     </ul>
