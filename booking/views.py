@@ -108,7 +108,8 @@ def all(request):
 def set_request_status(request, pk):
     
     ALLOWED_STATUSES = {
-        Booking.Status.PENDING: (Booking.Status.DECLINED, Booking.Status.ACCEPTED),
+        Booking.Status.PENDING:             (Booking.Status.DECLINED, Booking.Status.ACCEPTED),
+        Booking.Status.PREPAYMENT_REQUIRED: (Booking.Status.DECLINED, Booking.Status.ACCEPTED),
     }
 
     try:
@@ -126,10 +127,11 @@ def set_request_status(request, pk):
             MessageBooking.objects.create(text=message, sender=request.user, recipient=booking.renter, booking=booking)
 
         if new_status == Booking.Status.ACCEPTED:
-            if booking.boat.prepayment_required:
-                new_status = Booking.Status.PREPAYMENT_REQUIRED
-                prepayment_until = timezone.now() + timedelta(days=int(settings.PREPAYMENT_DAYS_LIMIT))
-                Prepayment.objects.create(booking=booking, until=prepayment_until)
+            if booking.status == Booking.Status.PENDING:
+                if booking.boat.prepayment_required:
+                    new_status = Booking.Status.PREPAYMENT_REQUIRED
+                    prepayment_until = timezone.now() + timedelta(days=int(settings.PREPAYMENT_DAYS_LIMIT))
+                    Prepayment.objects.create(booking=booking, until=prepayment_until)
 
         booking.status = new_status
         booking.save()
