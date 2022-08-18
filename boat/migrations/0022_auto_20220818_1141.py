@@ -27,6 +27,7 @@ def revert_migration(apps, schema_editor): # pragma: no cover
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('user', '0002_auto_20220701_1732'),
         ('boat', '0021_auto_20220818_1130'),
     ]
 
