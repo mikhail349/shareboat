@@ -15,6 +15,10 @@
             <div class="alert alert-danger">{{ errors|safe }}</div>
         {% endif %}
 
+        <h4>Лодка</h4>
+        <img class="card-img card-img-100 mb-2" src="{{ boat.files.first.file.url }}" />
+        <p>{{ boat.get_full_name }}<p>
+
         <h4>Стоимость</h4>
         <p>{{ total_sum }}&nbsp;₽</p>    
 
@@ -30,10 +34,6 @@
         {% endif %}
 
         {% include 'booking/spec.html' %}
-
-        <h4>Лодка</h4>
-        {% include 'boat/view_base.html' %}   
-
     </div>
     <div class="sticky-bottom bg-white border-top container-lg py-3">
         <div class="row g-2">

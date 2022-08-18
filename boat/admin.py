@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Boat, Manufacturer, Model, Tariff
+from .models import Boat, Manufacturer, Model, Tariff, Term
 
 class TariffInline(admin.TabularInline):
     model = Tariff
@@ -34,3 +34,4 @@ class TariffAdmin(admin.ModelAdmin):
 admin.site.register(Boat, BoatAdmin)
 admin.site.register(Manufacturer, ManufacturerAdmin)
 admin.site.register(Tariff, TariffAdmin)
+admin.site.register(Term)

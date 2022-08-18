@@ -1,0 +1,22 @@
+{% load l10n %}
+
+{% include 'form_errors.html' %}
+
+<input type="hidden" name="is_popup" value="{{ request.GET.is_popup }}" />
+
+<h4 class="mb-3">Основная информация</h4>
+
+<div class="form-floating mb-3">                 
+    <input type="text" name="name" class="form-control" placeholder="Укажите" autocomplete="off"           
+        required maxlength="255"
+        value="{{ form.name.value|default:'' }}"
+    />
+    <label for="name">{{ form.name.label }}</label>
+    <div class="invalid-tooltip">Укажите</div>
+</div>
+
+<div class="form-floating mb-3">                 
+    <textarea name="content" class="form-control" placeholder="Укажите" autocomplete="off" required style="height: 360px">{{ form.content.value|default:"" }}</textarea>
+    <label for="content">{{ form.content.label }}</label>
+    <div class="invalid-tooltip">Укажите</div>
+</div>

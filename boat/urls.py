@@ -36,5 +36,7 @@ urlpatterns = [
     path('update_tariff/<int:pk>/', views.update_tariff, name='update_tariff'),
     path('delete_tariff/<int:pk>/', views.delete_tariff, name='delete_tariff'),
 
+    path('create_term/', views.create_term, name='create_term'),
+
     path('api/', include(apiurlpatterns))
 ]

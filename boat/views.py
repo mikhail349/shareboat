@@ -13,10 +13,10 @@ from django.utils.dateparse import parse_date, parse_datetime
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.exceptions import ValidationError
-from boat.forms import TariffForm
+from boat.forms import TariffForm, TermForm
 from notification import utils as notify
 
-from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatCoordinates, Tariff
+from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatCoordinates, Tariff, Term
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking
 from base.models import Base
@@ -29,13 +29,14 @@ import datetime
 def response_not_found():
     return JsonResponse({'message': 'Лодка не найдена'}, status=404)
 
-def get_form_context():
+def get_form_context(request):
     return {
         'boat_types': Boat.get_types(), 
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
         'comfort_boat_types': json.dumps(Boat.get_comfort_boat_types()),
         'bases': Base.objects.all(),
-        'manufacturers': Manufacturer.objects.all()
+        'manufacturers': Manufacturer.objects.all(),
+        'terms': Term.objects.filter(user=request.user).order_by('name')
     }
 
 def get_bool(value):
@@ -287,7 +288,7 @@ def create(request):
     if request.method == 'GET':
         context = {
             'boat_coordinates': json.dumps({}),
-            **get_form_context()
+            **get_form_context(request)
         }
         return render(request, 'boat/create.html', context=context)
 
@@ -303,7 +304,7 @@ def update(request, pk):
             boat = Boat.active.get(pk=pk, owner=request.user)
             context = {
                 'boat': boat, 
-                **get_form_context()
+                **get_form_context(request)
             }
             return render(request, 'boat/update.html', context=context)
         except Boat.DoesNotExist:
@@ -340,8 +341,10 @@ def create_or_update(request, pk=None):
     is_custom_location = get_bool(data.get('is_custom_location'))
     prepayment_required = get_bool(data.get('prepayment_required'))
     base = Base.objects.get(pk=data.get('base')) if data.get('base') and not is_custom_location else None
-    
+
     try:
+        term = Term.objects.get(pk=data.get('term'), user=request.user) if data.get('term') else None
+
         errors = []
         try:
             model = Model.objects.get(pk=data.get('model'))
@@ -368,6 +371,7 @@ def create_or_update(request, pk=None):
                 boat.capacity   = data.get('capacity')
                 boat.type       = data.get('type')
                 boat.prepayment_required = prepayment_required
+                boat.term       = term
                 boat.base       = base
                 boat.model      = model
                 
@@ -388,6 +392,7 @@ def create_or_update(request, pk=None):
                     'capacity':     data.get('capacity'),
                     'type':         data.get('type'),
                     'prepayment_required': prepayment_required,
+                    'term':         term,
                     'base':         base,
                     'model':        model
                 }
@@ -459,6 +464,8 @@ def create_or_update(request, pk=None):
 
     except Boat.DoesNotExist:
         return response_not_found()
+    except Term.DoesNotExist:
+        return JsonResponse({'message': 'Условия аренды не найдены'}, status=404)
     except ValidationError as e:
         return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
  
@@ -480,6 +487,29 @@ def create_tariff(request):
             form.save()
             return redirect_to_tariffs(form.instance.boat.pk)
         return render(request, 'boat/create_tariff.html', context={'form': form}, status=400)
+
+@login_required
+@permission_required('boat.add_term', raise_exception=True)
+def create_term(request):
+      
+    if request.method == 'GET':
+        is_popup = get_bool(request.GET.get('is_popup', False))
+        form = TermForm()
+        if is_popup:
+            return render(request, 'boat/popup_create_term.html', context={'form': form})
+    elif request.method == 'POST':
+        is_popup = get_bool(request.POST.get('is_popup', False))
+        form = TermForm(request.POST)
+        if form.is_valid():
+            term = form.save(commit=False)
+            term.user = request.user
+            term.save()
+            if is_popup:
+                print(form.cleaned_data)
+                return JsonResponse({'data': {'pk': form.instance.pk, 'name': form.instance.name}})
+            return redirect('/')
+        if is_popup:
+            return render(request, 'boat/popup_create_term.html', context={'form': form}, status=400)
 
 @login_required
 @permission_required('boat.change_tariff', raise_exception=True)

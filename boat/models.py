@@ -59,6 +59,13 @@ class Model(models.Model):
     class Meta:
         ordering = ['name']
 
+
+class Term(models.Model):
+    name = models.CharField('Название шаблона', max_length=255)
+    content = models.TextField('Текст условий')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="term_templates", null=True, blank=True, verbose_name='Пользователь')
+
+
 class Boat(models.Model):
 
     class Meta:
@@ -99,9 +106,10 @@ class Boat(models.Model):
     capacity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
     type    = models.IntegerField(choices=Type.choices)
     prepayment_required = models.BooleanField(default=False)
+    term    = models.ForeignKey(Term, on_delete=models.SET_NULL, related_name="boats", null=True, blank=True)
     modified = models.DateTimeField(auto_now=True)
 
-    base    = models.ForeignKey(Base, on_delete=models.PROTECT, related_name="boats", null=True, blank=True)
+    base    = models.ForeignKey(Base, on_delete=models.SET_NULL, related_name="boats", null=True, blank=True)
 
     objects = models.Manager.from_queryset(BoatQuerySet)()
     active = ActiveBoatManager()

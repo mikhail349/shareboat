@@ -264,6 +264,16 @@
         <input class="form-check-input" id="prepaymentRequiredCheck" type="checkbox" name="prepayment_required" {% if boat.prepayment_required %} checked {% endif %}>
         <label class="form-check-label" for="prepaymentRequiredCheck">Требуется предоплата</label>
     </div>
+
+    <div class="form-floating mb-3" >
+        <select class="form-select" name="term">
+            <option selected value="">Не указаны</option>
+            {% for term in terms %}
+                <option value="{{ term.pk }}" {% if term == boat.term %}selected{% endif %}>{{ term.name }}</option> 
+            {% endfor %}
+        </select>
+        <label for="typeSelect">Условия</label>
+    </div>
 </div>
 
 <div class="mb-3">
