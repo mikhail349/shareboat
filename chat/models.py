@@ -49,6 +49,14 @@ class BookingManager(models.Manager):
         text = f'<div>Статус бронирования изменился на "{booking.get_status_display()}"</div>'
         return self.create(booking=booking, recipient=recipient, text=text)        
 
+    def remind_prepayment_to_renter(self, booking):
+        text = f'<div>Не забудьте внести предоплату.</div>'
+        return self.create(booking=booking, recipient=booking.renter, text=text)    
+
+    def remind_prepayment_to_owner(self, booking):
+        text = f'<div>Не забудьте сменить статус на "Оплата получена", если Вы получили предоплату.</div>'
+        return self.create(booking=booking, recipient=booking.boat.owner, text=text) 
+
 class MessageBooking(Message):
     booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
     objects = BookingManager()

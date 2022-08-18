@@ -18,14 +18,5 @@ sys.path.append(args.project_path)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shareboat.settings')
 django.setup()
 
-from django.utils import timezone
-from booking.models import Booking
-
-# decline if prepayment date is out
-Booking.objects.filter(status=Booking.Status.PREPAYMENT_REQUIRED, prepayment__until__lte=timezone.now()).update(status=Booking.Status.DECLINED)
-
-# active if period started
-Booking.objects.filter(status=Booking.Status.ACCEPTED, start_date__lte=timezone.now()).update(status=Booking.Status.ACTIVE)
-
-# done if period finished
-Booking.objects.filter(status=Booking.Status.ACTIVE, end_date__lte=timezone.now()).update(status=Booking.Status.DONE)
+from booking.utils import autoupdate_statuses
+autoupdate_statuses()

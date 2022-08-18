@@ -20,3 +20,9 @@ def send_boat_published_to_owner(boat, request=None):
 def send_boat_declined_to_owner(boat, comment, request):
     MessageBoat.objects.send_declined_to_owner(boat, comment)
     UserEmail.send_boat_declined_to_owner(boat, comment, request)
+
+def remind_prepayment_to_renter(booking):
+    MessageBooking.objects.remind_prepayment_to_renter(booking)
+
+def remind_prepayment_to_owner(booking):
+    MessageBooking.objects.remind_prepayment_to_owner(booking)

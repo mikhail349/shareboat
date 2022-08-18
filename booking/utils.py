@@ -5,3 +5,15 @@ def send_status_to_renter(booking):
 def send_initial_to_owner(booking):
     from chat.models import MessageBooking
     MessageBooking.objects.send_initial_to_owner(booking)
+
+def autoupdate_statuses():
+    from booking.models import Booking
+    from django.utils import timezone
+    Booking.objects.filter(status=Booking.Status.PREPAYMENT_REQUIRED, prepayment__until__lte=timezone.now()).update(status=Booking.Status.DECLINED)
+    Booking.objects.filter(status=Booking.Status.ACCEPTED, start_date__lte=timezone.now()).update(status=Booking.Status.ACTIVE)
+    Booking.objects.filter(status=Booking.Status.ACTIVE, end_date__lte=timezone.now()).update(status=Booking.Status.DONE)
+
+def autoremind_prepayment():
+    from booking.models import Booking
+    from notification.utils import remind_prepayment_to_renter, remind_prepayment_to_owner
+    #for booking in Booking.objects.filter()
