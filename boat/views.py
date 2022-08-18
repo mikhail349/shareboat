@@ -489,29 +489,6 @@ def create_tariff(request):
         return render(request, 'boat/create_tariff.html', context={'form': form}, status=400)
 
 @login_required
-@permission_required('boat.add_term', raise_exception=True)
-def create_term(request):
-      
-    if request.method == 'GET':
-        is_popup = get_bool(request.GET.get('is_popup', False))
-        form = TermForm()
-        if is_popup:
-            return render(request, 'boat/popup_create_term.html', context={'form': form})
-    elif request.method == 'POST':
-        is_popup = get_bool(request.POST.get('is_popup', False))
-        form = TermForm(request.POST)
-        if form.is_valid():
-            term = form.save(commit=False)
-            term.user = request.user
-            term.save()
-            if is_popup:
-                print(form.cleaned_data)
-                return JsonResponse({'data': {'pk': form.instance.pk, 'name': form.instance.name}})
-            return redirect('/')
-        if is_popup:
-            return render(request, 'boat/popup_create_term.html', context={'form': form}, status=400)
-
-@login_required
 @permission_required('boat.change_tariff', raise_exception=True)
 def update_tariff(request, pk):
     if request.method == 'GET':
@@ -541,3 +518,26 @@ def delete_tariff(request, pk):
         return redirect_to_tariffs(tariff.boat.pk)
     except Tariff.DoesNotExist:
         return response_not_found()
+
+@login_required
+@permission_required('boat.add_term', raise_exception=True)
+def create_term(request):
+      
+    if request.method == 'GET':
+        is_popup = get_bool(request.GET.get('is_popup', False))
+        form = TermForm()
+        if is_popup:
+            return render(request, 'boat/popup_create_term.html', context={'form': form})
+    elif request.method == 'POST':
+        is_popup = get_bool(request.POST.get('is_popup', False))
+        form = TermForm(request.POST)
+        if form.is_valid():
+            term = form.save(commit=False)
+            term.user = request.user
+            term.save()
+            if is_popup:
+                data_json = json.dumps({"pk": form.instance.pk , "name": form.instance.name}) 
+                return render(request, 'popup_response.html', context={'content': data_json})
+            return redirect('/')
+        if is_popup:
+            return render(request, 'boat/popup_create_term.html', context={'form': form}, status=400)

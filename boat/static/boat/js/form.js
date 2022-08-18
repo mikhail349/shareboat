@@ -1,3 +1,8 @@
+function onAfterPopupClosed(window, data) {
+    window.close();
+    $('select[name="term"]').append(new Option(text=data.name, value=data.pk, defaultSelected=true, selected=true));
+}
+
 $(document).ready(() => {
 
     var map;
@@ -153,6 +158,12 @@ $(document).ready(() => {
             $("#collapseCustomAddress").collapse('hide');
             $("#baseSelect").attr('disabled', false);
         }
+    })
+
+    $("#btnAddTerm").on('click', function() {
+        const url = $(this).attr('data-action');
+        const params = 'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no';
+        window.open(url, 'addTerm', params);
     })
 
     if (window.isCustomLocation) {

@@ -1,0 +1,12 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>Всплывающее окно закрывается...</title>
+        <script type="text/javascript" src=""></script>
+    </head>
+    <body>
+        <script id="popupResponse" src="{% static 'js/popup_response.min.js' %}" data-popup-response="{{ content }}">
+        </script>
+    </body>
+</html>
