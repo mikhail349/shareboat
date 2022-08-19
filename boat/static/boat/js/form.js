@@ -166,6 +166,15 @@ $(document).ready(() => {
         window.open(url, 'addTerm');
     })
 
+    $("#addressMapModalSearchButton").on('click', function(e) {
+        const text = $("#addressMapModalSearchText").val();
+        if (!text) {
+            showErrorToast('Введите адрес');
+            return;
+        }
+        geocode(text);
+    })
+
     if (window.isCustomLocation) {
         var latlng = {
             lat: window.boatCoordinates.lat,
@@ -190,6 +199,29 @@ $(document).ready(() => {
         }
     }
 
+    function geocode(text) {
+        $.ajax({
+            type: 'GET',
+            url: `https://nominatim.openstreetmap.org/?q=${text}&format=json&accept-language=ru`,
+            success: onSuccess,
+        })
+        function onSuccess(data) {
+            if (data.length == 0) {
+                return showErrorToast('Ничего не найдено');
+            }
+            const obj = data[0];
+
+            var latlng = {
+                lat: obj.lat,
+                lng: obj.lon
+            }
+
+            map.setView(latlng);
+            createMarker(latlng);
+            reverseGeocode(latlng);
+        }
+    }
+
     function reverseGeocode(latlng) {
         $("form button[type=submit").attr('disabled', true);
         
@@ -208,7 +240,6 @@ $(document).ready(() => {
                 $('.addressLabel').addClass('text-primary');
                 window.boatCoordinates.address = data.display_name;
                 window.boatCoordinates.state = data?.address?.state;
-                console.log(window.boatCoordinates);
                 $("form button[type=submit").attr('disabled', false);
             }
         }
