@@ -65,6 +65,9 @@ class Term(models.Model):
     content = models.TextField('Текст условий')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="term_templates", null=True, blank=True, verbose_name='Пользователь')
 
+    def __str__(self):
+        return self.name
+
 
 class Boat(models.Model):
 

@@ -138,7 +138,9 @@ def set_request_status(request, pk):
                 if booking.boat.prepayment_required:
                     new_status = Booking.Status.PREPAYMENT_REQUIRED
                     prepayment_until = timezone.now() + timedelta(days=int(settings.PREPAYMENT_DAYS_LIMIT))
-                    Prepayment.objects.create(booking=booking, until=prepayment_until)
+                    if prepayment_until.date() > booking.start_date:
+                        prepayment_until = booking.start_date
+                    Prepayment.objects.create(booking=booking, until=prepayment_until.date())
 
         booking.status = new_status
         booking.save()

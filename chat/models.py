@@ -2,6 +2,7 @@ from asyncore import read
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 
 from boat.models import Boat
 from booking.models import Booking
@@ -50,15 +51,17 @@ class BookingManager(models.Manager):
         return self.create(booking=booking, recipient=recipient, text=text)        
 
     def remind_prepayment_to_renter(self, booking):
-        text = f'<div>Не забудьте внести предоплату.</div>'
+        date = timezone.localdate(booking.prepayment.until).strftime('%d.%m.%Y')
+        text = f'<div>Не забудьте внести предоплату до {date}, иначе бронирование будет <b>отменено</b>.</div>'
         return self.create(booking=booking, recipient=booking.renter, text=text)    
 
     def remind_prepayment_to_owner(self, booking):
-        text = f'<div>Не забудьте сменить статус на "Оплата получена", если Вы получили предоплату.</div>'
+        date = timezone.localdate(booking.prepayment.until).strftime('%d.%m.%Y')
+        text = f'<div>Не забудьте сменить статус на "Оплата получена" до {date}, если Вы получили предоплату. Иначе бронирование будет <b>отменено</b>.</div>'
         return self.create(booking=booking, recipient=booking.boat.owner, text=text) 
 
 class MessageBooking(Message):
-    booking = models.ForeignKey(Booking, on_delete=models.PROTECT, related_name="messages")
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name="messages")
     objects = BookingManager()
 
     def get_title(self):

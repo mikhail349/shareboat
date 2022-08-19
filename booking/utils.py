@@ -16,4 +16,11 @@ def autoupdate_statuses():
 def autoremind_prepayment():
     from booking.models import Booking
     from notification.utils import remind_prepayment_to_renter, remind_prepayment_to_owner
-    #for booking in Booking.objects.filter()
+    from datetime import timedelta
+    from django.utils import timezone
+
+    deadline = timezone.now() + timedelta(days=3)
+    for booking in Booking.objects.filter(status=Booking.Status.PREPAYMENT_REQUIRED, prepayment__until__lte=deadline):
+        remind_prepayment_to_renter(booking)
+        remind_prepayment_to_owner(booking)
+        
