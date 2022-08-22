@@ -43,6 +43,10 @@ footer {
     content: none;
 }
 
+.note-editor.fullscreen .note-editing-area {
+    background-color: white;
+}
+
 .loading-ship-wheel {  
     animation-name: rotation;
     animation-duration: 1.5s;
