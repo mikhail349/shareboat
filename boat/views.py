@@ -68,6 +68,12 @@ def my_boats(request):
     return render(request, 'boat/my_boats.html', context=context) 
 
 @login_required
+@permission_required('boat.view_term', raise_exception=True)
+def terms(request):
+    terms = Term.objects.filter(user=request.user)
+    return render(request, 'boat/terms.html', context={'terms': terms})
+
+@login_required
 def favs(request):
     page = request.GET.get('page', 1)
 
@@ -517,7 +523,7 @@ def delete_tariff(request, pk):
         tariff.delete()
         return redirect_to_tariffs(tariff.boat.pk)
     except Tariff.DoesNotExist:
-        return response_not_found()
+        return render(request, 'not_found.html', status=404)
 
 @login_required
 @permission_required('boat.add_term', raise_exception=True)
@@ -528,6 +534,7 @@ def create_term(request):
         form = TermForm()
         if is_popup:
             return render(request, 'boat/popup_create_term.html', context={'form': form})
+        return render(request, 'boat/create_term.html', context={'form': form})
     elif request.method == 'POST':
         is_popup = get_bool(request.POST.get('is_popup', False))
         form = TermForm(request.POST)
@@ -538,6 +545,41 @@ def create_term(request):
             if is_popup:
                 data_json = json.dumps({"pk": form.instance.pk , "name": form.instance.name}) 
                 return render(request, 'popup_response.html', context={'content': data_json})
-            return redirect('/')
+            return redirect(reverse('boat:terms'))
         if is_popup:
             return render(request, 'boat/popup_create_term.html', context={'form': form}, status=400)
+
+@login_required
+@permission_required('boat.change_term', raise_exception=True)
+def update_term(request, pk):
+    if request.method == 'GET':
+        try:
+            term = Term.objects.get(pk=pk, user=request.user)
+            form = TermForm(instance=term)
+            return render(request, 'boat/update_term.html', context={'form': form})
+        except Term.DoesNotExist:
+            return render(request, 'not_found.html', status=404)
+    elif request.method == 'POST':
+        try:
+            term = Term.objects.get(pk=pk, user=request.user)
+            form = TermForm(request.POST, instance=term)
+            if form.is_valid():
+                with transaction.atomic(): 
+                    term.boats.filter(status=Boat.Status.PUBLISHED).update(status=Boat.Status.ON_MODERATION)
+                    form.save()
+                return redirect(reverse('boat:terms'))
+            return render(request, 'boat/update_term.html', context={'form': form}, status=400)
+        except Term.DoesNotExist:
+            return render(request, 'not_found.html', status=404)
+
+@login_required
+@permission_required('boat.delete_term', raise_exception=True)
+def delete_term(request, pk):
+    try:
+        term = Term.objects.get(pk=pk, user=request.user)
+        with transaction.atomic(): 
+            term.boats.filter(status=Boat.Status.PUBLISHED).update(status=Boat.Status.ON_MODERATION)
+            term.delete()
+        return redirect(reverse('boat:terms'))
+    except Term.DoesNotExist:
+        return render(request, 'not_found.html', status=404)

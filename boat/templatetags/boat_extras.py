@@ -76,6 +76,10 @@ def daycountcase(value):
     return '%s %s' % (value, get_str_case_by_count(value, 'день', 'дня', 'дней'))
 
 @register.simple_tag
+def countcase(value, one, two, five):
+    return get_str_case_by_count(value, one, two, five)
+
+@register.simple_tag
 def get_weekdays_display(tariff):
     def _get_display(weekday):
         if weekday == 0: return 'пн'

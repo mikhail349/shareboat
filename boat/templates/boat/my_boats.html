@@ -14,7 +14,7 @@
         <div class="container">
             <h1 class="jumbotron-heading mb-1">Мой флот</h1>
 
-            <a href="{% url 'boat:create' %}" class="btn btn-primary my-2">Добавить лодку</a>
+            <!--<a href="{% url 'boat:create' %}" class="btn btn-primary my-2">Добавить лодку</a>-->
         </div>
     </section>
 
@@ -85,6 +85,17 @@
         {% include 'paginator.html' with class="my-3" %}
         {% include 'boat/delete_modal.html' %}
         {% include 'modal_map.html' %}
+
+        <div class="sticky-bottom bg-white border-top container-lg py-3">
+            <div class="row g-2">            
+                <div class="col col-lg-auto">
+                    <a href="{% url 'boat:create' %}" class="btn btn-primary w-100">Добавить лодку</a>                       
+                </div>
+                <div class="col col-lg-auto">
+                    <a href="{% url 'boat:terms' %}" class="btn btn-outline-primary w-100">Условия аренды</a>
+                </div>
+            </div>
+        </div>
 
     {% endif %}
 {% endblock  %}

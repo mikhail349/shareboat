@@ -36,7 +36,10 @@ urlpatterns = [
     path('update_tariff/<int:pk>/', views.update_tariff, name='update_tariff'),
     path('delete_tariff/<int:pk>/', views.delete_tariff, name='delete_tariff'),
 
+    path('terms/', views.terms, name='terms'),
     path('create_term/', views.create_term, name='create_term'),
+    path('update_term/<int:pk>/', views.update_term, name='update_term'),
+    path('delete_term/<int:pk>/', views.delete_term, name='delete_term'),
 
     path('api/', include(apiurlpatterns))
 ]

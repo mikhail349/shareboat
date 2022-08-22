@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Добавление условий аренды{% endblock %}
+
+{% block content %}
+    <div class="container-lg">
+        <section class="jumbotron text-center">   
+            <h1 class="jumbotron-heading">Добавление условий аренды</h1>    
+        </section>
+    </div>
+
+    <form method="post" action="{% url 'boat:create_term' %}" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="container-lg">
+            {% include 'boat/term_form.html' %}             
+        </div>
+        <div class="sticky-bottom bg-white border-top container-lg py-3">
+            <button type="submit" class="btn btn-primary col-12 col-sm-auto">Сохранить</button>  
+        </div>
+    </form>
+{% endblock %}
