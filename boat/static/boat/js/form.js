@@ -175,6 +175,17 @@ $(document).ready(() => {
         geocode(text);
     })
 
+    $(document).on("keypress", "#addressMapModalSearchText", function (e) {
+        var code = e.keyCode || e.which;
+        if (code == 13) {
+            e.preventDefault();
+            const $btn = $("#addressMapModalSearchButton");
+            $btn.focus();
+            $btn.click(); 
+            return false;
+        }
+    });
+
     if (window.isCustomLocation) {
         var latlng = {
             lat: window.boatCoordinates.lat,
