@@ -31,6 +31,7 @@
 
 .dropdown-menu {
     --bs-dropdown-link-active-bg: var(--bs-primary);
+    z-index: 1025;
 }
 
 .form-control:focus, .form-select:focus, .form-check-input:focus {
