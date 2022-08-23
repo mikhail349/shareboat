@@ -82,11 +82,11 @@ function FilesList(props) {
             onDrop={onDrop}
             onDragOver={(e) => e.preventDefault()}
         >    
-            <div className="row">
+            <div className="row g-2 mb-3">
                 <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
                 {
                     files.map((file, index) => (
-                        <div key={index} className="col-lg-3 col-md-4 mb-3">
+                        <div key={index} className="col-md-4 col-lg-3">
                             <div className="card box-shadow text-end">
                                 <img src={file.url} className="card-img" data-filename={file.blob.name} />  
                                 <div className="card-img-overlay">
