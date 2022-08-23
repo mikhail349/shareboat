@@ -47,6 +47,10 @@ footer {
     background-color: white;
 }
 
+.was-validated .form-control:invalid + .note-editor {
+    border-color: var(--bs-danger);
+}
+
 .loading-ship-wheel {  
     animation-name: rotation;
     animation-duration: 1.5s;

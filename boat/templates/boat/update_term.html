@@ -15,7 +15,17 @@
     <form method="post" action="{% url 'boat:update_term' pk=form.instance.pk %}" class="needs-validation" novalidate>
         {% csrf_token %}
         <div class="container-lg">
-            {% include 'boat/term_form.html' %}         
+            {% include 'boat/term_form.html' %}       
+            <h4 class="mb-3">Лодки</h4>
+            {% if form.instance.boats.all.exists %}
+                <ul class="list-group mb-3">
+                    {% for boat in form.instance.boats.all %}
+                        <li class="list-group-item"><a target="_blank" href="{% url 'boat:view' pk=boat.pk %}">{{ boat.get_full_name }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Ни одна лодка не использует эти условия</p>
+            {% endif %}
         </div>
         <div class="sticky-bottom bg-white border-top container-lg py-3">
             <div class="row g-2">      
