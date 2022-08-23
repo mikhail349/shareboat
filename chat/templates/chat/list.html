@@ -10,8 +10,8 @@
         </div>
     </section>
 
-    <div class="container md-container mb-3">
-        <div class="list-group">
+    <div class="container md-container">
+        <div class="list-group  mb-3">
             {% for message in messages %}
                 <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     <div class="d-flex gap-3">
@@ -46,6 +46,18 @@
                 </a>
             {% endfor %}
         </div>
+        {% if unread_exists %}
+            <div class="sticky-bottom bg-white border-top container-lg py-3 px-0">
+                <div class="row g-0">      
+                    <div class="col col-lg-auto">
+                        <form method="post" action="{% url 'chat:read_all' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary w-100">Отметить все как прочитанные</button>                          
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
     
 {% endblock  %}

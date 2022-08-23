@@ -26,6 +26,7 @@ urlpatterns = [
     path('list/', views.list, name='list'),
     path('support/', views.support, name='support'),
     path('support_chat/<int:user_pk>/', views.support_chat, name='support_chat'),
+    path('read_all/', views.read_all, name='read_all'),
 
     path('api/', include(apiurlpatterns))
 ]

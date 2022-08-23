@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.db.models import Q, Prefetch
@@ -119,7 +119,12 @@ def list(request):
         last_message_support.badge = '<div class="badge bg-warning text-primary">Поддержка</div>'   
         messages.insert(0, last_message_support)
 
-    return render(request, 'chat/list.html', context={'messages': messages})
+    context={
+        'messages': messages,
+        'unread_exists': user.messages_as_recipient.filter(read=False).exists()
+    }
+
+    return render(request, 'chat/list.html', context=context)
 
 @login_required
 def get_new_messages_booking(request, pk):
@@ -294,4 +299,9 @@ def boat(request, pk):
 
         return render(request, 'chat/boat.html', context=context)
     except Boat.DoesNotExist:
-        return render(request, 'not_found.html', status=404) 
+        return render(request, 'not_found.html', status=404)
+
+@login_required
+def read_all(request):
+    request.user.messages_as_recipient.filter(read=False).update(read=True)
+    return redirect(reverse('chat:list'))
