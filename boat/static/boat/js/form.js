@@ -188,8 +188,7 @@ $(document).ready(() => {
             e.preventDefault();
             const $btn = $("#addressMapModalSearchButton");
             $btn.focus();
-            $btn.click(); 
-            return false;
+            $btn.click();
         }
     });
 
