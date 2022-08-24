@@ -175,7 +175,14 @@ $(document).ready(() => {
         geocode(text);
     })
 
-    $(document).on("keypress", "#addressMapModalSearchText", function (e) {
+    $(document).on("keydown", "#addressMapModalSearchText", function (e) {
+        var code = e.keyCode || e.which;
+        if (code == 13) {
+            e.preventDefault();
+        }
+    });
+
+    $(document).on("keyup", "#addressMapModalSearchText", function (e) {
         var code = e.keyCode || e.which;
         if (code == 13) {
             e.preventDefault();
