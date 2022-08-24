@@ -176,6 +176,7 @@ $(document).ready(() => {
     })
 
     $("#addressMapModalSearchText").on("keydown", function (e) {
+        alert(e.keyCode);
         if (e.keyCode == 13) {
             e.preventDefault();
         }
@@ -185,8 +186,8 @@ $(document).ready(() => {
         if (e.keyCode == 13) {
             e.preventDefault();
             const $btn = $("#addressMapModalSearchButton");
+            $btn.focus();
             $btn.click();
-            //$btn.focus();
         }
     });
 
