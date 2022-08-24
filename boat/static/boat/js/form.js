@@ -176,13 +176,14 @@ $(document).ready(() => {
     })
 
     $("#addressMapModalSearchText").on("keydown", function (e) {
-        alert(e.keyCode);
+        alert('keydown' + e.keyCode);
         if (e.keyCode == 13) {
             e.preventDefault();
         }
     });
 
     $("#addressMapModalSearchText").on("keyup", function (e) {
+        alert('keyup' + e.keyCode);
         if (e.keyCode == 13) {
             e.preventDefault();
             const $btn = $("#addressMapModalSearchButton");
