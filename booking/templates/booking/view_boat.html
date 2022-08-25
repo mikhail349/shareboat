@@ -1,0 +1,105 @@
+{% load l10n %}
+{% load booking_extras %}
+{% include 'leaflet.html' %}
+
+{% with booking.boat_info.spec|boatspectoobj as spec %}
+    <div class="row g-3"> 
+        <div class="col-lg">
+            <div class="card border-0 box-shadow text-end mb-3">
+                <img class="d-block w-100 card-img card-img-md" src="{{ booking.boat_info.photo.url }}" />
+                <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ booking.pk }}" title="Во весь экран">
+                    <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Full screen</span>
+                </a>
+            </div> 
+            
+            <h2>{{ spec.name }}</h2>   
+            <h4>{{ booking.boat_info.model.manufacturer.name }} {{ booking.boat_info.model.name }}</h4> 
+            <h4 class="text-muted">{{ booking.boat_info.get_type_display }}</h4>   
+        </div>
+
+        <div class="col-lg">            
+            <div class="row row-cols-3 gx-3">   
+                <div class="col-12">
+                    <h5>Основная информация</h5>
+                </div>                
+                <div class="col">
+                    <p class="text-muted">
+                        <span class="d-block">Длина, м.</span><span class="text-black">{{ spec.length }}</span>
+                    </p>
+                </div>
+                <div class="col">
+                    <p class="text-muted">
+                        <span class="d-block">Ширина, м.</span><span class="text-black">{{ spec.width }}</span>
+                    </p>
+                </div>
+                <div class="col">
+                    <p class="text-muted">
+                        <span class="d-block">Осадка, м.</span><span class="text-black">{{ spec.draft }}</span>
+                    </p>
+                </div>                      
+                <div class="col">
+                    <p class="text-muted">
+                        <span class="d-block">Год выпуска</span><span class="text-black">{{ spec.issue_year|default:"-"|unlocalize }}</span>
+                    </p>
+                </div>
+                <div class="col-8">
+                    <p class="text-muted">
+                        <span class="d-block">Вместимость</span><span class="text-black">{{ spec.capacity }}</span>
+                    </p>
+                </div>
+             
+                <div class="col-12">
+                    <h5>Двигатели</h5>
+                </div>                 
+                <div class="col">
+                    <p class="text-muted">
+                        <span class="d-block">Кол-во</span><span class="text-black">{{ spec.motor.motor_amount|default:"-" }}</span>
+                    </p>
+                </div>
+                <div class="col-8">
+                    <p class="text-muted">
+                        <span class="d-block">Мощность, л.с.</span><span class="text-black">{{ spec.motor.motor_power|default:"-" }}</span>
+                    </p>
+                </div>                  
+              
+                <div class="col-12">
+                    <h5>Удобства</h5>
+                </div>                 
+                <div class="col">
+                    <p class="text-muted">
+                        <span class="d-block">Спальные места</span><span class="text-black">{% get_berth_amount spec %}</span>
+                    </p>
+                </div>
+                <div class="col mt-auto">
+                    <p class="text-muted">
+                        <span class="d-block">Каюты</span><span class="text-black">{{ spec.comfort.cabin_amount|default:"-" }}</span>
+                    </p>
+                </div>           
+                <div class="col mt-auto">
+                    <p class="text-muted">
+                        <span class="d-block">WC</span><span class="text-black">{{ spec.comfort.bathroom_amount|default:"-" }}</span>
+                    </p>
+                </div>     
+                
+                <div class="col-12">
+                    <h5>Владелец</h5>
+                </div>  
+                <div class="col-12 mb-3">
+                    {% if booking.boat_info.owner.avatar_sm %}
+                        <img height="32" width="32" src="{{ booking.boat_info.owner.avatar_sm.url }}" class="of-cover rounded-circle">
+                    {% endif %}
+                    <span class="text-muted align-middle">{{ booking.boat_info.owner.first_name }}</span>
+                </div>
+            </div>
+        </div>           
+    </div>
+    {% include 'booking/boat_location.html' %}
+    {% include 'modal_map.html' %}
+
+    <div class="mt-3">{{ spec.text|default_if_none:""|linebreaks }}</div>
+{% endwith %}
+
+{% with booking.pk|stringformat:'s' as booking_pk_str %}
+    {% include 'boat/fullscreen_viewer.html' with fullscreen_viewer_id='fullscreenViewer'|add:booking_pk_str photo=booking.boat_info.photo %}
+{% endwith %}

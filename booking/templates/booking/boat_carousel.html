@@ -1,0 +1,20 @@
+{% if booking.boat_info.photo %}
+
+    <div class="position-relative">
+        <img src="{{ booking.boat_info.photo.url }}" class="card-img-left" />
+        <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ booking.pk }}" title="Во весь экран">
+            <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Full screen</span>
+        </a>
+    </div>
+
+{% else %}
+
+    <div class="card-img-left"></div>
+
+{% endif %}
+
+{% with booking.pk|stringformat:'s' as booking_pk_str %}
+    {% include 'boat/fullscreen_viewer.html' with fullscreen_viewer_id='fullscreenViewer'|add:booking_pk_str photo=booking.boat_info.photo %}
+{% endwith %}
+

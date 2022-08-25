@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
-from boat.models import Boat
+from boat.models import Boat, Model, Base
 from user.models import User
 
 
@@ -51,8 +51,7 @@ class Booking(models.Model):
     end_date    = models.DateField()
     total_sum   = models.DecimalField(max_digits=8, decimal_places=2)
     spec        = models.JSONField(null=True, blank=True)
-    term_content= models.TextField(null=True, blank=True)
-
+    
     objects = models.Manager.from_queryset(BookingQuerySet)()
 
     def clean(self):
@@ -83,3 +82,22 @@ class Booking(models.Model):
 class Prepayment(models.Model):
     booking     = models.OneToOneField(Booking, primary_key=True, on_delete=models.CASCADE)
     until       = models.DateTimeField()
+
+class BoatInfo(models.Model):
+    booking     = models.OneToOneField(Booking, on_delete=models.CASCADE, primary_key=True, related_name="boat_info")
+    prepayment_required = models.BooleanField()
+    term_content= models.TextField(null=True, blank=True)
+    
+    owner       = models.ForeignKey(User, on_delete=models.PROTECT, related_name="requests")
+    model       = models.ForeignKey(Model, on_delete=models.PROTECT, related_name="bookings")
+    type        = models.IntegerField(choices=Boat.Type.choices)
+    base        = models.ForeignKey(Base, on_delete=models.PROTECT, related_name="bookings", null=True, blank=True)
+    photo       = models.ImageField()
+    spec        = models.JSONField(null=True, blank=True)
+
+class BoatInfoCoordinates(models.Model):
+    boat_info = models.OneToOneField(BoatInfo, on_delete=models.CASCADE, primary_key=True, related_name="coordinates")
+    lon = models.DecimalField(max_digits=9, decimal_places=6)
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    address = models.TextField()
+    state = models.CharField(max_length=255, db_index=True)

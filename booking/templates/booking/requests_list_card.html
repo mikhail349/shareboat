@@ -14,7 +14,7 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body d-flex flex-column">
-                                    {% include 'booking/card.html' with boat=req.boat %}
+                                    {% include 'booking/boat_card.html' with booking=req %}
                                     <div class="alert {{ req.status|get_status_color }} p-2 mb-2" role="alert">
                                         {% include 'booking/booking_data.html' with booking=req %}
                                     </div>

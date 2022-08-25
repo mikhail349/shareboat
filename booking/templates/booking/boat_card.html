@@ -1,0 +1,7 @@
+{% load booking_extras %}
+<h5 class="card-title mb-2 ">
+    {% with booking.boat_info.spec|boatspectoobj as spec %}
+        {{ booking.boat_info.model.manufacturer.name }} {{ booking.boat_info.model.name }} "{{ spec.name }}"
+    {% endwith %}
+</h5>     
+<h6 class="card-subtitle mb-3 text-muted">{{ booking.boat_info.get_type_display }}</h6>

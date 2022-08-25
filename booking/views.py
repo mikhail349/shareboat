@@ -12,11 +12,11 @@ from boat.utils import calc_booking
 from chat.models import MessageBooking
 from notification import utils as notify 
 
-from .models import Booking, Prepayment
+from .models import Booking, Prepayment, BoatInfo, BoatInfoCoordinates
 from .exceptions import BookingDateRangeException, BookingDuplicatePendingException
 from .templatetags.booking_extras import spectolist
 
-from boat.models import Boat
+from boat.models import Boat, MotorBoat, ComfortBoat, BoatCoordinates
 from django.db.models import Q
 from telegram_bot.notifications import send_message
 from django.db import transaction
@@ -56,6 +56,71 @@ def confirm(request, boat_pk):
 
 @login_required
 def create(request):
+    def _create_boat_info(booking):
+        boat = booking.boat
+
+        term_content = None
+        if boat.term:
+            term_content = boat.term.content
+
+        photo = None 
+        if boat.files.exists():
+            photo = boat.files.all().first().file
+
+        spec = {
+            'name': boat.name,
+            'text': boat.text,
+            'issue_year': boat.issue_year,
+            'length': boat.length,
+            'width': boat.width,
+            'draft': boat.draft,
+            'capacity': boat.capacity
+        }
+
+        try:
+            motor = {
+                'motor_amount': boat.motor_boat.motor_amount,
+                'motor_power': boat.motor_boat.motor_power
+            }
+            spec['motor'] = motor
+        except MotorBoat.DoesNotExist:
+            pass
+
+        try:
+            comfort = {
+                'berth_amount': boat.comfort_boat.berth_amount,
+                'extra_berth_amount': boat.comfort_boat.extra_berth_amount,
+                'cabin_amount': boat.comfort_boat.cabin_amount,
+                'bathroom_amount': boat.comfort_boat.bathroom_amount
+            }
+            spec['comfort'] = comfort
+        except ComfortBoat.DoesNotExist:
+            pass
+
+        boat_info = BoatInfo.objects.create(
+            booking=booking,
+            prepayment_required=boat.prepayment_required,
+            term_content=term_content,
+            owner=boat.owner,
+            model=boat.model,
+            type=boat.type,
+            base=boat.base,
+            photo=photo,
+            spec=json.dumps(spec, default=str)
+        )
+
+        try:
+            BoatInfoCoordinates.objects.create(
+                boat_info=boat_info,
+                lon=boat.coordinates.lon,
+                lat=boat.coordinates.lat,
+                address=boat.coordinates.address,
+                state=boat.coordinates.state
+            )
+        except BoatCoordinates.DoesNotExist:
+            pass
+
+
     if request.method == 'POST':
         def _render_error(msg):
             url = reverse('boat:booking', kwargs={'pk': context['boat'].pk}) + f'?dateFrom={context["start_date"].isoformat()}&dateTo={context["end_date"].isoformat()}'
@@ -83,9 +148,9 @@ def create(request):
                 start_date=context['start_date'], 
                 end_date=context['end_date'], 
                 total_sum=context['total_sum'], 
-                spec=context['spec'],
-                term_content=context['term_content']
+                spec=context['spec']
             )
+            _create_boat_info(booking)
             notify.send_initial_booking_to_owner(booking)
             return redirect(reverse('booking:view', kwargs={'pk': booking.pk}))
 
@@ -137,10 +202,10 @@ def set_request_status(request, pk):
             if booking.status == Booking.Status.PENDING:
                 if booking.boat.prepayment_required:
                     new_status = Booking.Status.PREPAYMENT_REQUIRED
-                    prepayment_until = timezone.now() + timedelta(days=int(settings.PREPAYMENT_DAYS_LIMIT))
-                    if prepayment_until.date() > booking.start_date:
+                    prepayment_until = (timezone.now() + timedelta(days=int(settings.PREPAYMENT_DAYS_LIMIT))).date()
+                    if prepayment_until > booking.start_date:
                         prepayment_until = booking.start_date
-                    Prepayment.objects.create(booking=booking, until=prepayment_until.date())
+                    Prepayment.objects.create(booking=booking, until=prepayment_until)
 
         booking.status = new_status
         booking.save()

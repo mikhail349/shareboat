@@ -8,7 +8,7 @@
                 </button>
                 
                 <div class="modal-body bg-black d-flex align-items-center p-0">
-                    {% if photos.count > 1 %}
+                    {% if photos and photos.count > 1 %}
 
                         <div id="photoCarousel{{ fullscreen_viewer_id }}" class="carousel slide" data-bs-ride="carousel">
                             <ol class="carousel-indicators position-fixed">
@@ -37,8 +37,10 @@
                             
                         </div>
 
-                    {% elif photos.count == 1 %}
+                    {% elif photos and photos.count == 1 %}
                         <img class="fullscreen-img" src="{{ photos.first.file.url }}" />
+                    {% elif photo %}
+                        <img class="fullscreen-img" src="{{ photo.url }}" />
                     {% endif %}
                 </div>
             </div>
