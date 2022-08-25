@@ -17,9 +17,11 @@
 
         {% include 'booking/view_boat.html' %}
 
-        {% if booking.term_content %}
+        {% if booking.boat_info.term_content %}
             <h4>Условия аренды</h4>
-            {{ booking.term_content|safe }}
+            <div class="mb-3">
+                {{ booking.boat_info.term_content|safe }}
+            </div>
         {% endif %}
 
         {% include 'booking/spec.html' with spec=booking.spec total_sum=booking.total_sum %}

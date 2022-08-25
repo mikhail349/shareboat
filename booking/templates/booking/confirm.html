@@ -20,7 +20,7 @@
         <p>{{ boat.get_full_name }}<p>
 
         <h4>Стоимость</h4>
-        <p>{{ total_sum }}&nbsp;₽</p>    
+        <p>{{ total_sum }}&nbsp;₽, {{ boat.prepayment_required|yesno:'требуется предоплата,предоплата не требуется' }}</p>
 
         <h4>Период</h4>
         <p>с {{ start_date }} по {{ end_date }}</p>
@@ -28,10 +28,12 @@
         <h4>Продолжительность</h4>
         <p>{{ days|daycountcase }}</p>
 
-        <h4>Условия аренды</h4>
-        <p>{{ boat.prepayment_required|yesno:'Требуется предоплата,Предоплата не требуется' }}</p>
-
-        {{ boat.term.content|safe }}
+        {% if boat.term %}
+            <h4>Условия аренды</h4>
+            <div class="mb-3">
+                {{ boat.term.content|safe }}
+            </div>
+        {% endif %}
 
         {% include 'booking/spec.html' %}
     </div>
