@@ -195,10 +195,10 @@ def search_boats(request):
         q_date_from = datetime.datetime.strptime(q_date_from, '%Y-%m-%d')
         q_date_to = datetime.datetime.strptime(q_date_to, '%Y-%m-%d')    
       
-        boats = boats.filter(tariffs__start_date__lte=q_date_from, tariffs__end_date__gte=q_date_to).distinct()
+        boats = boats.filter(tariffs__active=True, tariffs__start_date__lte=q_date_from, tariffs__end_date__gte=q_date_to).distinct()
         boats = boats.exclude(bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
     else:
-        boats = boats.filter(tariffs__end_date__gte=date).distinct()
+        boats = boats.filter(tariffs__active=True, tariffs__end_date__gte=date).distinct()
     
     if q_boat_types:
         boats = boats.filter(type__in=q_boat_types)  
