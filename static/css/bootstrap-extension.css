@@ -28,9 +28,9 @@
     --bs-btn-hover-border-color: var(--bs-black);
     --bs-btn-hover-color: var(--bs-black);
     
-    --bs-btn-active-bg: var(--bs-white);
-    --bs-btn-active-border-color: var(--bs-black);
-    --bs-btn-active-color: var(--bs-black);
+    --bs-btn-active-bg: var(--bs-primary);
+    --bs-btn-active-border-color: var(--bs-primary);
+    --bs-btn-active-color: var(--bs-white);
 
     --bs-btn-focus-shadow-rgb: 25, 22, 69;
     --bs-btn-focus-box-shadow: 0 0 0 0.12rem rgba(var(--bs-btn-focus-shadow-rgb), 0.5);
