@@ -191,6 +191,7 @@ $(document).ready(() => {
             const $btn = $("#addressMapModalSearchButton");
             $btn.focus();
             $btn.click();
+            return true;
         }
     });
 
