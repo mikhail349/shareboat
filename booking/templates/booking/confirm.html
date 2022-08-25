@@ -16,7 +16,9 @@
         {% endif %}
 
         <h4>Лодка</h4>
-        <img class="card-img card-img-100 mb-2" src="{{ boat.files.first.file.url }}" />
+        {% if boat.files.exists %}
+            <img class="card-img card-img-100 mb-2" src="{{ boat.files.first.file.url }}" />
+        {% endif %}
         <p>{{ boat.get_full_name }}<p>
 
         <h4>Стоимость</h4>
