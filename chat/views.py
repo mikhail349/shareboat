@@ -82,7 +82,7 @@ def list(request):
     for booking in bookings:
         if booking.last_messages:
             last_message = booking.last_messages[0]
-            last_message.badge = f'<div class="badge bg-light text-primary">Бронирование № {booking.pk}</div>'
+            last_message.badge = f'<div class="badge bg-light text-primary border fw-normal">Бронирование № {booking.pk}</div>'
             messages.append(last_message)        
 
     # booking boat owner
@@ -93,7 +93,7 @@ def list(request):
     for req in requests:
         if req.last_messages:
             last_message = req.last_messages[0]
-            last_message.badge = f'<div class="badge bg-light text-primary">Заявка на бронирование № {req.pk}</div>'
+            last_message.badge = f'<div class="badge bg-light text-primary border fw-normal">Заявка на бронирование № {req.pk}</div>'
             messages.append(last_message)  
 
     # boat owner
@@ -104,19 +104,22 @@ def list(request):
     for boat in boats:
         if boat.last_messages:
             last_message = boat.last_messages[0]
-            last_message.badge = '<div class="badge bg-light text-primary">Лодка</div>' 
+            last_message.badge = '<div class="badge bg-light text-primary border fw-normal">Лодка</div>' 
             messages.append(last_message)  
+
+    messages = sorted(messages, key=lambda message: message.pk, reverse=True)
 
     last_message_support = MessageSupport.objects.filter(sender=user).union(MessageSupport.objects.filter(recipient=user)).last()
     if last_message_support:
-        last_message_support.badge = '<div class="badge bg-warning text-primary">Поддержка</div>'
-        messages.append(last_message_support)
+        last_message_support.badge = '<div class="badge bg-warning text-primary border border-warning fw-normal">Поддержка</div>'
+        #messages.append(last_message_support)
+        messages.insert(0, last_message_support)
     
-    messages = sorted(messages, key=lambda message: message.pk, reverse=True)
+    
 
     if not last_message_support:
         last_message_support = MessageSupport(text='Сообщений пока нет', read=True)    
-        last_message_support.badge = '<div class="badge bg-warning text-primary">Поддержка</div>'   
+        last_message_support.badge = '<div class="badge bg-warning text-primary border-warning fw-normal">Поддержка</div>'   
         messages.insert(0, last_message_support)
 
     context={

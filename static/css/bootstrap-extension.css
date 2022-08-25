@@ -39,6 +39,10 @@
     --bs-btn-disabled-border-color: var(--bs-primary-disabled);
 }
 
+.badge {
+    --bs-badge-padding-y: 0.33em;
+}
+
 .dropdown-menu {
     --bs-dropdown-link-active-bg: var(--bs-primary);
     z-index: 1025;
