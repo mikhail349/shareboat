@@ -175,23 +175,11 @@ $(document).ready(() => {
         geocode(text);
     })
 
-    /*
-    $("#addressMapModalSearchText").on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            const $btn = $("#addressMapModalSearchButton");
-            $btn.focus();
-            $btn.click();
-        }
-    });
-    */
-
     $("#addressMapModalSearchText").on("keydown", function(e) {
         if (e.keyCode === 13) {
             const $btn = $("#addressMapModalSearchButton");
             $btn.focus();
             $btn.click();
-            return true;
         }
     });
 
