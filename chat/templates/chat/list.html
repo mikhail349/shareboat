@@ -4,12 +4,6 @@
 {% block title %}Сообщения{% endblock  %}
 
 {% block content %}
-    <script type="text/javascript" src="{% static 'chat/js/list.min.js' %}"></script>
-    <script type="text/javascript">
-        var systemImgURL = "{% static 'img/boat.png' %}";
-        var myId = {{ request.user.pk }}
-    </script>
-
     <section class="jumbotron text-center">
         <div class="container">
             <h1 class="jumbotron-heading mb-0">Сообщения</h1>
@@ -17,8 +11,8 @@
     </section>
 
     <div class="container md-container">
-        <div class="chat-list list-group list-group-flush mb-3">
-            <!--{% for message in messages %}
+        <div class="list-group list-group-flush mb-3">
+            {% for message in messages %}
                 <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar_sm %}
@@ -50,7 +44,7 @@
                         </div>
                     </div>
                 </a>
-            {% endfor %}-->
+            {% endfor %}
         </div>
         {% if unread_exists %}
             <div class="sticky-bottom bg-white border-top container-lg py-3 px-0">

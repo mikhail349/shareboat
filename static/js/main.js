@@ -173,30 +173,3 @@ function plural(value, one, two, five) {
     if (lastDig >= 2 && lastDig <= 4) return two;
     return five;
 }
-
-function formatDateTime(value, format) {
-    const 
-        months = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-        monthsGen = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
-        monthsShort = ['янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноя.', 'дек.'];
-
-    if (value === null) return "";
-
-    var res = format;
-
-    res = res.replace('mmmm', months[value.getMonth()]);
-    res = res.replace('mmmg', monthsGen[value.getMonth()]);
-    res = res.replace('mmms', monthsShort[value.getMonth()]);
-
-    res = res.replace('yyyy', value.getFullYear());
-    res = res.replace('mm', ('0' + (value.getMonth()+1)).slice(-2));
-    res = res.replace('dd', ('0' + (value.getDate())).slice(-2));
-
-    res = res.replace('d', value.getDate());
-
-    res = res.replace('HH', ('0' + (value.getHours())).slice(-2));
-    res = res.replace('MM', ('0' + (value.getMinutes())).slice(-2));
-    res = res.replace('SS', ('0' + (value.getSeconds())).slice(-2));
-
-    return res;
-}
