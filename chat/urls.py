@@ -16,7 +16,9 @@ apiurlpatterns = [
     path('send_message/', views.send_message),
 
     path('get_new_support_messages/<int:user_pk>/', views.get_new_support_messages),
-    path('send_support_message/<int:user_pk>/', views.send_support_message)
+    path('send_support_message/<int:user_pk>/', views.send_support_message),
+
+    path('ajax_list/', views.ajax_list, name='ajax_list'),
 ]
 
 urlpatterns = [

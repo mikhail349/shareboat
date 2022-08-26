@@ -3,13 +3,17 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.db.models import Q, Prefetch
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage
 
 from .models import MessageBoat, MessageBooking, MessageSupport
-from .serializers import MessageSerializerList
+from .serializers import ChatSerializerList, MessageSerializerList
 from user.models import User
 
 from boat.models import Boat
 from booking.models import Booking
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 import json
 
@@ -128,6 +132,68 @@ def list(request):
     }
 
     return render(request, 'chat/list.html', context=context)
+
+@api_view(['GET'])
+@login_required
+def ajax_list(request):
+    page = request.GET.get('page', 1)
+    user = request.user
+    messages = []
+
+    # booking renter
+    msgs = MessageBooking.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-pk')
+    bookings = Booking.objects.filter(Q(renter=user)).prefetch_related(
+        Prefetch('messages', queryset=msgs, to_attr='last_messages')
+    )
+    for booking in bookings:
+        if booking.last_messages:
+            last_message = booking.last_messages[0]
+            last_message.badge = f'<div class="badge bg-light text-primary border fw-normal">Бронирование № {booking.pk}</div>'
+            messages.append(last_message)        
+
+    # booking boat owner
+    msgs = MessageBooking.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-pk')
+    requests = Booking.objects.filter(Q(boat__owner=user)).prefetch_related(
+        Prefetch('messages', queryset=msgs, to_attr='last_messages')
+    )
+    for req in requests:
+        if req.last_messages:
+            last_message = req.last_messages[0]
+            last_message.badge = f'<div class="badge bg-light text-primary border fw-normal">Заявка на бронирование № {req.pk}</div>'
+            messages.append(last_message)  
+
+    # boat owner
+    msgs = MessageBoat.objects.filter(Q(sender=user) | Q(recipient=user)).order_by('-pk')
+    boats = Boat.objects.filter(Q(owner=user)).prefetch_related(
+        Prefetch('messages', queryset=msgs, to_attr='last_messages')
+    )
+    for boat in boats:
+        if boat.last_messages:
+            last_message = boat.last_messages[0]
+            last_message.badge = '<div class="badge bg-light text-primary border fw-normal">Лодка</div>' 
+            messages.append(last_message)  
+
+    messages = sorted(messages, key=lambda message: message.pk, reverse=True)
+
+    last_message_support = MessageSupport.objects.filter(sender=user).union(MessageSupport.objects.filter(recipient=user)).last()
+    if last_message_support:
+        last_message_support.badge = '<div class="badge bg-warning text-primary border border-warning fw-normal">Поддержка</div>'
+        messages.insert(0, last_message_support)
+    
+    if not last_message_support:
+        last_message_support = MessageSupport(text='Сообщений пока нет', read=True)    
+        last_message_support.badge = '<div class="badge bg-warning text-primary border-warning fw-normal">Поддержка</div>'   
+        messages.insert(0, last_message_support)
+
+    p = Paginator(messages, 10).get_page(page)
+    ser = ChatSerializerList(p.object_list, many=True)
+
+    data = {
+        'has_next_page': p.has_next(),
+        'messages': ser.data
+    }
+
+    return Response(data)
 
 @login_required
 def get_new_messages_booking(request, pk):
