@@ -112,11 +112,8 @@ def list(request):
     last_message_support = MessageSupport.objects.filter(sender=user).union(MessageSupport.objects.filter(recipient=user)).last()
     if last_message_support:
         last_message_support.badge = '<div class="badge bg-warning text-primary border border-warning fw-normal">Поддержка</div>'
-        #messages.append(last_message_support)
         messages.insert(0, last_message_support)
     
-    
-
     if not last_message_support:
         last_message_support = MessageSupport(text='Сообщений пока нет', read=True)    
         last_message_support.badge = '<div class="badge bg-warning text-primary border-warning fw-normal">Поддержка</div>'   
