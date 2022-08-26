@@ -27,7 +27,7 @@ BOAT_OWNER_GROUP = 'boat_owner'
 
 @permission_required('user.view_support', raise_exception=True)
 def support(request):
-    return render(request, 'user/support.html')
+    return render(request, 'user/support.html', context={'admin_url': settings.ADMIN_URL})
 
 def get_bool(value):
     if value in (True, 'True', 'true', '1', 'on'):
