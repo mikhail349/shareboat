@@ -11,27 +11,39 @@
         </section>
         {% include 'boat/alert_boat_declined.html' %}
         {% include 'boat/view_base.html' %}     
+    </div>
 
-        <div class="row mb-3">
-            <div class="col col-lg-auto">
-                <a class="btn btn-primary w-100" href="{% url 'boat:update' boat.pk %}" role="button">Редактировать лодку</a>
-            </div>
-        </div>
-
-        <h4 id="tariffs" class="mb-3">Тарифы</h4>
-
-        {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}  
-        <div class="row">
-            <div class="col col-lg-auto">
-                <a class="btn btn-primary mb-3 w-100" href="{% url 'boat:create_tariff' %}?boat_pk={{ boat.pk }}" >Добавить тариф</a>  
+    <div class="container-lg mb-3">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col col-lg-auto">
+                    <a class="btn btn-primary w-100" href="{% url 'boat:update' boat.pk %}" role="button">Редактировать лодку</a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="sticky-bottom bg-white border-top container-lg py-3">
-        <div class="row">
-            <div class="col col-lg-auto">
-                <a class="btn btn-outline-primary w-100" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат с поддержкой</a>
+
+    <div class="container-lg mb-3">
+        <div class="card p-3 mb-3">
+            <h4 id="tariffs" class="mb-3">Тарифы</h4>
+            {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all show_active_column=True show_edit_href=True %}  
+            
+            <div class="row">
+                <div class="col col-lg-auto">
+                    <a class="btn btn-primary w-100" href="{% url 'boat:create_tariff' %}?boat_pk={{ boat.pk }}" >Добавить тариф</a>  
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="sticky-bottom container-lg mb-3">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col col-lg-auto">
+                    <a class="btn btn-outline-primary w-100" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат с поддержкой</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock  %}

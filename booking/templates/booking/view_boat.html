@@ -105,7 +105,10 @@
     {% include 'modal_map.html' %}
 
     {% if spec.text %}
-        <div class="card p-3 mb-3">{{ spec.text|default_if_none:""|linebreaks }}</div>
+        <div class="card p-3 mb-3">
+            <h4 class="mb-3">Описание</h4>
+            {{ spec.text|default_if_none:""|linebreaks }}
+        </div>
     {% endif %}
 
 {% endwith %}
