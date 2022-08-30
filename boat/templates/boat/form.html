@@ -16,151 +16,157 @@
         isCustomLocation = {{ boat.is_custom_location|yesno:"true,false" }};
 </script>
 
-<h4 class="mb-3">Основная информация</h4>
+<div class="card mb-3">
+    <h4 class="mb-3">Основная информация</h4>
 
-<div class="form-floating mb-3">                 
-    <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="off" aria-describedby="invalidInputName"             
-        required maxlength="255"
-        value="{{ boat.name }}"
-    />
-    <label for="name">Название лодки</label>
-    <div class="invalid-tooltip">Введите название лодки</div>
+    <div class="form-floating mb-3">                 
+        <input type="text" id="name" name="name" class="form-control" placeholder="Введите название лодки" autocomplete="off" aria-describedby="invalidInputName"             
+            required maxlength="255"
+            value="{{ boat.name }}"
+        />
+        <label for="name">Название лодки</label>
+        <div class="invalid-tooltip">Введите название лодки</div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-3">
+            <div class="form-floating" >
+                <select class="form-select" id="manufacturerSelect" name="manufacturer" required>
+                    <option selected disabled value="">Выберите из списка</option>
+                    {% for manufacturer in manufacturers %}
+                        <option value="{{ manufacturer.pk }}" {% if manufacturer.pk == boat.model.manufacturer.pk %}selected{% endif %}>{{ manufacturer.name }}</option> 
+                    {% endfor %}
+                </select>
+                <label for="manufacturerSelect">Производитель</label>
+                <div class="invalid-tooltip">Выберите производителя</div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="form-floating" >
+                <select class="form-select" id="modelSelect" name="model" required data-saved-model-id="{{ boat.model.pk }}">
+                    <option selected disabled value="">Выберите производителя</option>
+                    {% for model in boat.model.manufacturer.models.all %}
+                        <option value="{{ model.pk }}" {% if model.pk == boat.model.pk %}selected{% endif %}>{{ model.name }}</option> 
+                    {% endfor %}
+                </select>
+                <label for="modelSelect">Модель</label>
+                <div class="invalid-tooltip">Выберите модель</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-floating mb-3">                 
+        <textarea id="textareaText" name="text" class="form-control" placeholder="Описание лодки" autocomplete="off" style="height: 80px">{{ boat.text|default:"" }}</textarea>
+        <label for="textareaText">Описание лодки</label>
+    </div>
+
+    <div class="form-floating mb-3" >
+        <select class="form-select" id="typeSelect" name="type" required>
+            <option selected disabled value="">Выберите из списка</option>
+            {% for boat_type in boat_types %}
+                <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
+            {% endfor %}
+        </select>
+        <label for="typeSelect">Тип лодки</label>
+        <div class="invalid-tooltip">Выберите тип лодки</div>
+    </div>
+        
+    <div class="row g-3">
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="number" id="issueYearInput" name="issue_year" class="form-control" placeholder="Год выпуска"        
+                    min="1900"
+                    max="2999"
+                    step="1"
+                    value="{{ boat.issue_year|default_if_none:""|unlocalize }}"
+                />
+                <label for="name">Год выпуска</label>
+                <div class="invalid-tooltip">Введите год выпуска</div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="off"
+                    required min="1" max="99"
+                    value="{{ boat.capacity }}"      
+                />
+                <label for="capacityInput">Вместимость, чел.</label>
+                <div class="invalid-tooltip">Укажите вместимость лодки</div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="row g-3 mb-3">
-    <div class="col-lg-3">
-        <div class="form-floating" >
-            <select class="form-select" id="manufacturerSelect" name="manufacturer" required>
-                <option selected disabled value="">Выберите из списка</option>
-                {% for manufacturer in manufacturers %}
-                    <option value="{{ manufacturer.pk }}" {% if manufacturer.pk == boat.model.manufacturer.pk %}selected{% endif %}>{{ manufacturer.name }}</option> 
-                {% endfor %}
-            </select>
-            <label for="manufacturerSelect">Производитель</label>
-            <div class="invalid-tooltip">Выберите производителя</div>
+<div class="card mb-3">
+    <h4 class="mb-3">Габариты лодки</h4>
+    <div class="row g-3">
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="off"
+                    step=".01" min="0.01" max="999.99"
+                    required
+                    value="{{ boat.length|unlocalize }}"
+                />
+                <label for="lengthInput">Длина, м.</label>
+                <div class="invalid-tooltip">Укажите длину лодки</div>
+            </div>
         </div>
-    </div>
-
-    <div class="col-lg-3">
-        <div class="form-floating" >
-            <select class="form-select" id="modelSelect" name="model" required data-saved-model-id="{{ boat.model.pk }}">
-                <option selected disabled value="">Выберите производителя</option>
-                {% for model in boat.model.manufacturer.models.all %}
-                    <option value="{{ model.pk }}" {% if model.pk == boat.model.pk %}selected{% endif %}>{{ model.name }}</option> 
-                {% endfor %}
-            </select>
-            <label for="modelSelect">Модель</label>
-            <div class="invalid-tooltip">Выберите модель</div>
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="off"
+                    step=".01" min="0.01" max="99.99"
+                    required    
+                    value="{{ boat.width|unlocalize }}"     
+                />
+                <label for="widthInput">Ширина, м.</label>
+                <div class="invalid-tooltip">Укажите ширину лодки</div>
+            </div>
         </div>
-    </div>
-</div>
-
-<div class="form-floating mb-3">                 
-    <textarea id="textareaText" name="text" class="form-control" placeholder="Описание лодки" autocomplete="off" style="height: 80px">{{ boat.text|default:"" }}</textarea>
-    <label for="textareaText">Описание лодки</label>
-</div>
-
-<div class="form-floating mb-3" >
-    <select class="form-select" id="typeSelect" name="type" required>
-        <option selected disabled value="">Выберите из списка</option>
-        {% for boat_type in boat_types %}
-            <option value="{{ boat_type.0 }}" {% if boat_type.0 == boat.type %}selected{% endif %}>{{ boat_type.1 }}</option> 
-        {% endfor %}
-    </select>
-    <label for="typeSelect">Тип лодки</label>
-    <div class="invalid-tooltip">Выберите тип лодки</div>
-</div>
-    
-<div class="row g-3">
-    <div class="col-lg-3">
-        <div class="form-floating">                 
-            <input type="number" id="issueYearInput" name="issue_year" class="form-control" placeholder="Год выпуска"        
-                min="1900"
-                max="2999"
-                step="1"
-                value="{{ boat.issue_year|default_if_none:""|unlocalize }}"
-            />
-            <label for="name">Год выпуска</label>
-            <div class="invalid-tooltip">Введите год выпуска</div>
-        </div>
-    </div>
-
-    <div class="col-lg-3">
-        <div class="form-floating mb-3">                 
-            <input type="number" id="capacityInput" name="capacity" class="form-control" placeholder="Укажите вместимость лодки" autocomplete="off"
-                required min="1" max="99"
-                value="{{ boat.capacity }}"      
-            />
-            <label for="capacityInput">Вместимость, чел.</label>
-            <div class="invalid-tooltip">Укажите вместимость лодки</div>
-        </div>
-    </div>
-</div>
-
-<h4 class="mb-3">Габариты лодки</h4>
-<div class="row g-3 mb-3">
-    <div class="col-lg-3">
-        <div class="form-floating">                 
-            <input type="number" id="lengthInput" name="length" class="form-control" placeholder="Укажите длину лодки" autocomplete="off"
-                step=".01" min="0.01" max="999.99"
-                required
-                value="{{ boat.length|unlocalize }}"
-            />
-            <label for="lengthInput">Длина, м.</label>
-            <div class="invalid-tooltip">Укажите длину лодки</div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="form-floating">                 
-            <input type="number" id="widthInput" name="width" class="form-control" placeholder="Укажите ширину лодки" autocomplete="off"
-                step=".01" min="0.01" max="99.99"
-                required    
-                value="{{ boat.width|unlocalize }}"     
-            />
-            <label for="widthInput">Ширина, м.</label>
-            <div class="invalid-tooltip">Укажите ширину лодки</div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="form-floating">                 
-            <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="off"
-                step=".01" min="0.01" max="9.99"
-                required
-                value="{{ boat.draft|unlocalize }}"
-            />
-            <label for="draftInput">Осадка, м.</label>
-            <div class="invalid-tooltip">Укажите осадку лодки</div>
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="number" id="draftInput" name="draft" class="form-control" placeholder="Укажите осадку лодки" autocomplete="off"
+                    step=".01" min="0.01" max="9.99"
+                    required
+                    value="{{ boat.draft|unlocalize }}"
+                />
+                <label for="draftInput">Осадка, м.</label>
+                <div class="invalid-tooltip">Укажите осадку лодки</div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="collapse {% if boat.is_motor_boat %}show{% endif %}" id="collapseMotorBoat">
-    <h4 class="mb-3">Двигатели</h4>
-    <fieldset id="fieldsetMotorBoat" {% if not boat.is_motor_boat %}disabled{% endif %}>
-        <div class="row g-3 mb-3">
-            <div class="col-lg-3">
-                <div class="form-floating">                 
-                    <input type="number" id="motorAmountInput" name="motor_amount" class="form-control" placeholder="Укажите кол-во двигателей" autocomplete="off"
-                        required min="1" max="9"
-                        value="{{ boat.motor_boat.motor_amount }}"     
-                    />
-                    <label for="widthInput">Кол-во двигателей</label>
-                    <div class="invalid-tooltip">Укажите кол-во двигателей</div>
+    <div class="card mb-3">
+        <h4 class="mb-3">Двигатели</h4>
+        <fieldset id="fieldsetMotorBoat" {% if not boat.is_motor_boat %}disabled{% endif %}>
+            <div class="row g-3">
+                <div class="col-lg-3">
+                    <div class="form-floating">                 
+                        <input type="number" id="motorAmountInput" name="motor_amount" class="form-control" placeholder="Укажите кол-во двигателей" autocomplete="off"
+                            required min="1" max="9"
+                            value="{{ boat.motor_boat.motor_amount }}"     
+                        />
+                        <label for="widthInput">Кол-во двигателей</label>
+                        <div class="invalid-tooltip">Укажите кол-во двигателей</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-floating">                 
-                    <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="off"
-                        step=".1" min="0.1" max="9999.9"
-                        required
-                        value="{{ boat.motor_boat.motor_power|unlocalize }}"     
-                    />
-                    <label for="widthInput">Мощность, л.с.</label>
-                    <div class="invalid-tooltip">Укажите мощность двигателей</div>
+                <div class="col-lg-3">
+                    <div class="form-floating">                 
+                        <input type="number" id="motorPowerInput" name="motor_power" class="form-control" placeholder="Укажите мощность двигателей" autocomplete="off"
+                            step=".1" min="0.1" max="9999.9"
+                            required
+                            value="{{ boat.motor_boat.motor_power|unlocalize }}"     
+                        />
+                        <label for="widthInput">Мощность, л.с.</label>
+                        <div class="invalid-tooltip">Укажите мощность двигателей</div>
+                    </div>
                 </div>
-            </div>
-        </div>  
-    </fieldset>
+            </div>  
+        </fieldset>
+    </div>
 </div>
 
 <div class="collapse {% if boat.is_comfort_boat %}show{% endif %}" id="collapseComfortBoat">
