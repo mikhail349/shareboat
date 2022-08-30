@@ -8,7 +8,7 @@
 {% block content %}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next|urlencode }}" method="post" class='needs-validation form-signin' novalidate>
+    <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next|urlencode }}" method="post" class='needs-validation form-signin card p-3' novalidate>
         {% csrf_token %}
 
         <h1 class="h3 mb-3 font-weight-normal text-center">Авторизация</h1>  

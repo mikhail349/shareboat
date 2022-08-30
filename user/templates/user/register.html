@@ -8,7 +8,7 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script type="text/javascript" src="{% static 'user/js/register.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
-    <form action="." method="post" class="form-signin needs-validation" novalidate>
+    <form action="." method="post" class="form-signin needs-validation card p-3" novalidate>
         {% csrf_token %}
 
         <h1 class="h3 mb-3 font-weight-normal text-center">Регистрация</h1>    

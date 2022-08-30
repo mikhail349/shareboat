@@ -352,9 +352,6 @@ a {
     border-radius: var(--bs-border-radius-xl) !important;
 }
 
-body {
-    background-color: var(--bs-gray-100) !important;
-}
 
 .jumbotron {
     background-color: var(--bs-gray-100) !important;
