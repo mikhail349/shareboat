@@ -11,26 +11,32 @@
             <h1 class="jumbotron-heading">Просмотр бронирования</h1>    
         </section>
 
-        <div class="alert {{ booking.status|get_status_color }}" role="alert"> 
-            {% include 'booking/booking_data.html' %}   
+        <div class="card mb-3">
+            <div class="alert {{ booking.status|get_status_color }} bg-white mb-0" role="alert"> 
+                {% include 'booking/booking_data.html' %}   
+            </div>
         </div>
 
         {% include 'booking/view_boat.html' %}
 
         {% if booking.boat_info.term_content %}
-            <h4>Условия аренды</h4>
-            <div class="mb-3">
-                {{ booking.boat_info.term_content|safe }}
+            <div class="card mb-3 p-3">
+                <h4>Условия аренды</h4>
+                <div>
+                    {{ booking.boat_info.term_content|safe }}
+                </div>
             </div>
         {% endif %}
 
         {% include 'booking/spec.html' with spec=booking.spec total_sum=booking.total_sum %}
         
     </div>
-    <div class="sticky-bottom bg-white border-top container-lg py-3">
-        <div class="row g-2">
-            <div class="col col-lg-auto">
-                <a class="btn btn-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
+    <div class="sticky-bottom container-lg mb-3">
+        <div class="card p-3">
+            <div class="row g-2">
+                <div class="col col-lg-auto">
+                    <a class="btn btn-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
+                </div>
             </div>
         </div>
     </div>

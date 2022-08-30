@@ -1,31 +1,33 @@
 {% load booking_extras %}
 
-<h4 class="mb-3">Спецификация</h4>
-<div class="table-responsive">
-    <table class="table text-nowrap">
-        <thead>
-            <tr>
-                <th>№</th>
-                <th>Тариф</th>
-                <th>Цена</th>
-                <th>Кол-во</th>
-                <th>Сумма</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in spec|spectolist %}
+<div class="card mb-3 p-3">
+    <h4 class="mb-3">Спецификация</h4>
+    <div class="table-responsive">
+        <table class="table text-nowrap">
+            <thead>
                 <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.price }}</td>
-                    <td>{{ row.amount }}</td>
-                    <td>{{ row.sum }}</td>
+                    <th>№</th>
+                    <th>Тариф</th>
+                    <th>Цена</th>
+                    <th>Кол-во</th>
+                    <th>Сумма</th>
                 </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="4"><strong>ИТОГО</strong></td>
-                <td><strong>{{ total_sum }}</strong></td>
-            </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for row in spec|spectolist %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.price }}</td>
+                        <td>{{ row.amount }}</td>
+                        <td>{{ row.sum }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4"><strong>ИТОГО</strong></td>
+                    <td><strong>{{ total_sum }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

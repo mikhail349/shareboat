@@ -152,10 +152,10 @@ function showSuccessToast(msg="Изменения сохранены.") {
 
 function showErrorToast(body, header="Ошибка") {
     const html = `
-        <div class="toast-timer opacity-50"></div>
-        <div class="toast-header text-white bg-danger">
+        <div class="toast-header text-white bg-danger position-relative">
             <span class="me-auto">${header}</span>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <div class="toast-timer opacity-50"></div>
         </div>
         <div class="toast-body">${body}</div>
     `

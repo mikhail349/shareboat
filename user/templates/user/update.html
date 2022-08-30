@@ -31,54 +31,65 @@
             </p>
         </section> 
         {% include 'form_errors.html' %}
-        <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-            {% csrf_token %} 
+    </div>
 
+    <form id="formProfile" action='.' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %} 
+
+        <div class="container-lg">
             {% if success %}
                 <div class="alert alert-success">{{ success }}</div>
             {% endif %}
 
             <input type="file" name="avatar" accept="image/*" hidden /> 
             <input type="text" name="email" hidden value="{{ user.email }}"/> 
-
-            <h4 class="mb-3">Профиль</h4>
-            <div class="form-floating mb-3">            
-                <input type="text" name="first_name" class="form-control" required
-                    placeholder="Укажите" 
-                    autocomplete="off"
-                    value="{{ form.first_name.value }}"
-                />
-                <label for="first_name">{{ form.first_name.label }}</label>
-                <div class="invalid-tooltip">Укажите</div>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" id="isBoatOwnerCheck" type="checkbox" name="is_boat_owner" {% if form.is_boat_owner.value %} checked {% endif %}>
-                <label class="form-check-label" for="isBoatOwnerCheck">{{ form.is_boat_owner.label }}</label>
-            </div>
-
-            <h4 class="mb-3">Уведомления</h4>
-            <div class="form-check mb-3">
-                <input class="form-check-input" id="emailNotificationCheck" type="checkbox" name="email_notification" {% if form.email_notification.value %} checked {% endif %}>
-                <label class="form-check-label" for="emailNotificationCheck">{{ form.email_notification.label }}</label>
-                <div class="form-text">{{ form.email_notification.help_text }}</div>
-            </div>
-
-            <h4 class="mb-3">Telegram бот <a target="_blank" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
-            {% if user|hasattr:'telegramuser' %}
-                {% if user.telegramuser.chat_id %}
-                    <div id="tgAuth" class="text-muted mb-3">
-                        Авторизация пройдена. <a id="btnGenerateTgCode" href="#">Сгенерировать новый код</a>.                     
-                    </div>    
-                    <div id="tgCode"></div>     
-                {% else %}
-                    <div>{{ tgcode_message|safe }}</div>
-                {% endif%}
-            {% else %}
-                <button id="btnGenerateTgCode" type="button" class="btn btn-outline-primary mb-3">Сгенерировать код</button>
-                <div id="tgCode"></div>
-            {% endif %}
             
-            <div class="sticky-bottom bg-white border-top container-lg px-0 py-3">
+            <div class="card p-3 mb-3">
+                <h4 class="mb-3">Профиль</h4>
+                <div class="form-floating mb-3">            
+                    <input type="text" name="first_name" class="form-control" required
+                        placeholder="Укажите" 
+                        autocomplete="off"
+                        value="{{ form.first_name.value }}"
+                    />
+                    <label for="first_name">{{ form.first_name.label }}</label>
+                    <div class="invalid-tooltip">Укажите</div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" id="isBoatOwnerCheck" type="checkbox" name="is_boat_owner" {% if form.is_boat_owner.value %} checked {% endif %}>
+                    <label class="form-check-label" for="isBoatOwnerCheck">{{ form.is_boat_owner.label }}</label>
+                </div>
+            </div>
+            
+            <div class="card p-3 mb-3">
+                <h4 class="mb-3">Уведомления</h4>
+                <div class="form-check">
+                    <input class="form-check-input" id="emailNotificationCheck" type="checkbox" name="email_notification" {% if form.email_notification.value %} checked {% endif %}>
+                    <label class="form-check-label" for="emailNotificationCheck">{{ form.email_notification.label }}</label>
+                    <div class="form-text">{{ form.email_notification.help_text }}</div>
+                </div>
+            </div>
+
+            <div class="card p-3 mb-3">
+                <h4 class="mb-3">Telegram бот <a target="_blank" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
+                {% if user|hasattr:'telegramuser' %}
+                    {% if user.telegramuser.chat_id %}
+                        <div id="tgAuth" class="text-muted">
+                            Авторизация пройдена. <a id="btnGenerateTgCode" href="#">Сгенерировать новый код</a>.                     
+                        </div>    
+                        <div id="tgCode"></div>     
+                    {% else %}
+                        <div>{{ tgcode_message|safe }}</div>
+                    {% endif%}
+                {% else %}
+                    <button id="btnGenerateTgCode" type="button" class="btn btn-outline-primary">Сгенерировать код</button>
+                    <div id="tgCode"></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="sticky-bottom container-lg mb-3">
+            <div class="card p-3">
                 <div class="row g-2">            
                     <div class="col col-lg-auto">
                         <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
@@ -88,8 +99,6 @@
                     </div>
                 </div>
             </div>
-
-        </form>
-    </div>
-
+        </div>
+    </form>
 {% endblock  %}
