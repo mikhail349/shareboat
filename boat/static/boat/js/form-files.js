@@ -82,25 +82,30 @@ function FilesList(props) {
             onDrop={onDrop}
             onDragOver={(e) => e.preventDefault()}
         >    
-            <div className="row g-2 mb-3">
-                <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
-                {
-                    files.map((file, index) => (
-                        <div key={index} className="col-md-4 col-lg-3">
-                            <div className="card box-shadow text-end">
-                                <img src={file.url} className="card-img" data-filename={file.blob.name} />  
-                                <div className="card-img-overlay">
-                                    <div className="btn-group">
-                                        <button type="button" className="btn btn-sm btn-danger" onClick={() => deleteFile(index)}>
-                                            Удалить
-                                        </button>
+            <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
+            {
+                files.length > 0 && (
+                    <div className="row g-3 mb-3">      
+                        {
+                            files.map((file, index) => (
+                                <div key={index} className="col-md-4 col-lg-3">
+                                    <div className="card box-shadow text-end">
+                                        <img src={file.url} className="card-img" data-filename={file.blob.name} />  
+                                        <div className="card-img-overlay">
+                                            <div className="btn-group">
+                                                <button type="button" className="btn btn-sm btn-danger" onClick={() => deleteFile(index)}>
+                                                    Удалить
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>                    
-                    ))
-                }                
-            </div>
+                                </div>                    
+                            ))
+                        }                
+                    </div>
+                )
+            }
+            
             <div class="row row-cols-lg-auto align-items-center">
                 <div class="col">
                     <button type="button" className="btn btn-outline-primary w-100" onClick={() => fileInputRef.current.click()}>

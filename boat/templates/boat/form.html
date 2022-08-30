@@ -16,7 +16,7 @@
         isCustomLocation = {{ boat.is_custom_location|yesno:"true,false" }};
 </script>
 
-<div class="card mb-3">
+<div class="card p-3 mb-3">
     <h4 class="mb-3">Основная информация</h4>
 
     <div class="form-floating mb-3">                 
@@ -99,7 +99,7 @@
     </div>
 </div>
 
-<div class="card mb-3">
+<div class="card p-3 mb-3">
     <h4 class="mb-3">Габариты лодки</h4>
     <div class="row g-3">
         <div class="col-lg-3">
@@ -139,7 +139,7 @@
 </div>
 
 <div class="collapse {% if boat.is_motor_boat %}show{% endif %}" id="collapseMotorBoat">
-    <div class="card mb-3">
+    <div class="card p-3 mb-3">
         <h4 class="mb-3">Двигатели</h4>
         <fieldset id="fieldsetMotorBoat" {% if not boat.is_motor_boat %}disabled{% endif %}>
             <div class="row g-3">
@@ -170,105 +170,108 @@
 </div>
 
 <div class="collapse {% if boat.is_comfort_boat %}show{% endif %}" id="collapseComfortBoat">
-    <h4 class="mb-3">Удобства</h4>
-    <fieldset {% if not boat.is_comfort_boat %}disabled{% endif %}>
-        <div class="row g-3 mb-3">
-            <div class="col-lg-3">
-                <div class="form-floating">                 
-                    <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="off"
-                        required min="0" max="99"
-                        value="{{ boat.comfort_boat.berth_amount }}"     
-                    />
-                    <label for="widthInput">Кол-во спальных мест</label>
-                    <div class="invalid-tooltip">Укажите от 0 до 99</div>
+    <div class="card p-3 mb-3">
+        <h4 class="mb-3">Удобства</h4>
+        <fieldset {% if not boat.is_comfort_boat %}disabled{% endif %}>
+            <div class="row g-3">
+                <div class="col-lg-3">
+                    <div class="form-floating">                 
+                        <input type="number" id="berthAmountInput" name="berth_amount" class="form-control" placeholder="Укажите кол-во спальных мест" autocomplete="off"
+                            required min="0" max="99"
+                            value="{{ boat.comfort_boat.berth_amount }}"     
+                        />
+                        <label for="widthInput">Кол-во спальных мест</label>
+                        <div class="invalid-tooltip">Укажите от 0 до 99</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-floating">                 
-                    <input type="number" id="extraBerthAmountInput" name="extra_berth_amount" class="form-control" placeholder="Укажите кол-во доп. спальных мест" autocomplete="off"
-                        required min="0" max="99"
-                        value="{{ boat.comfort_boat.extra_berth_amount }}"     
-                    />
-                    <label for="widthInput">Кол-во доп. спальных мест</label>
-                    <div class="invalid-tooltip">Укажите от 0 до 99</div>
+                <div class="col-lg-3">
+                    <div class="form-floating">                 
+                        <input type="number" id="extraBerthAmountInput" name="extra_berth_amount" class="form-control" placeholder="Укажите кол-во доп. спальных мест" autocomplete="off"
+                            required min="0" max="99"
+                            value="{{ boat.comfort_boat.extra_berth_amount }}"     
+                        />
+                        <label for="widthInput">Кол-во доп. спальных мест</label>
+                        <div class="invalid-tooltip">Укажите от 0 до 99</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-floating">                 
-                    <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="off"
-                        required min="0" max="99"
-                        value="{{ boat.comfort_boat.cabin_amount }}"     
-                    />
-                    <label for="widthInput">Кол-во кают</label>
-                    <div class="invalid-tooltip">Укажите от 0 до 99</div>
+                <div class="col-lg-3">
+                    <div class="form-floating">                 
+                        <input type="number" id="cabinAmountInput" name="cabin_amount" class="form-control" placeholder="Укажите кол-во кают" autocomplete="off"
+                            required min="0" max="99"
+                            value="{{ boat.comfort_boat.cabin_amount }}"     
+                        />
+                        <label for="widthInput">Кол-во кают</label>
+                        <div class="invalid-tooltip">Укажите от 0 до 99</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-floating">                 
-                    <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="off"
-                        required min="0" max="9"
-                        value="{{ boat.comfort_boat.bathroom_amount }}"     
-                    />
-                    <label for="widthInput">Кол-во сан. узлов</label>
-                    <div class="invalid-tooltip">Укажите кол-во сан. узлов</div>
+                <div class="col-lg-3">
+                    <div class="form-floating">                 
+                        <input type="number" id="bathroomAmountInput" name="bathroom_amount" class="form-control" placeholder="Укажите кол-во сан. узлов" autocomplete="off"
+                            required min="0" max="9"
+                            value="{{ boat.comfort_boat.bathroom_amount }}"     
+                        />
+                        <label for="widthInput">Кол-во сан. узлов</label>
+                        <div class="invalid-tooltip">Укажите кол-во сан. узлов</div>
+                    </div>
                 </div>
-            </div>
-        </div>  
-    </fieldset>
+            </div>  
+        </fieldset>
+    </div>
 </div>
 
-<h4 class="mb-3">Местоположение</h4>
+<div class="card p-3 mb-3">
+    <h4 class="mb-3">Местоположение</h4>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="switchCustomLocation" name="is_custom_location">
+        <label class="form-check-label" for="switchCustomLocation">Указать на карте</label>
+    </div>
 
-<div class="form-check mb-3">
-    <input class="form-check-input" type="checkbox" id="switchCustomLocation" name="is_custom_location">
-    <label class="form-check-label" for="switchCustomLocation">Указать на карте</label>
-</div>
-
-<div class="collapse mb-3" id="collapseCustomAddress">
-    <div class="addressLabel mb-3">Адрес не указан</div>  
-    <div class="row g-2">            
-        <div class="col col-lg-auto">
-            <button id="btnShowAddressMapModal" type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addressMapModal">Указать адрес</button>                          
+    <div class="collapse" id="collapseCustomAddress">
+        <div class="addressLabel mb-3">Адрес не указан</div>  
+        <div class="row g-2">            
+            <div class="col col-lg-auto">
+                <button id="btnShowAddressMapModal" type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addressMapModal">Указать адрес</button>                          
+            </div>
         </div>
     </div>
-</div>
 
-<div class="collapse show" id="collapseBase">
-    <div class="form-floating mb-3">
-        <select class="form-select" id="baseSelect" name="base">
-            <option selected value="">Не указана</option>
-            {% for base in bases %}
-            <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }} ({{ base.state }})</option> 
-            {% endfor %}
-        </select>
-        <label for="baseSelect">База</label>
+    <div class="collapse show" id="collapseBase">
+        <div class="form-floating">
+            <select class="form-select" id="baseSelect" name="base">
+                <option selected value="">Не указана</option>
+                {% for base in bases %}
+                <option value="{{ base.pk }}" {% if base == boat.base %}selected{% endif %}>{{ base.name }} ({{ base.state }})</option> 
+                {% endfor %}
+            </select>
+            <label for="baseSelect">База</label>
+        </div>
     </div>
-</div>
 
-<div id="addressMapModal" class="modal" tabindex="-1" role="dialog" style="display: none">
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down" role="document">
-        <div class="modal-content shadow">
-            <div class="modal-header">
-                <h5 class="modal-title">Укажите адрес</h5>
-            </div>
-            <div class="modal-body">
-                <div class="input-group mb-3">
-                    <input id="addressMapModalSearchText" name="search" class="form-control" placeholder="Введите адрес для поиска" autocomplete="off" maxlength="255" />
-                    <button id="addressMapModalSearchButton" type="button" class="btn btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                        </svg>
-                    </button>
+    <div id="addressMapModal" class="modal" tabindex="-1" role="dialog" style="display: none">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title">Укажите адрес</h5>
                 </div>
-                <div id="mapContainer">
-                    <div id="map" class="mb-3"></div>
-                    <label class="addressLabel">Поставьте точку на карте</label>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input id="addressMapModalSearchText" name="search" class="form-control" placeholder="Введите адрес для поиска" autocomplete="off" maxlength="255" />
+                        <button id="addressMapModalSearchButton" type="button" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="mapContainer">
+                        <div id="map" class="mb-3"></div>
+                        <label class="addressLabel">Поставьте точку на карте</label>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer d-block">
-                <div class="row g-0 m-0">
-                    <div class="col col-lg-auto">                
-                        <button id="btnOkAddressMapModal" type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Закрыть</button>
+                <div class="modal-footer d-block">
+                    <div class="row g-0 m-0">
+                        <div class="col col-lg-auto">                
+                            <button id="btnOkAddressMapModal" type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Закрыть</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -276,7 +279,7 @@
     </div>
 </div>
 
-<div class="mb-3">
+<div class="card p-3 mb-3">
     <h4 class="mb-3">Аренда</h4>
     <div class="form-check mb-3">
         <input class="form-check-input" id="prepaymentRequiredCheck" type="checkbox" name="prepayment_required" {% if boat.prepayment_required %} checked {% endif %}>
@@ -292,12 +295,17 @@
         </select>
         <label for="typeSelect">Условия</label>
     </div>
-    <button id="btnAddTerm" type="button" class="btn btn-outline-primary col-12 col-sm-auto" data-action="{% url 'boat:create_term' %}?is_popup=1">
-        Добавить условия аренды
-    </button>
+
+    <div class="row g-2">            
+        <div class="col col-lg-auto">
+            <button id="btnAddTerm" type="button" class="btn btn-outline-primary w-100" data-action="{% url 'boat:create_term' %}?is_popup=1">
+                Добавить условия аренды
+            </button>
+        </div>
+    </div>
 </div>
 
-<div class="mb-3">
+<div class="card p-3 mb-3">
     <h4 class="">Фотографии</h4>
     <div class="small text-muted mb-3">Не более 30 фотографий, каждая размером не более 7 МБ.</div>
     <div id="react_app_photos" data-boat-id="{{ boat.id }}">
