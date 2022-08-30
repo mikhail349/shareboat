@@ -2,78 +2,80 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'boat/js/filter.min.js' %}"></script>
 
-<div class="offcanvas-lg offcanvas-end" id="offcanvasBoatFilter" tabindex="-1" data-bs-scroll="false">
-    <div class="offcanvas-header">
+<div class="offcanvas-lg offcanvas-end" id="offcanvasBoatFilter" tabindex="-1" data-bs-scroll="false" style="background-color: var(--bs-gray-100);">
+    <div class="offcanvas-header border-bottom">
         <h5 class="offcanvas-title" id="offcanvasBoatFilterLabel">Фильтр</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-label="Close"></button>
     </div>
 
     <div class="offcanvas-body d-block">
-        <form id="formFilter" action='.' method="get" class="needs-validation" novalidate>
-            <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
-            <input id="hiddenDateTo" name="dateTo" type="hidden" />
-            <input name="page" type="hidden" />
-        
-            <h6 class="mb-2">Сортировка</h6>
-            <select id="sortSelect" class="form-select mb-3" name="sort">
-                {% for sort in sort_list %}
-                    <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
-                {% endfor %}
-            </select>
-
-            <h6 class="mb-2">Дата и место</h6>
-            <div class="form-floating mb-2">                 
-                <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
-                <label>Период бронирования</label>
-                <div class="invalid-tooltip">Укажите период бронирования</div>
-            </div>
-
-            <div class="form-floating mb-3">
-                <select class="form-select" id="stateSelect" name="state">
-                    <option selected value="">Любое</option>
-                    {% for state in states %}
-                        <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
+        <div class="card p-3">
+            <form id="formFilter" action='.' method="get" class="needs-validation" novalidate>
+                <input id="hiddenDateFrom" name="dateFrom" type="hidden" />
+                <input id="hiddenDateTo" name="dateTo" type="hidden" />
+                <input name="page" type="hidden" />
+            
+                <h6 class="mb-2">Сортировка</h6>
+                <select id="sortSelect" class="form-select mb-3" name="sort">
+                    {% for sort in sort_list %}
+                        <option {% if request.GET.sort|default:'sum_asc' == sort.0 %}selected{% endif %} value="{{ sort.0 }}">{{ sort.1 }}</option>
                     {% endfor %}
                 </select>
-                <label for="stateSelect">Местоположение</label>
-            </div>
 
-            <h6 class="mb-2">Цена за день</h6>
-            <div class="row g-2 mb-3 position-relative">            
-                <div class="col">
-                    <div class="form-floating">
-                        <input type="number" name="priceFrom" class="form-control" placeholder="От" step=".01" min="0" max="1000000" value="{{ request.GET.priceFrom }}" />
-                        <label for="priceFrom">От</label>
-                        <div class="invalid-tooltip">от 0&nbsp;₽ до 1&nbsp;млн.</div>
-                    </div>  
+                <h6 class="mb-2">Дата и место</h6>
+                <div class="form-floating mb-2">                 
+                    <input id="dpRange" type="text" placeholder="Укажите период" class="form-control false-readonly" autocomplete="off" readonly />
+                    <label>Период бронирования</label>
+                    <div class="invalid-tooltip">Укажите период бронирования</div>
                 </div>
-                <div class="col">
-                    <div class="form-floating">
-                        <input type="number" name="priceTo" class="form-control" placeholder="До" step=".01" min="0" max="1000000" value="{{ request.GET.priceTo }}" />  
-                        <label for="priceTo">До</label>
-                        <div class="invalid-tooltip">от 0&nbsp;₽ до 1&nbsp;млн.</div>  
-                    </div>  
-                </div>
-            </div>
 
-            <h6 class="mb-2">Типы лодок</h6>
-            <div class="list-group mb-3">
-                {% for boat_type in boat_types %}
-                    <label class="list-group-item">
-                        <input name="boatType" class="form-check-input me-1" value="{{ boat_type.0 }}" type="checkbox" {% if boat_type.0|stringformat:'i' in request.GET|get_list:'boatType' %}checked{% endif %}>
-                        {{ boat_type.1 }}
-                    </label>
-                {% endfor %}
-            </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="stateSelect" name="state">
+                        <option selected value="">Любое</option>
+                        {% for state in states %}
+                            <option {% if request.GET.state == state %}selected{% endif %} value="{{ state }}">{{ state }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="stateSelect">Местоположение</label>
+                </div>
 
-            <div class="row g-3">
-                <div class="col pe-0">
-                    <button class="btn btn-primary w-100" type="submit">Применить</button>
+                <h6 class="mb-2">Цена за день</h6>
+                <div class="row g-2 mb-3 position-relative">            
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="number" name="priceFrom" class="form-control" placeholder="От" step=".01" min="0" max="1000000" value="{{ request.GET.priceFrom }}" />
+                            <label for="priceFrom">От</label>
+                            <div class="invalid-tooltip">от 0&nbsp;₽ до 1&nbsp;млн.</div>
+                        </div>  
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="number" name="priceTo" class="form-control" placeholder="До" step=".01" min="0" max="1000000" value="{{ request.GET.priceTo }}" />  
+                            <label for="priceTo">До</label>
+                            <div class="invalid-tooltip">от 0&nbsp;₽ до 1&nbsp;млн.</div>  
+                        </div>  
+                    </div>
                 </div>
-                <div class="col">
-                    <button id="btnOffcanvasBoatFilterClear" class="btn btn-outline-danger w-100" type="button">Сбросить</button>
+
+                <h6 class="mb-2">Типы лодок</h6>
+                <div class="list-group mb-3">
+                    {% for boat_type in boat_types %}
+                        <label class="list-group-item">
+                            <input name="boatType" class="form-check-input me-1" value="{{ boat_type.0 }}" type="checkbox" {% if boat_type.0|stringformat:'i' in request.GET|get_list:'boatType' %}checked{% endif %}>
+                            {{ boat_type.1 }}
+                        </label>
+                    {% endfor %}
                 </div>
-            </div>
-        </form>
+
+                <div class="row g-3">
+                    <div class="col pe-0">
+                        <button class="btn btn-primary w-100" type="submit">Применить</button>
+                    </div>
+                    <div class="col">
+                        <button id="btnOffcanvasBoatFilterClear" class="btn btn-outline-danger w-100" type="button">Сбросить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>  
 </div>

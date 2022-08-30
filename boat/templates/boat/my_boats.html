@@ -86,13 +86,15 @@
         {% include 'boat/delete_modal.html' %}
         {% include 'modal_map.html' %}
 
-        <div class="sticky-bottom bg-white border-top container-lg py-3">
-            <div class="row g-2">            
-                <div class="col col-lg-auto">
-                    <a href="{% url 'boat:create' %}" class="btn btn-primary w-100">Добавить лодку</a>                       
-                </div>
-                <div class="col col-lg-auto">
-                    <a href="{% url 'boat:terms' %}" class="btn btn-outline-primary w-100">Условия аренды</a>
+        <div class="sticky-bottom bg-white border-top py-3">
+            <div class="container-lg">
+                <div class="row g-2">            
+                    <div class="col col-lg-auto">
+                        <a href="{% url 'boat:create' %}" class="btn btn-primary w-100">Добавить лодку</a>                       
+                    </div>
+                    <div class="col col-lg-auto">
+                        <a href="{% url 'boat:terms' %}" class="btn btn-outline-primary w-100">Условия аренды</a>
+                    </div>
                 </div>
             </div>
         </div>

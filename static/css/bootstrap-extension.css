@@ -309,7 +309,8 @@ a {
 }
 
 /* border-radius */
-.form-control, .form-select, .btn, .card-img, .card, .modal .modal-dialog .modal-content {
+.form-control, .form-select, .btn, .card-img, .card, .modal .modal-dialog .modal-content, .badge, .card-img-left,
+.dropdown-menu, .list-group {
     border-radius: var(--bs-border-radius-xl) !important;
 }
 
