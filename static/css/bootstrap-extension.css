@@ -310,11 +310,20 @@ a {
 
 /* border-radius */
 .form-control, .form-select, .btn, .card-img, .card, .modal .modal-dialog .modal-content, .badge, .card-img-left,
-.dropdown-menu, .list-group {
+.dropdown-menu, .list-group /*, .toast*/ {
     border-radius: var(--bs-border-radius-xl) !important;
 }
 
-.jumbotron, .main-content-container {
+/*.toast .toast-header {
+    border-top-left-radius: var(--bs-border-radius-xl) !important;
+    border-top-right-radius: var(--bs-border-radius-xl) !important;
+}*/
+
+body {
+    background-color: var(--bs-gray-100) !important;
+}
+
+.jumbotron {
     background-color: var(--bs-gray-100) !important;
 }
 

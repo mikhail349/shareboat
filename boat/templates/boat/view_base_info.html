@@ -6,7 +6,7 @@
 
 {% if boat.files.exists %}
     <script type="text/javascript" src="{% static 'boat/js/img_viewer.min.js' %}"></script>
-    <div class="card border-0 box-shadow text-end mb-3">
+    <div class="card border-0 text-end shadow-none mb-3">
         <img class="d-block w-100 card-img card-img-md" src="{{ boat.files.first.file.url }}" />
         <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
             <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
@@ -14,7 +14,7 @@
         </a>
     </div>  
     {% if boat.files.count > 1 %}
-        <div class="row g-1 mb-3">
+        <div class="row g-1 px-3 mb-3">
             {% for file in boat.files.all %}
                 <div class="col-auto">
                     <img class="card-img card-img-small {% if forloop.counter0 == 0  %}active{% endif %}" src="{{ file.file.url }}" />
@@ -24,11 +24,13 @@
     {% endif %}       
 {% endif %}
 
-<h2>{{ boat.name }}</h2>   
-<h4>{{ boat.model.manufacturer.name }} {{ boat.model.name }}</h4> 
-<h4 class="text-muted">{{ boat.get_type_display }}</h4>   
+<div class="px-3 pb-3">
+    <h2>{{ boat.name }}</h2>   
+    <h4>{{ boat.model.manufacturer.name }} {{ boat.model.name }}</h4> 
+    <h4 class="text-muted">{{ boat.get_type_display }}</h4>
+    {% include 'boat/location.html' %}
+</div>
 
-{% include 'boat/location.html' %}
 {% include 'modal_map.html' %}
 
 {% with boat.pk|stringformat:'s' as boat_pk_str %}

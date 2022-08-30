@@ -48,19 +48,18 @@
                 <h1 class="jumbotron-heading">Бронирование лодки</h1>    
             </section>
 
-            <div class="row g-3"> 
+            <div class="row g-3 mb-3"> 
                 <div class="col-lg">
-                    {% include 'boat/view_base_info.html' %}   
+                    <div class="card h-100">
+                        {% include 'boat/view_base_info.html' %}
+                    </div>
                 </div>
             
                 <div class="col-lg">
                     
-                    <div class="mb-3">
+                    <div class="card p-3 mb-3">
                         {% if prices_exist %}
-
-                            <div id="priceAlert" class="alert text-center fs-3 fw-light">
-                                <span>Выберите период</span>
-                            </div>
+                            <h4 id="priceAlert" class="mb-3"><span>Выберите период</span></h4>
                     
                             <div class="form-floating mb-3">                 
                                 <input id="dateRange" type="text" placeholder="Укажите период" class="form-control false-readonly" required autocomplete="off" readonly />
@@ -79,16 +78,20 @@
                             <div class="alert text-center text-danger fs-5">Владелец не завёл ни одного тарифа</div>
                         {% endif %}
                     </div>     
-                    {% include 'boat/view_base_specs.html' %}   
+                    <div class="card p-3">
+                        {% include 'boat/view_base_specs.html' %}   
+                    </div> 
                 </div>           
             </div>
-            <div class="mt-3">{{ boat.text|default_if_none:""|linebreaks }}</div>
+            {% if boat.text %}
+                <div class="card p-3 mb-3">{{ boat.text|default_if_none:""|linebreaks }}</div>
+            {% endif %}
             
             {% if prices_exist %}
-                <section class="jumbotron text-center">
-                    <h1 class="jumbotron-heading">Тарифы</h1>    
-                </section>
-                {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.active_gte_now|dictsort:'start_date'|dictsort:'end_date' %}  
+                <div class="card p-3 mb-3">
+                    <h4 class="mb-3">Тарифы</h4>
+                    {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.active_gte_now|dictsort:'start_date'|dictsort:'end_date' %}
+                </div>  
             {% endif %}
             
         </form>
