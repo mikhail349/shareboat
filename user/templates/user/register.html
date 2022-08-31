@@ -8,49 +8,55 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script type="text/javascript" src="{% static 'user/js/register.min.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
-    <form action="." method="post" class="form-signin needs-validation card p-3" novalidate>
-        {% csrf_token %}
 
-        <h1 class="h3 mb-3 font-weight-normal text-center">Регистрация</h1>    
-
-        {% if errors %}
-            <div class="alert alert-danger">{{ errors }}</div>
-        {% endif %}
+    <div class="container-lg mw-lg-500">
+        <div class="card p-3">
+            <form action="." method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
         
-        <div class="form-floating mb-3">           
-            <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" area-describedby="invalidInputName" autofocus autocomplete="username">
-            <label for="email">Эл. почта</label>
-            <div class="invalid-tooltip">Введите эл. почту</div>
-        </div>
-        <div class="form-floating mb-3">                   
-            <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control" autocomplete="new-password">
-            <label for="password1">Пароль</label>
-            <div class="invalid-tooltip">Введите пароль</div>
-        </div>
-        <div class="form-floating mb-3">          
-            <input id="password2" type="password" name="password2" placeholder="Повторите пароль" required class="form-control" autocomplete="new-password">
-            <label for="password2">Повторите пароль</label>
-            <div class="invalid-tooltip">Повторите пароль</div>
-        </div>
-
-        <div class="form-floating mb-3">          
-            <input id="first_name" type="text" name="first_name" class="form-control" placeholder="Имя" value="{{ first_name }}" required>
-            <label for="first_name">Имя</label>
-            <div class="invalid-tooltip">Укажите Ваше имя</div>
-        </div>
-
-        <div class="form-check mb-3">
-            <input class="form-check-input" id="isBoatOwnerCheck" type="checkbox" name="is_boat_owner">
-            <label class="form-check-label" for="isBoatOwnerCheck">Являюсь арендодателем</label>
-        </div>
-
-        <input type="hidden" name="next" value={{ request.GET.next }} >
-
-        {% is_debug as is_debug %}
-        {% if not is_debug %}
-            <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
-        {% endif %}
+                <h1 class="h3 mb-3 font-weight-normal text-center">Регистрация</h1>    
         
-        <button class="w-100 btn btn-lg btn-primary" type="submit" {% if not is_debug %}disabled{% endif %}>Зарегистрироваться</button>
-    </form>
+                {% if errors %}
+                    <div class="alert alert-danger">{{ errors }}</div>
+                {% endif %}
+                
+                <div class="form-floating mb-3">           
+                    <input id="email" type="email" name="email" placeholder="Эл. почта" required class="form-control" area-describedby="invalidInputName" autofocus autocomplete="username">
+                    <label for="email">Эл. почта</label>
+                    <div class="invalid-tooltip">Введите эл. почту</div>
+                </div>
+                <div class="form-floating mb-3">                   
+                    <input id="password1" type="password" name="password1" placeholder="Пароль" required class="form-control" autocomplete="new-password">
+                    <label for="password1">Пароль</label>
+                    <div class="invalid-tooltip">Введите пароль</div>
+                </div>
+                <div class="form-floating mb-3">          
+                    <input id="password2" type="password" name="password2" placeholder="Повторите пароль" required class="form-control" autocomplete="new-password">
+                    <label for="password2">Повторите пароль</label>
+                    <div class="invalid-tooltip">Повторите пароль</div>
+                </div>
+        
+                <div class="form-floating mb-3">          
+                    <input id="first_name" type="text" name="first_name" class="form-control" placeholder="Имя" value="{{ first_name }}" required>
+                    <label for="first_name">Имя</label>
+                    <div class="invalid-tooltip">Укажите Ваше имя</div>
+                </div>
+        
+                <div class="form-check mb-3">
+                    <input class="form-check-input" id="isBoatOwnerCheck" type="checkbox" name="is_boat_owner">
+                    <label class="form-check-label" for="isBoatOwnerCheck">Являюсь арендодателем</label>
+                </div>
+        
+                <input type="hidden" name="next" value={{ request.GET.next }} >
+        
+                {% is_debug as is_debug %}
+                {% if not is_debug %}
+                    <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
+                {% endif %}
+                
+                <button class="btn btn-primary w-100" type="submit" {% if not is_debug %}disabled{% endif %}>Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
 {% endblock %}

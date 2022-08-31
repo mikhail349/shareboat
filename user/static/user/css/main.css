@@ -1,20 +1,3 @@
-html,
-body {
+html, body {
   height: 100%;
-}
-
-body {
-  display: -ms-flexbox;
-  display: -webkit-box;
-  display: flex;
-  -ms-flex-align: center;
-  -ms-flex-pack: center;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-
-}
-
-.form-signin {
-  margin: 0 auto;
 }

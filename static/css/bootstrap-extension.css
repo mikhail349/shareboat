@@ -141,8 +141,12 @@ a {
         height: 400px;
     }
 
-    .md-container {
+    .mw-lg-700 {
         max-width: 700px;
+    }
+
+    .mw-lg-500 {
+        max-width: 500px;
     }
 }
 

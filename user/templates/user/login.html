@@ -8,40 +8,44 @@
 {% block content %}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next|urlencode }}" method="post" class='needs-validation form-signin card p-3' novalidate>
-        {% csrf_token %}
+    <div class="container-lg mw-lg-500">
+        <div class="card p-3">
+            <form id="signin" action="{% url 'user:login' %}?next={{ request.GET.next|urlencode }}" method="post" class='needs-validation' novalidate>
+                {% csrf_token %}
 
-        <h1 class="h3 mb-3 font-weight-normal text-center">Авторизация</h1>  
-        
-        {% if errors %}
-            <div class="alert alert-danger">{{ errors }}</div>
-        {% endif %}
-        
-        <div class="form-floating mb-3">            
-            <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="username email" placeholder="Эл. почта" required class="form-control" >
-            <label for="email">Эл. почта</label>
-            <div class="invalid-tooltip">Введите эл. почту</div>
+                <h1 class="h3 mb-3 font-weight-normal text-center">Авторизация</h1>  
+                
+                {% if errors %}
+                    <div class="alert alert-danger">{{ errors }}</div>
+                {% endif %}
+                
+                <div class="form-floating mb-3">            
+                    <input id="email" type="email" name="email" {% if email %}value={{ email }} {% endif %} autocomplete="username email" placeholder="Эл. почта" required class="form-control" >
+                    <label for="email">Эл. почта</label>
+                    <div class="invalid-tooltip">Введите эл. почту</div>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input id="password" type="password" name="password" autocomplete="current-password" placeholder="Пароль" required class="form-control" {% if errors %} autofocus {% endif %}>
+                    <label for="password">Пароль</label>
+                    <div class="invalid-tooltip">Введите пароль</div>
+                </div>
+
+                <input type="hidden" name="next" value={{ request.GET.next }} >
+
+                {% is_debug as is_debug %}
+                {% if not is_debug %}
+                    <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
+                {% endif %}
+                
+                <button class="btn btn-primary w-100 mb-3" type="submit" {% if not is_debug %}disabled{% endif %}>Войти</button>
+                
+                <div class="mb-2 text-center">
+                    <div class="mb-2"><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>
+                    <div><a href="{% url 'user:register' %}">Зарегистрироваться</a></div>
+                </div>
+            </form>
         </div>
-
-        <div class="form-floating mb-3">
-            <input id="password" type="password" name="password" autocomplete="current-password" placeholder="Пароль" required class="form-control" {% if errors %} autofocus {% endif %}>
-            <label for="password">Пароль</label>
-            <div class="invalid-tooltip">Введите пароль</div>
-        </div>
-
-        <input type="hidden" name="next" value={{ request.GET.next }} >
-
-        {% is_debug as is_debug %}
-        {% if not is_debug %}
-            <div class="g-recaptcha mb-3" data-sitekey="{{ recaptcha_key }}" data-callback="recaptchaCallback"></div>
-        {% endif %}
-        
-        <button class="w-100 btn btn-lg btn-primary mb-3" type="submit" {% if not is_debug %}disabled{% endif %}>Войти</button>
-        
-        <div class="mb-2 text-center">
-            <div class="mb-2"><a href="{% url 'user:restore_password' %}">Восстановить пароль</a></div>
-            <div><a href="{% url 'user:register' %}">Зарегистрироваться</a></div>
-        </div>
-    </form>
+    </div>
     
 {% endblock %}
