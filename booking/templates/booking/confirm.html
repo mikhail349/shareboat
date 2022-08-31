@@ -39,19 +39,21 @@
 
         {% include 'booking/spec.html' %}
     </div>
-    <div class="sticky-bottom container-lg mb-3">
-        <div class="card p-3">
-            <div class="row g-2">
-                <div class="col col-lg-auto">
-                    <form method="post" action="{% url 'booking:create' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="boat_pk" value="{{ boat.pk }}" />
-                        <input type="hidden" name="start_date" value="{{ start_date.isoformat }}" />
-                        <input type="hidden" name="end_date" value="{{ end_date.isoformat }}"  />
-                        <input type="hidden" name="calculated_data" value="{{ calculated_data }}" />
-                        <input type="hidden" name="term_content" value="{{ boat.term.content }}" />
-                        <button type="submit" class="btn btn-primary w-100">Забронировать</button>
-                    </form>
+    <div class="sticky-bottom action-footer mb-3">
+        <div class="container-lg">
+            <div class="card p-3">
+                <div class="row g-2">
+                    <div class="col col-lg-auto">
+                        <form method="post" action="{% url 'booking:create' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="boat_pk" value="{{ boat.pk }}" />
+                            <input type="hidden" name="start_date" value="{{ start_date.isoformat }}" />
+                            <input type="hidden" name="end_date" value="{{ end_date.isoformat }}"  />
+                            <input type="hidden" name="calculated_data" value="{{ calculated_data }}" />
+                            <input type="hidden" name="term_content" value="{{ boat.term.content }}" />
+                            <button type="submit" class="btn btn-primary w-100">Забронировать</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

@@ -21,18 +21,20 @@
             {% include 'boat/form.html' %}                
         </div>
 
-        <div class="sticky-bottom container-lg mb-3">
-            <div class="card p-3">
-                <fieldset {% if boat.is_read_only %}disabled{% endif %}>
-                    <div class="row g-2">            
-                        <div class="col col-lg-auto">
-                            <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
+        <div class="sticky-bottom action-footer mb-3">
+            <div class="container-lg">
+                <div class="card p-3">
+                    <fieldset {% if boat.is_read_only %}disabled{% endif %}>
+                        <div class="row g-2">            
+                            <div class="col col-lg-auto">
+                                <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
+                            </div>
+                            <div class="col col-lg-auto">
+                                <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+                            </div>
                         </div>
-                        <div class="col col-lg-auto">
-                            <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
-                        </div>
-                    </div>
-                </fieldset>
+                    </fieldset>
+                </div>
             </div>
         </div>
     </form>

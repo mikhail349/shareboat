@@ -36,34 +36,36 @@
             {% endif %}
         </div>
 
-        <div class="sticky-bottom container-lg mb-3">
-            <div class="card p-3">
-                <div class="row g-2">            
-                    <div class="col col-lg-auto">
-                        <form action="{% url 'boat:accept' boat.pk %}" method="post">
-                            {% csrf_token %} 
-                            <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
-                            <button type="submit" class="btn btn-primary w-100">Принять</button>
-                        </form>                         
-                    </div>
-                    <div class="col col-lg-auto d-none d-lg-block">
-                        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
-                    </div>
-                    <div class="col-auto d-none d-lg-block">
-                        <div class="vr d-none d-lg-block h-100 mx-lg-2"></div>
-                    </div>
-                    <div class="col-auto d-none d-lg-block">
-                        <a class="btn btn-outline-primary" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a>
-                    </div>
-                    <div class="col d-lg-none">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Действия
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
-                                <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button></li>  
-                            </ul>
+        <div class="sticky-bottom action-footer mb-3">
+            <div class="container-lg">
+                <div class="card p-3">
+                    <div class="row g-2">            
+                        <div class="col col-lg-auto">
+                            <form action="{% url 'boat:accept' boat.pk %}" method="post">
+                                {% csrf_token %} 
+                                <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
+                                <button type="submit" class="btn btn-primary w-100">Принять</button>
+                            </form>                         
+                        </div>
+                        <div class="col col-lg-auto d-none d-lg-block">
+                            <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
+                        </div>
+                        <div class="col-auto d-none d-lg-block">
+                            <div class="vr d-none d-lg-block h-100 mx-lg-2"></div>
+                        </div>
+                        <div class="col-auto d-none d-lg-block">
+                            <a class="btn btn-outline-primary" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a>
+                        </div>
+                        <div class="col d-lg-none">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действия
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
+                                    <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button></li>  
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

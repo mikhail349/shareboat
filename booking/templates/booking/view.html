@@ -31,11 +31,13 @@
         {% include 'booking/spec.html' with spec=booking.spec total_sum=booking.total_sum %}
         
     </div>
-    <div class="sticky-bottom container-lg mb-3">
-        <div class="card p-3">
-            <div class="row g-2">
-                <div class="col col-lg-auto">
-                    <a class="btn btn-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
+    <div class="sticky-bottom action-footer mb-3">
+        <div class="container-lg">
+            <div class="card p-3">
+                <div class="row g-2">
+                    <div class="col col-lg-auto">
+                        <a class="btn btn-primary w-100" href="{% url 'chat:booking' booking.pk %}" role="button">Чат</a>
+                    </div>
                 </div>
             </div>
         </div>
