@@ -56,6 +56,13 @@ $(document).ready(() => {
         $("#acceptAllCookies div").addClass('slide-down');
         setCookie('all_cookies_accepted', true, 365*10);
     })
+
+    const el = document.querySelector(".sticky-bottom");
+    const observer = new IntersectionObserver( 
+        ([e]) => e.target.classList.toggle("stuck", e.intersectionRatio < 1),
+        { threshold: [1] }
+    );
+    observer.observe(el);
 });
 
 $(document).ready(() => {
