@@ -20,43 +20,51 @@
             {% include 'boat/view_base.html' %}
 
             {% if boat.term.content %}
-                <h4>Условия аренды</h4>
-                {{ boat.term.content|safe }}
+                <div class="card mb-3 p-3">
+                    <h4>Условия аренды</h4>
+                    <div>
+                        {{ boat.term.content|safe }}
+                    </div>
+                </div>
             {% endif %}
 
-            <section class="jumbotron text-center">
-                <h1 class="jumbotron-heading">Тарифы</h1>    
-            </section>
-            {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all|dictsort:'start_date'|dictsort:'end_date' show_active_column=True %}  
+            {% if boat.tariffs.exists %}
+                <div class="card p-3 mb-3">
+                    <h4 class="mb-3">Тарифы</h4>
+                    {% include 'boat/tariffs_list.html' with tariffs=boat.tariffs.all|dictsort:'start_date'|dictsort:'end_date' show_active_column=True %}
+                </div>
+            {% endif %}
         </div>
 
-        <div class="sticky-bottom bg-white border-top container-lg py-3">
-            <div class="row g-2">            
-                <div class="col col-lg-auto">
-                    <form action="{% url 'boat:accept' boat.pk %}" method="post">
-                        {% csrf_token %} 
-                        <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
-                        <button type="submit" class="btn btn-primary w-100">Принять</button>
-                    </form>                         
-                </div>
-                <div class="col col-lg-auto d-none d-lg-block">
-                    <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
-                </div>
-                <div class="col-auto d-none d-lg-block">
-                    <div class="vr d-none d-lg-block h-100 mx-lg-2"></div>
-                </div>
-                <div class="col-auto d-none d-lg-block">
-                    <a class="btn btn-outline-primary" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a>
-                </div>
-                <div class="col d-lg-none">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Действия
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
-                            <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button></li>  
-                        </ul>
+        <div class="sticky-bottom container-lg mb-3">
+            <div class="card p-3">
+                <div class="row g-2">            
+                    <div class="col col-lg-auto">
+                        <form action="{% url 'boat:accept' boat.pk %}" method="post">
+                            {% csrf_token %} 
+                            <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />
+                            <button type="submit" class="btn btn-primary w-100">Принять</button>
+                        </form>                         
+                    </div>
+                    <div class="col col-lg-auto d-none d-lg-block">
+                        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button>
+                    </div>
+                    <div class="col-auto d-none d-lg-block">
+                        <div class="vr d-none d-lg-block h-100 mx-lg-2"></div>
+                    </div>
+                    <div class="col-auto d-none d-lg-block">
+                        <a class="btn btn-outline-primary" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a>
+                    </div>
+                    <div class="col d-lg-none">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Действия
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'chat:boat' boat.pk %}?back={{ request.path }}">Чат</a></li>
+                                <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" data-bs-target="#declineModal">Отказать</button></li>  
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -65,7 +73,7 @@
 
     <div id="declineModal" class="modal" tabindex="-1" role="dialog" data-bs-backdrop="static" style="display: none">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 380px;">
-            <div class="modal-content rounded shadow">
+            <div class="modal-content box-shadow">
                 <form action="{% url 'boat:reject' boat.pk %}" method="post" class="needs-validation" novalidate>
                     {% csrf_token %} 
                     <input type="hidden" name="modified" value="{{ boat.modified.isoformat }}" />

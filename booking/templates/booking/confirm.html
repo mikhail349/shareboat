@@ -15,42 +15,44 @@
             <div class="alert alert-danger">{{ errors|safe }}</div>
         {% endif %}
 
-        <h4>Лодка</h4>
-        {% if boat.files.exists %}
-            <img class="card-img card-img-100 mb-2" src="{{ boat.files.first.file.url }}" />
-        {% endif %}
-        <p>{{ boat.get_full_name }}<p>
+        <div class="card p-3 mb-3">
+            <h4>Лодка</h4>
+            {% if boat.files.exists %}
+                <img class="card-img card-img-100 mb-2" src="{{ boat.files.first.file.url }}" />
+            {% endif %}
+            <p>{{ boat.get_full_name }}</p>
 
-        <h4>Стоимость</h4>
-        <p>{{ total_sum }}&nbsp;₽, {{ boat.prepayment_required|yesno:'требуется предоплата,предоплата не требуется' }}</p>
+            <h4>Стоимость</h4>
+            <p>{{ total_sum }}&nbsp;₽, {{ boat.prepayment_required|yesno:'требуется предоплата,предоплата не требуется' }}</p>
 
-        <h4>Период</h4>
-        <p>с {{ start_date }} по {{ end_date }}</p>
-        
-        <h4>Продолжительность</h4>
-        <p>{{ days|daycountcase }}</p>
+            <h4>Период</h4>
+            <p>с {{ start_date }} по {{ end_date }}</p>
+            
+            <h4>Продолжительность</h4>
+            <p>{{ days|daycountcase }}</p>
 
-        {% if boat.term %}
-            <h4>Условия аренды</h4>
-            <div class="mb-3">
+            {% if boat.term %}
+                <h4>Условия аренды</h4>
                 {{ boat.term.content|safe }}
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
 
         {% include 'booking/spec.html' %}
     </div>
-    <div class="sticky-bottom bg-white border-top container-lg py-3">
-        <div class="row g-2">
-            <div class="col col-lg-auto">
-                <form method="post" action="{% url 'booking:create' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="boat_pk" value="{{ boat.pk }}" />
-                    <input type="hidden" name="start_date" value="{{ start_date.isoformat }}" />
-                    <input type="hidden" name="end_date" value="{{ end_date.isoformat }}"  />
-                    <input type="hidden" name="calculated_data" value="{{ calculated_data }}" />
-                    <input type="hidden" name="term_content" value="{{ boat.term.content }}" />
-                    <button type="submit" class="btn btn-primary w-100">Забронировать</button>
-                </form>
+    <div class="sticky-bottom container-lg mb-3">
+        <div class="card p-3">
+            <div class="row g-2">
+                <div class="col col-lg-auto">
+                    <form method="post" action="{% url 'booking:create' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="boat_pk" value="{{ boat.pk }}" />
+                        <input type="hidden" name="start_date" value="{{ start_date.isoformat }}" />
+                        <input type="hidden" name="end_date" value="{{ end_date.isoformat }}"  />
+                        <input type="hidden" name="calculated_data" value="{{ calculated_data }}" />
+                        <input type="hidden" name="term_content" value="{{ boat.term.content }}" />
+                        <button type="submit" class="btn btn-primary w-100">Забронировать</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

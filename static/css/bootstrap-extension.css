@@ -348,7 +348,7 @@ a {
     --bs-toast-border-radius: var(--bs-border-radius-xl);
 }
 
-.form-control, .form-select, .card-img, .card-img-left, .card {
+.form-control, .form-select, .card-img, .card-img-left, .card-img-top, .card, .list-group {
     border-radius: var(--bs-border-radius-xl) !important;
 }
 

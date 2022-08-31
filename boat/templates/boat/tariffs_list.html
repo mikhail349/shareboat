@@ -20,7 +20,9 @@
 
                     {% ifchanged tariff.start_date tariff.end_date %}
                         <tr>
-                            <td colspan="{% if show_active_column %}6{% else %}5{% endif %}"><h6 class="bg-light  p-2">{{ tariff.start_date }} - {{ tariff.end_date }}</h6></td>
+                            <td class="px-0" colspan="{% if show_active_column %}6{% else %}5{% endif %}">
+                                <h6 class="badge text-bg-light p-2 mb-0 w-100 text-start">{{ tariff.start_date }} - {{ tariff.end_date }}</h6>
+                            </td>
                         </tr>      
                     {% endifchanged  %}
                     <tr>

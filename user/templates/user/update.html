@@ -82,7 +82,11 @@
                         <div>{{ tgcode_message|safe }}</div>
                     {% endif%}
                 {% else %}
-                    <button id="btnGenerateTgCode" type="button" class="btn btn-outline-primary">Сгенерировать код</button>
+                    <div class="row">
+                        <div class="col col-lg-auto">
+                            <button id="btnGenerateTgCode" type="button" class="btn btn-outline-primary w-100">Сгенерировать код</button>
+                        </div>
+                    </div>
                     <div id="tgCode"></div>
                 {% endif %}
             </div>

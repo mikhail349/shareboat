@@ -7,9 +7,11 @@
 
             {% include 'portal/breadcrumb.html' with category=article.category %}
 
-            <h2>{{ article.name }}</h2>
-            <div class="text-muted mb-3">{{ article.created_at|date:'d.m.Y' }}</div>
-            <div class="django-summernote-container">{{ article.content|safe }}</div>
+            <div class="card p-3">
+                <h2>{{ article.name }}</h2>
+                <div class="text-muted mb-3">{{ article.created_at|date:'d.m.Y' }}</div>
+                <div class="django-summernote-container">{{ article.content|safe }}</div>
+            </div>
 
         {% else %}
             

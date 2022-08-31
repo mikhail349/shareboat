@@ -117,7 +117,7 @@ class MessageHandler {
     }
     
     getMessageHtml(message) {
-        const bg = message.is_out ? 'bg-primary border-primary text-white' : 'bg-light border';
+        const bg = message.is_out ? 'bg-primary border-primary text-white' : 'bg-white border';
         var align = 'align-self-start';
         if (this.isMobile) {
             align = message.is_out ? 'align-self-end' : 'align-self-start';
@@ -132,12 +132,12 @@ class MessageHandler {
         }
         
         return `
-            <div class="list-group-item border-0 ${align}" style="width: fit-content;">
+            <div class="list-group-item border-0 ${align} bg-light" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + this.getAvatar(message) + `
-                    <div class="${bg} rounded-3">
+                    <div class="${bg} rounded-4 box-shadow border-0">
                         <div class="p-1 px-2" style="font-size: 18px; height: fit-content">${text}</div>
-                        <small class="float-end pe-1 align-self-end ps-3 mt-2" style="font-size: 11px;">${datetimeTitle}${this.formatSentAt(new Date(message.sent_at))}</small>
+                        <small class="float-end pe-1 align-self-end ps-3 mt-2 me-1" style="font-size: 11px;">${datetimeTitle}${this.formatSentAt(new Date(message.sent_at))}</small>
                     </div>  
                 </div>
             </div>  

@@ -18,7 +18,7 @@
             {% include 'boat/term_form.html' %}       
             <h4 class="mb-3">Лодки</h4>
             {% if form.instance.boats.all.exists %}
-                <ul class="list-group mb-3">
+                <ul class="list-group list-group-flush box-shadow mb-3">
                     {% for boat in form.instance.boats.all %}
                         <li class="list-group-item"><a target="_blank" href="{% url 'boat:view' pk=boat.pk %}">{{ boat.get_full_name }}</a></li>
                     {% endfor %}
@@ -27,13 +27,15 @@
                 <p>Ни одна лодка не использует эти условия</p>
             {% endif %}
         </div>
-        <div class="sticky-bottom bg-white border-top container-lg py-3">
-            <div class="row g-2">      
-                <div class="col col-lg-auto">
-                    <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
-                </div>
-                <div class="col col-lg-auto">
-                    <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+        <div class="sticky-bottom container-lg mb-3">
+            <div class="card p-3">
+                <div class="row g-2">      
+                    <div class="col col-lg-auto">
+                        <button type="submit" class="btn btn-primary w-100">Сохранить</button>                          
+                    </div>
+                    <div class="col col-lg-auto">
+                        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Удалить</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -41,7 +43,7 @@
 
     <div id="confirmDeleteModal" class="modal" tabindex="-1" role="dialog" style="display: none">
         <div class="modal-dialog modal-dialog-centered" >
-            <div class="modal-content rounded shadow">
+            <div class="modal-content box-shadow">
                 <div class="modal-body text-center p-4">
                     <h5 class="mb-0">Удалить условия аренды?</h5>
                     {% if form.instance.boats.all.exists > 0 %}

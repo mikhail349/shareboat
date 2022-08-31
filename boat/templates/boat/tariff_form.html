@@ -3,118 +3,118 @@
 {% include 'form_errors.html' %}
 {% load boat_extras %}
 
-<h4 class="mb-3">Основная информация</h4>
-
-<div class="form-check mb-3">
-    <input class="form-check-input" type="checkbox" name="active" id="switchActive" {% if form.active.value %} checked {% endif %}>
-    <label class="form-check-label" for="switchActive">{{ form.active.label }}</label>
-</div>
-
-<div class="form-floating mb-3" >
-    <select class="form-select" name="boat" required>
-        <option selected disabled value="">Выберите из списка</option>
-        {% for boat in user.boats.active.all %}
-            <option value="{{ boat.pk }}" {% if boat.pk|unlocalize == form.boat.value|unlocalize %}selected{% endif %}>{{ boat.name }}</option> 
-        {% endfor %}
-    </select>
-    <label>{{ form.boat.label }}</label>
-    <div class="invalid-tooltip">Выберите</div>
-</div>
-
-<div class="form-floating mb-3">                 
-    <input type="text" name="name" class="form-control" placeholder="Укажите" autocomplete="off"           
-        required maxlength="255"
-        value="{{ form.name.value|default:'' }}"
-    />
-    <label for="name">{{ form.name.label }}</label>
-    <div class="invalid-tooltip">Укажите</div>
-</div>
-
-<div class="form-floating mb-3">                 
-    <input type="number" name='price' class="form-control" placeholder="Укажите" autocomplete="false"
-        required 
-        step=".01" min=".01" max="999999.99"  
-        value="{{ form.price.value|unlocalize }}"
-    />
-    <label>{{ form.price.label }}</label>
-    <div class="invalid-tooltip">Укажите</div>
-</div>
-
-<h4 class="mb-3">Сезон</h4>
-
-<div class="row g-3 mb-3">
-    <div class="col-lg-3">
-        <div class="form-floating">                 
-            <input type="date" name="start_date" class="form-control" placeholder="Укажите" required 
-                value="{{ form.start_date.value|tryiso }}"
-            />
-            <label>{{ form.start_date.label }}</label>
-            <div class="invalid-tooltip">Укажите</div>
-        </div>
+<div class="card p-3 mb-3">
+    <h4 class="mb-3">Основная информация</h4>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="active" id="switchActive" {% if form.active.value %} checked {% endif %}>
+        <label class="form-check-label" for="switchActive">{{ form.active.label }}</label>
     </div>
 
-    <div class="col-lg-3">
-        <div class="form-floating">                 
-            <input type="date" name="end_date" class="form-control" placeholder="Укажите" required 
-                value="{{ form.end_date.value|tryiso }}"
-            />
-            <label>{{ form.end_date.label }}</label>
-            <div class="invalid-tooltip">Укажите</div>
-        </div>
+    <div class="form-floating mb-3" >
+        <select class="form-select" name="boat" required>
+            <option selected disabled value="">Выберите из списка</option>
+            {% for boat in user.boats.active.all %}
+                <option value="{{ boat.pk }}" {% if boat.pk|unlocalize == form.boat.value|unlocalize %}selected{% endif %}>{{ boat.name }}</option> 
+            {% endfor %}
+        </select>
+        <label>{{ form.boat.label }}</label>
+        <div class="invalid-tooltip">Выберите</div>
+    </div>
+
+    <div class="form-floating mb-3">                 
+        <input type="text" name="name" class="form-control" placeholder="Укажите" autocomplete="off"           
+            required maxlength="255"
+            value="{{ form.name.value|default:'' }}"
+        />
+        <label for="name">{{ form.name.label }}</label>
+        <div class="invalid-tooltip">Укажите</div>
+    </div>
+
+    <div class="form-floating">                 
+        <input type="number" name='price' class="form-control" placeholder="Укажите" autocomplete="false"
+            required 
+            step=".01" min=".01" max="999999.99"  
+            value="{{ form.price.value|unlocalize }}"
+        />
+        <label>{{ form.price.label }}</label>
+        <div class="invalid-tooltip">Укажите</div>
     </div>
 </div>
 
-<h4 class="mb-3">Сроки</h4>
-
-<div class="row g-3 mb-3">
-    <div class="col-lg-3">
-        <div class="form-floating"> 
-            <input type="number" name="duration" class="form-control" placeholder="Укажите" autocomplete="false" required min="1"
-                value="{{ form.duration.value }}"
-            />
-            <label>{{ form.duration.label }}</label>
-            <div class="invalid-tooltip">Укажите значение не менее 1</div>
+<div class="card p-3 mb-3">
+    <h4 class="mb-3">Сезон</h4>
+    <div class="row g-3">
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="date" name="start_date" class="form-control" placeholder="Укажите" required 
+                    value="{{ form.start_date.value|tryiso }}"
+                />
+                <label>{{ form.start_date.label }}</label>
+                <div class="invalid-tooltip">Укажите</div>
+            </div>
         </div>
-    </div>
 
-    <div class="col-lg-3">
-        <div class="form-floating"> 
-            <input type="number" name="min" class="form-control" placeholder="Укажите" autocomplete="false" required min="1"
-                value="{{ form.min.value }}"
-            />
-            <label>{{ form.min.label }}</label>
-            <div class="invalid-tooltip">Укажите значение не менее 1</div>
+        <div class="col-lg-3">
+            <div class="form-floating">                 
+                <input type="date" name="end_date" class="form-control" placeholder="Укажите" required 
+                    value="{{ form.end_date.value|tryiso }}"
+                />
+                <label>{{ form.end_date.label }}</label>
+                <div class="invalid-tooltip">Укажите</div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row g-3 mb-3">
-    
+<div class="card p-3 mb-3">
+    <h4 class="mb-3">Сроки</h4>
+    <div class="row g-3">
+        <div class="col-lg-3">
+            <div class="form-floating"> 
+                <input type="number" name="duration" class="form-control" placeholder="Укажите" autocomplete="false" required min="1"
+                    value="{{ form.duration.value }}"
+                />
+                <label>{{ form.duration.label }}</label>
+                <div class="invalid-tooltip">Укажите значение не менее 1</div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="form-floating"> 
+                <input type="number" name="min" class="form-control" placeholder="Укажите" autocomplete="false" required min="1"
+                    value="{{ form.min.value }}"
+                />
+                <label>{{ form.min.label }}</label>
+                <div class="invalid-tooltip">Укажите значение не менее 1</div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<h4 class="mb-3">Дни начала применения тарифа</h4>
+<div class="card d-block p-3 mb-3">
+    <h4 class="mb-3">Дни начала применения тарифа</h4>
+    <div class="btn-group" role="group">
+        <input type="checkbox" name="mon" id="checkMon" class="btn-check" autocomplete="off" {% if form.mon.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkMon">пн</label>
 
-<div class="btn-group mb-3" role="group">
-    <input type="checkbox" name="mon" id="checkMon" class="btn-check" autocomplete="off" {% if form.mon.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkMon">пн</label>
+        <input type="checkbox" name="tue" id="checkTue" class="btn-check" autocomplete="off" {% if form.tue.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkTue">вт</label>
 
-    <input type="checkbox" name="tue" id="checkTue" class="btn-check" autocomplete="off" {% if form.tue.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkTue">вт</label>
+        <input type="checkbox" name="wed" id="checkWed" class="btn-check" autocomplete="off" {% if form.wed.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkWed">ср</label>
 
-    <input type="checkbox" name="wed" id="checkWed" class="btn-check" autocomplete="off" {% if form.wed.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkWed">ср</label>
+        <input type="checkbox" name="thu" id="checkThu" class="btn-check" autocomplete="off" {% if form.thu.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkThu">чт</label>
 
-    <input type="checkbox" name="thu" id="checkThu" class="btn-check" autocomplete="off" {% if form.thu.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkThu">чт</label>
+        <input type="checkbox" name="fri" id="checkFri" class="btn-check" autocomplete="off" {% if form.fri.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkFri">пт</label>
 
-    <input type="checkbox" name="fri" id="checkFri" class="btn-check" autocomplete="off" {% if form.fri.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkFri">пт</label>
+        <input type="checkbox" name="sat" id="checkSat" class="btn-check" autocomplete="off" {% if form.sat.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkSat">сб</label>
 
-    <input type="checkbox" name="sat" id="checkSat" class="btn-check" autocomplete="off" {% if form.sat.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkSat">сб</label>
-
-    <input type="checkbox" name="sun" id="checkSun" class="btn-check" autocomplete="off" {% if form.sun.value %} checked {% endif %}>
-    <label class="btn btn-outline-primary" for="checkSun">вс</label>
+        <input type="checkbox" name="sun" id="checkSun" class="btn-check" autocomplete="off" {% if form.sun.value %} checked {% endif %}>
+        <label class="btn btn-outline-primary" for="checkSun">вс</label>
+    </div>
 </div>
 
 <div class="mb-3">
