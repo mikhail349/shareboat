@@ -378,10 +378,14 @@ a {
     --bs-toast-border-radius: var(--bs-border-radius-xl);
 }
 
-.form-control, .form-select, .card-img, .card-img-left, .card-img-top, .card, .list-group {
+#map, .form-control, .form-select, .card-img, .card-img-left, .card-img-top, .card, .list-group {
     border-radius: var(--bs-border-radius-xl) !important;
 }
 
+.input-group > :not(:last-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
 
 .jumbotron {
     background-color: var(--bs-gray-100) !important;

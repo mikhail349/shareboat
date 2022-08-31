@@ -167,6 +167,7 @@ $(document).ready(() => {
     })
 
     $("#addressMapModalSearchButton").on('click', function(e) {
+        console.log('click');
         const text = $("#addressMapModalSearchText").val();
         if (!text) {
             showErrorToast('Введите адрес');
@@ -177,9 +178,11 @@ $(document).ready(() => {
 
     $("#addressMapModalSearchText").on("keydown", function(e) {
         if (e.keyCode === 13) {
+            e.preventDefault();
             const $btn = $("#addressMapModalSearchButton");
             $btn.focus();
             $btn.click();
+            return false;
         }
     });
 
@@ -207,8 +210,15 @@ $(document).ready(() => {
         }
     }
 
+    var xhrGeocode; 
     function geocode(text) {
-        $.ajax({
+        
+        if (xhrGeocode != null) {
+            xhrGeocode.abort();
+            xhrGeocode = null;
+        }
+        
+        xhrGeocode = $.ajax({
             type: 'GET',
             url: `https://nominatim.openstreetmap.org/?q=${text}&format=json&accept-language=ru`,
             success: onSuccess,
@@ -230,13 +240,20 @@ $(document).ready(() => {
         }
     }
 
+    var xhrReverseGeocode;
     function reverseGeocode(latlng) {
+        
+        if (xhrReverseGeocode != null) {
+            xhrReverseGeocode.abort();
+            xhrReverseGeocode = null;
+        }
+
         $("form button[type=submit").attr('disabled', true);
         
         $('.addressLabel').text('Идет поиск...');
         $('.addressLabel').removeClass('text-primary');
 
-        $.ajax({
+        xhrReverseGeocode = $.ajax({
             type: 'GET',
             url: `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json&accept-language=ru`,
             success: onSuccess,
