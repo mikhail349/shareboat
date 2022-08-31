@@ -1,3 +1,15 @@
+function showSuccessAlert() {
+
+    const MSG = 'Аватар изменён.';
+    const $alert = $(".alert.alert-success");
+    
+    if ($alert.length) {
+        $alert.html(MSG)
+    } else {
+        $("#formProfile > .container-lg").prepend(`<div class="alert alert-success">${ MSG }</div>`)
+    }
+}
+
 $(document).ready(() => {
 
     $("img.avatar").on("click", (e) => {
@@ -29,7 +41,7 @@ $(document).ready(() => {
                 processData: false,
                 contentType: false,
                 success: (data) => {
-                    showSuccessToast("Аватар изменён");
+                    showSuccessAlert();
                     
                     $("img.avatar").attr('src', data.avatar);
                     $("#navbarDropdownUserProfile > img").attr('src', data.avatar_sm);
