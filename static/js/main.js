@@ -57,12 +57,25 @@ $(document).ready(() => {
         setCookie('all_cookies_accepted', true, 365*10);
     })
 
-    const el = document.querySelector(".sticky-bottom.action-footer");
     const observer = new IntersectionObserver( 
-        ([e]) => e.target.classList.toggle("stuck", e.intersectionRatio < 1),
+        (entries) => { 
+            entries.forEach((entry) => {
+                console.log(entry)
+                entry.target.classList.toggle("stuck", entry.intersectionRatio < 1)
+            })
+        },
         { threshold: [1] }
     );
-    observer.observe(el);
+
+    const actionHeaderEl = document.querySelector(".sticky-top.action-header");
+    if (actionHeaderEl != null) {
+        observer.observe(actionHeaderEl);
+    }
+    
+    const actionFooterEl = document.querySelector(".sticky-bottom.action-footer");
+    if (actionFooterEl != null) {
+        observer.observe(actionFooterEl);
+    }   
 });
 
 $(document).ready(() => {
@@ -144,7 +157,7 @@ function removeToastBGs() {
 }
 
 function showSuccessToast(msg="Изменения сохранены.") {
-    // TODO: make it to look pretty
+    // TODO: make it looks pretty
     const html = `
         <div class="toast-header text-white bg-success position-relative">
             <span class="me-auto">${msg}</span>
