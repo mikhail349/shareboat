@@ -18,13 +18,19 @@
             <h1 class="jumbotron-heading">Поиск лодки</h1>
         </section>
 
-        <button class="btn btn-outline-primary btn-lg w-100 mb-3 position-relative bg-white d-lg-none" type="button" 
-            data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
-            {% get_filter_count request as filter_count %}
-            {% if filter_count > 0 %}
-                <span class="badge bg-danger">{{ filter_count }}</span>
-            {% endif %}
-        </button>
+        <div class="card p-3 mb-3 d-lg-none">
+            <div class="row g-2">            
+                <div class="col col-lg-auto">
+                    <button class="btn btn-outline-primary w-100 position-relative" type="button" 
+                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBoatFilter" aria-controls="offcanvasBoatFilter">Фильтр
+                        {% get_filter_count request as filter_count %}
+                        {% if filter_count > 0 %}
+                            <span class="badge bg-danger">{{ filter_count }}</span>
+                        {% endif %}
+                    </button>                        
+                </div>
+            </div>
+        </div>
         
         {% include 'paginator.html' with class="mb-3" %}
         <div class="row">
