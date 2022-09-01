@@ -35,6 +35,14 @@
     --bs-toast-border-radius: var(--bs-border-radius-xl);
 }
 
+.pagination {
+    --bs-pagination-border-radius: var(--bs-border-radius-xl);
+}
+
+.form-check-input[type=checkbox] {
+    border-radius: var(--bs-border-radius-xl);
+}
+
 #map, .form-control, .form-select, .card-img, .card-img-left, .card-img-top, .card, .list-group, .leaflet-control-zoom {
     border-radius: var(--bs-border-radius-xl) !important;
 }
