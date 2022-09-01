@@ -83,8 +83,12 @@
                     </div> 
                 </div>           
             </div>
+
             {% if boat.text %}
-                <div class="card p-3 mb-3">{{ boat.text|default_if_none:""|linebreaks }}</div>
+                <div class="card p-3 mb-3">
+                    <h4 class="mb-3">Описание</h4>
+                    {{ boat.text|default_if_none:""|linebreaks }}
+                </div>
             {% endif %}
             
             {% if prices_exist %}
