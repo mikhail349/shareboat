@@ -43,7 +43,7 @@
     border-radius: var(--bs-border-radius-xl);
 }
 
-#map, .form-control, .form-select, .card-img, .card-img-left, .card-img-top, .card, .list-group, .leaflet-control-zoom {
+#map, .form-control, .form-select, .card-img, .card, .list-group, .leaflet-control-zoom {
     border-radius: var(--bs-border-radius-xl) !important;
 }
 

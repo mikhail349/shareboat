@@ -88,9 +88,9 @@ function FilesList(props) {
                     <div className="row g-3 mb-3">      
                         {
                             files.map((file, index) => (
-                                <div key={index} className="col-md-4 col-lg-3">
+                                <div key={index} className="col-6 col-md-4 col-lg-3">
                                     <div className="card box-shadow text-end">
-                                        <img src={file.url} className="card-img" data-filename={file.blob.name} />  
+                                        <img src={file.url} className="card-img" style={{height: '150px'}} data-filename={file.blob.name} />  
                                         <div className="card-img-overlay">
                                             <div className="btn-group">
                                                 <button type="button" className="btn btn-sm btn-danger" onClick={() => deleteFile(index)}>

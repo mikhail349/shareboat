@@ -9,7 +9,7 @@
         <div class="carousel-inner">
             {% for file in boat.files.all %} 
                 <div class="carousel-item {% if forloop.counter0 == 0  %}active{% endif %}" data-bs-interval="60000">
-                    <img class="card-img-left" src="{{ file.file.url }}" />
+                    <img class="card-img" src="{{ file.file.url }}" />
                 </div>
             {% endfor %}
         </div>
@@ -30,7 +30,7 @@
 {% elif boat.files.exists %}
 
     <div class="position-relative">
-        <img src="{{ boat.files.first.file.url }}" class="card-img-left" />
+        <img src="{{ boat.files.first.file.url }}" class="card-img" />
         <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ boat.pk }}" title="Во весь экран">
             <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Full screen</span>
@@ -39,7 +39,7 @@
 
 {% else %}
 
-    <div class="card-img-left"></div>
+    <div class="card-img"></div>
 
 {% endif %}
 

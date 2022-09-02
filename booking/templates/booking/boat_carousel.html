@@ -1,7 +1,7 @@
 {% if booking.boat_info.photo %}
 
     <div class="position-relative">
-        <img src="{{ booking.boat_info.photo.url }}" class="card-img-left" />
+        <img src="{{ booking.boat_info.photo.url }}" class="card-img" />
         <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ booking.pk }}" title="Во весь экран">
             <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Full screen</span>
@@ -10,7 +10,7 @@
 
 {% else %}
 
-    <div class="card-img-left"></div>
+    <div class="card-img"></div>
 
 {% endif %}
 

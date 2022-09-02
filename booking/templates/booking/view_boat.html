@@ -8,7 +8,7 @@
             <div class="card h-100">
                 {% if booking.boat_info.photo %}
                     <div class="card border-0 box-shadow text-end mb-3">
-                        <img class="d-block w-100 card-img card-img-md" src="{{ booking.boat_info.photo.url }}" />
+                        <img class="d-block w-100 card-img" src="{{ booking.boat_info.photo.url }}" />
                         <a type="button" class="carousel-control-full-screen" data-bs-toggle='modal' data-bs-target="#fullscreenViewer{{ booking.pk }}" title="Во весь экран">
                             <span class="carousel-control-full-screen-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Full screen</span>

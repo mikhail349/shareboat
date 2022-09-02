@@ -18,7 +18,7 @@
         <div class="card p-3 mb-3">
             <h4>Лодка</h4>
             {% if boat.files.exists %}
-                <img class="card-img card-img-100 mb-2" src="{{ boat.files.first.file.url }}" />
+                <img class="card-img mb-2" src="{{ boat.files.first.file.url }}" style="width:100px; height:100px;" />
             {% endif %}
             <p>{{ boat.get_full_name }}</p>
 
