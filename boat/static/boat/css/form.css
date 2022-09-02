@@ -1,4 +1,8 @@
-.file-upload-wrapper {
-  border-radius: .25rem;
-  transition: background-color .15s ease-in-out;
+.photo-upload-wrapper {
+  transition: background-color .2s ease-in-out;
+}
+
+.photo-upload-wrapper-hover {
+  background-color: var(--bs-light);
+  transition: background-color .2s ease-in-out; 
 }
