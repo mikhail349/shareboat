@@ -2,7 +2,6 @@
     --bs-primary: #191645;
     --bs-primary-rgb: 	25, 22, 69;
     --bs-primary-disabled: #3b3586;
-    
 }
 
 .btn-primary {
@@ -333,4 +332,78 @@ a {
     border-radius: 0 !important;
     box-shadow: none;
     transition: all .2s ease-in-out;
+}
+
+/* dark theme */
+
+:root .dark-theme {
+    --bs-light-rgb: 33,37,41;
+    --bs-primary-rgb: 33,37,41;
+    --bs-primary: #212529;
+}
+
+body.dark-theme {
+    color: gainsboro;
+}
+
+.dark-theme .jumbotron {
+    background-color: #212529 !important;
+}
+
+.dark-theme .card {
+    --bs-card-bg: #35393c;
+}
+
+.dark-theme .form-control, .dark-theme .form-select {
+    background-color: var(--bs-primary);
+    border: 1px solid var(--bs-primary);
+    color: gainsboro;
+}
+
+.dark-theme .sticky-bottom.action-footer .card {
+    border-top: 1px solid #35393c !important;
+}
+
+.dark-theme .sticky-bottom.action-footer.stuck {
+    background-color: #35393c;
+}
+
+.dark-theme .btn-primary {
+    --bs-btn-bg: white;
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-border-color: gainsboro;
+
+    --bs-btn-hover-bg: white;
+    --bs-btn-hover-color: var(--bs-primary);
+    --bs-btn-hover-border-color: gainsboro;
+
+    --bs-btn-active-border-color: var(--bs-primary);
+}
+
+.dark-theme .btn-outline-primary {
+    --bs-btn-color: gainsboro;
+    --bs-btn-border-color: gainsboro;
+    --bs-btn-active-bg: var(--bs-primary);
+    --bs-btn-active-border-color: gainsboro;
+    --bs-btn-active-color: gainsboro;
+}
+
+.dark-theme .text-primary, .dark-theme .text-muted {
+    color: rgba(gainsboro, var(--bs-text-opacity))!important;
+}
+
+.dark-theme .text-black {
+    color: white !important;
+}
+
+.dark-theme .dropdown-menu {
+    --bs-dropdown-bg: var(--bs-primary);
+}
+
+.dark-theme .modal {
+    --bs-modal-bg: #35393c;
+}
+
+.dark-theme a {
+    color: gainsboro;
 }

@@ -11,7 +11,7 @@
             data-coordinates-lon="{{ booking.boat_info.base.lon|stringformat:".6f" }}"
             data-coordinates-address="{{ booking.boat_info.base.address }}">{{ booking.boat_info.base.name }}, {{ booking.boat_info.base.state }}</a>
     {% elif booking.boat_info|hasattr:'coordinates' %}
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalMap" 
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalMap" class="text-primary"
             data-coordinates-lat="{{ booking.boat_info.coordinates.lat|stringformat:".6f" }}"
             data-coordinates-lon="{{ booking.boat_info.coordinates.lon|stringformat:".6f" }}"
             data-coordinates-address="{{ booking.boat_info.coordinates.address }}">{{ booking.boat_info.coordinates.state }}</a>
