@@ -7,25 +7,25 @@
 <div class="container text-muted px-0 mt-3 small">
     <div class="row">
         <div class="col-2 pe-0">Год</div>
-        <div class="col-4 ps-0 text-end text-black">{{ boat.issue_year|default:"-"|unlocalize }}</div>
+        <div class="col-4 ps-0 text-end text-primary">{{ boat.issue_year|default:"-"|unlocalize }}</div>
         <div class="col-3 pe-0">Двигатель</div>
-        <div class="col-3 ps-0 text-end text-black">
+        <div class="col-3 ps-0 text-end text-primary">
             {% if boat.is_motor_boat %}
                 {% if boat.motor_boat.motor_amount > 1 %}{{ boat.motor_boat.motor_amount }}&nbsp;x&nbsp;{% endif %}{{ boat.motor_boat.motor_power.normalize }} л.с.
             {% else %}-{% endif %}
         </div>
 
         <div class="col-4 pe-0">Длина</div>
-        <div class="col-2 ps-0 text-end text-black">{{ boat.length }} м.</div>
+        <div class="col-2 ps-0 text-end text-primary">{{ boat.length }} м.</div>
         <div class="col-3 pe-0">Осадка</div>
-        <div class="col-3 ps-0 text-end text-black">{{ boat.draft }} м.</div>
+        <div class="col-3 ps-0 text-end text-primary">{{ boat.draft }} м.</div>
 
         <div class="col-4 pe-0">Спальных мест</div>
-        <div class="col-2 ps-0 text-end text-black">{% get_berth_amount boat %}</div>
+        <div class="col-2 ps-0 text-end text-primary">{% get_berth_amount boat %}</div>
         <div class="col-3 pe-0">Кают</div>
-        <div class="col-3 ps-0 text-end text-black">{{ boat.comfort_boat.cabin_amount|default:'-' }}</div>
+        <div class="col-3 ps-0 text-end text-primary">{{ boat.comfort_boat.cabin_amount|default:'-' }}</div>
 
         <div class="col-4 pe-0">WC</div>
-        <div class="col-2 ps-0 text-end text-black">{{ boat.comfort_boat.bathroom_amount|default:'-' }}</div>
+        <div class="col-2 ps-0 text-end text-primary">{{ boat.comfort_boat.bathroom_amount|default:'-' }}</div>
     </div>
 </div>

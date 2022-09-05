@@ -7,27 +7,27 @@
     </div>                
     <div class="col">
         <p class="text-muted">
-            <span class="d-block">Длина, м.</span><span class="text-black">{{ boat.length }}</span>
+            <span class="d-block">Длина, м.</span><span class="text-primary">{{ boat.length }}</span>
         </p>
     </div>
     <div class="col">
         <p class="text-muted">
-            <span class="d-block">Ширина, м.</span><span class="text-black">{{ boat.width }}</span>
+            <span class="d-block">Ширина, м.</span><span class="text-primary">{{ boat.width }}</span>
         </p>
     </div>
     <div class="col">
         <p class="text-muted">
-            <span class="d-block">Осадка, м.</span><span class="text-black">{{ boat.draft }}</span>
+            <span class="d-block">Осадка, м.</span><span class="text-primary">{{ boat.draft }}</span>
         </p>
     </div>                      
     <div class="col">
         <p class="text-muted">
-            <span class="d-block">Год выпуска</span><span class="text-black">{{ boat.issue_year|default:"-"|unlocalize }}</span>
+            <span class="d-block">Год выпуска</span><span class="text-primary">{{ boat.issue_year|default:"-"|unlocalize }}</span>
         </p>
     </div>
     <div class="col-8">
         <p class="text-muted">
-            <span class="d-block">Вместимость</span><span class="text-black">{{ boat.capacity }}</span>
+            <span class="d-block">Вместимость</span><span class="text-primary">{{ boat.capacity }}</span>
         </p>
     </div>
  
@@ -36,12 +36,12 @@
     </div>                 
     <div class="col">
         <p class="text-muted">
-            <span class="d-block">Кол-во</span><span class="text-black">{{ boat.motor_boat.motor_amount|default:"-" }}</span>
+            <span class="d-block">Кол-во</span><span class="text-primary">{{ boat.motor_boat.motor_amount|default:"-" }}</span>
         </p>
     </div>
     <div class="col-8">
         <p class="text-muted">
-            <span class="d-block">Мощность, л.с.</span><span class="text-black">{% if boat.is_motor_boat %}{{ boat.motor_boat.motor_power }}{% else %}-{% endif%}</span>
+            <span class="d-block">Мощность, л.с.</span><span class="text-primary">{% if boat.is_motor_boat %}{{ boat.motor_boat.motor_power }}{% else %}-{% endif%}</span>
         </p>
     </div>                  
   
@@ -50,17 +50,17 @@
     </div>                 
     <div class="col">
         <p class="text-muted">
-            <span class="d-block">Спальные места</span><span class="text-black">{% get_berth_amount boat %}</span>
+            <span class="d-block">Спальные места</span><span class="text-primary">{% get_berth_amount boat %}</span>
         </p>
     </div>
     <div class="col mt-auto">
         <p class="text-muted">
-            <span class="d-block">Каюты</span><span class="text-black">{{ boat.comfort_boat.cabin_amount|default:"-" }}</span>
+            <span class="d-block">Каюты</span><span class="text-primary">{{ boat.comfort_boat.cabin_amount|default:"-" }}</span>
         </p>
     </div>           
     <div class="col mt-auto">
         <p class="text-muted">
-            <span class="d-block">WC</span><span class="text-black">{{ boat.comfort_boat.bathroom_amount|default:"-" }}</span>
+            <span class="d-block">WC</span><span class="text-primary">{{ boat.comfort_boat.bathroom_amount|default:"-" }}</span>
         </p>
     </div>     
     

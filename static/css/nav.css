@@ -1,3 +1,7 @@
+.bg-nav {
+    background-color: var(--bs-primary);
+}
+
 header .navbar-brand img {
     filter: brightness(0) invert(1);
     height: 46px;
