@@ -16,9 +16,9 @@
                 <a class="list-group-item sb-secondary-bg py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar_sm %}
-                            <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle of-cover">
+                            <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle of-cover bg-light">
                         {% elif not message.sender %}
-                            <img height="32" width="32" src="{% static 'img/boat.png' %}" class="rounded-circle of-cover">
+                            <img height="32" width="32" src="{% static 'img/boat.png' %}" class="rounded-circle of-cover bg-light">
                         {% else %}
                             <div style="width:32px; height:32px; min-width: 32px !important; min-height: 32px;"></div>
                         {% endif %}

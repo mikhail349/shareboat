@@ -132,7 +132,7 @@ class MessageHandler {
         }
         
         return `
-            <div class="list-group-item border-0 ${align} bg-light" style="width: fit-content;">
+            <div class="list-group-item border-0 ${align} bg-sb-primary" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + this.getAvatar(message) + `
                     <div class="${bg} rounded-4 box-shadow border-0">
