@@ -11,9 +11,9 @@
     </section>
 
     <div class="container mw-lg-700">
-        <div class="list-group list-group-flush bg-secondary box-shadow mb-3">
+        <div class="list-group list-group-flush sb-secondary-bg box-shadow mb-3">
             {% for message in messages %}
-                <a class="list-group-item py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
+                <a class="list-group-item sb-secondary-bg py-3" href="{{ message.get_href }}?back={{ request.get_full_path }}">
                     <div class="d-flex gap-3">
                         {% if message.sender.avatar_sm %}
                             <img height="32" width="32" src="{{ message.sender.avatar_sm.url }}" class="rounded-circle of-cover">
