@@ -12,7 +12,7 @@
             data-coordinates-lon="{{ coordinates.lon|stringformat:".6f" }}"
             data-coordinates-address="{{ coordinates.address }}">{{ boat.base.name }}, {{ boat.base.state }}</a>
     {% elif boat.is_custom_location %}
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalMap" 
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalMap" class="text-primary"
             data-coordinates-lat="{{ coordinates.lat|stringformat:".6f" }}"
             data-coordinates-lon="{{ coordinates.lon|stringformat:".6f" }}"
             data-coordinates-address="{{ coordinates.address }}">{{ boat.coordinates.state }}</a>

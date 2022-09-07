@@ -16,7 +16,7 @@
                     {% if user.avatar %}data-do-save{% endif %}
                     width="150" height="150"
                     src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'img/blank-profile-picture.png' %}{% endif %}" 
-                    class="rounded-circle avatar mb-3 of-cover" 
+                    class="rounded-circle avatar mb-3 of-cover bg-light" 
                     title="Сменить аватар"
                 >
                 <img id="loadingShipWheel" class="loading-ship-wheel position-absolute" src="{% static 'img/ship-wheel-2.png' %}" style="display: none;">
@@ -66,7 +66,16 @@
             </div>
 
             <div class="card p-3 mb-3">
-                <h4 class="mb-3">Telegram бот <a target="_blank" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
+                <h4 class="mb-3">Интерфейс</h4>
+                <div class="form-check">
+                    <input class="form-check-input" id="useDarkThemeCheck" type="checkbox" name="use_dark_theme" {% if form.use_dark_theme.value %} checked {% endif %}>
+                    <label class="form-check-label" for="useDarkThemeCheck">{{ form.use_dark_theme.label }}</label>
+                    <div class="form-text">{{ form.use_dark_theme.help_text }}</div>
+                </div>
+            </div>
+
+            <div class="card p-3 mb-3">
+                <h4 class="mb-3">Telegram бот <a target="_blank" class="text-primary" href="https://t.me/shareboat_bot">@botshareboat</a></h4>
                 {% if user|hasattr:'telegramuser' %}
                     {% if user.telegramuser.chat_id %}
                         <div id="tgAuth" class="text-muted">

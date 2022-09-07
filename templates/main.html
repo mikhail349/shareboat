@@ -41,7 +41,7 @@
         <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.png' %}"/>
         <link rel="manifest" href="{% static 'json/manifest.json' %}">
     </head>
-    <body class="bg-light">
+    <body class="{% if user.use_dark_theme %}dark-theme{% endif %} sb-primary-bg">
         <noscript><div><img src="https://mc.yandex.ru/watch/88868575" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
         
         {% block nav %}

@@ -58,6 +58,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to=get_upload_avatar_to, null=True, blank=True)
     avatar_sm = models.ImageField(upload_to=get_upload_avatar_sm_to, null=True, blank=True)
     email_notification = models.BooleanField('По электронной почте', default=True, help_text='О смене статуса лодки, бронирования.')
+    use_dark_theme = models.BooleanField("Использовать тёмную тему", default=False)
     
     objects = UserManager()
 

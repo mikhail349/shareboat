@@ -32,27 +32,27 @@
                     </div>                
                     <div class="col">
                         <p class="text-muted">
-                            <span class="d-block">Длина, м.</span><span class="text-black">{{ spec.length }}</span>
+                            <span class="d-block">Длина, м.</span><span class="text-primary">{{ spec.length }}</span>
                         </p>
                     </div>
                     <div class="col">
                         <p class="text-muted">
-                            <span class="d-block">Ширина, м.</span><span class="text-black">{{ spec.width }}</span>
+                            <span class="d-block">Ширина, м.</span><span class="text-primary">{{ spec.width }}</span>
                         </p>
                     </div>
                     <div class="col">
                         <p class="text-muted">
-                            <span class="d-block">Осадка, м.</span><span class="text-black">{{ spec.draft }}</span>
+                            <span class="d-block">Осадка, м.</span><span class="text-primary">{{ spec.draft }}</span>
                         </p>
                     </div>                      
                     <div class="col">
                         <p class="text-muted">
-                            <span class="d-block">Год выпуска</span><span class="text-black">{{ spec.issue_year|default:"-"|unlocalize }}</span>
+                            <span class="d-block">Год выпуска</span><span class="text-primary">{{ spec.issue_year|default:"-"|unlocalize }}</span>
                         </p>
                     </div>
                     <div class="col-8">
                         <p class="text-muted">
-                            <span class="d-block">Вместимость</span><span class="text-black">{{ spec.capacity }}</span>
+                            <span class="d-block">Вместимость</span><span class="text-primary">{{ spec.capacity }}</span>
                         </p>
                     </div>
                 
@@ -61,12 +61,12 @@
                     </div>                 
                     <div class="col">
                         <p class="text-muted">
-                            <span class="d-block">Кол-во</span><span class="text-black">{{ spec.motor.motor_amount|default:"-" }}</span>
+                            <span class="d-block">Кол-во</span><span class="text-primary">{{ spec.motor.motor_amount|default:"-" }}</span>
                         </p>
                     </div>
                     <div class="col-8">
                         <p class="text-muted">
-                            <span class="d-block">Мощность, л.с.</span><span class="text-black">{{ spec.motor.motor_power|default:"-" }}</span>
+                            <span class="d-block">Мощность, л.с.</span><span class="text-primary">{{ spec.motor.motor_power|default:"-" }}</span>
                         </p>
                     </div>                  
                 
@@ -75,17 +75,17 @@
                     </div>                 
                     <div class="col">
                         <p class="text-muted">
-                            <span class="d-block">Спальные места</span><span class="text-black">{% get_berth_amount spec %}</span>
+                            <span class="d-block">Спальные места</span><span class="text-primary">{% get_berth_amount spec %}</span>
                         </p>
                     </div>
                     <div class="col mt-auto">
                         <p class="text-muted">
-                            <span class="d-block">Каюты</span><span class="text-black">{{ spec.comfort.cabin_amount|default:"-" }}</span>
+                            <span class="d-block">Каюты</span><span class="text-primary">{{ spec.comfort.cabin_amount|default:"-" }}</span>
                         </p>
                     </div>           
                     <div class="col mt-auto">
                         <p class="text-muted">
-                            <span class="d-block">WC</span><span class="text-black">{{ spec.comfort.bathroom_amount|default:"-" }}</span>
+                            <span class="d-block">WC</span><span class="text-primary">{{ spec.comfort.bathroom_amount|default:"-" }}</span>
                         </p>
                     </div>     
                     
@@ -94,7 +94,7 @@
                     </div>  
                     <div class="col-12 mb-3">
                         {% if booking.boat_info.owner.avatar_sm %}
-                            <img height="32" width="32" src="{{ booking.boat_info.owner.avatar_sm.url }}" class="of-cover rounded-circle">
+                            <img height="32" width="32" src="{{ booking.boat_info.owner.avatar_sm.url }}" class="of-cover rounded-circle bg-light">
                         {% endif %}
                         <span class="text-muted align-middle">{{ booking.boat_info.owner.first_name }}</span>
                     </div>
