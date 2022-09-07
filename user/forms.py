@@ -43,4 +43,4 @@ class UpdateForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'email_notification', 'is_boat_owner')
+        fields = ('first_name', 'email_notification', 'is_boat_owner', 'use_dark_theme')
