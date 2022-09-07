@@ -6,10 +6,10 @@ from django.db.models import Q
 
 
 def calc_booking(boat_pk, start_date, end_date):
-    
+
     class TariffNotFound(Exception):
         pass
-    
+
     class Node:
         def __init__(self, tariff, prev=None):
             self.tariff = tariff
@@ -17,7 +17,7 @@ def calc_booking(boat_pk, start_date, end_date):
 
     def _return_empty():
         return {}
-    
+
     def is_weekday_in_tariff(weekday, tariff):
         if weekday == 0:
             return tariff.mon
@@ -55,26 +55,29 @@ def calc_booking(boat_pk, start_date, end_date):
         if last_tariff:
             if last_tariff.start_date <= date <= last_tariff.end_date:
                 return True
-        return False   
-    
+        return False
+
     try:
         boat = Boat.objects.get(pk=boat_pk)
     except Boat.DoesNotExist:
-        return _return_empty()    
+        return _return_empty()
 
     total_duration = (end_date - start_date).days
-    tariffs = list(boat.tariffs.filter(active=True, weight__lte=total_duration).exclude(Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
+    tariffs = list(boat.tariffs.filter(active=True, weight__lte=total_duration).exclude(
+        Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
     used_tariffs = {}
     total_sum = Decimal("0.0")
     date = start_date
     node = None
     last_tariff = None
     spec = {}
-    
+
     try:
         while date < end_date:
-            filtered = [tariff for tariff in tariffs if tariff.start_date <= date <= tariff.end_date]
-            weighted = sorted(filtered, key=lambda tariff: tariff.weight, reverse=True)
+            filtered = [
+                tariff for tariff in tariffs if tariff.start_date <= date <= tariff.end_date]
+            weighted = sorted(
+                filtered, key=lambda tariff: tariff.weight, reverse=True)
 
             date_changed = False
             for i, tariff in enumerate(weighted):
@@ -83,7 +86,6 @@ def calc_booking(boat_pk, start_date, end_date):
                         tariff = last_tariff
                     else:
                         continue
-
 
                 target_duration = (end_date - date).days
 
@@ -104,11 +106,11 @@ def calc_booking(boat_pk, start_date, end_date):
                 break
 
             if not date_changed:
-                if node:                   
+                if node:
                     total_sum -= node.tariff.price
                     date -= timedelta(days=node.tariff.duration)
                     spec_dec(node.tariff)
-                    node = node.prev        
+                    node = node.prev
                 else:
                     raise TariffNotFound()
 

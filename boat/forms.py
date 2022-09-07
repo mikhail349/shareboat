@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 
 from .models import Tariff, Term
 
+
 class TariffForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -19,6 +20,7 @@ class TariffForm(ModelForm):
     class Meta:
         model = Tariff
         exclude = ('weight',)
+
 
 class TermForm(ModelForm):
     class Meta:
