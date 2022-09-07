@@ -1,4 +1,7 @@
+import json
+import datetime
 from decimal import Decimal
+
 from django.shortcuts import redirect, render
 from django.db import transaction
 from django.db.models import Max, Min, Value
@@ -9,22 +12,19 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
-
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.core.exceptions import ValidationError
+
 from boat.forms import TariffForm, TermForm
 from notification import utils as notify
-
-from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat, ComfortBoat, BoatFile, BoatCoordinates, Tariff, Term
+from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat,\
+                    ComfortBoat, BoatFile, BoatCoordinates, Tariff, Term
 from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking
 from base.models import Base
 from booking.models import Booking
 from chat.models import MessageBoat
-
-import json
-import datetime
 
 
 def response_not_found():
@@ -85,8 +85,9 @@ def terms(request):
 def favs(request):
     page = request.GET.get('page', 1)
 
-    boats = Boat.published.filter(favs__user=request.user).prefetch_actual_tariffs(
-    ).annotate(in_fav=Value(True)).order_by('id')
+    boats = Boat.published.filter(
+        favs__user=request.user
+    ).prefetch_actual_tariffs().annotate(in_fav=Value(True)).order_by('id')
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(page)
 
     context = {
@@ -100,7 +101,8 @@ def favs(request):
 @permission_required('boat.view_boats_on_moderation', raise_exception=True)
 def boats_on_moderation(request):
     boats = Boat.objects.filter(status=Boat.Status.ON_MODERATION)
-    return render(request, 'boat/boats_on_moderation.html', context={'boats': boats})
+    return render(request, 'boat/boats_on_moderation.html',
+                  context={'boats': boats})
 
 
 @permission_required('boat.view_boats_on_moderation', raise_exception=True)
@@ -132,8 +134,9 @@ def set_status(request, pk):
         new_status = int(request.POST.get('status'))
 
         boat = Boat.objects.get(pk=pk, owner=request.user)
-        if not new_status in ALLOWED_STATUSES.get(boat.status):
-            return JsonResponse({'message': 'Некорректный статус'}, status=status.HTTP_400_BAD_REQUEST)
+        if new_status not in ALLOWED_STATUSES.get(boat.status):
+            return JsonResponse({'message': 'Некорректный статус'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
         boat.status = new_status
         boat.save()
@@ -154,7 +157,8 @@ def accept(request, pk):
                 'reasons': MessageBoat.get_rejection_reasons(),
                 'errors': 'Лодка была изменена. Выполните проверку еще раз.'
             }
-            return render(request, 'boat/moderate.html', context=context, status=404)
+            return render(request, 'boat/moderate.html', context=context,
+                          status=404)
 
         boat.status = Boat.Status.PUBLISHED
         boat.save()
@@ -169,7 +173,6 @@ def reject(request, pk):
     if request.method == 'POST':
         try:
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
-            #reason = int(request.POST.get('reason'))
             comment = request.POST.get('comment')
             modified = parse_datetime(request.POST.get('modified'))
 
@@ -179,14 +182,15 @@ def reject(request, pk):
                 context = {
                     'boat': boat,
                     'reasons': reasons,
-                    'errors': 'Лодка была изменена. Возможно, недочёты исправлены.'
+                    'errors': 'Лодка была изменена. \
+                        Возможно, недочёты исправлены.'
                 }
-                return render(request, 'boat/moderate.html', context=context, status=404)
+                return render(request, 'boat/moderate.html', context=context,
+                              status=404)
 
             boat.status = Boat.Status.DECLINED
             boat.save()
 
-            #reason_display = [item[1] for item in reasons if item[0] == reason][0]
             notify.send_boat_declined_to_owner(boat, comment, request)
 
             return redirect(reverse('boat:boats_on_moderation'))
@@ -212,10 +216,15 @@ def search_boats(request):
         q_date_from = datetime.datetime.strptime(q_date_from, '%Y-%m-%d')
         q_date_to = datetime.datetime.strptime(q_date_to, '%Y-%m-%d')
 
-        boats = boats.filter(tariffs__active=True, tariffs__start_date__lte=q_date_from,
-                             tariffs__end_date__gte=q_date_to).distinct()
+        boats = boats.filter(
+            tariffs__active=True,
+            tariffs__start_date__lte=q_date_from,
+            tariffs__end_date__gte=q_date_to
+        ).distinct()
         boats = boats.exclude(
-            bookings__in=Booking.objects.blocked_in_range(q_date_from, q_date_to))
+            bookings__in=Booking.objects.blocked_in_range(q_date_from,
+                                                          q_date_to)
+        )
     else:
         boats = boats.filter(tariffs__active=True,
                              tariffs__end_date__gte=date).distinct()
@@ -232,24 +241,40 @@ def search_boats(request):
 
     if q_price_from:
         boats = [
-            boat for boat in boats if boat.actual_tariffs[0].price_per_day >= q_price_from]
+            boat for boat in boats
+            if boat.actual_tariffs[0].price_per_day >= q_price_from
+        ]
 
     if q_price_to:
         boats = [
-            boat for boat in boats if boat.actual_tariffs[0].price_per_day <= q_price_to]
+            boat for boat in boats
+            if boat.actual_tariffs[0].price_per_day <= q_price_to
+        ]
 
-    boats = sorted(boats, key=lambda boat: boat.actual_tariffs[0].price_per_day, reverse=q_sort.split(
-        '_')[1] == 'desc')
+    boats = sorted(
+        boats,
+        key=lambda boat: boat.actual_tariffs[0].price_per_day,
+        reverse=q_sort.split('_')[1] == 'desc'
+    )
     p = Paginator(boats, settings.PAGINATOR_BOAT_PER_PAGE).get_page(q_page)
 
-    boats_states = set(Boat.published.filter(
-        coordinates__pk__isnull=False).values_list('coordinates__state', flat=True))
+    boats_states = set(
+        Boat.published.filter(
+            coordinates__pk__isnull=False
+        ).values_list(
+            'coordinates__state',
+            flat=True
+        )
+    )
     bases_states = set(Boat.published.filter(
         base__pk__isnull=False).values_list('base__state', flat=True))
     states = sorted(boats_states | bases_states)
 
     context = {
-        'sort_list': [('sum_asc', 'Сначала дешевые'), ('sum_desc', 'Сначала дорогие')],
+        'sort_list': [
+            ('sum_asc', 'Сначала дешевые'),
+            ('sum_desc', 'Сначала дорогие')
+        ],
         'boat_types': Boat.get_types(),
         'boats': p.object_list,
         'p': p,
@@ -261,7 +286,8 @@ def search_boats(request):
 
 def switch_fav(request, pk):
     if not request.user.is_authenticated:
-        return JsonResponse({'data': 'redirect', 'url': reverse('user:login')}, status=302)
+        return JsonResponse({'data': 'redirect', 'url': reverse('user:login')},
+                            status=302)
 
     res = None
     try:
@@ -285,7 +311,8 @@ def booking(request, pk):
                 first=Min('start_date'), last=Max('end_date'))
             prices = tariffs.values('start_date', 'end_date')
             accepted_bookings = boat.bookings.filter(
-                status__in=Booking.BLOCKED_STATUSES).values('start_date', 'end_date')
+                status__in=Booking.BLOCKED_STATUSES
+            ).values('start_date', 'end_date')
 
             context = {
                 'boat': boat,

@@ -63,8 +63,13 @@ def calc_booking(boat_pk, start_date, end_date):
         return _return_empty()
 
     total_duration = (end_date - start_date).days
-    tariffs = list(boat.tariffs.filter(active=True, weight__lte=total_duration).exclude(
-        Q(end_date__lt=start_date) | Q(start_date__gt=end_date)))
+    tariffs = list(
+        boat.tariffs.filter(
+            active=True, weight__lte=total_duration
+        ).exclude(
+            Q(end_date__lt=start_date) | Q(start_date__gt=end_date)
+        )
+    )
     used_tariffs = {}
     total_sum = Decimal("0.0")
     date = start_date
@@ -75,7 +80,9 @@ def calc_booking(boat_pk, start_date, end_date):
     try:
         while date < end_date:
             filtered = [
-                tariff for tariff in tariffs if tariff.start_date <= date <= tariff.end_date]
+                tariff for tariff in tariffs
+                if tariff.start_date <= date <= tariff.end_date
+            ]
             weighted = sorted(
                 filtered, key=lambda tariff: tariff.weight, reverse=True)
 
@@ -117,4 +124,8 @@ def calc_booking(boat_pk, start_date, end_date):
     except TariffNotFound:
         return _return_empty()
 
-    return {'sum': total_sum, 'days': (end_date - start_date).days, 'spec': spec}
+    return {
+        'sum': total_sum,
+        'days': (end_date - start_date).days,
+        'spec': spec
+    }
