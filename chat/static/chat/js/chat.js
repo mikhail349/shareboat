@@ -87,7 +87,7 @@ class MessageHandler {
                     height="32"
                     width="32"
                     src="${window.sbImg}" 
-                    class="rounded-circle align-self-end of-cover"
+                    class="rounded-circle align-self-end of-cover bg-light"
                     alt 
                 />
             `
@@ -103,7 +103,7 @@ class MessageHandler {
                     height="32"
                     width="32"
                     src="${message.sender.avatar_sm}" 
-                    class="rounded-circle of-cover align-self-end"
+                    class="rounded-circle of-cover align-self-end bg-light"
                     alt 
                 />
             `
@@ -117,7 +117,7 @@ class MessageHandler {
     }
     
     getMessageHtml(message) {
-        const bg = message.is_out ? 'bg-primary border-primary text-white' : 'bg-white border';
+        const bg = message.is_out ? 'sb-primary-msg' : 'sb-secondary-msg';
         var align = 'align-self-start';
         if (this.isMobile) {
             align = message.is_out ? 'align-self-end' : 'align-self-start';
@@ -132,7 +132,7 @@ class MessageHandler {
         }
         
         return `
-            <div class="list-group-item border-0 ${align} bg-sb-primary" style="width: fit-content;">
+            <div class="list-group-item border-0 ${align} sb-primary-bg" style="width: fit-content;">
                 <div class="d-flex gap-3">
                     ` + this.getAvatar(message) + `
                     <div class="${bg} rounded-4 box-shadow border-0">

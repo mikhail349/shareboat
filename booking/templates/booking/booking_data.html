@@ -1,16 +1,8 @@
 <div>
-    <div>
-        <h5>{{ booking.get_status_display }}</h5>
-    </div>
-    <div class="text-muted">
-        Бронирование № {{ booking.pk }}
-    </div>
-    <div>
-        {{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}
-    </div>
-    <div>
-        <strong>{{ booking.total_sum }}&nbsp;₽</strong>
-    </div>
+    <h5>{{ booking.get_status_display }}</h5>
+    <div>Бронирование № {{ booking.pk }}</div>
+    <div>{{ booking.start_date|date:'d b. Y' }} - {{ booking.end_date|date:'d b. Y' }}</div>
+    <div><strong>{{ booking.total_sum }}&nbsp;₽</strong></div>
     {% if booking.renter != user %}
         <div class="mt-2">
             {% if booking.renter.avatar %}
