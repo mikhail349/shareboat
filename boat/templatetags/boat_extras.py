@@ -18,7 +18,7 @@ def tryiso(value):
 
 @register.simple_tag
 def get_filter_count(request):
-    ex_counters = ('sort', 'page')
+    ex_counters = ('sort', 'page', 'dateFrom')
     return len([
         True for k, v in request.GET.items()
         if k not in ex_counters and v
