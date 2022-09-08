@@ -1,5 +1,6 @@
 repos:
 -   repo: https://github.com/pycqa/flake8
-    rev: '5.0.4'  # pick a git hash / tag to point to
+    rev: '5.0.4'  # exclude: tests/|migrations/ args: [--config, .flake8]
     hooks:
     -   id: flake8
+        args: [--config, ./setup.cfg]
