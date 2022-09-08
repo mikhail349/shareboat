@@ -7,10 +7,3 @@ repos:
         args: ["--config=setup.cfg"]
         language: python
         types: [python]
-
-    -   id: coverage
-        name: coverage
-        entry: coverage
-        args: ["run manage.py test -v 2"]
-        language: python
-        types: [python]
