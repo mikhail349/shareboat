@@ -124,10 +124,10 @@ def create(request):
     if request.method == 'POST':
         def _render_error(msg):
             url = reverse('boat:booking', kwargs={'pk': context['boat'].pk}) \
-                + f'?dateFrom={context["start_date"].isoformat()} \
-                  &dateTo={context["end_date"].isoformat()}'
-            context['errors'] = f'{msg}. <a href="{url}" \
-                class="link-secondary">Вернуться к бронированию.</a>'
+                + f'?dateFrom={context["start_date"].isoformat()}' \
+                  f'&dateTo={context["end_date"].isoformat()}'
+            context['errors'] = f'{msg}. <a href="{url}" ' \
+                f'class="link-secondary">Вернуться к бронированию.</a>'
             return render(request, 'booking/confirm.html', context=context,
                           status=400)
 
