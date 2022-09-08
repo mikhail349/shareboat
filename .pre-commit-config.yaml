@@ -3,4 +3,3 @@ repos:
     rev: '5.0.4'  # exclude: tests/|migrations/ args: [--config, .flake8]
     hooks:
     -   id: flake8
-        args: [--config, ./setup.cfg]
