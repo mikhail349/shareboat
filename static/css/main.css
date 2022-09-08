@@ -158,6 +158,10 @@ input[readonly].false-readonly {
     animation-fill-mode: forwards;
 }
 
+.no-scrollbars::-webkit-scrollbar {
+    display: none;
+}
+
 @keyframes slide-down {
     100% {
         bottom: -100%;

@@ -1,16 +1,21 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'booking/js/nav_status.min.js' %}"></script>
+
 <div class="container mb-3">
-    <ul class="nav nav-pills flex-column flex-sm-row">
+    <ul class="nav nav-pills nav-status flex-nowrap overflow-auto no-scrollbars">
+
         <li class="nav-item">
-            <a class="nav-link {% if request.GET.status == 'pending' %}active{% endif %}" href="?status=pending">На рассмотрении</a>
+            <a class="nav-link text-nowrap {% if request.GET.status == 'pending' %}active{% endif %}" href="?status=pending">На рассмотрении</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if request.GET.status == 'active' %}active{% endif %}" href="?status=active">Активные</a>
+            <a class="nav-link text-nowrap {% if request.GET.status == 'active' %}active{% endif %}" href="?status=active">Активные</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if request.GET.status == 'done' %}active{% endif %}" href="?status=done">Завершенные</a>
+            <a class="nav-link text-nowrap {% if request.GET.status == 'done' %}active{% endif %}" href="?status=done">Завершенные</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if not request.GET.status %}active{% endif %}" href="?">Все</a>
+            <a class="nav-link text-nowrap {% if not request.GET.status %}active{% endif %}" href="?">Все</a>
         </li>
+
     </ul>
 </div>
