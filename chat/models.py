@@ -1,4 +1,3 @@
-from asyncore import read
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -13,10 +12,12 @@ class Message(models.Model):
 
     text = models.TextField()
     sender = models.ForeignKey(User, on_delete=models.PROTECT,
-                               related_name="messages_as_sender", null=True, blank=True)
+                               related_name="messages_as_sender",
+                               null=True, blank=True)
     sent_at = models.DateTimeField(auto_now_add=True)
     recipient = models.ForeignKey(User, on_delete=models.PROTECT,
-                                  related_name="messages_as_recipient", null=True, blank=True)
+                                  related_name="messages_as_recipient",
+                                  null=True, blank=True)
     read = models.BooleanField(default=False)
 
     def get_title(self):
@@ -32,7 +33,8 @@ class Message(models.Model):
 
 class SupportManager(models.Manager):
     def send_greetings(self, recipient):
-        text = "<div>Вас приветствует SHAREBOAT.RU!</div><div>Здесь вы можете задать интересующий Вас вопрос.</div>"
+        text = '<div>Вас приветствует SHAREBOAT.RU!</div>' \
+               '<div>Здесь вы можете задать интересующий Вас вопрос.</div>'
         return self.create(recipient=recipient, text=text)
 
 
@@ -50,23 +52,30 @@ class MessageSupport(Message):
 class BookingManager(models.Manager):
     def send_initial_to_owner(self, booking):
         text = "<div>Новый запрос на бронирование</div>"
-        return self.create(booking=booking, recipient=booking.boat.owner, text=text)
+        return self.create(booking=booking, recipient=booking.boat.owner,
+                           text=text)
 
     def send_status(self, booking, recipient):
-        text = f'<div>Статус бронирования изменился на "{booking.get_status_display()}"</div>'
+        status = booking.get_status_display()
+        text = f'<div>Статус бронирования изменился на "{status}"</div>'
         return self.create(booking=booking, recipient=recipient, text=text)
 
     def remind_prepayment_to_renter(self, booking):
-        date = timezone.localdate(
-            booking.prepayment.until).strftime('%d.%m.%Y')
-        text = f'<div>Не забудьте внести предоплату до {date}, иначе бронирование будет <b>отменено</b>.</div>'
-        return self.create(booking=booking, recipient=booking.renter, text=text)
+        date = timezone.localdate(booking.prepayment.until) \
+                       .strftime('%d.%m.%Y')
+        text = f'<div>Не забудьте внести предоплату до {date}, ' \
+               f'иначе бронирование будет <b>отменено</b>.</div>'
+        return self.create(booking=booking, recipient=booking.renter,
+                           text=text)
 
     def remind_prepayment_to_owner(self, booking):
-        date = timezone.localdate(
-            booking.prepayment.until).strftime('%d.%m.%Y')
-        text = f'<div>Не забудьте сменить статус на "Оплата получена" до {date}, если Вы получили предоплату. Иначе бронирование будет <b>отменено</b>.</div>'
-        return self.create(booking=booking, recipient=booking.boat.owner, text=text)
+        date = timezone.localdate(booking.prepayment.until) \
+                       .strftime('%d.%m.%Y')
+        text = f'<div>Не забудьте сменить статус на "Оплата получена" ' \
+               f'до {date}, если Вы получили предоплату. ' \
+               f'Иначе бронирование будет <b>отменено</b>.</div>'
+        return self.create(booking=booking, recipient=booking.boat.owner,
+                           text=text)
 
 
 class MessageBooking(Message):
@@ -87,7 +96,9 @@ class BoatManager(models.Manager):
         return self.create(boat=boat, recipient=boat.owner, text=text)
 
     def send_declined_to_owner(self, boat, comment):
-        text = f"<div>Лодка не прошла модерацию.</div><div>Объявление не соответствует правилам сервиса: {comment}</div>"
+        text = f'<div>Лодка не прошла модерацию.</div>' \
+               f'<div>Объявление не соответствует ' \
+               f'правилам сервиса: {comment}</div>'
         return self.create(boat=boat, recipient=boat.owner, text=text)
 
 

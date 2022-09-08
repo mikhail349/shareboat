@@ -18,16 +18,21 @@ import json
 def support(request):
     messages = []
 
-    for user in User.objects.filter(is_active=True).prefetch_related('messages_as_sender__messagesupport'):
-        last_message = user.messages_as_sender.filter(messagesupport__isnull=False).union(
-            user.messages_as_recipient.filter(messagesupport__isnull=False)).last()
+    for user in User.objects.filter(is_active=True) \
+            .prefetch_related('messages_as_sender__messagesupport'):
+        msg_as_recipient = user.messages_as_recipient \
+                               .filter(messagesupport__isnull=False)
+        last_message = user.messages_as_sender \
+                           .filter(messagesupport__isnull=False) \
+                           .union(msg_as_recipient).last()
         if last_message:
             last_message.get_href = reverse(
                 'chat:support_chat', kwargs={'user_pk': user.pk})
             last_message.get_title = user.email
             messages.append(last_message)
 
-    return render(request, 'chat/support.html', context={'messages': messages})
+    return render(request, 'chat/support.html',
+                  context={'messages': messages})
 
 
 @permission_required('user.support_chat', raise_exception=True)
@@ -40,7 +45,9 @@ def support_chat(request, user_pk):
     messages = MessageSupport.objects.filter(
         Q(sender__pk=user.pk) | Q(recipient__pk=user.pk)).order_by('sent_at')
     messages_serializer_data = MessageSerializerList(
-        messages, many=True, context={'request': request, 'is_support': True}).data
+        messages, many=True,
+        context={'request': request, 'is_support': True}
+    ).data
     messages.filter(recipient__isnull=True, read=False).update(read=True)
 
     context = {
@@ -55,9 +62,12 @@ def support_chat(request, user_pk):
 def get_new_support_messages(request, user_pk):
     if request.method == 'GET':
         messages = MessageSupport.objects.filter(
-            sender__pk=user_pk, recipient__isnull=True, read=False).order_by('sent_at')
-        data = MessageSerializerList(messages, many=True, context={
-                                     'request': request, 'is_support': True}).data
+            sender__pk=user_pk, recipient__isnull=True, read=False
+        ).order_by('sent_at')
+        data = MessageSerializerList(
+            messages, many=True,
+            context={'request': request, 'is_support': True}
+        ).data
         messages.update(read=True)
         return JsonResponse({'data': data})
 
@@ -71,11 +81,19 @@ def send_support_message(request, user_pk):
             new_message = MessageSupport.objects.create(
                 text=data.get('text'), sender=None, recipient=user)
 
-            messages = MessageSupport.objects.filter(Q(read=False)).filter(
-                Q(sender=user, recipient__isnull=True) | Q(pk=new_message.pk)).order_by('sent_at')
+            messages = MessageSupport.objects.filter(
+                Q(read=False)
+            ).filter(
+                Q(sender=user, recipient__isnull=True) |
+                Q(pk=new_message.pk)
+            ).order_by(
+                'sent_at'
+            )
 
-            data = MessageSerializerList(messages, many=True, context={
-                                         'request': request, 'is_support': True}).data
+            data = MessageSerializerList(
+                messages, many=True,
+                context={'request': request, 'is_support': True}
+            ).data
             messages.filter(recipient__isnull=True,
                             read=False).update(read=True)
 
@@ -98,7 +116,9 @@ def list(request):
     for booking in bookings:
         if booking.last_messages:
             last_message = booking.last_messages[0]
-            last_message.badge = f'<div class="badge bg-light text-black border fw-normal">Бронирование № {booking.pk}</div>'
+            badge = f'<div class="badge bg-light text-black ' \
+                    f'border fw-normal">Бронирование № {booking.pk}</div>'
+            last_message.badge = badge
             messages.append(last_message)
 
     # booking boat owner
@@ -110,7 +130,9 @@ def list(request):
     for req in requests:
         if req.last_messages:
             last_message = req.last_messages[0]
-            last_message.badge = f'<div class="badge bg-light text-black border fw-normal">Заявка на бронирование № {req.pk}</div>'
+            badge = f'<div class="badge bg-light text-black border ' \
+                    f'fw-normal">Заявка на бронирование № {req.pk}</div>'
+            last_message.badge = badge
             messages.append(last_message)
 
     # boat owner
@@ -122,7 +144,9 @@ def list(request):
     for boat in boats:
         if boat.last_messages:
             last_message = boat.last_messages[0]
-            last_message.badge = '<div class="badge bg-light text-black border fw-normal">Лодка</div>'
+            badge = '<div class="badge bg-light text-black ' \
+                    'border fw-normal">Лодка</div>'
+            last_message.badge = badge
             messages.append(last_message)
 
     messages = sorted(messages, key=lambda message: message.pk, reverse=True)
@@ -130,18 +154,24 @@ def list(request):
     last_message_support = MessageSupport.objects.filter(sender=user).union(
         MessageSupport.objects.filter(recipient=user)).last()
     if last_message_support:
-        last_message_support.badge = '<div class="badge bg-warning text-black border border-warning fw-normal">Поддержка</div>'
+        badge = '<div class="badge bg-warning text-black border ' \
+                'border-warning fw-normal">Поддержка</div>'
+        last_message_support.badge = badge
         messages.insert(0, last_message_support)
 
     if not last_message_support:
         last_message_support = MessageSupport(
             text='Сообщений пока нет', read=True)
-        last_message_support.badge = '<div class="badge bg-warning text-black border-warning fw-normal">Поддержка</div>'
+        badge = '<div class="badge bg-warning text-black ' \
+                'border-warning fw-normal">Поддержка</div>'
+        last_message_support.badge = badge
         messages.insert(0, last_message_support)
 
     context = {
         'messages': messages,
-        'unread_exists': user.messages_as_recipient.filter(read=False).exists()
+        'unread_exists': user.messages_as_recipient
+                             .filter(read=False)
+                             .exists()
     }
 
     return render(request, 'chat/list.html', context=context)
@@ -155,7 +185,10 @@ def get_new_messages_booking(request, pk):
                 renter=request.user) | Q(boat__owner=request.user))
 
             messages = MessageBooking.objects.filter(
-                booking=booking, recipient=request.user, read=False).order_by('sent_at')
+                booking=booking, recipient=request.user, read=False
+            ).order_by(
+                'sent_at'
+            )
             data = MessageSerializerList(messages, many=True, context={
                                          'request': request}).data
             messages.update(read=True)
@@ -163,7 +196,8 @@ def get_new_messages_booking(request, pk):
             return JsonResponse({'data': data})
 
         except Booking.DoesNotExist:
-            return JsonResponse({'message': 'Бронирование не найдено'}, status=400)
+            return JsonResponse({'message': 'Бронирование не найдено'},
+                                status=400)
 
 
 @login_required
@@ -181,7 +215,8 @@ def get_new_messages(request):
 def get_new_messages_boat(request, pk):
 
     def _not_found():
-        return JsonResponse({'message': 'Бронирование не найдено'}, status=400)
+        return JsonResponse({'message': 'Бронирование не найдено'},
+                            status=400)
 
     if request.method == 'GET':
         try:
@@ -213,13 +248,24 @@ def send_message_booking(request, pk):
         try:
             booking = Booking.objects.get(Q(pk=pk), Q(
                 renter=request.user) | Q(boat__owner=request.user))
-            recipient = booking.boat.owner if booking.renter == request.user else booking.renter
+            recipient = (
+                booking.boat.owner
+                if booking.renter == request.user
+                else booking.renter
+            )
 
-            new_message = MessageBooking.objects.create(text=data.get(
-                'text'), sender=request.user, recipient=recipient, booking=booking)
+            new_message = MessageBooking.objects.create(
+                text=data.get('text'), sender=request.user,
+                recipient=recipient, booking=booking
+            )
 
-            messages = MessageBooking.objects.filter(Q(booking=booking), Q(read=False), Q(
-                recipient=request.user) | Q(pk=new_message.pk)).order_by('sent_at')
+            messages = MessageBooking.objects.filter(
+                Q(booking=booking),
+                Q(read=False),
+                Q(recipient=request.user) | Q(pk=new_message.pk)
+            ).order_by(
+                'sent_at'
+            )
             data = MessageSerializerList(messages, many=True, context={
                                          'request': request}).data
             messages.filter(recipient=request.user,
@@ -227,7 +273,8 @@ def send_message_booking(request, pk):
 
             return JsonResponse({'data': data})
         except Booking.DoesNotExist:
-            return JsonResponse({'message': 'Не удалось отправить сообщение. Бронирование не найдено'}, status=400)
+            msg = 'Не удалось отправить сообщение. Бронирование не найдено'
+            return JsonResponse({'message': msg}, status=400)
 
 
 @login_required
@@ -245,13 +292,19 @@ def send_message_boat(request, pk):
                 recipient = boat.owner
                 sender = None
             else:
-                return JsonResponse({'message': 'Не удалось отправить сообщение. Лодка не найдена'}, status=400)
+                msg = 'Не удалось отправить сообщение. Лодка не найдена'
+                return JsonResponse({'message': msg}, status=400)
 
             new_message = MessageBoat.objects.create(text=data.get(
                 'text'), sender=sender, recipient=recipient, boat=boat)
 
-            messages = MessageBoat.objects.filter(Q(boat=boat), Q(read=False), Q(
-                recipient=request.user) | Q(pk=new_message.pk)).order_by('sent_at')
+            messages = MessageBoat.objects.filter(
+                Q(boat=boat),
+                Q(read=False),
+                Q(recipient=request.user) | Q(pk=new_message.pk)
+            ).order_by(
+                'sent_at'
+            )
             data = MessageSerializerList(messages, many=True, context={
                                          'request': request}).data
             messages.filter(recipient=request.user,
@@ -260,7 +313,8 @@ def send_message_boat(request, pk):
             return JsonResponse({'data': data})
 
         except Booking.DoesNotExist:
-            return JsonResponse({'message': 'Не удалось отправить сообщение. Лодка не найдена'}, status=400)
+            msg = 'Не удалось отправить сообщение. Лодка не найдена'
+            return JsonResponse({'message': msg}, status=400)
 
 
 @login_required
@@ -285,7 +339,10 @@ def send_message(request):
 @login_required
 def message(request):
     messages = MessageSupport.objects.filter(
-        Q(sender=request.user) | Q(recipient=request.user)).order_by('sent_at')
+        Q(sender=request.user) | Q(recipient=request.user)
+    ).order_by(
+        'sent_at'
+    )
     messages_serializer_data = MessageSerializerList(
         messages, many=True, context={'request': request}).data
 
@@ -302,8 +359,12 @@ def booking(request, pk):
     try:
         booking = Booking.objects.get(Q(pk=pk), Q(
             renter=request.user) | Q(boat__owner=request.user))
-        messages = MessageBooking.objects.filter(Q(booking=booking), Q(
-            sender=request.user) | Q(recipient=request.user)).order_by('sent_at')
+        messages = MessageBooking.objects.filter(
+            Q(booking=booking),
+            Q(sender=request.user) | Q(recipient=request.user)
+        ).order_by(
+            'sent_at'
+        )
         messages_serializer_data = MessageSerializerList(
             messages, many=True, context={'request': request}).data
 
