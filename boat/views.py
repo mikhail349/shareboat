@@ -314,13 +314,20 @@ def booking(request, pk):
                 status__in=Booking.BLOCKED_STATUSES
             ).values('start_date', 'end_date')
 
+            price_exists = (price_dates.get('last') is not None and
+                            price_dates.get('last') >= timezone.localdate())
             context = {
                 'boat': boat,
                 'first_price_date': price_dates.get('first'),
                 'last_price_date': price_dates.get('last'),
-                'prices_exist': price_dates.get('last') is not None and price_dates.get('last') >= timezone.localdate(),
-                'price_ranges': [[e['start_date'], e['end_date']] for e in prices],
-                'accepted_bookings_ranges': [[e['start_date'], e['end_date']] for e in accepted_bookings]
+                'prices_exist': price_exists,
+                'price_ranges': [
+                    [e['start_date'], e['end_date']] for e in prices
+                ],
+                'accepted_bookings_ranges': [
+                    [e['start_date'], e['end_date']]
+                    for e in accepted_bookings
+                ]
             }
             return render(request, 'boat/booking.html', context=context)
         except Boat.DoesNotExist:
@@ -388,10 +395,24 @@ def delete(request, pk):
     except Boat.DoesNotExist:
         return response_not_found()
 
-    boat.bookings.filter(status=Booking.Status.PENDING).update(
-        status=Booking.Status.DECLINED)
-    if boat.bookings.filter(status__in=[Booking.Status.ACCEPTED, Booking.Status.PREPAYMENT_REQUIRED, Booking.Status.ACTIVE]).exists():
-        return JsonResponse({'message': "По этой лодке уже есть подтвержденные или активные бронирования", "code": "invalid_status"}, status=status.HTTP_400_BAD_REQUEST)
+    boat.bookings.filter(
+        status=Booking.Status.PENDING
+    ).update(
+        status=Booking.Status.DECLINED
+    )
+    if boat.bookings.filter(
+                status__in=[Booking.Status.ACCEPTED,
+                            Booking.Status.PREPAYMENT_REQUIRED,
+                            Booking.Status.ACTIVE]
+            ).exists():
+        return JsonResponse(
+            {
+                'message': "По этой лодке уже есть подтвержденные \
+                    или активные бронирования",
+                "code": "invalid_status"
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     boat.status = Boat.Status.DELETED
     boat.save()
@@ -427,7 +448,8 @@ def create_or_update(request, pk=None):
 
         if len(files) > FILES_LIMIT_COUNT:
             errors.append(ValidationError(
-                f'Можно приложить не более {FILES_LIMIT_COUNT} фотографий', code="files_count_limit"))
+                f'Можно приложить не более {FILES_LIMIT_COUNT} фотографий',
+                code="files_count_limit"))
 
         if errors:
             raise ValidationError(errors)
@@ -525,12 +547,15 @@ def create_or_update(request, pk=None):
                     bc.state = state
                     bc.save()
                 except BoatCoordinates.DoesNotExist:
-                    BoatCoordinates.objects.create(
-                        boat=boat, lat=lat, lon=lon, address=address, state=state)
+                    BoatCoordinates.objects.create(boat=boat, lat=lat,
+                                                   lon=lon, address=address,
+                                                   state=state)
             else:
                 BoatCoordinates.objects.filter(boat=boat).delete()
 
-            BoatFile.objects.filter(boat=boat).exclude(file__in=files).delete()
+            BoatFile.objects.filter(boat=boat) \
+                            .exclude(file__in=files) \
+                            .delete()
             for file in files:
                 BoatFile.objects.get_or_create(boat=boat, file=file)
 
@@ -542,9 +567,11 @@ def create_or_update(request, pk=None):
     except Boat.DoesNotExist:
         return response_not_found()
     except Term.DoesNotExist:
-        return JsonResponse({'message': 'Условия аренды не найдены'}, status=404)
+        return JsonResponse({'message': 'Условия аренды не найдены'},
+                            status=404)
     except ValidationError as e:
-        return JsonResponse({'message': list(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'message': list(e)},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 def redirect_to_tariffs(boat_pk):
@@ -559,13 +586,16 @@ def create_tariff(request):
             'boat': request.GET.get('boat_pk'),
         }
         form = TariffForm(initial=initial)
-        return render(request, 'boat/create_tariff.html', context={'form': form})
+        return render(request, 'boat/create_tariff.html',
+                      context={'form': form})
     elif request.method == 'POST':
         form = TariffForm(request.POST, request=request)
         if form.is_valid():
             form.save()
             return redirect_to_tariffs(form.instance.boat.pk)
-        return render(request, 'boat/create_tariff.html', context={'form': form}, status=400)
+        return render(request, 'boat/create_tariff.html',
+                      context={'form': form},
+                      status=400)
 
 
 @login_required
@@ -575,7 +605,8 @@ def update_tariff(request, pk):
         try:
             tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
             form = TariffForm(instance=tariff)
-            return render(request, 'boat/update_tariff.html', context={'form': form})
+            return render(request, 'boat/update_tariff.html',
+                          context={'form': form})
         except Tariff.DoesNotExist:
             return render(request, 'not_found.html', status=404)
     elif request.method == 'POST':
@@ -585,7 +616,8 @@ def update_tariff(request, pk):
             if form.is_valid():
                 form.save()
                 return redirect_to_tariffs(form.instance.boat.pk)
-            return render(request, 'boat/update_tariff.html', context={'form': form}, status=400)
+            return render(request, 'boat/update_tariff.html',
+                          context={'form': form}, status=400)
         except Tariff.DoesNotExist:
             return response_not_found()
 
@@ -609,8 +641,10 @@ def create_term(request):
         is_popup = get_bool(request.GET.get('is_popup', False))
         form = TermForm()
         if is_popup:
-            return render(request, 'boat/popup_create_term.html', context={'form': form})
-        return render(request, 'boat/create_term.html', context={'form': form})
+            return render(request, 'boat/popup_create_term.html',
+                          context={'form': form})
+        return render(request, 'boat/create_term.html',
+                      context={'form': form})
     elif request.method == 'POST':
         is_popup = get_bool(request.POST.get('is_popup', False))
         form = TermForm(request.POST)
@@ -621,10 +655,12 @@ def create_term(request):
             if is_popup:
                 data_json = json.dumps(
                     {"pk": form.instance.pk, "name": form.instance.name})
-                return render(request, 'popup_response.html', context={'content': data_json})
+                return render(request, 'popup_response.html',
+                              context={'content': data_json})
             return redirect(reverse('boat:terms'))
         if is_popup:
-            return render(request, 'boat/popup_create_term.html', context={'form': form}, status=400)
+            return render(request, 'boat/popup_create_term.html',
+                          context={'form': form}, status=400)
 
 
 @login_required
@@ -634,7 +670,8 @@ def update_term(request, pk):
         try:
             term = Term.objects.get(pk=pk, user=request.user)
             form = TermForm(instance=term)
-            return render(request, 'boat/update_term.html', context={'form': form})
+            return render(request, 'boat/update_term.html',
+                          context={'form': form})
         except Term.DoesNotExist:
             return render(request, 'not_found.html', status=404)
     elif request.method == 'POST':
@@ -643,11 +680,12 @@ def update_term(request, pk):
             form = TermForm(request.POST, instance=term)
             if form.is_valid():
                 with transaction.atomic():
-                    term.boats.filter(status=Boat.Status.PUBLISHED).update(
-                        status=Boat.Status.ON_MODERATION)
+                    term.boats.filter(status=Boat.Status.PUBLISHED) \
+                              .update(status=Boat.Status.ON_MODERATION)
                     form.save()
                 return redirect(reverse('boat:terms'))
-            return render(request, 'boat/update_term.html', context={'form': form}, status=400)
+            return render(request, 'boat/update_term.html',
+                          context={'form': form}, status=400)
         except Term.DoesNotExist:
             return render(request, 'not_found.html', status=404)
 
@@ -658,8 +696,8 @@ def delete_term(request, pk):
     try:
         term = Term.objects.get(pk=pk, user=request.user)
         with transaction.atomic():
-            term.boats.filter(status=Boat.Status.PUBLISHED).update(
-                status=Boat.Status.ON_MODERATION)
+            term.boats.filter(status=Boat.Status.PUBLISHED) \
+                      .update(status=Boat.Status.ON_MODERATION)
             term.delete()
         return redirect(reverse('boat:terms'))
     except Term.DoesNotExist:

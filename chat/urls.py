@@ -15,7 +15,8 @@ apiurlpatterns = [
     path('get_new_messages/', views.get_new_messages),
     path('send_message/', views.send_message),
 
-    path('get_new_support_messages/<int:user_pk>/', views.get_new_support_messages),
+    path('get_new_support_messages/<int:user_pk>/',
+         views.get_new_support_messages),
     path('send_support_message/<int:user_pk>/', views.send_support_message)
 ]
 

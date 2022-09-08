@@ -2,12 +2,14 @@ from rest_framework import serializers
 from .models import MessageBooking, MessageBoat, Message
 from user.serializers import MessageUserSerializer
 
+
 class MessageBookingSerializerSend(serializers.ModelSerializer):
     booking_id = serializers.IntegerField()
 
     class Meta:
         model = MessageBooking
         fields = ('text', 'booking_id')
+
 
 class MessageSerializerList(serializers.ModelSerializer):
     sender = MessageUserSerializer()

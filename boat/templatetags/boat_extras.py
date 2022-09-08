@@ -1,7 +1,8 @@
-from django import template
-
 from datetime import date as datetime_date, datetime
 import json
+
+from django import template
+
 from boat.models import Boat
 from shareboat.utils import get_str_case_by_count
 
@@ -18,7 +19,10 @@ def tryiso(value):
 @register.simple_tag
 def get_filter_count(request):
     ex_counters = ('sort', 'page')
-    return len([True for k, v in request.GET.items() if k not in ex_counters and v])
+    return len([
+        True for k, v in request.GET.items()
+        if k not in ex_counters and v
+    ])
 
 
 @register.simple_tag
@@ -66,8 +70,14 @@ def get_duration_display(tariff):
     if tariff.duration == 1:
         return 'день'
     elif tariff.duration % 7 == 0:
-        return '%s %s' % (tariff.duration // 7, get_str_case_by_count(tariff.duration // 7, 'неделя', 'недели', 'недель'))
-    return f"{str(tariff.duration)} {get_str_case_by_count(tariff.duration, 'день', 'дня', 'дней')}"
+        weeks = tariff.duration // 7
+        weeks_case = get_str_case_by_count(weeks,
+                                           'неделя', 'недели', 'недель')
+        return '%s %s' % (weeks, weeks_case)
+
+    duration_case = get_str_case_by_count(tariff.duration,
+                                          'день', 'дня', 'дней')
+    return f"{str(tariff.duration)} {duration_case}"
 
 
 @register.simple_tag
@@ -83,7 +93,8 @@ def get_min_display(tariff):
 
 @register.filter
 def daycountcase(value):
-    return '%s %s' % (value, get_str_case_by_count(value, 'день', 'дня', 'дней'))
+    value_case = get_str_case_by_count(value, 'день', 'дня', 'дней')
+    return '%s %s' % (value, value_case)
 
 
 @register.simple_tag
@@ -109,12 +120,12 @@ def get_weekdays_display(tariff):
         if weekday == 6:
             return 'вс'
 
-    l = [tariff.mon, tariff.tue, tariff.wed,
-         tariff.thu, tariff.fri, tariff.sat, tariff.sun]
+    weekdays = [tariff.mon, tariff.tue, tariff.wed,
+                tariff.thu, tariff.fri, tariff.sat, tariff.sun]
 
     res = ''
-    for i in range(len(l)):
-        if l[i]:
+    for i in range(len(weekdays)):
+        if weekdays[i]:
             res += ', ' + _get_display(i)
     return res[2:]
 
