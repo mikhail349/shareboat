@@ -1,15 +1,15 @@
 from django.db import models
 from django.utils.translation import gettext as _
-from django.contrib.auth.models import AbstractUser, BaseUserManager 
-from django.db.models.signals import pre_save, post_save, post_delete
-
-from file import utils, signals
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models.signals import pre_save, post_save
 from PIL import Image
 
-import uuid
+from file import utils, signals
+
 
 class UserManager(BaseUserManager):
-    """Define a model manager for User model with no username and last_name fields."""
+    """Define a model manager for User model with no \
+    username and last_name fields."""
 
     use_in_migrations = True
 
@@ -24,7 +24,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email, password=None, **extra_fields):
-        """Create and save a regular User with the given email and password."""
+        """Create and save a regular User with \
+        the given email and password."""
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(email, password, **extra_fields)
@@ -41,25 +42,34 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
-       
+
+
 def get_upload_avatar_to(instance, filename):
     return utils.get_file_path(instance, filename, 'avatar/')
+
 
 def get_upload_avatar_sm_to(instance, filename):
     return utils.get_file_path(instance, filename, 'avatar/sm/')
 
-class User(AbstractUser):   
+
+class User(AbstractUser):
     username = None
     last_name = None
 
     first_name = models.CharField(_('first name'), max_length=150)
     email = models.EmailField(_('email address'), unique=True)
-    email_confirmed = models.BooleanField("Эл. почта подтверждена", default=False)
-    avatar = models.ImageField(upload_to=get_upload_avatar_to, null=True, blank=True)
-    avatar_sm = models.ImageField(upload_to=get_upload_avatar_sm_to, null=True, blank=True)
-    email_notification = models.BooleanField('По электронной почте', default=True, help_text='О смене статуса лодки, бронирования.')
-    use_dark_theme = models.BooleanField("Использовать тёмную тему", default=False)
-    
+    email_confirmed = models.BooleanField(
+        "Эл. почта подтверждена", default=False)
+    avatar = models.ImageField(
+        upload_to=get_upload_avatar_to, null=True, blank=True)
+    avatar_sm = models.ImageField(
+        upload_to=get_upload_avatar_sm_to, null=True, blank=True)
+    email_notification = models.BooleanField(
+        'По электронной почте', default=True,
+        help_text='О смене статуса лодки, бронирования.')
+    use_dark_theme = models.BooleanField(
+        "Использовать тёмную тему", default=False)
+
     objects = UserManager()
 
     USERNAME_FIELD = "email"
@@ -70,15 +80,16 @@ class User(AbstractUser):
             return self.telegramuser.chat_id
         return None
 
-    def save(self, *args, **kwargs):  
+    def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
-        
-        try: 
+
+        try:
             if self.avatar_sm:
                 img = Image.open(self.avatar_sm.path)
-                img = img.resize(utils.limit_size(img.width, img.height, 64, 64), Image.ANTIALIAS)
-                img.save(self.avatar_sm.path, format="webp") 
-        except Exception as e: # pragma: no cover
+                img = img.resize(utils.limit_size(
+                    img.width, img.height, 64, 64), Image.ANTIALIAS)
+                img.save(self.avatar_sm.path, format="webp")
+        except Exception as e:  # pragma: no cover
             import logging
             logger = logging.getLogger(__name__)
             logger.error(str(e))
@@ -92,7 +103,8 @@ class User(AbstractUser):
 
 
 class TelegramUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, primary_key=True)
     verification_code = models.CharField("Код верификации", max_length=6)
     chat_id = models.IntegerField("Telegram ИД", null=True, blank=True)
 
@@ -110,4 +122,3 @@ class TelegramUser(models.Model):
 
 pre_save.connect(signals.verify_imagefile, sender=User)
 post_save.connect(signals.compress_imagefile, sender=User)
-

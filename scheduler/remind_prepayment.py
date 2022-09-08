@@ -1,3 +1,4 @@
+from booking.utils import autoremind_prepayment
 import sys
 import os
 import django
@@ -8,8 +9,10 @@ desc = """Рассылает напоминания:
 2. Арендодателям, что необходимо сменить статус, если предоплата внесена.
 """
 
-parser = argparse.ArgumentParser(description=desc, formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument("--project_path", required=False, type=str, help="Путь проекта. По умолчанию ../", default='../')
+parser = argparse.ArgumentParser(
+    description=desc, formatter_class=argparse.RawTextHelpFormatter)
+parser.add_argument("--project_path", required=False, type=str,
+                    help="Путь проекта. По умолчанию ../", default='../')
 args = parser.parse_args()
 
 sys.path.append(args.project_path)
@@ -17,5 +20,4 @@ sys.path.append(args.project_path)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shareboat.settings')
 django.setup()
 
-from booking.utils import autoremind_prepayment
 autoremind_prepayment()

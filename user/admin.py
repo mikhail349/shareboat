@@ -4,11 +4,14 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from .models import User, TelegramUser
 
+
 class TelegramUserInline(admin.StackedInline):
     model = TelegramUser
 
+
 class UserAdmin(DjangoUserAdmin):
-    """Define admin model for custom User model with no email and last_name fields."""
+    """Define admin model for custom User model with \
+    no email and last_name fields."""
 
     fieldsets = (
         (None, {'fields': ('email', 'email_confirmed', 'password')}),
@@ -29,5 +32,6 @@ class UserAdmin(DjangoUserAdmin):
     search_fields = ('email', 'first_name',)
     ordering = ('email',)
     inlines = (TelegramUserInline,)
+
 
 admin.site.register(User, UserAdmin)

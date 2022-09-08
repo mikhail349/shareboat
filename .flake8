@@ -3,4 +3,5 @@ exclude =
     .git,
     venv,
     tests,
-    migrations
+    migrations,
+    settings.py

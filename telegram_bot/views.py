@@ -10,6 +10,7 @@ import json
 
 from .handlers import setup_handlers, setup_commands
 
+
 @csrf_exempt
 def webhook(request):
     update = Update.de_json(json.loads(request.body), bot)

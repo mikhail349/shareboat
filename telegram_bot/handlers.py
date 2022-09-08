@@ -1,12 +1,12 @@
-#from turtle import st
 from telegram import ParseMode, BotCommand
-from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, Filters
+from telegram.ext import CommandHandler, ConversationHandler, \
+                         MessageHandler, Filters
 from .decorators import login_required
 
 from booking.models import Booking
 from boat.models import Boat
-from user.models import TelegramUser, User
-from user.utils import verify_tg_code  
+from user.models import TelegramUser
+from user.utils import verify_tg_code
 
 AUTH = 0
 SETNAME = 1
@@ -21,6 +21,7 @@ commands = [
     BotCommand('setname', 'сменить свое имя')
 ]
 
+
 def build_auth_commands_list():
     return "\
 \n<b>Общие:</b>\n\
@@ -30,6 +31,7 @@ def build_auth_commands_list():
 /setname - сменить имя\n\
     "
 
+
 def start(update, context):
     msg = "Вас приветствует <b>SHAREBOAT.RU</b>!\n\n"
     user = TelegramUser.get_user(update)
@@ -37,9 +39,14 @@ def start(update, context):
         msg += "Вам доступны команды:\n"
         msg += build_auth_commands_list()
         update.message.reply_text(msg, parse_mode=ParseMode.HTML)
-        return 
+        return
 
-    update.message.reply_text(msg + "Похоже, вы еще не авторизованы.\nЧтобы сделать это, выполните команду /auth", parse_mode=ParseMode.HTML)
+    update.message.reply_text(
+        msg + "Похоже, вы еще не авторизованы.\n \
+              Чтобы сделать это, выполните команду /auth",
+        parse_mode=ParseMode.HTML
+    )
+
 
 def auth(update, context):
     chat_id = update.message.from_user.id
@@ -48,17 +55,20 @@ def auth(update, context):
         return
 
     update.message.reply_text(
-        """Пожалуйста, введите шестизначный код авторизации.\n""" +
-        """Чтобы его получить перейдите на <a href="https://preprod.shareboat.ru/user/update/">страницу своего профиля</a>.\n\n""", 
-    parse_mode=ParseMode.HTML)
+        """Пожалуйста, введите шестизначный код авторизации.\n \
+        Чтобы его получить перейдите на \
+        <a href="https://preprod.shareboat.ru/user/update/">\
+        страницу своего профиля</a>.\n\n""",
+        parse_mode=ParseMode.HTML)
     return AUTH
 
+
 def verify_code(update, context):
-    
+
     user_id = update.message.from_user.id
     code = update.message.text
     res = verify_tg_code(user_id, code)
-    
+
     if res:
         msg = "Отлично! Теперь Вам доступны следующие команды:\n"
         msg += build_auth_commands_list()
@@ -66,35 +76,49 @@ def verify_code(update, context):
         update.message.reply_text(msg, parse_mode=ParseMode.HTML)
         return ConversationHandler.END
 
-    update.message.reply_text('Неверный код.') 
+    update.message.reply_text('Неверный код.')
+
 
 def wrong_code(update, context):
-    update.message.reply_text('Это не похоже на шестизначный код.\n\nЕсли Вы хотите прекратить процесс авторизации, выполните команду /cancel') 
+    update.message.reply_text(
+        'Это не похоже на шестизначный код.\n\n\
+        Если Вы хотите прекратить процесс авторизации, \
+        выполните команду /cancel')
+
 
 def cancel(update, context):
     update.message.reply_text("Диалог завершен.")
     return ConversationHandler.END
 
+
 def error(update, context):
-    update.message.reply_text("Я Вас не понимаю.\n\nЧтобы начать общение, выполните команду /start") 
+    update.message.reply_text(
+        "Я Вас не понимаю.\n\nЧтобы начать общение, выполните команду /start")
+
 
 def no_conv(update, context):
-    update.message.reply_text("Нет активных диалогов.\n\nЧтобы начать общение, выполните команду /start")    
+    update.message.reply_text(
+        "Нет активных диалогов.\n\n\
+        Чтобы начать общение, выполните команду /start")
+
 
 @login_required()
 def myboats(update, context, user):
     cnt = Boat.objects.filter(owner=user).count()
     update.message.reply_text('У Вас лодок: %s' % cnt)
 
+
 @login_required()
 def mybookings(update, context, user):
     cnt = Booking.objects.filter(renter=user).count()
-    update.message.reply_text('У Вас бронирований: %s' % cnt)    
+    update.message.reply_text('У Вас бронирований: %s' % cnt)
+
 
 @login_required()
 def setname(update, context, user):
     update.message.reply_text("Введите Ваше имя.")
     return SETNAME
+
 
 @login_required()
 def set_new_name(update, context, user):
@@ -113,10 +137,10 @@ def setup_handlers(dispatcher):
         ],
         states={
             AUTH: [
-                MessageHandler(Filters.regex('^\d{6}$'), verify_code),
+                MessageHandler(Filters.regex(r'^\d{6}$'), verify_code),
                 MessageHandler(Filters.text & ~Filters.command, wrong_code)
             ],
-            SETNAME: [            
+            SETNAME: [
                 MessageHandler(Filters.text & ~Filters.command, set_new_name),
             ]
         },
@@ -131,6 +155,7 @@ def setup_handlers(dispatcher):
     dispatcher.add_handler(CommandHandler('mybookings', mybookings))
     dispatcher.add_handler(CommandHandler('cancel', no_conv))
     dispatcher.add_handler(MessageHandler(Filters.text, error))
+
 
 def setup_commands(bot):
     bot.set_my_commands(commands)

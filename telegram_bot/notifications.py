@@ -1,6 +1,7 @@
 from .views import bot
 from telegram import ParseMode
 
+
 def send_message(user, html):
     if hasattr(user, 'telegramuser'):
         chat_id = user.telegramuser.chat_id

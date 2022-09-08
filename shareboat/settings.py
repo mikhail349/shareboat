@@ -74,7 +74,7 @@ SUMMERNOTE_CONFIG = {
 
 REST_FRAMEWORK = {
 
-    'DEFAULT_AUTHENTICATION_CLASSES' : (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -218,27 +218,27 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
-    },  
+    },
     'handlers': {
-        'file': {   
+        'file': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(os.environ['LOGGER_ROOT'], 'shareboat.log'),
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'verbose',
         },
-        'tgbot_file': {   
+        'tgbot_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(os.environ['LOGGER_ROOT'], 'tgbot_shareboat.log'),
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'verbose',
         },
@@ -253,7 +253,7 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
         }
-    },  
+    },
     'root': {
         'handlers': ['file', 'console'],
     },

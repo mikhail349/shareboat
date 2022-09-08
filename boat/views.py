@@ -182,8 +182,8 @@ def reject(request, pk):
                 context = {
                     'boat': boat,
                     'reasons': reasons,
-                    'errors': 'Лодка была изменена. ' \
-                        'Возможно, недочёты исправлены.'
+                    'errors': 'Лодка была изменена. '
+                              'Возможно, недочёты исправлены.'
                 }
                 return render(request, 'boat/moderate.html', context=context,
                               status=404)
