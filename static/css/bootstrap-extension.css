@@ -20,6 +20,10 @@
     background-color: var(--bs-white);
 }
 
+#menu.show {
+    background-color: var(--bs-primary) !important;
+}
+
 .btn-primary {
     --bs-btn-color: var(--bs-gray-200);
     --bs-btn-bg: var(--bs-primary);
@@ -391,6 +395,10 @@ a {
 }
 
 .dark-theme .bg-nav {
+    background-color: var(--sb-primary-bg) !important;
+}
+
+.dark-theme #menu.show {
     background-color: var(--sb-primary-bg) !important;
 }
 
