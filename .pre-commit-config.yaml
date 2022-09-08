@@ -1,5 +1,5 @@
 repos:
--   repo: local # exclude: tests/|migrations/ args: [--config, .flake8] repo: https://github.com/pycqa/flake8 rev: '5.0.4'
+-   repo: local
     hooks:
     -   id: flake8
         name: flake8
