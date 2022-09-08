@@ -20,10 +20,6 @@
     background-color: var(--bs-white);
 }
 
-#menu.show {
-    background-color: var(--bs-primary) !important;
-}
-
 .btn-primary {
     --bs-btn-color: var(--bs-gray-200);
     --bs-btn-bg: var(--bs-primary);
@@ -391,11 +387,10 @@ a {
 .dark-theme .list-group {
     --bs-list-group-color: var(--bs-primary);
     --bs-list-group-bg: var(--sb-primary-bg);
-    /*--bs-list-group-border-color: var(--bs-gray-600);*/
 }
 
 .dark-theme .bg-nav {
-    background-color: var(--sb-primary-bg) !important;
+    background-color: var(--sb-primary-bg);
 }
 
 .dark-theme #menu.show {
@@ -449,7 +444,6 @@ body.dark-theme {
 
 .dark-theme .form-check-input:checked[type=checkbox] {
     background-color: var(--sb-primary-bg);
-    /*border-color: var(--sb-primary-bg);*/
 }
 
 .dark-theme .btn-primary {
