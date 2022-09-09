@@ -15,5 +15,5 @@ $(document).ready(() => {
     const halfEl = $el.width() / 2;
     const linkPadding = convertRemToPixels(getComputedStyle($el[0]).getPropertyValue('--bs-nav-link-padding-x'));
 
-    $('.nav-status').animate({scrollLeft: $el.position().left - halfWindow + halfEl + linkPadding}, 250);
+    $('.nav-status').animate({scrollLeft: $el.position().left - halfWindow + halfEl + linkPadding}, 100);
 })
