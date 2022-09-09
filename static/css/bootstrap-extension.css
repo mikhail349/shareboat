@@ -6,6 +6,10 @@
     --sb-primary-bg-rgb: var(--bs-light-rgb);
 }
 
+.note-dropdown-menu {
+    z-index: 1025 !important;
+}
+
 .sb-primary-bg {
     --bs-bg-opacity: 1;
     background-color: rgba(var(--sb-primary-bg-rgb),var(--bs-bg-opacity)) !important;
@@ -509,4 +513,26 @@ body.dark-theme {
     --adp-color: var(--bs-primary);
     --adp-color-other-month: var(--sb-secondary-bg);
     --adp-color-disabled: var(--sb-secondary-bg);
+}
+.dark-theme .note-toolbar {
+    background-color: var(--sb-primary-bg);
+    color: var(--bs-primary);
+}
+
+.dark-theme .note-btn {
+    border: 1px solid var(--sb-secondary-bg);
+    background-color: var(--sb-secondary-bg);
+    color: var(--bs-primary);
+}
+
+.dark-theme .note-editable {
+    background-color: white;
+}
+
+.dark-theme .note-dropdown-menu {
+    background-color: var(--sb-primary-bg);
+}
+
+.dark-theme a.note-dropdown-item {
+    color: var(--bs-primary);
 }
