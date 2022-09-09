@@ -77,7 +77,7 @@ function FilesList(props) {
     }
 
     return (
-        <div>  
+        <div class="file-upload-wrapper">  
             <input ref={fileInputRef} type="file" name="hidden_files" accept="image/*" multiple hidden onChange={onFileInputChange} />
             <div className="row g-3 mb-3">      
                 {
