@@ -10,10 +10,10 @@ register = template.Library()
 @register.filter
 def get_status_color(value):
     if value == Booking.Status.DECLINED:
-        return 'bg-light text-danger'
+        return 'bg-booking-data text-danger'
     if value == Booking.Status.ACCEPTED:
-        return 'bg-light text-success'
-    return 'bg-light text-secondary'
+        return 'bg-booking-data text-success'
+    return 'bg-booking-data text-secondary'
 
 
 @register.filter

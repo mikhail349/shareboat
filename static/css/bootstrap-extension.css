@@ -356,6 +356,10 @@ a {
     transition: all .2s ease-in-out;
 }
 
+.bg-booking-data {
+    background-color: var(--bs-light);
+}
+
 /* dark theme */
 
 :root .dark-theme {
@@ -535,4 +539,8 @@ body.dark-theme {
 
 .dark-theme a.note-dropdown-item {
     color: var(--bs-primary);
+}
+
+.dark-theme .bg-booking-data {
+    background-color: var(--sb-primary-bg);
 }
