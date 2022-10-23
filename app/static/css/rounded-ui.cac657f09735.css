@@ -1,0 +1,72 @@
+
+.card {
+    --bs-card-border-radius: var(--bs-border-radius-xl);
+    --bs-card-border-width: 0 !important;
+}
+
+.nav-pills {
+    --bs-nav-pills-border-radius: var(--bs-border-radius-xl);
+}
+
+.btn {
+    --bs-btn-border-radius: var(--bs-border-radius-xl);
+}
+
+.modal {
+    --bs-modal-border-radius: var(--bs-border-radius-xl);
+}
+
+.badge {
+    --bs-badge-border-radius: var(--bs-border-radius-xl);
+}
+
+.dropdown-menu {
+    --bs-dropdown-border-radius: var(--bs-border-radius-xl);
+}
+
+.list-group {
+    --bs-list-group-border-radius: var(--bs-border-radius-xl);
+}
+
+.alert {
+    --bs-alert-border-radius: var(--bs-border-radius-xl);
+}
+
+.toast {
+    --bs-toast-border-radius: var(--bs-border-radius-xl);
+}
+
+.pagination {
+    --bs-pagination-border-radius: var(--bs-border-radius-xl);
+}
+
+.form-check-input[type=checkbox] {
+    border-radius: var(--bs-border-radius-xl);
+}
+
+#map, .form-control, .form-select, .card-img, .card, .list-group, .leaflet-control-zoom {
+    border-radius: var(--bs-border-radius-xl) !important;
+}
+
+.input-group > :not(:last-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.jumbotron {
+    background-color: var(--bs-gray-100) !important;
+}
+
+.card {
+    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 5%);
+}
+
+.leaflet-control-zoom-in {
+    border-top-left-radius: var(--bs-border-radius-xl) !important;
+    border-top-right-radius: var(--bs-border-radius-xl) !important;
+}
+
+.leaflet-control-zoom-out {
+    border-bottom-left-radius: var(--bs-border-radius-xl) !important;
+    border-bottom-right-radius: var(--bs-border-radius-xl) !important;
+}

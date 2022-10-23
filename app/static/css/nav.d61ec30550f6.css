@@ -1,0 +1,48 @@
+.bg-nav {
+    background-color: var(--bs-primary);
+}
+
+header .navbar-brand img {
+    filter: brightness(0) invert(1);
+    height: 46px;
+}
+
+#userNotificationsNavBar img {
+    filter: brightness(0) invert(1);
+}
+
+header .navbar {
+    min-height: var(--header-padding-top);
+}
+
+header .nav-link, header .navbar-brand {
+    color: var(--bs-gray-200) !important;
+}
+
+header .nav-link:hover {
+    color: var(--bs-white) !important;
+}
+
+header .navbar-dark .navbar-toggler,
+header.navbar-dark .navbar-toggler {
+    border: unset;
+}
+
+header .navbar-dark .navbar-toggler-icon,
+header.navbar-dark .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+header .nav-bar-avatar {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+}
+
+.nav-link {
+    color: var(--bs-primary);
+}
+
+.nav-link.active {
+    background-color: var(--bs-primary) !important;
+}

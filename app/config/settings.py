@@ -20,7 +20,7 @@ import dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # EVN
-dotenv_file = os.path.join(BASE_DIR, ".env")
+dotenv_file = os.path.join(BASE_DIR, ".dev.env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
@@ -182,13 +182,15 @@ PAGINATOR_ARTICLE_PER_PAGE = os.environ.get('PAGINATOR_ARTICLE_PER_PAGE', 15)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 MEDIA_ROOT = os.environ['MEDIA_ROOT']
-MEDIA_URL = '/uploads/'
+MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.environ['STATIC_ROOT']
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static')
 ]
+
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 LOGIN_URL = '/user/login/'
 
