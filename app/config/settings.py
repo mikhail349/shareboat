@@ -91,7 +91,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'shareboat.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -102,7 +102,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'shareboat.context_processors.nav_counters',
+                'config.context_processors.nav_counters',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -110,7 +110,7 @@ TEMPLATES = [
             ],
 
             'libraries': {
-                'extras': 'shareboat.templatetags.extras'
+                'extras': 'config.templatetags.extras'
             }
         },
     },
@@ -119,12 +119,12 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'environment': 'shareboat.jinja2.environment'
+            'environment': 'config.jinja2.environment'
         },
     },
 ]
 
-WSGI_APPLICATION = 'shareboat.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database

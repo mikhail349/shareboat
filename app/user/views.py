@@ -11,8 +11,8 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 import jwt
 
-from shareboat import tokens
-from shareboat.exceptions import InvalidToken
+from config import tokens
+from config.exceptions import InvalidToken
 from emails.models import UserEmail
 from user.forms import UpdateForm
 from emails.exceptions import EmailLagError

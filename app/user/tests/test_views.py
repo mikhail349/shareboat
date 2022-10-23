@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 from boat.models import Boat
 from boat.tests.test_models import create_model, create_simple_boat
 
-from shareboat import tokens
+from config import tokens
 from user.models import TelegramUser, User
 
 from user.tests.test_models import create_boat_owner, create_user

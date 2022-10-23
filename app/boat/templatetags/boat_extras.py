@@ -4,7 +4,7 @@ import json
 from django import template
 
 from boat.models import Boat
-from shareboat.utils import get_str_case_by_count
+from config.utils import get_str_case_by_count
 
 register = template.Library()
 
