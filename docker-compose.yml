@@ -8,8 +8,30 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
+  app:
+    build: ./app
+    env_file:
+      - ./app/.env
+    volumes:
+      - appstatic:${APP_STATIC_ROOT}
+      - appmedia:${APP_MEDIA_ROOT}
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+      - ./nginx/html:/data/html:ro
+      - appstatic:/data/static
+      - appmedia:/data/media
+    restart: always
+    depends_on:
+      - app
     ports:
-      - 5432:5432
+      - 80:80
 
 volumes:
   pgdata:
+  appstatic:
+  appmedia:
