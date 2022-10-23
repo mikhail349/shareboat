@@ -20,7 +20,7 @@ import dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # EVN
-dotenv_file = os.path.join(BASE_DIR, ".dev.env")
+dotenv_file = os.path.join(BASE_DIR, ".env.dev")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
