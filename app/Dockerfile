@@ -10,7 +10,6 @@ ENV UWSGI_HARAKIRI 60
 ENV DJANGO_SETTINGS_MODULE 'config.settings'
 
 COPY requirements.txt requirements.txt
-COPY uwsgi/uwsgi.ini uwsgi.ini
 
 RUN apt-get update && apt-get install -y netcat
 
