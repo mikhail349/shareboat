@@ -1,5 +1,4 @@
 .env
-.dev.env
-media/
+.env.dev
 log/
 venv/
