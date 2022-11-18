@@ -4,9 +4,6 @@ WORKDIR /opt/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV UWSGI_PROCESSES 4
-ENV UWSGI_THREADS 8
-ENV UWSGI_HARAKIRI 60
 ENV DJANGO_SETTINGS_MODULE 'config.settings'
 
 COPY requirements.txt requirements.txt
@@ -24,7 +21,8 @@ RUN mkdir /opt/app/log/ \
 
 EXPOSE 8000
 
-RUN groupadd -r app && useradd -d /opt/app -r -g app app \
+RUN groupadd -r app \
+    && useradd -d /opt/app -r -g app app \
     && chown app:app -R /opt/app
 
 USER app
