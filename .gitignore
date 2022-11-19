@@ -6,5 +6,5 @@ collected_static/
 storage/
 
 *.pyc
-*.env*
+*.env
 .coverage
