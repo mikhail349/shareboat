@@ -1,5 +1,4 @@
 #!/bin/bash
-
 [[ -z "$DATABASE_HOST" ]] && { echo "Parameter DATABASE_HOST is empty" ; exit 1; }
 [[ -z "$DATABASE_PORT" ]] && { echo "Parameter DATABASE_PORT is empty" ; exit 1; }
 
