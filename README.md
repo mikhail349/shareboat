@@ -13,6 +13,7 @@
 
 ### Локальный запуск
 
+1. Запустить БД с открытым портом `docker-compose -f docker-compose.yml -f docker-compose.dev.yaml up db -d`
 1. Перейти в папку с приложением `cd app`
 2. Создать виртуальное Python-окружение `python -m venv venv`
 3. Установить зависимости `pip install -r requirements.txt`
@@ -25,6 +26,7 @@
 
 ## Тестирование
 
-1. Перейти в папку с приложением `cd app`
-2. Запустить тест `coverage run manage.py test -v 2`
-3. Сформировать отчет `coverage html`
+1. Запустить БД с открытым портом `docker-compose -f docker-compose.yml -f docker-compose.dev.yaml up db -d`
+2. Перейти в папку с приложением `cd app`
+3. Запустить тест `coverage run manage.py test -v 2`
+4. Сформировать отчет `coverage html`
