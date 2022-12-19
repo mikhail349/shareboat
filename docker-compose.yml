@@ -13,6 +13,8 @@ services:
     build: ./app
     env_file:
       - ./app/.env
+    environment:
+      - DATABASE_HOST=db
     volumes:
       - ${HOST_APP_MEDIA}:/opt/app/assets/media
       - ${HOST_APP_STATIC}:/opt/app/assets/static
