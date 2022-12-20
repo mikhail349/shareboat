@@ -1,5 +1,6 @@
-from .views import bot
 from telegram import ParseMode
+
+from .views import bot
 
 
 def send_message(user, html):

@@ -1,16 +1,20 @@
 def send_status_to_renter(booking):
     from chat.models import MessageBooking
+
     MessageBooking.objects.send_status_to_renter(booking)
 
 
 def send_initial_to_owner(booking):
     from chat.models import MessageBooking
+
     MessageBooking.objects.send_initial_to_owner(booking)
 
 
 def autoupdate_statuses():
-    from booking.models import Booking
     from django.utils import timezone
+
+    from booking.models import Booking
+    
     Booking.objects \
            .filter(status=Booking.Status.PREPAYMENT_REQUIRED,
                    prepayment__until__lte=timezone.now()) \
@@ -32,7 +36,7 @@ def autoremind_prepayment():
 
     from booking.models import Booking
     from notification.utils import remind_prepayment_to_renter, \
-        remind_prepayment_to_owner
+                                   remind_prepayment_to_owner
 
     deadline = timezone.now() + timedelta(days=3)
     for booking in Booking.objects \

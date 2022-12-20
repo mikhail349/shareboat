@@ -1,12 +1,13 @@
 from telegram import ParseMode, BotCommand
 from telegram.ext import CommandHandler, ConversationHandler, \
                          MessageHandler, Filters
-from .decorators import login_required
 
+from .decorators import login_required
 from booking.models import Booking
 from boat.models import Boat
 from user.models import TelegramUser
 from user.utils import verify_tg_code
+
 
 AUTH = 0
 SETNAME = 1

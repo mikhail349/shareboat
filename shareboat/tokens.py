@@ -1,8 +1,10 @@
 import datetime
-import jwt
 
+import jwt
 from django.conf import settings
+
 from .exceptions import InvalidToken
+
 
 VERIFICATION = 'verification'
 RESTORE_PASSWORD = 'restore_password'

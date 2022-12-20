@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
@@ -7,11 +9,8 @@ from django.urls import reverse
 from .models import MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
 from user.models import User
-
 from boat.models import Boat
 from booking.models import Booking
-
-import json
 
 
 @permission_required('user.support_chat', raise_exception=True)

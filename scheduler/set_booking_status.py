@@ -1,27 +1,31 @@
-from booking.utils import autoupdate_statuses
 import sys
 import os
+
 import django
 import argparse
 
-desc = """Обновляет статусы бронирований:
-1. Проставляет "Отменена" для броней,
-    у которых статус "Требуется предоплата" и срок предоплаты истек.
-2. Проставляет "Активна" для броней,
-    у которых статус "Подтверждена" и срок аренды начался.
-2. Проставляет "Завершена" для броней,
-    у которых статус "Активна" и срок аренды закончился.
-"""
+from booking.utils import autoupdate_statuses
 
-parser = argparse.ArgumentParser(
-    description=desc, formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument("--project_path", required=False, type=str,
-                    help="Путь проекта. По умолчанию ../", default='../')
-args = parser.parse_args()
 
-sys.path.append(args.project_path)
+if __name__ == '__main__':
+    desc = """Обновляет статусы бронирований:
+    1. Проставляет "Отменена" для броней,
+        у которых статус "Требуется предоплата" и срок предоплаты истек.
+    2. Проставляет "Активна" для броней,
+        у которых статус "Подтверждена" и срок аренды начался.
+    2. Проставляет "Завершена" для броней,
+        у которых статус "Активна" и срок аренды закончился.
+    """
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shareboat.settings')
-django.setup()
+    parser = argparse.ArgumentParser(
+        description=desc, formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("--project_path", required=False, type=str,
+                        help="Путь проекта. По умолчанию ../", default='../')
+    args = parser.parse_args()
 
-autoupdate_statuses()
+    sys.path.append(args.project_path)
+
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shareboat.settings')
+    django.setup()
+
+    autoupdate_statuses()

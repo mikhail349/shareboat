@@ -1,4 +1,6 @@
+from decimal import Decimal
 from datetime import datetime
+
 from django.db import models
 from django.db.models import Q, Exists, OuterRef, Value, Prefetch, F, \
                              DecimalField
@@ -6,7 +8,6 @@ from django.db.models.signals import pre_save, post_save
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
-from decimal import Decimal
 from django.db.models.functions import Cast
 
 from user.models import User

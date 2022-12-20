@@ -1,8 +1,9 @@
 from datetime import timedelta
 from decimal import Decimal
-from .models import Boat
 
 from django.db.models import Q
+
+from .models import Boat
 
 
 def calc_booking(boat_pk, start_date, end_date):
