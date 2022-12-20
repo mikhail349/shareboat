@@ -1,6 +1,7 @@
 import random
-import requests
+import logging
 
+import requests
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as django_login, \
                                 logout as django_logout
@@ -19,7 +20,7 @@ from emails.exceptions import EmailLagError
 from notification import utils as notify
 from .models import User, TelegramUser
 
-import logging
+
 logger_admin_mails = logging.getLogger('mail_admins')
 logger = logging.getLogger(__name__)
 

@@ -1,9 +1,12 @@
-from . import utils
+import logging
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from PIL import Image, UnidentifiedImageError
 
-import logging
+from . import utils
+
+
 logger = logging.getLogger(__name__)
 
 

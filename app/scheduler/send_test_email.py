@@ -1,8 +1,10 @@
-from emails.utils import send_email
 import sys
 import os
+
 import django
 import argparse
+
+from emails.utils import send_email
 
 
 parser = argparse.ArgumentParser(description="Отправляет тестовое письмо")

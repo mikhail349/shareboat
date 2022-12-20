@@ -1,10 +1,10 @@
 from django.forms import ModelForm, PasswordInput, BooleanField
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
+
 from .models import User
 from boat.models import Boat
-from django.contrib.auth.models import Group
-
-from django.core.exceptions import ValidationError
 
 
 class LoginForm(ModelForm):

@@ -9,8 +9,10 @@ def send_initial_to_owner(booking):
 
 
 def autoupdate_statuses():
-    from booking.models import Booking
     from django.utils import timezone
+
+    from booking.models import Booking
+
     Booking.objects \
            .filter(status=Booking.Status.PREPAYMENT_REQUIRED,
                    prepayment__until__lte=timezone.now()) \

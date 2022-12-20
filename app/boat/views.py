@@ -12,9 +12,9 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
+from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from rest_framework import status
-from django.core.exceptions import ValidationError
 
 from boat.forms import TariffForm, TermForm
 from notification import utils as notify

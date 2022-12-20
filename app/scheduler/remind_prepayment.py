@@ -1,8 +1,11 @@
-from booking.utils import autoremind_prepayment
 import sys
 import os
+
 import django
 import argparse
+
+from booking.utils import autoremind_prepayment
+
 
 desc = """Рассылает напоминания:
 1. Арендаторам, что необходимо внести предоплату.

@@ -1,12 +1,11 @@
+import json
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 from telegram import Update
 from telegram.bot import Bot
 from telegram.ext import Dispatcher
 from django.conf import settings
-
-import json
 
 from .handlers import setup_handlers, setup_commands
 
