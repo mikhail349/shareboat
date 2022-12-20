@@ -4,20 +4,20 @@
 
 ## Первый запуск
 
-1. Создать файл `.env` по аналогии с файлом `.env.example`.
-2. Создать файл `app/.env` по аналогии с файлом `app/.env.example`.
+1. Создать файл `.env` по аналогии с файлом `.env.example`
+2. Создать файл `app/.env` по аналогии с файлом `app/.env.example`
 
 ## Запуск в Docker
 
-1. Запустить докер `docker-compose up --build`
+1. Запустить докер `docker compose up -d --build`
 
 ## Локальный запуск для разработки и тестирования
 
-1. Запустить БД с открытым портом `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up db -d`
-1. Перейти в папку с приложением `cd app`
-2. Создать виртуальное Python-окружение `python -m venv venv`
-3. Установить зависимости `pip install -r requirements.txt`
-3. Запустить приложение `python manage.py runserver`
+1. Запустить PostgreSQL
+2. Перейти в папку с приложением `cd app`
+3. Создать виртуальное Python-окружение `python -m venv venv`
+4. Установить зависимости `pip install -r requirements.txt`
+5. Запустить приложение `python manage.py runserver`
  
 ## Линтер
 
@@ -26,7 +26,7 @@
 
 ## Тестирование
 
-1. Запустить БД с открытым портом `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up db -d`
+1. Запустить PostgreSQL
 2. Перейти в папку с приложением `cd app`
 3. Запустить тест `coverage run manage.py test -v 2`
 4. Сформировать отчет `coverage html`
