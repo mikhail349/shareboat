@@ -1,0 +1,40 @@
+body, #youcando, #clients {
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+} 
+
+body {
+    background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.70), rgba(0,0,0,0.50)), url("/static/img/index2.d5d5d3cd1758.d5d5d3cd1758.webp");
+}
+
+.mw-900 {
+    max-width: 900px;
+}
+
+#search {
+    height: calc(100vh - var(--header-padding-top));
+}
+
+#youcando {
+    background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.70), rgba(0,0,0,0.50)), url("/static/img/index3.5601ea7c5eb2.5601ea7c5eb2.webp");
+}
+
+#clients {
+    background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.90), rgba(0,0,0,0.80)), url("/static/img/index4.f0bb76494460.f0bb76494460.webp");
+}
+
+section {
+    min-height: 50vh;
+}
+
+#clients ul li,
+#youcando ul li {
+    list-style-position: outside;
+    list-style-type: square;
+}
+
+#clients ul li::marker,
+#youcando ul li::marker {
+    color: var(--bs-warning);
+}

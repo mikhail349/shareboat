@@ -3,6 +3,8 @@ uploads/
 venv/
 nodejs/
 collected_static/
+storage/
+
 *.pyc
-.env
+*.env
 .coverage

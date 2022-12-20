@@ -1,0 +1,1 @@
+$(document).ready(()=>{const a=document.getElementsByClassName("needs-validation");Array.prototype.filter.call(a,a=>{a.addEventListener("submit",b=>{a.checkValidity()||(b.preventDefault(),b.stopPropagation()),a.classList.add("was-validated")},!1)})});
