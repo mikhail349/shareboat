@@ -6,9 +6,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_SETTINGS_MODULE 'config.settings'
 
-COPY requirements.txt requirements.txt
-
 RUN apt-get update && apt-get install -y netcat
+
+COPY requirements.txt requirements.txt
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt

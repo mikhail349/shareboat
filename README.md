@@ -1,11 +1,30 @@
 # Shareboat
 
-Сайт для аренды лодок
+Сайт для аренды лодок. Позволяет сдавать лодку и брать в аренду. 
 
 ## Первый запуск
 
 1. Создать файл `.env` по аналогии с файлом `.env.example`
 2. Создать файл `app/.env` по аналогии с файлом `app/.env.example`
+
+## Переменные среды для запуска в режиме разработки
+Чтобы не настраивать RECAPTCHA, Telegram-bot и email рассылку, можно перевести `DEBUG=True`, а значение переменных оставить пустыми:
+```
+DEBUG=True
+
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+EMAIL_USE_SSL=
+DEFAULT_FROM_EMAIL=
+SERVER_EMAIL=
+
+RECAPTCHA_CLIENTSIDE_KEY=
+RECAPTCHA_SERVERSIDE_KEY=
+
+TGBOT_TOKEN=
+```
 
 ## Запуск в Docker
 
@@ -13,20 +32,24 @@
 
 ## Локальный запуск для разработки и тестирования
 
-1. Запустить PostgreSQL
+1. Запустить PostgreSQL `docker compose -f docker-compose.dev.yml -f docker-compose.yml up db -d`
 2. Перейти в папку с приложением `cd app`
 3. Создать виртуальное Python-окружение `python -m venv venv`
 4. Установить зависимости `pip install -r requirements.txt`
-5. Запустить приложение `python manage.py runserver`
+6. Накатить миграции `py manage.py migrate`
+7. Запустить приложение `python manage.py runserver`
  
 ## Линтер
 
-1. Перейти в папку с приложением `cd app`
-2. Запуск `flake8`. Конфигурация находится в `setup.cfg`
+1. Запуск `flake8 app --config=app/setup.cfg`
 
-## Тестирование
+## Локальное тестирование
 
-1. Запустить PostgreSQL
-2. Перейти в папку с приложением `cd app`
-3. Запустить тест `coverage run manage.py test -v 2`
-4. Сформировать отчет `coverage html`
+1. Сменить название БД на тестовую в файлах `.env` и `app/.env` 
+2. Запустить PostgreSQL `docker compose -f docker-compose.dev.yml -f docker-compose.yml up db -d`
+3. Перейти в папку с приложением `cd app`
+4. Создать виртуальное Python-окружение `python -m venv venv`
+5. Установить зависимости `pip install -r requirements.txt`
+6. Собрать статику `py manage.py collectstatic --noinput`
+7. Запустить тест `coverage run manage.py test -v 2`
+8. Сформировать отчет `coverage html`

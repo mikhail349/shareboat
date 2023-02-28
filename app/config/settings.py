@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import sys
 
 import dotenv
 from split_settings.tools import include
@@ -24,7 +23,7 @@ include(
 )
 
 SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG = ('runserver' in sys.argv) or ('test' in sys.argv)
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'user.User'
 ROOT_URLCONF = 'config.urls'

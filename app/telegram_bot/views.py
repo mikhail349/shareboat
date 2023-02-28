@@ -17,7 +17,8 @@ def webhook(request):
     return JsonResponse({"ok": "Request processed"})
 
 
-bot = Bot(settings.TGBOT_TOKEN)
-dispatcher = Dispatcher(bot=bot, update_queue=None, use_context=True)
-setup_commands(bot)
-setup_handlers(dispatcher)
+if settings.TGBOT_TOKEN:
+    bot = Bot(settings.TGBOT_TOKEN)
+    dispatcher = Dispatcher(bot=bot, update_queue=None, use_context=True)
+    setup_commands(bot)
+    setup_handlers(dispatcher)
