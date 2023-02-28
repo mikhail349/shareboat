@@ -30,14 +30,18 @@ TGBOT_TOKEN=
 
 1. Запустить докер `docker compose up -d --build`
 
+## Админ-панель
+Находится по URL `/admin/`
+
 ## Локальный запуск для разработки и тестирования
 
 1. Запустить PostgreSQL `docker compose -f docker-compose.dev.yml -f docker-compose.yml up db -d`
 2. Перейти в папку с приложением `cd app`
 3. Создать виртуальное Python-окружение `python -m venv venv`
 4. Установить зависимости `pip install -r requirements.txt`
-6. Накатить миграции `py manage.py migrate`
-7. Запустить приложение `python manage.py runserver`
+6. Накатить миграции `python manage.py migrate`
+7. Создать суперпользователя `python manage.py createsuperuser --noinput`
+8. Запустить приложение `python manage.py runserver`
  
 ## Линтер
 
@@ -50,6 +54,6 @@ TGBOT_TOKEN=
 3. Перейти в папку с приложением `cd app`
 4. Создать виртуальное Python-окружение `python -m venv venv`
 5. Установить зависимости `pip install -r requirements.txt`
-6. Собрать статику `py manage.py collectstatic --noinput`
+6. Собрать статику `python manage.py collectstatic --noinput`
 7. Запустить тест `coverage run manage.py test -v 2`
 8. Сформировать отчет `coverage html`
