@@ -1,41 +1,71 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.db.models import Q
 
-from .models import Boat
+from .models import Boat, Tariff
 
 
-def calc_booking(boat_pk, start_date, end_date):
+def calc_booking(boat_pk: int, start_date: date, end_date: date) -> dict:
+    """Рассчитать стоимость бронирования.
 
-    class TariffNotFound(Exception):
-        pass
+    Args:
+        boat_pk: ID лодки
+        start_date: дата начала бронирования
+        end_date: дата окончания бронирования
+
+    Returns:
+        dict: пустой словарь или содержащий
+        ```
+        sum - итоговую стоимость
+        days - кол-во дней
+        spec - спецификация бронирования
+        ```
+
+    """
+    class TariffNotFoundError(Exception):
+        """Ошибка - тариф не найден."""
 
     class Node:
+        """Класс ноды тарифа."""
         def __init__(self, tariff, prev=None):
             self.tariff = tariff
             self.prev = prev
 
-    def _return_empty():
+    def _return_empty() -> dict:
+        """Вернуть пустой словарь.
+
+        Returns:
+            dict
+
+        """
         return {}
 
-    def is_weekday_in_tariff(weekday, tariff):
-        if weekday == 0:
-            return tariff.mon
-        if weekday == 1:
-            return tariff.tue
-        if weekday == 2:
-            return tariff.wed
-        if weekday == 3:
-            return tariff.thu
-        if weekday == 4:
-            return tariff.fri
-        if weekday == 5:
-            return tariff.sat
-        if weekday == 6:
-            return tariff.sun
+    def is_weekday_in_tariff(weekday, tariff: Tariff) -> bool:
+        """Есть ли день недели в тарифе.
 
-    def spec_inc(tariff):
+        Args:
+            weekday: день недели, начиная с 0
+            tariff: тариф
+        """
+        mapping = {
+            0: tariff.mon,
+            1: tariff.tue,
+            2: tariff.wed,
+            3: tariff.thu,
+            4: tariff.fri,
+            5: tariff.sat,
+            6: tariff.sun,
+        }
+        return mapping.get(weekday)
+
+    def spec_inc(tariff: Tariff):
+        """Добавить тариф в спецификацию бронирования.
+
+        Args:
+            tariff: тариф
+
+        """
         item = spec.get(tariff.pk, {})
         item['name'] = tariff.name
         item['price'] = tariff.price
@@ -43,7 +73,13 @@ def calc_booking(boat_pk, start_date, end_date):
         item['sum'] = item.get('sum', Decimal("0.0")) + tariff.price
         spec[tariff.pk] = item
 
-    def spec_dec(tariff):
+    def spec_dec(tariff: Tariff):
+        """Исключить тариф из спецификации бронирования.
+
+        Args:
+            tariff: тариф
+
+        """
         item = spec.get(tariff.pk)
         item['amount'] = item['amount'] - 1
         item['sum'] = item['sum'] - tariff.price
@@ -52,7 +88,13 @@ def calc_booking(boat_pk, start_date, end_date):
             return spec.pop(tariff.pk)
         spec[tariff.pk] = item
 
-    def is_last_tariff_ok():
+    def is_last_tariff_ok() -> bool:
+        """Попадает ли последний обработанный тариф в текущую дату.
+
+        Returns:
+            bool
+
+        """
         if last_tariff:
             if last_tariff.start_date <= date <= last_tariff.end_date:
                 return True
@@ -120,9 +162,9 @@ def calc_booking(boat_pk, start_date, end_date):
                     spec_dec(node.tariff)
                     node = node.prev
                 else:
-                    raise TariffNotFound()
+                    raise TariffNotFoundError()
 
-    except TariffNotFound:
+    except TariffNotFoundError:
         return _return_empty()
 
     return {
