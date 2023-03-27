@@ -1,9 +1,12 @@
-from django.test import TestCase
-from .test_models import get_imagefile, get_file
-from user.models import User
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
-class TestCase(TestCase):
+from user.models import User
+
+from .test_models import get_file, get_imagefile
+
+
+class FileTestCase(TestCase):
     
     def test_verify_imagefile(self):
         with self.assertRaises(ValidationError) as context:

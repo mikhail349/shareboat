@@ -1,5 +1,7 @@
 from django.test import TestCase
+
 from base.models import Base
+
 
 class BaseTest(TestCase):
     

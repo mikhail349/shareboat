@@ -1,7 +1,9 @@
 from django.test import TestCase
-from file.utils import limit_size, get_file_path
 
-class TestCase(TestCase):
+from file.utils import get_file_path, limit_size
+
+
+class FileTestCase(TestCase):
     
     def test_limit_size(self):
         # width limit

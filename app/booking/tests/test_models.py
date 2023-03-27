@@ -1,10 +1,13 @@
+from datetime import date, datetime
+
 from django.test import TestCase
 
-from boat.tests.test_models import create_boat_owner, create_model, create_simple_boat
-from booking.exceptions import BookingDateRangeException, BookingDuplicatePendingException
+from boat.tests.test_models import (create_boat_owner, create_model,
+                                    create_simple_boat)
+from booking.exceptions import (BookingDateRangeException,
+                                BookingDuplicatePendingException)
 from booking.models import Booking
 
-from datetime import date, datetime
 
 class BookingTest(TestCase):
     

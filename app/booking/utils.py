@@ -33,8 +33,8 @@ def autoremind_prepayment():
     from django.utils import timezone
 
     from booking.models import Booking
-    from notification.utils import remind_prepayment_to_renter, \
-        remind_prepayment_to_owner
+    from notification.utils import (remind_prepayment_to_owner,
+                                    remind_prepayment_to_renter)
 
     deadline = timezone.now() + timedelta(days=3)
     for booking in Booking.objects \

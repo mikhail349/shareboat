@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_summernote.admin import SummernoteModelAdmin
 
-from .models import Category, Article
+from .models import Article, Category
 
 
 class CategoryAdmin(SummernoteModelAdmin):

@@ -1,16 +1,17 @@
 import json
 
-from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import Prefetch, Q
 from django.http import JsonResponse
-from django.db.models import Q, Prefetch
+from django.shortcuts import redirect, render
 from django.urls import reverse
+
+from boat.models import Boat
+from booking.models import Booking
+from user.models import User
 
 from .models import MessageBoat, MessageBooking, MessageSupport
 from .serializers import MessageSerializerList
-from user.models import User
-from boat.models import Boat
-from booking.models import Booking
 
 
 @permission_required('user.support_chat', raise_exception=True)

@@ -1,8 +1,10 @@
 from django.test import TestCase
-from user.models import User, TelegramUser
+
+from user.models import TelegramUser, User
 from user.utils import verify_tg_code
 
-class TestCase(TestCase):
+
+class UserTestCase(TestCase):
     def test_verify_tg_code(self):
         user = User.objects.create(email='ivan@mail.ru', password="12345")
         tg_user = TelegramUser.objects.create(user=user, verification_code='123456')

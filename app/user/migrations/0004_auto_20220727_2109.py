@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def apply_migration(apps, schema_editor):    
     Group       = apps.get_model('auth', 'Group')
     Permission  = apps.get_model('auth', 'Permission')

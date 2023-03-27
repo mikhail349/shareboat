@@ -1,21 +1,21 @@
 from django.contrib import admin
 
-from .models import Message, MessageBooking, MessageBoat, MessageSupport
+from .models import Message, MessageBoat, MessageBooking, MessageSupport
 
 
 class MessageAdmin(admin.ModelAdmin):
     model = Message
-    list_display = ('sender', 'recipient', 'text', 'sent_at')
+    list_display = ['sender', 'recipient', 'text', 'sent_at']
 
 
 class MessageBookingAdmin(MessageAdmin):
     model = MessageBooking
-    list_display = MessageAdmin.list_display + ('booking',)
+    list_display = MessageAdmin.list_display + ['booking']
 
 
 class MessageBoatAdmin(MessageAdmin):
     model = MessageBoat
-    list_display = MessageAdmin.list_display + ('boat',)
+    list_display = MessageAdmin.list_display + ['boat']
 
 
 admin.site.register(MessageBooking, MessageBookingAdmin)

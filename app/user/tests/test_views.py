@@ -1,20 +1,20 @@
-from django.test import TestCase, Client
-from django.urls import reverse
+import json
+from time import sleep
+
+from django.test import Client, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
+
 from boat.models import Boat
 from boat.tests.test_models import create_model, create_simple_boat
-
 from config import tokens
+from file.tests.test_models import get_imagefile
 from user.models import TelegramUser, User
-
 from user.tests.test_models import create_boat_owner, create_user
 from user.views import get_bool, get_tgcode_message
-from file.tests.test_models import get_imagefile
 
-from time import sleep
-import json
 
-class TestCase(TestCase):
+class UserTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()

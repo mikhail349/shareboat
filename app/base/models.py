@@ -1,9 +1,9 @@
-from django.db import models
 from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models.signals import post_save, pre_save
 from django.utils.translation import gettext_lazy as _
-from django.db.models.signals import pre_save, post_save
 
-from file import utils, signals
+from file import signals, utils
 
 
 class Base(models.Model):

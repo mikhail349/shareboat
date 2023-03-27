@@ -1,14 +1,15 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 
-from user import urls as user_urls
 from boat import urls as boat_urls
 from booking import urls as booking_urls
-from telegram_bot import urls as telegram_bot_urls
 from chat import urls as chat_urls
 from portal import urls as portal_urls
+from telegram_bot import urls as telegram_bot_urls
+from user import urls as user_urls
+
 from . import views
 
 urlpatterns = [

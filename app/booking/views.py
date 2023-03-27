@@ -1,24 +1,25 @@
-from decimal import Decimal
-from datetime import timedelta
 import json
+from datetime import timedelta
+from decimal import Decimal
 
-from django.shortcuts import redirect, render
-from django.http import JsonResponse
-from django.utils.dateparse import parse_date
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import transaction
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.conf import settings
-from django.db.models import Q
-from django.db import transaction
+from django.utils.dateparse import parse_date
 
+from boat.models import Boat, BoatCoordinates, ComfortBoat, MotorBoat
 from boat.utils import calc_booking
 from chat.models import MessageBooking
 from notification import utils as notify
-from .models import Booking, Prepayment, BoatInfo, BoatInfoCoordinates
-from .exceptions import BookingDateRangeException, \
-                        BookingDuplicatePendingException
-from boat.models import Boat, MotorBoat, ComfortBoat, BoatCoordinates
+
+from .exceptions import (BookingDateRangeException,
+                         BookingDuplicatePendingException)
+from .models import BoatInfo, BoatInfoCoordinates, Booking, Prepayment
 
 
 def get_confirm_create_context(data, boat_pk):

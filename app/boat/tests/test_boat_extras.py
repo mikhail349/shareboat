@@ -1,13 +1,14 @@
+import datetime
+
 from django.http import QueryDict
 from django.test import TestCase
 
-from boat.tests.test_models import create_model, create_simple_boat
-from user.tests.test_models import create_boat_owner
+from base.models import Base
 from boat.models import Boat, BoatCoordinates, ComfortBoat, Tariff
 from boat.templatetags import boat_extras
-from base.models import Base
+from boat.tests.test_models import create_model, create_simple_boat
+from user.tests.test_models import create_boat_owner
 
-import datetime
 
 class BoatExtrasTestCase(TestCase):
 

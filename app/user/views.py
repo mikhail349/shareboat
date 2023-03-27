@@ -1,25 +1,25 @@
-import random
 import logging
+import random
 
-import requests
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as django_login, \
-                                logout as django_logout
-from django.contrib.auth.decorators import login_required, permission_required
-from django.http import JsonResponse
-from django.contrib.auth import get_user_model
-from django.conf import settings
-from django.contrib.auth.models import Group
 import jwt
+import requests
+from django.conf import settings
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Group
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
 
 from config import tokens
 from config.exceptions import InvalidToken
-from emails.models import UserEmail
-from user.forms import UpdateForm
 from emails.exceptions import EmailLagError
+from emails.models import UserEmail
 from notification import utils as notify
-from .models import User, TelegramUser
+from user.forms import UpdateForm
 
+from .models import TelegramUser, User
 
 logger_admin_mails = logging.getLogger('mail_admins')
 logger = logging.getLogger(__name__)

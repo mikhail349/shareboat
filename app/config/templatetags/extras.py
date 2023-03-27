@@ -19,6 +19,7 @@ def is_debug():
 def div(value, arg):
     return str(value / arg).replace(',', '.')
 
+
 @register.simple_tag
 def settings_value(name):
     return getattr(settings, name, "")

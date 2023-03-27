@@ -1,11 +1,10 @@
-import sys
+import argparse
 import os
+import sys
 
 import django
-import argparse
 
 from booking.utils import autoupdate_statuses
-
 
 desc = """Обновляет статусы бронирований:
 1. Проставляет "Отменена" для броней,

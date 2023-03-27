@@ -1,16 +1,17 @@
 import datetime
 
-from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
+from django.db import models
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
-from .utils import send_email
-from .exceptions import EmailLagError
 from config import tokens
+
+from .exceptions import EmailLagError
+from .utils import send_email
 
 
 class UserEmail(models.Model):

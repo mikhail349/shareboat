@@ -1,12 +1,13 @@
-from django.test import TestCase
-from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+import datetime
 
-from boat.models import Boat, BoatFav, BoatCoordinates, Manufacturer, Model, Specification, get_upload_to, Tariff
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django.test import TestCase
+
+from boat.models import (Boat, BoatCoordinates, BoatFav, Manufacturer, Model,
+                         Specification, Tariff, get_upload_to)
 from user.tests.test_models import create_boat_owner
 
-import datetime
-   
 
 def create_model():
     manufacturer = Manufacturer.objects.create(name="Manufacturer1")

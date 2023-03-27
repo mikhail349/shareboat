@@ -1,10 +1,12 @@
-from django.test import TestCase
-from user.models import User, TelegramUser
-from django.contrib.auth.models import Group, Permission
-from file.tests.test_models import get_imagefile
-
 import json
 from types import SimpleNamespace
+
+from django.contrib.auth.models import Group, Permission
+from django.test import TestCase
+
+from file.tests.test_models import get_imagefile
+from user.models import TelegramUser, User
+
 
 def create_user(email, password): # pragma: no cover
     user = User.objects.create(email=email)

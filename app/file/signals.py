@@ -6,7 +6,6 @@ from PIL import Image, UnidentifiedImageError
 
 from . import utils
 
-
 logger = logging.getLogger(__name__)
 
 

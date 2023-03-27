@@ -1,20 +1,19 @@
-from django.test import TestCase, Client
-from django.urls import reverse
-from base.models import Base
-
-from boat.tests.test_models import create_model, create_simple_boat
-from boat.models import BoatFav, BoatFile, Manufacturer, Model, Boat, Tariff
-from booking.models import Booking
-from chat.models import MessageBoat
-
-from file.tests.test_models import get_imagefile
-from user.tests.test_models import create_boat_owner, create_moderator, create_user
+import datetime
+import json
+import time
 
 from django.contrib.auth.models import Group
+from django.test import Client, TestCase
+from django.urls import reverse
 
-import json
-import datetime
-import time
+from base.models import Base
+from boat.models import Boat, BoatFav, BoatFile, Manufacturer, Model, Tariff
+from boat.tests.test_models import create_model, create_simple_boat
+from booking.models import Booking
+from chat.models import MessageBoat
+from file.tests.test_models import get_imagefile
+from user.tests.test_models import (create_boat_owner, create_moderator,
+                                    create_user)
 
 
 class TariffTestCase(TestCase):

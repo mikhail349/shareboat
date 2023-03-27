@@ -1,11 +1,10 @@
-import sys
+import argparse
 import os
+import sys
 
 import django
-import argparse
 
 from emails.utils import send_email
-
 
 parser = argparse.ArgumentParser(description="Отправляет тестовое письмо")
 parser.add_argument("--project_path", required=False, type=str,

@@ -1,7 +1,8 @@
 import os
+
 from django.test import TestCase
 
-from boat.models import Manufacturer, Model, Boat, BoatFile
+from boat.models import Boat, BoatFile, Manufacturer, Model
 from boat.serializers import BoatFileSerializer
 from file.tests.test_models import get_imagefile
 from user.tests.test_models import create_boat_owner

@@ -1,14 +1,16 @@
+from datetime import date, datetime
+from decimal import Decimal
 from tkinter import image_types
+
 from django.test import TestCase
 
-from booking.models import Booking 
+from boat.tests.test_models import (create_boat_owner, create_model,
+                                    create_simple_boat)
+from booking.models import Booking
 from booking.templatetags.booking_extras import get_status_color, spectolist
-from boat.tests.test_models import create_boat_owner, create_model, create_simple_boat
 
-from datetime import datetime, date
-from decimal import Decimal
 
-class TestCase(TestCase):
+class BookingTestCase(TestCase):
     def test_get_status_color(self):
         self.assertEqual(get_status_color(Booking.Status.DECLINED), 'bg-booking-data text-danger')
         self.assertEqual(get_status_color(Booking.Status.ACCEPTED), 'bg-booking-data text-success')

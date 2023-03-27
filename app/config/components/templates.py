@@ -2,7 +2,6 @@ import os
 
 from config.settings import BASE_DIR
 
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

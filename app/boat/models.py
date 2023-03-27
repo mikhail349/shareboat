@@ -1,18 +1,18 @@
 from datetime import datetime
 from decimal import Decimal
 
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q, Exists, OuterRef, Value, Prefetch, F, \
-                             DecimalField
-from django.db.models.signals import pre_save, post_save
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import (DecimalField, Exists, F, OuterRef, Prefetch, Q,
+                              Value)
 from django.db.models.functions import Cast
+from django.db.models.signals import post_save, pre_save
+from django.utils.translation import gettext_lazy as _
 
-from user.models import User
-from file import utils, signals
 from base.models import Base
+from file import signals, utils
+from user.models import User
 
 
 class ActiveBoatManager(models.Manager):

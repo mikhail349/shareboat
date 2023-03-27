@@ -1,12 +1,12 @@
+import datetime
+
 from django.test import TestCase
 
+from boat.models import Tariff
 from boat.tests.test_models import create_model, create_simple_boat
+from boat.utils import calc_booking
 from user.tests.test_models import create_boat_owner
 
-from boat.models import Tariff
-from boat.utils import calc_booking
-
-import datetime
 
 class UtilsTestCase(TestCase):
 

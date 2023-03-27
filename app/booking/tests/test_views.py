@@ -1,15 +1,16 @@
+import json
+from datetime import date, datetime
+from decimal import Decimal
+
 from django.test import Client, TestCase
 from django.urls import reverse
-from boat.models import Boat, Tariff
 
-from boat.tests.test_models import create_boat_owner, create_model, create_simple_boat
-from user.tests.test_models import create_user
+from boat.models import Boat, Tariff
+from boat.tests.test_models import (create_boat_owner, create_model,
+                                    create_simple_boat)
 from booking.models import Booking, Prepayment
 from booking.views import get_confirm_create_context
-
-from datetime import datetime, date
-import json
-from decimal import Decimal
+from user.tests.test_models import create_user
 
 
 class BookingTestCase(TestCase):

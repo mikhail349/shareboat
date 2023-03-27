@@ -1,12 +1,14 @@
-from django.test import TestCase, Client
+import json
+import time
+
+from django.test import Client, TestCase
 from django.urls import reverse
 
-from boat.tests.test_models import create_boat_owner, create_simple_boat, create_model
-from user.tests.test_models import create_user
+from boat.tests.test_models import (create_boat_owner, create_model,
+                                    create_simple_boat)
 from chat.models import MessageBoat, MessageSupport
+from user.tests.test_models import create_user
 
-import time
-import json
 
 class ChatTestCase(TestCase):
 

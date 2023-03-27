@@ -1,6 +1,8 @@
 from io import BytesIO
+
 from django.core.files.base import File
 from PIL import Image
+
 
 def get_imagefile(filename='test.png', size=(50,50)):
     image_file = BytesIO()

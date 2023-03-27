@@ -1,10 +1,10 @@
-from django.db import models
-from django.utils.translation import gettext as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db.models.signals import pre_save, post_save
+from django.db import models
+from django.db.models.signals import post_save, pre_save
+from django.utils.translation import gettext as _
 from PIL import Image
 
-from file import utils, signals
+from file import signals, utils
 
 
 class UserManager(BaseUserManager):

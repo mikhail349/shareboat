@@ -1,30 +1,31 @@
-import json
 import datetime
+import json
 from decimal import Decimal
 
-from django.shortcuts import redirect, render
+from django.conf import settings
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Max, Min, Value
-from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.core.paginator import Paginator
-from django.conf import settings
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
-from django.core.exceptions import ValidationError
-from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.decorators import api_view
 
-from boat.forms import TariffForm, TermForm
-from notification import utils as notify
-from .models import Boat, BoatFav, Manufacturer, Model, MotorBoat,\
-                    ComfortBoat, BoatFile, BoatCoordinates, Tariff, Term
-from .serializers import BoatFileSerializer, ModelSerializer
-from .utils import calc_booking as _calc_booking
 from base.models import Base
+from boat.forms import TariffForm, TermForm
 from booking.models import Booking
 from chat.models import MessageBoat
+from notification import utils as notify
+
+from .models import (Boat, BoatCoordinates, BoatFav, BoatFile, ComfortBoat,
+                     Manufacturer, Model, MotorBoat, Tariff, Term)
+from .serializers import BoatFileSerializer, ModelSerializer
+from .utils import calc_booking as _calc_booking
 
 
 def response_not_found():

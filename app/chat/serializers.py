@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from .models import MessageBooking, Message
 from user.serializers import MessageUserSerializer
+
+from .models import Message, MessageBooking
 
 
 class MessageBookingSerializerSend(serializers.ModelSerializer):

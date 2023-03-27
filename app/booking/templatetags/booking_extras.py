@@ -1,7 +1,8 @@
-from decimal import Decimal
 import json
+from decimal import Decimal
 
 from django import template
+
 from booking.models import Booking
 
 register = template.Library()

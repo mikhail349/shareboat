@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Booking, Prepayment, BoatInfo, BoatInfoCoordinates
+from .models import BoatInfo, BoatInfoCoordinates, Booking, Prepayment
 
 
 class PrepaymentInline(admin.StackedInline):

@@ -2,10 +2,11 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-from .exceptions import BookingDateRangeException, \
-                        BookingDuplicatePendingException
-from boat.models import Boat, Model, Base
+from boat.models import Base, Boat, Model
 from user.models import User
+
+from .exceptions import (BookingDateRangeException,
+                         BookingDuplicatePendingException)
 
 
 class BookingQuerySet(models.QuerySet):
