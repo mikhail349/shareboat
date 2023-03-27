@@ -7,6 +7,7 @@ from file import signals, utils
 
 
 class Base(models.Model):
+    """Модель базы."""
     name = models.CharField(max_length=255)
     lon = models.DecimalField(max_digits=9, decimal_places=6)
     lat = models.DecimalField(max_digits=9, decimal_places=6)
@@ -32,6 +33,7 @@ class Base(models.Model):
 
 
 class BaseImage(models.Model):
+    """Модель фотографии базы."""
     image = models.ImageField(upload_to=utils.get_file_path)
     base = models.ForeignKey(Base,
                              on_delete=models.CASCADE,
