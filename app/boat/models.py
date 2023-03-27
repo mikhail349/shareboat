@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -12,22 +13,32 @@ from django.utils.translation import gettext_lazy as _
 
 from base.models import Base
 from file import signals, utils
-from user.models import User
+
+User = get_user_model()
 
 
 class ActiveBoatManager(models.Manager):
+    """Менеджер активных лодок."""
     def get_queryset(self):
         return super().get_queryset().exclude(status=Boat.Status.DELETED)
 
 
 class PublishedBoatManager(models.Manager):
+    """Менеджер опубликованных лодок."""
     def get_queryset(self):
         return super().get_queryset().filter(status=Boat.Status.PUBLISHED)
 
 
 class BoatQuerySet(models.QuerySet):
-    def annotate_in_fav(self, user):
-        if user.is_authenticated:
+    """QuerySet лодки."""
+    def annotate_in_fav(self, user: User):  # type: ignore
+        """Добавить поле, добавлена ли лодка в избранное.
+
+        Args:
+            user: пользователь
+
+        """
+        if user.is_authenticated:  # type: ignore
             return self.annotate(
                 in_fav=Exists(BoatFav.objects.filter(boat__pk=OuterRef('pk'),
                                                      user=user))
@@ -35,6 +46,7 @@ class BoatQuerySet(models.QuerySet):
         return self.annotate(in_fav=Value(False))
 
     def prefetch_actual_tariffs(self):
+        """Предварительно выбрать активные тарифы с ценой за день."""
         actual_tariffs = Tariff.objects.active_gte_now().annotate(
             price_per_day=Cast(F('price') / F('duration'),
                                DecimalField(max_digits=6, decimal_places=0))
@@ -45,11 +57,17 @@ class BoatQuerySet(models.QuerySet):
         )
 
     def active(self):
+        """Исключить удаленные лодки."""
         return self.exclude(status=Boat.Status.DELETED)
 
 
 class TariffQuerySet(models.QuerySet):
+    """QuerySet тарифа."""
     def active_gte_now(self):
+        """
+        Отфильтровать активные тарифы, которые действуют сейчас или
+        будут действовать в будущем.
+        """
         now = datetime.now()
         return self.filter(
             Q(active=True),
@@ -58,6 +76,7 @@ class TariffQuerySet(models.QuerySet):
 
 
 class Manufacturer(models.Model):
+    """Модель производителя лодок."""
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -68,6 +87,7 @@ class Manufacturer(models.Model):
 
 
 class Model(models.Model):
+    """Модель моделей лодок."""
     name = models.CharField(max_length=255)
     manufacturer = models.ForeignKey(
         Manufacturer, on_delete=models.PROTECT, related_name="models")
@@ -80,6 +100,7 @@ class Model(models.Model):
 
 
 class Term(models.Model):
+    """Модель шаблонов условий."""
     name = models.CharField('Название шаблона', max_length=255)
     content = models.TextField('Текст условий')
     user = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -92,7 +113,7 @@ class Term(models.Model):
 
 
 class Boat(models.Model):
-
+    """Модель лодки."""
     class Meta:
         permissions = [
             ('view_boats_on_moderation', 'Can view boats on moderation'),
@@ -101,6 +122,7 @@ class Boat(models.Model):
         ]
 
     class Status(models.IntegerChoices):
+        """Статусы лодки."""
         DELETED = -2, _("Удалена")
         DECLINED = -1, _("Отклонена")
         SAVED = 0, _("Сохранена")
@@ -108,6 +130,7 @@ class Boat(models.Model):
         PUBLISHED = 2, _("Опубликована")
 
     class Type(models.IntegerChoices):
+        """Типы лодки."""
         SAILING_YACHT = 0, _("Парусная яхта")
         MOTOR_BOAT = 1, _("Катер/моторная лодка")
         BOAT = 2, _("Лодка")
@@ -153,14 +176,32 @@ class Boat(models.Model):
     published = PublishedBoatManager.from_queryset(BoatQuerySet)()
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
+        """Свойство - активна ли лодка (или удалена).
+
+        Returns:
+            bool: активна / удалена
+
+        """
         return self.status != self.Status.DELETED
 
     @property
-    def is_published(self):
+    def is_published(self) -> bool:
+        """Свойство - опубликована ли лодка.
+
+        Returns:
+            bool: опубликована / не опубликована
+
+        """
         return self.status == self.Status.PUBLISHED
 
-    def get_full_name(self):
+    def get_full_name(self) -> str:
+        """Получить полное название лодки с производителем и моделью.
+
+        Returns:
+            str: название лодки в формате `производитель модель "название"`
+
+        """
         manufacturer_name = self.model.manufacturer.name
         return f'{manufacturer_name} {self.model.name} "{self.name}"'
 
@@ -176,13 +217,31 @@ class Boat(models.Model):
         self.full_clean()
         super(Boat, self).save(*args, **kwargs)
 
-    def is_motor_boat(self):
+    def is_motor_boat(self) -> bool:
+        """Является ли лодка моторной.
+
+        Returns:
+            bool: да / нет
+
+        """
         return self.type in self.get_motor_boat_types()
 
-    def is_comfort_boat(self):
+    def is_comfort_boat(self) -> bool:
+        """Имеет ли лодка сан. узлы, каюты, спальные места.
+
+        Returns:
+            bool: да / нет
+
+        """
         return self.type in self.get_comfort_boat_types()
 
-    def is_custom_location(self):
+    def is_custom_location(self) -> bool:
+        """Заданы ли координаты лодки вручную.
+
+        Returns:
+            bool: да / нет
+
+        """
         try:
             self.coordinates
             return True
@@ -190,7 +249,13 @@ class Boat(models.Model):
             return False
 
     @classmethod
-    def get_motor_boat_types(cls):
+    def get_motor_boat_types(cls) -> list[tuple[int, str]]:
+        """Получить перечень моторных типов лодки.
+
+        Returns:
+            list[Type]: перечень моторных типов лодки
+
+        """
         return [
             cls.Type.SAILING_YACHT,
             cls.Type.MOTOR_BOAT,
@@ -203,7 +268,13 @@ class Boat(models.Model):
         ]
 
     @classmethod
-    def get_comfort_boat_types(cls):
+    def get_comfort_boat_types(cls) -> list[tuple[int, str]]:
+        """Получить перечень комфортных типов лодки.
+
+        Returns:
+            list[Type]: перечень комфортных типов лодки
+
+        """
         return [
             cls.Type.SAILING_YACHT,
             cls.Type.GULET,
@@ -214,7 +285,13 @@ class Boat(models.Model):
         ]
 
     @classmethod
-    def get_types(cls):
+    def get_types(cls) -> list[tuple[int, str]]:
+        """Получить перечень типов лодки, отсортированных по названию.
+
+        Returns:
+            list[Type]
+
+        """
         types = cls.Type.choices
         return sorted(types, key=lambda tup: tup[1])
 
@@ -223,6 +300,7 @@ class Boat(models.Model):
 
 
 class MotorBoat(models.Model):
+    """Модель моторной лодки."""
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE,
                                 primary_key=True, related_name="motor_boat")
     motor_amount = models.IntegerField(
@@ -234,6 +312,7 @@ class MotorBoat(models.Model):
 
 
 class ComfortBoat(models.Model):
+    """Модель комфортной лодки."""
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE,
                                 primary_key=True, related_name="comfort_boat")
     berth_amount = models.IntegerField(
@@ -247,6 +326,7 @@ class ComfortBoat(models.Model):
 
 
 class BoatCoordinates(models.Model):
+    """Модель коррдинат лодки."""
     boat = models.OneToOneField(Boat, on_delete=models.CASCADE,
                                 primary_key=True, related_name="coordinates")
     lon = models.DecimalField(max_digits=9, decimal_places=6)
@@ -256,8 +336,10 @@ class BoatCoordinates(models.Model):
 
 
 class Specification(models.Model):
+    """Модель спецификации лодки."""
 
     class Category(models.IntegerChoices):
+        """Категории спецификации лодки."""
         OTHER = 0, _("Прочее")
         ELECTRONICS = 1, _("Электроника")
 
@@ -267,16 +349,33 @@ class Specification(models.Model):
     сategory = models.IntegerField(choices=Category.choices)
 
     @classmethod
-    def get_сategories(cls):
+    def get_сategories(cls) -> list[Category]:
+        """Получить перечень категорий, отсортированных по названию.
+
+        Returns:
+            list[Category]
+
+        """
         сategories = cls.Category.choices
         return sorted(сategories, key=lambda tup: tup[1])
 
 
-def get_upload_to(instance, filename):
+def get_upload_to(instance: models.Model, filename: str) -> str:
+    """Получить путь сохранения файла.
+
+    Args:
+        instance: инстанс модели
+        filename: имя файла
+
+    Returns:
+        str
+
+    """
     return utils.get_file_path(instance, filename, 'boat/')
 
 
 class BoatFile(models.Model):
+    """Модель файлов лодки."""
     file = models.ImageField(upload_to=get_upload_to)
     boat = models.ForeignKey(
         Boat, on_delete=models.CASCADE, related_name='files')
@@ -287,6 +386,7 @@ post_save.connect(signals.compress_imagefile, sender=BoatFile)
 
 
 class BoatFav(models.Model):
+    """Модель отметки лодка нравится."""
     boat = models.ForeignKey(
         Boat, on_delete=models.PROTECT, related_name='favs')
     user = models.ForeignKey(
@@ -297,6 +397,7 @@ class BoatFav(models.Model):
 
 
 class Tariff(models.Model):
+    """Модель тарифа лодки."""
     boat = models.ForeignKey(Boat, on_delete=models.CASCADE,
                              related_name="tariffs", verbose_name='Лодка')
     active = models.BooleanField('Активен', default=False)

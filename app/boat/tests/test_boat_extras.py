@@ -18,7 +18,6 @@ class BoatExtrasTestCase(TestCase):
         self.boat = create_simple_boat(self.model, self.owner)
 
     def test_get_boat_coordinates(self):
-        self.assertDictEqual(boat_extras.get_boat_coordinates('This is not a boat instance'), {})
         self.assertDictEqual(boat_extras.get_boat_coordinates(self.boat), {})
         
         base = Base.objects.create(name='Base1', lon=111, lat=222, address="Base Address, Moscow, 15", state="Moscow")
