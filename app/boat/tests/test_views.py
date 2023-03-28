@@ -3,7 +3,7 @@ import json
 import time
 
 from django.contrib.auth.models import Group
-from django.test import tag, Client, TestCase
+from django.test import Client, TestCase, tag
 from django.urls import reverse
 
 from base.models import Base

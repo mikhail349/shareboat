@@ -92,13 +92,13 @@ def to_json(value: Any) -> str:
 
 @register.filter
 def get_status_color(value: Boat.Status) -> str:
-    """Получить CSS-класс фона статуса лодки.
+    """Получить HTML классы для статуса лодки.
 
     Args:
         value: статус лодки
 
     Returns:
-        str: CSS-класс
+        str: HTML классы
 
     """
     mapping = {

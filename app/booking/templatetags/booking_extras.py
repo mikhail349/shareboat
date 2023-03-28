@@ -9,18 +9,36 @@ register = template.Library()
 
 
 @register.filter
-def get_status_color(value):
-    if value == Booking.Status.DECLINED:
-        return 'bg-booking-data text-danger'
-    if value == Booking.Status.ACCEPTED:
-        return 'bg-booking-data text-success'
-    return 'bg-booking-data text-secondary'
+def get_status_color(status: Booking.Status) -> str:
+    """Получить HTML классы для статуса бронирования.
+
+    Args:
+        status: статус бронирования
+
+    Returns:
+        str: HTML классы
+
+    """
+    mapping = {
+        Booking.Status.DECLINED: 'bg-booking-data text-danger',
+        Booking.Status.ACCEPTED: 'bg-booking-data text-success'
+    }
+    return mapping.get(status, 'bg-booking-data text-secondary')
 
 
 @register.filter
-def spectolist(value):
+def spectolist(spec: str) -> list:
+    """Преобразовать спецификацию JSON в список.
+
+    Args:
+        spec: спецификация в формате JSON
+
+    Returns:
+        list
+
+    """
     try:
-        d = json.loads(value)
+        d = json.loads(spec)
 
         for value in d.values():
             value['price'] = Decimal(value['price'])
@@ -32,7 +50,16 @@ def spectolist(value):
 
 
 @register.filter
-def boatspectoobj(value):
+def boatspectoobj(value: str) -> dict:
+    """Преобразовать спецификацию JSON в словарь.
+
+    Args:
+        value: спецификация в формате JSON
+
+    Returns:
+        dict
+
+    """
     try:
         d = json.loads(value)
 
@@ -49,13 +76,22 @@ def boatspectoobj(value):
 
 
 @register.simple_tag
-def get_berth_amount(spec):
-    if spec.get('comfort'):
-        berth_amount_str = str(spec['comfort'].get('berth_amount'))
-        extra_berth_amount_str = ''
+def get_berth_amount(spec: dict) -> str:
+    """Получить количество спальных мест лодки с учетом доп. мест.
 
-        if spec['comfort'].get('extra_berth_amount', 0) > 0:
-            extra_berth_amount_str = '+' + \
-                str(spec['comfort'].get('extra_berth_amount'))
-        return berth_amount_str+extra_berth_amount_str
-    return '-'
+    Args:
+        spec: спецификация лодки из бронирования
+
+    Returns:
+        str: кол-во спальных мест
+
+    """
+    if not spec.get('comfort'):
+        return '-'
+
+    berth_amount_str = str(spec['comfort'].get('berth_amount'))
+    extra_berth_amount = spec["comfort"].get("extra_berth_amount", 0)
+    extra_berth_amount_str = (
+        f'+{str(extra_berth_amount)}' if extra_berth_amount > 0 else ''
+    )
+    return f'{berth_amount_str}{extra_berth_amount_str}'

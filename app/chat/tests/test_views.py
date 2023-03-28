@@ -1,7 +1,7 @@
 import json
 import time
 
-from django.test import tag, Client, TestCase
+from django.test import Client, TestCase, tag
 from django.urls import reverse
 
 from boat.tests.test_models import (create_boat_owner, create_model,
