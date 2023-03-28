@@ -3,7 +3,7 @@ import json
 import time
 
 from django.contrib.auth.models import Group
-from django.test import Client, TestCase
+from django.test import tag, Client, TestCase
 from django.urls import reverse
 
 from base.models import Base
@@ -577,6 +577,7 @@ class BoatTestCase(TestCase):
         boats = response.context.get('boats', [])
         self.assertEqual(len(boats), 0)
 
+    @tag('slow')
     def test_search_boats_time(self):
         now = datetime.datetime.now()
         for i in range(1000):

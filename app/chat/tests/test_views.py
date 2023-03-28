@@ -1,7 +1,7 @@
 import json
 import time
 
-from django.test import Client, TestCase
+from django.test import tag, Client, TestCase
 from django.urls import reverse
 
 from boat.tests.test_models import (create_boat_owner, create_model,
@@ -12,6 +12,7 @@ from user.tests.test_models import create_user
 
 class ChatTestCase(TestCase):
 
+    @tag('slow')
     def test_list_time(self):
         BOAT_AMOUNT = 100
         MSG_AMOUNT_PER_BOAT = 50
@@ -36,6 +37,7 @@ class ChatTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['messages']), BOAT_AMOUNT + 1) # + support chat
 
+    @tag('slow')
     def test_message_time(self):
         MSG_AMOUNT = 1000
 

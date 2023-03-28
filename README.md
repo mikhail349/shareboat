@@ -60,5 +60,5 @@ SUPPORT_TELEGRAM=
 4. Создать виртуальное Python-окружение `python -m venv venv`
 5. Установить зависимости `pip install -r requirements.txt`
 6. Собрать статику `python manage.py collectstatic --noinput`
-7. Запустить тест `coverage run manage.py test -v 2`
+7. Запустить тест `coverage run manage.py test -v 2`. Либо с параметром `--exclude-tag=slow`, чтобы не тестировать скорость
 8. Сформировать отчет `coverage html`
