@@ -1,2 +1,2 @@
 class EmailLagError(Exception):
-    pass
+    """Ошибка - повторная отправка еще недоступна."""

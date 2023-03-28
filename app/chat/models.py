@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -6,7 +7,7 @@ from django.utils import timezone
 from boat.models import Boat
 from booking.models import Booking
 
-User = get_user_model()
+User: AbstractBaseUser = get_user_model()
 
 
 class Message(models.Model):
