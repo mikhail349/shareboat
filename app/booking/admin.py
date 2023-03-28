@@ -4,10 +4,12 @@ from .models import BoatInfo, BoatInfoCoordinates, Booking, Prepayment
 
 
 class PrepaymentInline(admin.StackedInline):
+    """Вкладка предоплаты."""
     model = Prepayment
 
 
 class BookingAdmin(admin.ModelAdmin):
+    """Модель админа бронирования."""
     inlines = [PrepaymentInline]
 
 

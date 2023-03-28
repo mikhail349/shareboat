@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -22,11 +22,21 @@ from .exceptions import (BookingDateRangeException,
 from .models import BoatInfo, BoatInfoCoordinates, Booking, Prepayment
 
 
-def get_confirm_create_context(data, boat_pk):
+def get_confirm_create_context(data: dict, boat_pk: int) -> dict:
+    """Получить контекст для создания бронирования.
+
+    Args:
+        data: POST данные
+        boat_pk: ID лодки
+
+    Returns:
+        dict
+
+    """
     boat = Boat.published.get(pk=boat_pk)
     start_date = parse_date(data.get('start_date'))
     end_date = parse_date(data.get('end_date'))
-    calculated_data = json.loads(data.get('calculated_data'))
+    calculated_data = json.loads(data['calculated_data'])
 
     context = {
         'boat': boat,
@@ -43,7 +53,17 @@ def get_confirm_create_context(data, boat_pk):
 
 
 @login_required
-def confirm(request, boat_pk):
+def confirm(request: HttpRequest, boat_pk: int) -> HttpResponse:
+    """View подтверждения бронирования.
+
+    Args:
+        request: http-запрос
+        boat_pk: ID лодки
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'POST':
         try:
             context = get_confirm_create_context(request.POST, boat_pk)
@@ -57,8 +77,23 @@ def confirm(request, boat_pk):
 
 
 @login_required
-def create(request):
-    def _create_boat_info(booking):
+def create(request: HttpRequest) -> HttpResponse:
+    """View добавления бронирования.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
+    def _create_boat_info(booking: Booking):
+        """Сохранить в БД информацию о лодке из бронирования.
+
+        Args:
+            booking: бронирование
+
+        """
         boat = booking.boat
 
         term_content = None
@@ -170,7 +205,16 @@ def create(request):
 
 
 @login_required
-def my_bookings(request):
+def my_bookings(request: HttpRequest) -> HttpResponse:
+    """View бронирований пользователя.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     status = request.GET.get('status')
     bookings = Booking.objects.filter(renter=request.user).filter_by_status(
         status).order_by('-start_date')
@@ -179,7 +223,16 @@ def my_bookings(request):
 
 
 @login_required
-def requests(request):
+def requests(request: HttpRequest) -> HttpResponse:
+    """View бронирований арендодателя с фильтром по статусу.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     status = request.GET.get('status')
     requests = Booking.objects.filter(
         boat__owner=request.user).filter_by_status(status).order_by('-pk')
@@ -189,6 +242,15 @@ def requests(request):
 
 @permission_required('user.view_all_bookings', raise_exception=True)
 def all(request):
+    """View бронирований с фильтром по статусу.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     status = request.GET.get('status')
     bookings = Booking.objects.filter_by_status(status).order_by('-pk')
     return render(request, 'booking/all.html',
@@ -197,8 +259,17 @@ def all(request):
 
 @login_required
 @transaction.atomic
-def set_request_status(request, pk):
+def set_request_status(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка смены статуса бронирования от лица арендодателя.
 
+    Args:
+        request: http-запрос
+        pk: ID бронирования
+
+    Returns:
+        JsonResponse
+
+    """
     ALLOWED_STATUSES = {
         Booking.Status.PENDING: (Booking.Status.DECLINED,
                                  Booking.Status.ACCEPTED),
@@ -210,7 +281,7 @@ def set_request_status(request, pk):
         new_status = int(request.POST.get('status'))
         booking = Booking.objects.get(pk=pk, boat__owner=request.user)
 
-        if new_status not in ALLOWED_STATUSES.get(booking.status):
+        if new_status not in ALLOWED_STATUSES[booking.status]:
             return JsonResponse({'message': 'Некорректный статус'},
                                 status=400)
 
@@ -228,7 +299,9 @@ def set_request_status(request, pk):
         if new_status == Booking.Status.ACCEPTED:
             if booking.status == Booking.Status.PENDING:
                 if booking.boat.prepayment_required:
-                    new_status = Booking.Status.PREPAYMENT_REQUIRED
+                    new_status = (
+                        Booking.Status.PREPAYMENT_REQUIRED  # type: ignore
+                    )
                     prepayment_until = \
                         (timezone.now() + timedelta(
                             days=int(settings.PREPAYMENT_DAYS_LIMIT)
@@ -251,7 +324,17 @@ def set_request_status(request, pk):
 
 
 @login_required
-def view(request, pk):
+def view(request: HttpRequest, pk: int) -> HttpResponse:
+    """View просмотра бронирования.
+
+    Args:
+        request: http-запрос
+        pk: ID бронирования
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         if request.user.has_perm('user.view_all_bookings'):
             booking = Booking.objects.get(pk=pk)
@@ -268,8 +351,17 @@ def view(request, pk):
 
 
 @login_required
-def set_status(request, pk):
+def set_status(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка смены статуса бронирования от лица арендатора.
 
+    Args:
+        request: http-запрос
+        pk: ID бронирования
+
+    Returns:
+        JsonResponse
+
+    """
     ALLOWED_STATUSES = {
         Booking.Status.PENDING: (Booking.Status.DECLINED,),
     }
@@ -278,7 +370,7 @@ def set_status(request, pk):
         new_status = int(request.POST.get('status'))
         booking = Booking.objects.get(pk=pk, renter=request.user)
 
-        if new_status not in ALLOWED_STATUSES.get(booking.status):
+        if new_status not in ALLOWED_STATUSES[booking.status]:
             return JsonResponse({'message': 'Некорректный статус'}, status=400)
 
         booking.status = new_status

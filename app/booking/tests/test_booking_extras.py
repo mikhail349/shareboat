@@ -14,8 +14,8 @@ class BookingTestCase(TestCase):
     def test_get_status_color(self):
         self.assertEqual(get_status_color(Booking.Status.DECLINED), 'bg-booking-data text-danger')
         self.assertEqual(get_status_color(Booking.Status.ACCEPTED), 'bg-booking-data text-success')
-        self.assertEqual(get_status_color(Booking.Status.ACTIVE), 'bg-light text-secondary')
-        self.assertEqual(get_status_color(Booking.Status.DONE), 'bg-light text-secondary')
+        self.assertEqual(get_status_color(Booking.Status.ACTIVE), 'bg-booking-data text-secondary')
+        self.assertEqual(get_status_color(Booking.Status.DONE), 'bg-booking-data text-secondary')
 
     def test_spectolist(self):
         owner = create_boat_owner('owner@mail.ru', '12345')

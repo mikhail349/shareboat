@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -10,30 +12,56 @@ from .exceptions import (BookingDateRangeException,
 
 
 class BookingQuerySet(models.QuerySet):
-    def in_range(self, start_date, end_date):
+    """QuerySet бронирования."""
+    def in_range(self, start_date: datetime.date, end_date: datetime.date):
+        """Отфильтровать за период.
+
+        Args:
+            start_date: дата начала
+            end_date: дата окончания
+
+        """
         return self.filter(
             Q(start_date__range=(start_date, end_date)) |
             Q(end_date__range=(start_date, end_date)) |
             Q(start_date__lt=start_date, end_date__gt=end_date)
         )
 
-    def blocked_in_range(self, start_date, end_date):
+    def blocked_in_range(self,
+                         start_date: datetime.date, end_date: datetime.date):
+        """Отфильтровать заблокированные бронирования за период.
+
+        Args:
+            start_date: дата начала
+            end_date: дата окончания
+
+        """
         return self.filter(status__in=Booking.BLOCKED_STATUSES) \
                    .in_range(start_date, end_date)
 
-    def filter_by_status(self, status):
-        if status == 'pending':
-            return self.filter(status__in=Booking.PENDING_STATUSES)
-        if status == 'active':
-            return self.filter(status__in=Booking.ACTIVE_STATUSES)
-        elif status == 'done':
-            return self.filter(status__in=Booking.DONE_STATUSES)
-        return self
+    def filter_by_status(self, status: str):
+        """Отфильтровать бронирования по статусу.
+
+        Args:
+            status: статус
+
+        """
+        mapping = {
+            'pending': Booking.PENDING_STATUSES,
+            'active': Booking.ACTIVE_STATUSES,
+            'done': Booking.DONE_STATUSES,
+        }
+        statuses = mapping.get(status)
+        if not statuses:
+            return self
+        return self.filter(status__in=statuses)
 
 
 class Booking(models.Model):
+    """Модель бронирования."""
 
     class Status(models.IntegerChoices):
+        """Статусы бронирования."""
         PENDING = 0, _("Ожидание подтверждения")
         DECLINED = -1, _("Отменено")
         ACCEPTED = 1, _("Подтверждено")
@@ -98,12 +126,14 @@ class Booking(models.Model):
 
 
 class Prepayment(models.Model):
+    """Модель предоплаты."""
     booking = models.OneToOneField(
         Booking, primary_key=True, on_delete=models.CASCADE)
     until = models.DateTimeField()
 
 
 class BoatInfo(models.Model):
+    """Модель информации о лодке."""
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE,
                                    primary_key=True, related_name="boat_info")
     prepayment_required = models.BooleanField()
@@ -121,6 +151,7 @@ class BoatInfo(models.Model):
 
 
 class BoatInfoCoordinates(models.Model):
+    """Модель информации о координатах лодки."""
     boat_info = models.OneToOneField(BoatInfo, on_delete=models.CASCADE,
                                      primary_key=True,
                                      related_name="coordinates")

@@ -1,14 +1,30 @@
-def send_status_to_renter(booking):
+from booking.models import Booking
+
+
+def send_status_to_renter(booking: Booking):
+    """Отправить арендатору уведомление с текущим статусом.
+
+    Args:
+        booking: бронирование
+
+    """
     from chat.models import MessageBooking
     MessageBooking.objects.send_status_to_renter(booking)
 
 
-def send_initial_to_owner(booking):
+def send_initial_to_owner(booking: Booking):
+    """Отправить арендодателю начальное уведомление.
+
+    Args:
+        booking: бронирование
+
+    """
     from chat.models import MessageBooking
     MessageBooking.objects.send_initial_to_owner(booking)
 
 
 def autoupdate_statuses():
+    """Обновить статусы бронирований."""
     from django.utils import timezone
 
     from booking.models import Booking
@@ -28,6 +44,7 @@ def autoupdate_statuses():
 
 
 def autoremind_prepayment():
+    """Напомнить об предоплате."""
     from datetime import timedelta
 
     from django.utils import timezone
