@@ -1,2 +1,2 @@
 class AssetFileCountException(Exception):
-    pass
+    """Ошибка - превышение кол-ва прикрепленных файлов к объекту."""

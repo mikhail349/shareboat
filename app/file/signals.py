@@ -10,6 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 def verify_imagefile(sender, instance, *args, **kwargs):
+    """Проверить файл.
+
+    Raises:
+        ValidationError: превышение размера файла
+        UnidentifiedImageError: файл не явялется изображением
+
+    """
     for field in sender._meta.fields:
         if isinstance(field, models.ImageField):
             image_file = getattr(instance, field.name)
@@ -27,6 +34,7 @@ def verify_imagefile(sender, instance, *args, **kwargs):
 
 
 def compress_imagefile(sender, instance, created, *args, **kwargs):
+    """Сжать файл."""
     try:
         for field in sender._meta.fields:
             if isinstance(field, models.ImageField):
