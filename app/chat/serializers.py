@@ -6,6 +6,7 @@ from .models import Message, MessageBooking
 
 
 class MessageBookingSerializerSend(serializers.ModelSerializer):
+    """Сериализатор отправки сообщения по бронированию."""
     booking_id = serializers.IntegerField()
 
     class Meta:
@@ -14,10 +15,20 @@ class MessageBookingSerializerSend(serializers.ModelSerializer):
 
 
 class MessageSerializerList(serializers.ModelSerializer):
+    """Сериализатор сообщений."""
     sender = MessageUserSerializer()
     is_out = serializers.SerializerMethodField()
 
-    def get_is_out(self, obj):
+    def get_is_out(self, obj: Message) -> bool:
+        """Является ли сообщение исходящим для пользователя.
+
+        Args
+            obj: сообщение
+
+        Returns:
+            bool: исходящее / входящее
+
+        """
         if self.context.get('is_support'):
             return obj.sender is None
         return obj.sender == self.context['request'].user

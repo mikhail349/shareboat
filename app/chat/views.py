@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Prefetch, Q
-from django.http import JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -15,7 +15,15 @@ from .serializers import MessageSerializerList
 
 
 @permission_required('user.support_chat', raise_exception=True)
-def support(request):
+def support(request: HttpRequest) -> HttpResponse:
+    """View страницы поддержки.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+    """
     messages = []
 
     for user in User.objects.filter(is_active=True) \
@@ -36,7 +44,17 @@ def support(request):
 
 
 @permission_required('user.support_chat', raise_exception=True)
-def support_chat(request, user_pk):
+def support_chat(request: HttpRequest, user_pk: int) -> HttpResponse:
+    """View чата поддержки с пользователем.
+
+    Args:
+        request: http-запрос
+        user_pk: ID пользователя
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         user = User.objects.get(pk=user_pk)
     except User.DoesNotExist:
@@ -59,7 +77,20 @@ def support_chat(request, user_pk):
 
 
 @permission_required('user.support_chat', raise_exception=True)
-def get_new_support_messages(request, user_pk):
+def get_new_support_messages(
+    request: HttpRequest,
+    user_pk: int
+) -> JsonResponse:
+    """Ручка получения новых сообщений от пользователя в поддержке.
+
+    Args:
+        request: http-запрос
+        user_pk: ID пользователя
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'GET':
         messages = MessageSupport.objects.filter(
             sender__pk=user_pk, recipient__isnull=True, read=False
@@ -73,7 +104,17 @@ def get_new_support_messages(request, user_pk):
 
 
 @permission_required('user.support_chat', raise_exception=True)
-def send_support_message(request, user_pk):
+def send_support_message(request: HttpRequest, user_pk: int) -> JsonResponse:
+    """Ручка отправки новых сообщений пользователю поддержкой.
+
+    Args:
+        request: http-запрос
+        user_pk: ID пользователя
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'POST':
         data = request.POST
         try:
@@ -103,7 +144,16 @@ def send_support_message(request, user_pk):
 
 
 @login_required
-def list(request):
+def list(request: HttpRequest) -> HttpResponse:
+    """View списка сообщений.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     user = request.user
     messages = []
 
@@ -178,7 +228,17 @@ def list(request):
 
 
 @login_required
-def get_new_messages_booking(request, pk):
+def get_new_messages_booking(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка получения новых сообщений по бронированию.
+
+    Args:
+        request: http-запрос
+        pk: ID бронирования
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'GET':
         try:
             booking = Booking.objects.get(Q(pk=pk), Q(
@@ -201,7 +261,16 @@ def get_new_messages_booking(request, pk):
 
 
 @login_required
-def get_new_messages(request):
+def get_new_messages(request: HttpRequest) -> JsonResponse:
+    """Ручка получения новых сообщений от поддержки.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'GET':
         messages = MessageSupport.objects.filter(
             recipient=request.user, read=False).order_by('sent_at')
@@ -212,9 +281,24 @@ def get_new_messages(request):
 
 
 @login_required
-def get_new_messages_boat(request, pk):
+def get_new_messages_boat(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка получения новых сообщений по лодке.
 
-    def _not_found():
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        JsonResponse
+
+    """
+    def _not_found() -> JsonResponse:
+        """Вернуть 404 в формате JSON.
+
+        Returns:
+            JsonResponse
+
+        """
         return JsonResponse({'message': 'Бронирование не найдено'},
                             status=400)
 
@@ -242,7 +326,17 @@ def get_new_messages_boat(request, pk):
 
 
 @login_required
-def send_message_booking(request, pk):
+def send_message_booking(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка отправки сообщений по бронированию.
+
+    Args:
+        request: http-запрос
+        pk: ID бронирования
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'POST':
         data = request.POST
         try:
@@ -278,7 +372,17 @@ def send_message_booking(request, pk):
 
 
 @login_required
-def send_message_boat(request, pk):
+def send_message_boat(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка отправки сообщений по лодке.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'POST':
         data = request.POST
         try:
@@ -318,7 +422,16 @@ def send_message_boat(request, pk):
 
 
 @login_required
-def send_message(request):
+def send_message(request: HttpRequest) -> JsonResponse:
+    """Ручка отправки сообщений в поддержку.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        JsonResponse
+
+    """
     if request.method == 'POST':
         data = request.POST
         new_message = MessageSupport.objects.create(
@@ -337,7 +450,16 @@ def send_message(request):
 
 
 @login_required
-def message(request):
+def message(request: HttpRequest) -> HttpResponse:
+    """View чата с поддержкой.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     messages = MessageSupport.objects.filter(
         Q(sender=request.user) | Q(recipient=request.user)
     ).order_by(
@@ -355,7 +477,17 @@ def message(request):
 
 
 @login_required
-def booking(request, pk):
+def booking(request: HttpRequest, pk: int) -> HttpResponse:
+    """View чата по бронированию.
+
+    Args:
+        request: http-запрос
+        pk: ID бронирования
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         booking = Booking.objects.get(Q(pk=pk), Q(
             renter=request.user) | Q(boat__owner=request.user))
@@ -380,7 +512,17 @@ def booking(request, pk):
 
 
 @login_required
-def boat(request, pk):
+def boat(request: HttpRequest, pk: int) -> HttpResponse:
+    """View чата по лодке.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         is_moderator = request.user.has_perm('boat.moderate_boats')
 
@@ -418,6 +560,15 @@ def boat(request, pk):
 
 
 @login_required
-def read_all(request):
+def read_all(request: HttpRequest) -> HttpResponse:
+    """Ручка отметить все сообщения как прочитанные.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse: редирект в список чатов
+
+    """
     request.user.messages_as_recipient.filter(read=False).update(read=True)
     return redirect(reverse('chat:list'))
