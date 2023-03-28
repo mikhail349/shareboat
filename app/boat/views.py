@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Max, Min, Value
-from django.http import JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -28,11 +28,25 @@ from .serializers import BoatFileSerializer, ModelSerializer
 from .utils import calc_booking as _calc_booking
 
 
-def response_not_found():
+def response_not_found() -> JsonResponse:
+    """Вернуть 404 в формате JSON.
+
+    Returns:
+        JsonResponse
+    """
     return JsonResponse({'message': 'Лодка не найдена'}, status=404)
 
 
-def get_form_context(request):
+def get_form_context(request: HttpRequest) -> dict:
+    """Получить контекст для формы.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        dict: словарь с данными
+
+    """
     return {
         'boat_types': Boat.get_types(),
         'motor_boat_types': json.dumps(Boat.get_motor_boat_types()),
@@ -43,24 +57,48 @@ def get_form_context(request):
     }
 
 
-def get_bool(value):
+def get_bool(value) -> bool:
+    """Конвертировать значение в bool.
+
+    Args:
+        value: значение
+
+    Returns:
+        bool
+
+    """
     if value in (True, 'True', 'true', '1', 'on'):
         return True
     return False
 
 
-FILES_LIMIT_COUNT = 30
-
-
 @login_required
-def get_models(request, pk):
+def get_models(request: HttpRequest, pk: int) -> JsonResponse:
+    """Получить модели производителя.
+
+    Args:
+        request: http-запрос
+        pk: ИД производителя
+
+    Returns:
+        JsonResponse
+    """
     models = Model.objects.filter(manufacturer__pk=pk)
     return JsonResponse({'data': ModelSerializer(models, many=True).data})
 
 
 @login_required
 @permission_required('boat.view_my_boats', raise_exception=True)
-def my_boats(request):
+def my_boats(request: HttpRequest) -> HttpResponse:
+    """View лодок пользователя.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     page = request.GET.get('page', 1)
 
     boats = Boat.active.filter(owner=request.user).order_by('id')
@@ -77,13 +115,31 @@ def my_boats(request):
 
 @login_required
 @permission_required('boat.view_term', raise_exception=True)
-def terms(request):
+def terms(request: HttpRequest) -> HttpResponse:
+    """View шаблонов условий пользователя.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     terms = Term.objects.filter(user=request.user)
     return render(request, 'boat/terms.html', context={'terms': terms})
 
 
 @login_required
-def favs(request):
+def favs(request: HttpRequest) -> HttpResponse:
+    """View любимых лодок пользователя.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     page = request.GET.get('page', 1)
 
     boats = Boat.published.filter(
@@ -100,14 +156,33 @@ def favs(request):
 
 
 @permission_required('boat.view_boats_on_moderation', raise_exception=True)
-def boats_on_moderation(request):
+def boats_on_moderation(request: HttpRequest) -> HttpResponse:
+    """View лодок на модерации.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     boats = Boat.objects.filter(status=Boat.Status.ON_MODERATION)
     return render(request, 'boat/boats_on_moderation.html',
                   context={'boats': boats})
 
 
 @permission_required('boat.view_boats_on_moderation', raise_exception=True)
-def moderate(request, pk):
+def moderate(request: HttpRequest, pk: int) -> HttpResponse:
+    """View модерации лодки.
+
+    Args:
+        request: http-запрос
+        pk: ИД лодки
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         try:
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
@@ -122,7 +197,17 @@ def moderate(request, pk):
 
 @login_required
 @permission_required('boat.change_boat', raise_exception=True)
-def set_status(request, pk):
+def set_status(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка смены статуса лодки.
+
+    Args:
+        request: http-запрос
+        pk: ИД лодки
+
+    Returns:
+        JsonResponse
+
+    """
 
     ALLOWED_STATUSES = {
         Boat.Status.DECLINED: (Boat.Status.ON_MODERATION,),
@@ -135,7 +220,7 @@ def set_status(request, pk):
         new_status = int(request.POST.get('status'))
 
         boat = Boat.objects.get(pk=pk, owner=request.user)
-        if new_status not in ALLOWED_STATUSES.get(boat.status):
+        if new_status not in ALLOWED_STATUSES[boat.status]:
             return JsonResponse({'message': 'Некорректный статус'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -148,7 +233,17 @@ def set_status(request, pk):
 
 
 @permission_required('boat.moderate_boats', raise_exception=True)
-def accept(request, pk):
+def accept(request: HttpRequest, pk: int) -> HttpResponse:
+    """View акцепта модерации лодки.
+
+    Args:
+        request: http-запрос
+        pk: ИД лодки
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
 
@@ -170,7 +265,17 @@ def accept(request, pk):
 
 
 @permission_required('boat.moderate_boats', raise_exception=True)
-def reject(request, pk):
+def reject(request: HttpRequest, pk: int) -> HttpResponse:
+    """View отклонения модерации лодки.
+
+    Args:
+        request: http-запрос
+        pk: ИД лодки
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'POST':
         try:
             boat = Boat.objects.get(pk=pk, status=Boat.Status.ON_MODERATION)
@@ -199,7 +304,16 @@ def reject(request, pk):
             return render(request, 'not_found.html', status=404)
 
 
-def search_boats(request):
+def search_boats(request: HttpRequest) -> HttpResponse:
+    """View поиска лодок.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     date = datetime.datetime.now().date()
     q_date_from = request.GET.get('dateFrom')
     q_date_to = request.GET.get('dateTo')
@@ -285,7 +399,17 @@ def search_boats(request):
     return render(request, 'boat/search_boats.html', context)
 
 
-def switch_fav(request, pk):
+def switch_fav(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка добавления/удаления лодки из избранного для пользователя.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        JsonResponse
+
+    """
     if not request.user.is_authenticated:
         return JsonResponse({'data': 'redirect', 'url': reverse('user:login')},
                             status=302)
@@ -303,7 +427,17 @@ def switch_fav(request, pk):
     return JsonResponse({'data': res})
 
 
-def booking(request, pk):
+def booking(request: HttpRequest, pk: int) -> HttpResponse:
+    """View бронирования лодки.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         try:
             boat = Boat.published.get(pk=pk)
@@ -335,7 +469,21 @@ def booking(request, pk):
             return render(request, 'not_found.html', status=404)
 
 
-def calc_booking(request, pk):
+def calc_booking(request: HttpRequest, pk: int) -> JsonResponse:
+    """Рассчитать стоимость бронирования лодки.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        JsonResponse: пустой словарь или содержащий
+        ```
+        sum - итоговую стоимость
+        days - кол-во дней
+        spec - спецификация бронирования
+        ```
+    """
     start_date = parse_date(request.GET.get('start_date'))
     end_date = parse_date(request.GET.get('end_date'))
     res = _calc_booking(pk, start_date, end_date)
@@ -343,7 +491,17 @@ def calc_booking(request, pk):
 
 
 @login_required
-def view(request, pk):
+def view(request: HttpRequest, pk: int) -> HttpResponse:
+    """View просмотра лодки.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         boat = Boat.active.get(pk=pk, owner=request.user)
 
@@ -357,7 +515,16 @@ def view(request, pk):
 
 @login_required
 @permission_required('boat.add_boat', raise_exception=True)
-def create(request):
+def create(request: HttpRequest) -> HttpResponse:
+    """View создания лодки.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         context = {
             'boat_coordinates': json.dumps({}),
@@ -371,8 +538,17 @@ def create(request):
 
 @login_required
 @permission_required('boat.change_boat', raise_exception=True)
-def update(request, pk):
+def update(request: HttpRequest, pk: int) -> HttpResponse:
+    """View изменения лодки.
 
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         try:
             boat = Boat.active.get(pk=pk, owner=request.user)
@@ -390,7 +566,17 @@ def update(request, pk):
 @login_required
 @api_view(['POST'])
 @permission_required('boat.delete_boat', raise_exception=True)
-def delete(request, pk):
+def delete(request: HttpRequest, pk: int) -> JsonResponse:
+    """View удаления лодки.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        JsonResponse
+
+    """
     try:
         boat = Boat.active.get(pk=pk, owner=request.user)
     except Boat.DoesNotExist:
@@ -421,14 +607,38 @@ def delete(request, pk):
 
 
 @login_required
-def get_files(request, pk):
+def get_files(request: HttpRequest, pk: int) -> JsonResponse:
+    """Ручка получения файлов лодки.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки
+
+    Returns:
+        JsonResponse
+
+    """
     files = BoatFile.objects.filter(boat__pk=pk, boat__owner=request.user)
     serializer = BoatFileSerializer(
         files, many=True, context={'request': request})
     return JsonResponse({'data': serializer.data})
 
 
-def create_or_update(request, pk=None):
+def create_or_update(
+    request: HttpRequest,
+    pk: int | None = None
+) -> JsonResponse:
+    """Создаить или изменить лодку.
+
+    Args:
+        request: http-запрос
+        pk: ID лодки или None
+
+    Returns:
+        HttpResponse
+
+    """
+    FILES_LIMIT_COUNT = settings.FILES_LIMIT_COUNT
     data = request.POST
     files = request.FILES.getlist('file')
     is_custom_location = get_bool(data.get('is_custom_location'))
@@ -575,13 +785,31 @@ def create_or_update(request, pk=None):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-def redirect_to_tariffs(boat_pk):
+def redirect_to_tariffs(boat_pk: int) -> HttpResponse:
+    """Перенаправить на вкладку тарифов лодки.
+
+    Args:
+        boat_pk: ID лодки
+
+    Returns:
+        HttpResponse
+
+    """
     return redirect(reverse('boat:view', kwargs={'pk': boat_pk}) + '#tariffs')
 
 
 @login_required
 @permission_required('boat.add_tariff', raise_exception=True)
-def create_tariff(request):
+def create_tariff(request: HttpRequest) -> HttpResponse:
+    """Добавить тариф.
+
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         initial = {
             'boat': request.GET.get('boat_pk'),
@@ -601,7 +829,17 @@ def create_tariff(request):
 
 @login_required
 @permission_required('boat.change_tariff', raise_exception=True)
-def update_tariff(request, pk):
+def update_tariff(request: HttpRequest, pk: int) -> HttpResponse:
+    """Изменить тариф.
+
+    Args:
+        request: http-запрос
+        pk: ID тарифа
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         try:
             tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
@@ -620,12 +858,22 @@ def update_tariff(request, pk):
             return render(request, 'boat/update_tariff.html',
                           context={'form': form}, status=400)
         except Tariff.DoesNotExist:
-            return response_not_found()
+            return render(request, 'not_found.html', status=404)
 
 
 @login_required
 @permission_required('boat.delete_tariff', raise_exception=True)
-def delete_tariff(request, pk):
+def delete_tariff(request: HttpRequest, pk: int) -> HttpResponse:
+    """Удалить тариф.
+
+    Args:
+        request: http-запрос
+        pk: ID тарифа
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         tariff = Tariff.objects.get(pk=pk, boat__owner=request.user)
         tariff.delete()
@@ -636,8 +884,16 @@ def delete_tariff(request, pk):
 
 @login_required
 @permission_required('boat.add_term', raise_exception=True)
-def create_term(request):
+def create_term(request: HttpRequest) -> HttpResponse:
+    """Добавить шаблон условия.
 
+    Args:
+        request: http-запрос
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         is_popup = get_bool(request.GET.get('is_popup', False))
         form = TermForm()
@@ -666,7 +922,17 @@ def create_term(request):
 
 @login_required
 @permission_required('boat.change_term', raise_exception=True)
-def update_term(request, pk):
+def update_term(request: HttpRequest, pk: int) -> HttpResponse:
+    """Изменить шаблон условия.
+
+    Args:
+        request: http-запрос
+        pk: ID шаблона
+
+    Returns:
+        HttpResponse
+
+    """
     if request.method == 'GET':
         try:
             term = Term.objects.get(pk=pk, user=request.user)
@@ -693,7 +959,17 @@ def update_term(request, pk):
 
 @login_required
 @permission_required('boat.delete_term', raise_exception=True)
-def delete_term(request, pk):
+def delete_term(request: HttpRequest, pk: int) -> HttpResponse:
+    """Удалить шаблон условия.
+
+    Args:
+        request: http-запрос
+        pk: ID шаблона
+
+    Returns:
+        HttpResponse
+
+    """
     try:
         term = Term.objects.get(pk=pk, user=request.user)
         with transaction.atomic():

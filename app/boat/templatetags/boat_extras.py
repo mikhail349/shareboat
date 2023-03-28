@@ -46,7 +46,7 @@ def get_filter_count(request: HttpRequest) -> int:
 
 
 @register.simple_tag
-def get_boat_coordinates(boat: Boat) -> dict:
+def get_boat_coordinates(boat: Any) -> dict:
     """Получить координаты лодки.
 
     Args:
@@ -57,6 +57,8 @@ def get_boat_coordinates(boat: Boat) -> dict:
         lat, lon, address, state
 
     """
+    if not isinstance(boat, Boat):
+        return {}
     if boat.is_custom_location():
         coordinates = boat.coordinates
     elif boat.base:

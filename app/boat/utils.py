@@ -57,7 +57,7 @@ def calc_booking(boat_pk: int, start_date: date, end_date: date) -> dict:
             5: tariff.sat,
             6: tariff.sun,
         }
-        return mapping.get(weekday)
+        return mapping[weekday]
 
     def spec_inc(tariff: Tariff):
         """Добавить тариф в спецификацию бронирования.
@@ -81,6 +81,8 @@ def calc_booking(boat_pk: int, start_date: date, end_date: date) -> dict:
 
         """
         item = spec.get(tariff.pk)
+        if not item:
+            return
         item['amount'] = item['amount'] - 1
         item['sum'] = item['sum'] - tariff.price
 
@@ -113,12 +115,12 @@ def calc_booking(boat_pk: int, start_date: date, end_date: date) -> dict:
             Q(end_date__lt=start_date) | Q(start_date__gt=end_date)
         )
     )
-    used_tariffs = {}
+    used_tariffs: dict = {}
     total_sum = Decimal("0.0")
     date = start_date
     node = None
     last_tariff = None
-    spec = {}
+    spec: dict = {}
 
     try:
         while date < end_date:
